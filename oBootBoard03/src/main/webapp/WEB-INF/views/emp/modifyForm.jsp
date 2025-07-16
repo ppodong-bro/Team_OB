@@ -1,0 +1,156 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+ <!-- 부트스트랩 CSS CDN 링크 -->
+ <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        /* 폼 컨테이너를 페이지 중앙에 배치하고 최대 너비 설정 (선택 사항) */
+        .form-container {
+            max-width: 70%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #FFBB00;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+	<div id="header">
+		<%@ include file="../header.jsp" %>
+	</div>
+	<div id="contents">
+	    <div class="form-container bg-primary bg-opacity-25">
+	        <h2 class="text-center mb-4">사원 수정저장</h2>
+	        <!-- 조회 화면이므로 form action은 필요 없음. -->
+	        <!-- 만약 수정 페이지로 이동하는 버튼이 있다면, 해당 버튼에 onclick 등으로 처리 -->
+			<form action="${pageContext.request.contextPath}/emp/update" method="post" enctype="multipart/form-data">
+			    <!-- 부서 번호 -->
+			    <div class="row mb-3">
+			        <label for="empno" class="col-sm-2 col-form-label form-label-col">사원번호</label>
+			        <div class="col-sm-10">
+			            <!-- 부서 번호는 보통 수정할 수 없도록 readonly를 유지하거나 hidden으로 처리합니다. -->
+			            <!-- 여기서는 화면에 보여주면서 수정은 막도록 readonly를 유지합니다. -->
+			            <input type="text" class="form-control" id="empno" name="emp_no" value="${empDto.emp_no}" readonly="readonly">
+			        </div>
+			    </div>
+			    
+			    <!-- 이름 -->
+			    <div class="row mb-3">
+			        <label for="empName" class="col-sm-2 col-form-label form-label-col">이름</label>
+			        <div class="col-sm-10">
+			            <input type="text" class="form-control" id="empName" name="emp_name" value="${empDto.emp_name}">
+			        </div>
+			    </div>
+			
+			    <!--전화 -->
+			    <div class="row mb-3">
+			        <label for="deptTel" class="col-sm-2 col-form-label form-label-col">전화</label>
+			        <div class="col-sm-10">
+			            <input type="text" class="form-control" id="deptTel" name="emp_tel" value="${empDto.emp_tel}">
+			        </div>
+			    </div>
+			
+			    <!-- email -->
+ 			    <div class="row mb-3">
+			        <label for="email" class="col-sm-2 col-form-label form-label-col">이메일</label>
+			        <div class="col-sm-10">
+			            <input type="text" class="form-control" id="email" name="email" value="${empDto.email}">
+			        </div>
+			    </div>
+			    
+  			    <!-- 급여 -->
+ 			    <div class="row mb-3">
+			        <label for="sal" class="col-sm-2 col-form-label form-label-col">급여</label>
+			        <div class="col-sm-10">
+			            <input type="text" class="form-control" id="sal" name="sal" value="${empDto.sal}">
+			        </div>
+			    </div>
+
+				<!-- 부서 구분 -->
+	            <div class="row mb-3">
+	             	<label for="dept_code" class="col-sm-2 col-form-label form-label-col">부서</label>
+	            	<div class="col-sm-10">
+	            	<select id="dept_code" name="dept_code">
+	            		<c:forEach var="dept" items="${ deptAllList}">
+	            			<option value="${dept.dept_code }">${dept.dept_name }</option>
+	            		</c:forEach>
+	            	</select>
+	            	</div>
+	            </div>
+				
+   			    			
+			    <!-- 등록일 -->
+			    <div class="row mb-3">
+			        <label for="inDate" class="col-sm-2 col-form-label form-label-col">등록일</label>
+			        <div class="col-sm-10">
+			            <!-- 등록일은 보통 수정하지 않는 필드이므로 readonly를 유지합니다. -->
+			         <input type="date" class="form-control" id="inDate" name="in_date" value="${empDto.in_date }" required readonly="readonly">   
+			        </div>
+			    </div>
+
+			    <!-- 아이디 -->
+			    <div class="row mb-3">
+			        <label for="emp_id" class="col-sm-2 col-form-label form-label-col">아이디</label>
+			        <div class="col-sm-10">
+	                <input type="text" class="form-control" id="emp_id" name="emp_id" value="${empDto.emp_id }" required>   
+			        </div>
+			    </div>
+
+			    <!-- 패스워드 -->
+			    <div class="row mb-3">
+			        <label for="emp_password" class="col-sm-2 col-form-label form-label-col">비밀번호</label>
+			        <div class="col-sm-10">
+	                <input type="password" class="form-control" id="emp_password" name="emp_password" value="${empDto.emp_password }" required>   
+			        </div>
+			    </div>
+			    
+			    
+
+				<!-- 삭제구분 -->
+			       <div class="row mb-3">
+	                <label for="delstatus" class="col-sm-2 col-form-label form-label-col">삭제구분</label>
+	                <div class="col-sm-10">
+	                    <select class="form-select" id="delstatus" name="del_statusview" disabled="disabled">
+	                        <option value="true" <c:if test="${empDto.del_status == true}">selected</c:if>>true</option>
+	                        <option value="false" <c:if test="${empDto.del_status == false}">selected</c:if>>false</option>
+	                    </select>
+	                </div>
+		         </div>
+				
+				<!-- 사진 -->
+				<div class="row mb-3">
+	            	<label for="files" class="form-label">파일</label>
+	            	<c:forEach var="empimage" items="${ empImageList}">
+                    	<img alt="프로필" src="${pageContext.request.contextPath}/upload/${empimage}">
+                    	<input type="hidden" id="uploadFileNames" value="${empimage}">
+                    </c:forEach>
+	            	<input type="file" multiple="multiple" id="files" name="files">
+	            </div>
+
+
+			
+			    <!-- 버튼 -->
+			    <div class="d-flex gap-2 mt-4 justify-content-center"">
+			        <!-- 수정하기 버튼: 폼을 서버로 제출 (type="submit") -->
+			        <button type="submit" class="btn btn-primary btn-lg">수정 완료</button>
+			        <!-- 목록으로 버튼: 부서 목록 페이지로 이동 (type="button" 유지) -->
+			        <button type="button" class="btn btn-secondary btn-lg" onclick="location.href='${pageContext.request.contextPath}/emp/list'">목록으로</button>
+			    </div>
+
+			</form>
+	    </div>
+    </div>
+	<div id="footer">
+		<%@ include file="../foot.jsp" %>
+	</div>
+	<!-- 부트스트랩 JS CDN 링크 (<body> 태그 닫기 직전에!) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+</body>
+</html>
