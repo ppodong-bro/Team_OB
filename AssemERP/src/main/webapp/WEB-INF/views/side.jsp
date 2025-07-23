@@ -47,25 +47,27 @@
 .side .logo {
 	width: 100%;
 	text-align: center;
+	background-color: #347691; /* 배경색 필수: 아래 내용이 비쳐 보이는 걸 방지 */
+	z-index: 200; /* 다른 요소 위에 위치하도록 */
 }
 
 .side .logo img {
 	height: 50px;
 	width: auto;
-	margin: 5px;
+	margin: 5px 5px 0px 5px;
 }
 
 .side .main-nav {
 	width: 100%;
 }
 
-.side .main-nav ul {
+.side ul {
 	list-style: none;
 	padding: 0;
 	margin: 10px;
 }
 
-.side .main-nav .menu span {
+.side .menu span {
 	cursor: pointer; /* 선택가능한 포인터 */
 	width: auto;
 	margin: 0;
@@ -76,7 +78,7 @@
 }
 
 /* '>' 마크 추가 */
-.side .main-nav .menu span::after {
+.side .menu span::after {
 	content: "〉";
 	display: inline-block;
 	margin: 0px 10px 0px auto;
@@ -84,21 +86,21 @@
 	align-self: center;
 }
 
-.side .main-nav .menu span:hover {
+.side .menu span:hover {
 	background-color: #3A8299; /* 호버 시 배경색 변경 */
 }
 
-.side .main-nav .menu.active span {
+.side .menu.active span {
 	background-color: #3F97AF; /* 선택 시 배경색 변경 */
 }
 
 /* 활성화된 메뉴의 마크 회전 */
-.side .main-nav .menu.active span::after {
+.side .menu.active span::after {
 	transform: rotate(90deg);
 }
 
 /* 비 활성화된 서브메뉴 */
-.side .main-nav .menu .submenu {
+.side .menu .submenu {
 	padding: 0;
 	margin: 0;
 	font-size: 1rem;
@@ -110,11 +112,11 @@
 }
 
 /* 활성화된 서브메뉴 */
-.side .main-nav .menu.active .submenu {
+.side .menu.active .submenu {
 	max-height: 200px; /* 충분한 높이 값 설정 */
 }
 /* 서브메뉴 항목 스타일 */
-.side .main-nav .menu .submenu li {
+.side .menu .submenu li {
 	opacity: 0;
 	transform: translateY(-10px); /* 위로 이동하는 애니메이션 */
 	transition: opacity 0.3s ease, transform 0.3s ease;
@@ -122,27 +124,27 @@
 }
 
 /* 활성화된 서브메뉴 항목 스타일 */
-.side .main-nav .menu.active .submenu li {
+.side .menu.active .submenu li {
 	opacity: 1;
 	transform: translateY(0); /* 원래 위치로 */
 }
 
 /* 서브메뉴 링크 스타일 */
-.side .main-nav .menu .submenu a {
+.side .menu .submenu a {
 	text-decoration: none; /* 링크 효과 삭제 */
 	color: #F2F2F2;
 	display: block;
 }
 
-.side .main-nav .menu .submenu a:hover {
+.side .menu .submenu a:hover {
 	background-color: #3A8299;
 }
 
-.side .main-nav .menu .submenu a:hover {
+.side .menu .submenu a:hover {
 	background-color: #3A8299; /* 호버 시 배경색 변경 */
 }
 
-.side .main-nav .menu .submenu.active a {
+.side .menu .submenu.active a {
 	background-color: #3F97AF; /* 선택 시 배경색 변경 */
 }
 
@@ -155,25 +157,43 @@
 	color: #F2F2F2;
 	width: 100%;
 	height: 25px;
-	
 	border-top: 0px;
 	border-bottom: #3A8299 solid 2px;
 	border-right: #3A8299 solid 2px;
 	border-left: #3A8299 solid 2px;
-    /* 하단만 둥글게 처리 */
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
+	/* 하단만 둥글게 처리 */
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	border-bottom: #3A8299 solid 2px;
+	/* 애니메이션을 위한 설정 */
+	transition: transform 0.5s ease;
+	transform: translateY(0) rotate(0deg);
+}
+
+.side .hamburger-btn.active {
+	/* 이동거리 = 25(버튼높이) + 60(푸터높이) + 60(헤더높이) */
+	transform: translateY(calc(100vh - 145px)) rotate(180deg);
 }
 
 .side .hamburger-nav {
-	display: none; /* 기본적으로는 숨김 상태 */
-	cursor: pointer;
-	width: 30px;
-	height: 25px;
-	position: relative;
-	margin-left: 0; /* 오른쪽 정렬 */
-	margin-right: 1rem;
-	z-index: 101; /* 메뉴보다 위에 표시되도록 */
+	display: none;
+	position: fixed;
+	top: -100%;
+	left: 0px;
+	width: 200px;
+	height: calc(100vh - 60px);
+	overflow: hidden; /* 넘치는 내용 숨김 */
+	background-color: #347691;
+	flex-direction: column;
+	z-index: 100; /* 다른 요소 위에 위치하도록 */
+	/* 애니메이션 */
+	transition: top 0.5s ease;
+	display: flex;
+}
+
+.side .hamburger-nav.active {
+	display: flex;
+	top: 60px;
 }
 
 /* 모바일 화면 */
@@ -187,16 +207,14 @@
 	.side .hamburger-btn {
 		display: block;
 	}
-	.side .hamburger-nav {
-		/* display: block; */
-	}
 }
 </style>
-<script>
+<script type="text/javascript">
 	document.addEventListener('DOMContentLoaded', function() {
+		/* 메뉴 */
 		// 모든 메뉴 항목 가져오기
 		const menuItems = document.querySelectorAll('.menu');
-
+		
 		// 각 메뉴 항목에 클릭 이벤트 추가
 		menuItems.forEach(function(item) {
 			item.addEventListener('click', function() {
@@ -213,6 +231,15 @@
 					this.classList.add('active');
 				}
 			});
+		});
+
+		/* 햄버거 메뉴 */
+		const hamburgerBtn = document.querySelector('.hamburger-btn');
+		const hamburgerNav = document.querySelector('.hamburger-nav');
+		
+		hamburgerBtn.addEventListener('click', () => {
+			hamburgerBtn.classList.toggle('active');
+			hamburgerNav.classList.toggle('active');
 		});
 	});
 </script>

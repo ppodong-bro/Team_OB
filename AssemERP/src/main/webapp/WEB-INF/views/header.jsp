@@ -50,39 +50,6 @@
 	font-size: 0.9rem;
 }
 </style>
-<script type="text/javascript">
-	document.addEventListener("DOMContentLoaded", function() {
-		// 햄버거 메뉴
-		const hamburger = document.querySelector(".hamburger-btn");
-		const navMenu = document.querySelector(".hamburger-nav");
-
-		hamburger.addEventListener("click", function() {
-			hamburger.classList.toggle("active"); // 햄버거 아이콘 애니메이션
-			navMenu.classList.toggle("active"); // 메뉴 슬라이드 토글
-		});
-		
-		// 햄버거 서브 메뉴
-		const menuItems = document.querySelectorAll(".hamburger-nav li > span");
-
-		menuItems.forEach((span) => {
-			span.addEventListener("click", function () {
-				// 1. 현재 클릭된 li
-				const parentLi = this.parentElement;
-				const submenu = parentLi.querySelector(".hamburger-nav .submenu");
-
-				// 2. 모든 submenu 닫기 (자기 자신 제외)
-				document.querySelectorAll(".hamburger-nav .submenu").forEach((ul) => {
-					if (ul !== submenu) ul.classList.remove("active");
-				});
-
-				// 3. 현재 submenu 토글
-				if (submenu) {
-					submenu.classList.toggle("active");
-				}
-			});
-		});
-	});
-</script>
 <body>
 	<div class="header">
 		<!-- 로그인/회원가입 영역 -->
