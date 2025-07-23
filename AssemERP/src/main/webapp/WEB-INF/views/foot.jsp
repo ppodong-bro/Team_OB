@@ -36,7 +36,7 @@
 </style>
 <body>
 	<div class="footer">
-	<span>※Create By Team : RightButton</span>
+	<span>※Create By : WiseForce</span>
 	</div>
 </body>
 </html>
