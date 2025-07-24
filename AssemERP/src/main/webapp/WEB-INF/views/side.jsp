@@ -246,7 +246,7 @@
 					</ul></li>
 				<li class="menu"><span>거래처</span>
 					<ul class="submenu">
-						<li><a href="<c:url value='/business/customer'/>">거래처</a></li>
+						<li><a href="<c:url value='/business/clientStartList'/>">거래처</a></li>
 					</ul></li>
 				<li class="menu"><span>발주</span>
 					<ul class="submenu">
