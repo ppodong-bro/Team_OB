@@ -8,7 +8,11 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+
 </head>
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+	rel="stylesheet">
 <style>
 .header {
 	position: fixed; /* 스크롤 해도 항상 위에 위치 하도록 */
@@ -21,7 +25,6 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	
 	border-bottom: #CCE4F6 solid 3px;
 }
 
@@ -84,27 +87,32 @@
 	});
 </script>
 <body>
-	<div class="header">
-		<!-- 로그인/회원가입 영역 -->
-		<div class="auth-links">
-			<c:choose>
-				<c:when test="${empty sessionScope.user}">
-					<span>관리자${sessionScope.user.name}님 환영합니다!</span>
-					<a href="<c:url value='/login'/>"> <img alt="마이페이지"
-						src="<%=request.getContextPath()%>/img/login.png">
-					</a>
-					<a href="<c:url value='/logout'/>"> <img alt="로그아웃"
-						src="<%=request.getContextPath()%>/img/logout.png">
-					</a>
-				</c:when>
-				<c:otherwise>
-					<a href="<c:url value='/register'/>">회원가입</a>
-					<a href="<c:url value='/login'/>"> <img alt="로그인"
-						src="<%=request.getContextPath()%>/img/login.png">
-					</a>
-				</c:otherwise>
-			</c:choose>
-		</div>
+	<div class="container">
+		<header
+			class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+			<div class="col-md-3 mb-2 mb-md-0">
+				<a href="/"
+					class="d-inline-flex link-body-emphasis text-decoration-none">
+					<svg class="bi" width="40" height="32" role="img"
+						aria-label="Bootstrap">
+						<use xlink:href="#bootstrap"></use></svg>
+				</a>
+			</div>
+			<!-- <ul
+				class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+				<li><a href="#" class="nav-link px-2 link-secondary">Home</a></li>
+				<li><a href="#" class="nav-link px-2">Features</a></li>
+				<li><a href="#" class="nav-link px-2">Pricing</a></li>
+				<li><a href="#" class="nav-link px-2">FAQs</a></li>
+				<li><a href="#" class="nav-link px-2">About</a></li>
+			</ul> -->
+			<div class="col-md-3 text-end">
+				<button type="button" class="btn btn-outline-primary me-2">Login</button>
+				<button type="button" class="btn btn-primary">Sign-up</button>
+			</div>
+		</header>
+		
+		
 	</div>
 </body>
 </html>
