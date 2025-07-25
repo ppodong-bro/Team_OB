@@ -17,23 +17,16 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@SequenceGenerator(
-		name = "INVENTORY_SEQ_GEN",
-		sequenceName = "INVENTORY_SEQ",
-		initialValue = 1,
-		allocationSize = 1
-		)
+@SequenceGenerator(name = "INVENTORY_SEQ_GEN", sequenceName = "INVENTORY_SEQ", initialValue = 1, allocationSize = 1)
 public class Inventory {
 	@Id
-	@GeneratedValue(
-			generator = "INVENTORY_SEQ_GEN",
-			strategy = GenerationType.SEQUENCE
-			)
-	private int inventory_his_no;
-	private int item_status;
-	private int item_no;
-	private int inout_status;
-	private LocalDateTime inout_date;
-	private int item_cnt;
-	private int item_quality;
+	@GeneratedValue(generator = "INVENTORY_SEQ_GEN", strategy = GenerationType.SEQUENCE)
+	private int inventory_his_no; // 재고변동이력번호
+	private int item_status; // 제품/부품 구분
+	private int item_no; // 제품/부품번호
+	private int inout_status; // 입/출고 구분
+	private LocalDateTime inout_date; // 입/출고일시
+	private int item_cnt; // 수량
+	private int item_quality; // 품질
+
 }

@@ -16,11 +16,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Month_Inventory {
 	@EmbeddedId
-	Month_Inventory_ID month_Inventory_ID;
 	// 년월
 	// 기초/기말 구분
 	// 제품/부품 구분
 	// 제품/부품번호
+	Month_Inventory_ID month_Inventory_ID;
 
 	int cnt;// 수량
 	LocalDateTime in_date;// 등록일자
