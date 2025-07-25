@@ -11,17 +11,16 @@ DROP TABLE INVENTORY CASCADE CONSTRAINTS;
 DROP TABLE INVENTORY_CLOSE CASCADE CONSTRAINTS;
 DROP TABLE MONTH_INVENTORY CASCADE CONSTRAINTS;
 DROP TABLE PARTS CASCADE CONSTRAINTS;
-DROP TABLE PARTS_PRICE_HIS CASCADE CONSTRAINTS;
+DROP TABLE PARTS_COSTHIS CASCADE CONSTRAINTS;
 DROP TABLE PRODUCT CASCADE CONSTRAINTS;
 DROP TABLE PRODUCT_BOM CASCADE CONSTRAINTS;
-DROP TABLE PRODUCT_PRICE_HIS CASCADE CONSTRAINTS;
+DROP TABLE PRODUCT_COSTHIS CASCADE CONSTRAINTS;
 DROP TABLE PURCHASE_ITEM CASCADE CONSTRAINTS;
 DROP TABLE PURCHASE_ORDER CASCADE CONSTRAINTS;
 DROP TABLE PURCHASE_PERFORM CASCADE CONSTRAINTS;
 DROP TABLE SALES_ITEM CASCADE CONSTRAINTS;
 DROP TABLE SALES_ORDER CASCADE CONSTRAINTS;
 DROP TABLE SALES_PERFORM CASCADE CONSTRAINTS;
-
 
 /* 제품 */
 CREATE TABLE product (
@@ -31,7 +30,7 @@ CREATE TABLE product (
 	product_context VARCHAR2(1000), /* 제품내용 */
 	filename VARCHAR2(1000), /* 사진 */
 	del_status NUMBER(1), /* 삭제구분 */
-	registrar NUMBER(7), /* 등록자 */
+	emp_no NUMBER(7), /* 사원번호 */
 	in_date TIMESTAMP /* 등록일자 */
 );
 
@@ -61,7 +60,7 @@ COMMENT ON COLUMN product.filename IS '사진';
 
 COMMENT ON COLUMN product.del_status IS '삭제구분';
 
-COMMENT ON COLUMN product.registrar IS '등록자';
+COMMENT ON COLUMN product.emp_no IS '사원번호';
 
 COMMENT ON COLUMN product.in_date IS '등록일자';
 
@@ -104,7 +103,7 @@ CREATE TABLE parts (
 	manufacture VARCHAR2(100), /* 제조사 */
 	parts_filename VARCHAR2(1000), /* 사진 */
 	del_status NUMBER(1), /* 삭제구분 */
-	registrar NUMBER(7), /* 등록자 */
+	emp_no NUMBER(7), /* 사원번호 */
 	in_date DATE /* 등록일자 */
 );
 
@@ -138,7 +137,7 @@ COMMENT ON COLUMN parts.parts_filename IS '사진';
 
 COMMENT ON COLUMN parts.del_status IS '삭제구분';
 
-COMMENT ON COLUMN parts.registrar IS '등록자';
+COMMENT ON COLUMN parts.emp_no IS '사원번호';
 
 COMMENT ON COLUMN parts.in_date IS '등록일자';
 
@@ -224,37 +223,37 @@ COMMENT ON COLUMN month_inventory.cnt IS '수량';
 COMMENT ON COLUMN month_inventory.in_date IS '등록일자';
 
 /* 제품가격변동이력 */
-CREATE TABLE product_price_his (
-	product_price_his_no NUMBER(7) NOT NULL, /* 제품가격변동이력 */
+CREATE TABLE product_costhis (
+	product_costhis_no NUMBER(7) NOT NULL, /* 제품가격변동이력 */
 	product_no NUMBER(7) NOT NULL, /* 제품번호 */
 	start_date DATE NOT NULL, /* 시작일자 */
 	end_date DATE, /* 종료일자 */
 	price NUMBER(19) /* 가격 */
 );
 
-CREATE UNIQUE INDEX PK_product_price_his
-	ON product_price_his (
-		product_price_his_no ASC
+CREATE UNIQUE INDEX PK_product_costhis
+	ON product_costhis (
+		product_costhis_no ASC
 	);
 
-ALTER TABLE product_price_his
+ALTER TABLE product_costhis
 	ADD
-		CONSTRAINT PK_product_price_his
+		CONSTRAINT PK_product_costhis
 		PRIMARY KEY (
-			product_price_his_no
+			product_costhis_no
 		);
 
-COMMENT ON TABLE product_price_his IS '제품가격변동이력';
+COMMENT ON TABLE product_costhis IS '제품가격변동이력';
 
-COMMENT ON COLUMN product_price_his.product_price_his_no IS '제품가격변동이력';
+COMMENT ON COLUMN product_costhis.product_costhis_no IS '제품가격변동이력';
 
-COMMENT ON COLUMN product_price_his.product_no IS '제품번호';
+COMMENT ON COLUMN product_costhis.product_no IS '제품번호';
 
-COMMENT ON COLUMN product_price_his.start_date IS '시작일자';
+COMMENT ON COLUMN product_costhis.start_date IS '시작일자';
 
-COMMENT ON COLUMN product_price_his.end_date IS '종료일자';
+COMMENT ON COLUMN product_costhis.end_date IS '종료일자';
 
-COMMENT ON COLUMN product_price_his.price IS '가격';
+COMMENT ON COLUMN product_costhis.price IS '가격';
 
 /* 매출실적 */
 CREATE TABLE sales_perform (
@@ -292,9 +291,10 @@ COMMENT ON COLUMN sales_perform.total IS '총액';
 CREATE TABLE SALES_ORDER (
 	sales_no NUMBER(7) NOT NULL, /* 수주번호 */
 	client_no NUMBER(7), /* 거래처번호 */
+	emp_no NUMBER(7), /* 사원번호 */
 	sales_date DATE, /* 납기완료일 */
 	out_status NUMBER(1), /* 출고상태 */
-	emp_no NUMBER(7), /* 사원번호 */
+	del_status NUMBER(1), /* 삭제구분 */
 	in_date DATE /* 등록일시 */
 );
 
@@ -316,11 +316,13 @@ COMMENT ON COLUMN SALES_ORDER.sales_no IS '수주번호';
 
 COMMENT ON COLUMN SALES_ORDER.client_no IS '거래처번호';
 
+COMMENT ON COLUMN SALES_ORDER.emp_no IS '사원번호';
+
 COMMENT ON COLUMN SALES_ORDER.sales_date IS '납기완료일';
 
 COMMENT ON COLUMN SALES_ORDER.out_status IS '출고상태';
 
-COMMENT ON COLUMN SALES_ORDER.emp_no IS '사원번호';
+COMMENT ON COLUMN SALES_ORDER.del_status IS '삭제구분';
 
 COMMENT ON COLUMN SALES_ORDER.in_date IS '등록일시';
 
@@ -328,9 +330,10 @@ COMMENT ON COLUMN SALES_ORDER.in_date IS '등록일시';
 CREATE TABLE PURCHASE_ORDER (
 	purchase_no NUMBER(7) NOT NULL, /* 발주번호 */
 	client_no NUMBER(7), /* 거래처번호 */
+	emp_no NUMBER(7), /* 사원번호 */
 	purchase_date DATE, /* 납기완료일 */
 	in_status NUMBER(1), /* 입고상태 */
-	emp_no NUMBER(7), /* 사원번호 */
+	del_status NUMBER(1), /* 삭제구분 */
 	in_date DATE /* 등록일시 */
 );
 
@@ -352,11 +355,13 @@ COMMENT ON COLUMN PURCHASE_ORDER.purchase_no IS '발주번호';
 
 COMMENT ON COLUMN PURCHASE_ORDER.client_no IS '거래처번호';
 
+COMMENT ON COLUMN PURCHASE_ORDER.emp_no IS '사원번호';
+
 COMMENT ON COLUMN PURCHASE_ORDER.purchase_date IS '납기완료일';
 
 COMMENT ON COLUMN PURCHASE_ORDER.in_status IS '입고상태';
 
-COMMENT ON COLUMN PURCHASE_ORDER.emp_no IS '사원번호';
+COMMENT ON COLUMN PURCHASE_ORDER.del_status IS '삭제구분';
 
 COMMENT ON COLUMN PURCHASE_ORDER.in_date IS '등록일시';
 
@@ -369,6 +374,7 @@ CREATE TABLE client (
 	client_email VARCHAR2(100), /* 거래처이메일 */
 	client_man VARCHAR2(100), /* 거래처담당자명 */
 	client_address VARCHAR2(100), /* 거래처주소 */
+	del_status NUMBER(1), /* 삭제구분 */
 	modify_date DATE, /* 수정일자 */
 	in_date DATE /* 등록일자 */
 );
@@ -400,6 +406,8 @@ COMMENT ON COLUMN client.client_email IS '거래처이메일';
 COMMENT ON COLUMN client.client_man IS '거래처담당자명';
 
 COMMENT ON COLUMN client.client_address IS '거래처주소';
+
+COMMENT ON COLUMN client.del_status IS '삭제구분';
 
 COMMENT ON COLUMN client.modify_date IS '수정일자';
 
@@ -505,37 +513,37 @@ COMMENT ON COLUMN common.middle_status IS '중분류';
 COMMENT ON COLUMN common.context IS '내용';
 
 /* 부품가격변동이력 */
-CREATE TABLE parts_price_his (
-	parts_price_his_no NUMBER(7) NOT NULL, /* 부품가격변동이력번호 */
+CREATE TABLE parts_costhis (
+	parts_costhis_no NUMBER(7) NOT NULL, /* 부품가격변동이력번호 */
 	parts_no NUMBER(7) NOT NULL, /* 부품번호 */
 	start_date DATE NOT NULL, /* 시작일자 */
 	end_date DATE, /* 종료일자 */
 	price NUMBER(19) /* 가격 */
 );
 
-CREATE UNIQUE INDEX PK_parts_price_his
-	ON parts_price_his (
-		parts_price_his_no ASC
+CREATE UNIQUE INDEX PK_parts_costhis
+	ON parts_costhis (
+		parts_costhis_no ASC
 	);
 
-ALTER TABLE parts_price_his
+ALTER TABLE parts_costhis
 	ADD
-		CONSTRAINT PK_parts_price_his
+		CONSTRAINT PK_parts_costhis
 		PRIMARY KEY (
-			parts_price_his_no
+			parts_costhis_no
 		);
 
-COMMENT ON TABLE parts_price_his IS '부품가격변동이력';
+COMMENT ON TABLE parts_costhis IS '부품가격변동이력';
 
-COMMENT ON COLUMN parts_price_his.parts_price_his_no IS '부품가격변동이력번호';
+COMMENT ON COLUMN parts_costhis.parts_costhis_no IS '부품가격변동이력번호';
 
-COMMENT ON COLUMN parts_price_his.parts_no IS '부품번호';
+COMMENT ON COLUMN parts_costhis.parts_no IS '부품번호';
 
-COMMENT ON COLUMN parts_price_his.start_date IS '시작일자';
+COMMENT ON COLUMN parts_costhis.start_date IS '시작일자';
 
-COMMENT ON COLUMN parts_price_his.end_date IS '종료일자';
+COMMENT ON COLUMN parts_costhis.end_date IS '종료일자';
 
-COMMENT ON COLUMN parts_price_his.price IS '가격';
+COMMENT ON COLUMN parts_costhis.price IS '가격';
 
 /* 매입실적 */
 CREATE TABLE purchase_perform (
@@ -643,6 +651,7 @@ CREATE TABLE client_HIS (
 	client_name VARCHAR2(100), /* 거래처명 */
 	client_gubun NUMBER(1), /* 거래처유형 */
 	client_email VARCHAR2(100), /* 거래처이메일 */
+	client_man VARCHAR2(100), /* 거래처담당자명 */
 	client_address VARCHAR2(100), /* 거래처주소 */
 	in_date DATE /* 등록일자 */
 );
@@ -676,6 +685,8 @@ COMMENT ON COLUMN client_HIS.client_name IS '거래처명';
 COMMENT ON COLUMN client_HIS.client_gubun IS '거래처유형';
 
 COMMENT ON COLUMN client_HIS.client_email IS '거래처이메일';
+
+COMMENT ON COLUMN client_HIS.client_man IS '거래처담당자명';
 
 COMMENT ON COLUMN client_HIS.client_address IS '거래처주소';
 
@@ -851,6 +862,16 @@ COMMENT ON COLUMN emp_image.order_num IS '사진번호';
 
 COMMENT ON COLUMN emp_image.emp_filename IS '사진';
 
+ALTER TABLE product
+	ADD
+		CONSTRAINT FK_emp_TO_product
+		FOREIGN KEY (
+			emp_no
+		)
+		REFERENCES emp (
+			emp_no
+		);
+
 ALTER TABLE product_BOM
 	ADD
 		CONSTRAINT FK_product_TO_product_BOM
@@ -871,6 +892,36 @@ ALTER TABLE product_BOM
 			parts_no
 		);
 
+ALTER TABLE parts
+	ADD
+		CONSTRAINT FK_emp_TO_parts
+		FOREIGN KEY (
+			emp_no
+		)
+		REFERENCES emp (
+			emp_no
+		);
+
+ALTER TABLE product_costhis
+	ADD
+		CONSTRAINT FK_product_TO_product_costhis
+		FOREIGN KEY (
+			product_no
+		)
+		REFERENCES product (
+			product_no
+		);
+
+ALTER TABLE sales_perform
+	ADD
+		CONSTRAINT FK_product_TO_sales_perform
+		FOREIGN KEY (
+			product_no
+		)
+		REFERENCES product (
+			product_no
+		);
+
 ALTER TABLE SALES_ORDER
 	ADD
 		CONSTRAINT FK_client_TO_SALES_ORDER
@@ -881,6 +932,16 @@ ALTER TABLE SALES_ORDER
 			client_no
 		);
 
+ALTER TABLE SALES_ORDER
+	ADD
+		CONSTRAINT FK_emp_TO_SALES_ORDER
+		FOREIGN KEY (
+			emp_no
+		)
+		REFERENCES emp (
+			emp_no
+		);
+
 ALTER TABLE PURCHASE_ORDER
 	ADD
 		CONSTRAINT FK_client_TO_PURCHASE_ORDER
@@ -889,6 +950,26 @@ ALTER TABLE PURCHASE_ORDER
 		)
 		REFERENCES client (
 			client_no
+		);
+
+ALTER TABLE PURCHASE_ORDER
+	ADD
+		CONSTRAINT FK_emp_TO_PURCHASE_ORDER
+		FOREIGN KEY (
+			emp_no
+		)
+		REFERENCES emp (
+			emp_no
+		);
+
+ALTER TABLE client
+	ADD
+		CONSTRAINT FK_emp_TO_client
+		FOREIGN KEY (
+			emp_no
+		)
+		REFERENCES emp (
+			emp_no
 		);
 
 ALTER TABLE SALES_ITEM
@@ -931,6 +1012,26 @@ ALTER TABLE PURCHASE_ITEM
 			parts_no
 		);
 
+ALTER TABLE parts_costhis
+	ADD
+		CONSTRAINT FK_parts_TO_parts_costhis
+		FOREIGN KEY (
+			parts_no
+		)
+		REFERENCES parts (
+			parts_no
+		);
+
+ALTER TABLE purchase_perform
+	ADD
+		CONSTRAINT FK_parts_TO_purchase_perform
+		FOREIGN KEY (
+			parts_no
+		)
+		REFERENCES parts (
+			parts_no
+		);
+
 ALTER TABLE Client_perform
 	ADD
 		CONSTRAINT FK_client_TO_Client_perform
@@ -949,6 +1050,16 @@ ALTER TABLE client_HIS
 		)
 		REFERENCES client (
 			client_no
+		);
+
+ALTER TABLE client_HIS
+	ADD
+		CONSTRAINT FK_emp_TO_client_HIS
+		FOREIGN KEY (
+			emp_no
+		)
+		REFERENCES emp (
+			emp_no
 		);
 
 ALTER TABLE emp
