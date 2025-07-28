@@ -6,6 +6,7 @@
 <configuration>
     <typeAliases>
         <package name="com.WiseForce.AssemERP.dto.km"/>
+		<typeAlias alias="PartsDTO" type="com.WiseForce.AssemERP.dto.sh.PartsDTO" />
     </typeAliases>
 
     <mappers>
