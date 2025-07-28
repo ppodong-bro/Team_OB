@@ -1,0 +1,35 @@
+@charset "UTF-8";
+.status-text {
+	display: inline-flex;
+	align-items: center;
+	font-size: 0.9rem;
+	gap: 4px;
+}
+
+.status-text .dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	display: inline-block;
+}
+
+/* 상태별 색상 */
+.status-text[data-status="0"] .dot {
+	background: #ffc107;
+}
+/* 상태별 색상 */
+.status-text[data-status="1"] .dot {
+	background: #66ff66;
+}
+/* 상태별 색상 */
+.status-text[data-status="2"] .dot {
+	background: #33bbff;
+}
+/* 상태별 색상 */
+.status-text[data-status="3"] .dot {
+	background: #bfbfbf;
+}
+
+.main-content {
+  margin-left: 260px;
+}
