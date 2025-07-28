@@ -17,6 +17,7 @@ CREATE OR REPLACE PACKAGE month_close AS
     -- 월마감9 : 부품 실적 기록
     -- 월마감998 : 다음달 기말 재고 등록
     -- 월마감999 : 수불마감 끝 이력 등록
+    PROCEDURE month_close_end (p_sum_yymm in VARCHAR2, p_regi_emp_no in VARCHAR2);
 END;
 -- PACKAGE와 PACKAGE BODY 구분
 /
@@ -38,6 +39,7 @@ CREATE OR REPLACE PACKAGE BODY month_close AS
         -- 월마감9 : 부품 실적 기록
         -- 월마감998 : 다음달 기말 재고 등록
         -- 월마감999 : 수불마감 끝 이력 등록
+        month_close_end(p_sum_yymm, p_regi_emp_no);
         COMMIT;
     END;
     
@@ -189,4 +191,22 @@ CREATE OR REPLACE PACKAGE BODY month_close AS
             WHEN OTHERS THEN
                   DBMS_OUTPUT.PUT_LINE(SQLERRM||'에러 발생 ');
     END;
+    
+    /***************************************************************************
+    Procedure Name : month_close_end
+    Description    : 수불마감 끝 이력 등록
+    ***************************************************************************/
+    PROCEDURE month_close_end(p_sum_yymm in VARCHAR2, p_regi_emp_no in VARCHAR2)
+    IS
+    BEGIN
+        DBMS_OUTPUT.ENABLE;
+        dbms_output.put_line('month_close_end START p_sum_yymm/p_regi_emp_no ' || p_sum_yymm || '/' || p_regi_emp_no);
+        
+        -- 수불마감 끝 이력 등록
+        UPDATE inventory_close SET CLOSE_STATUS = 1, CLOSE_ENDDATE = sysdate
+        WHERE yearmonth = p_sum_yymm;
+        
+        dbms_output.put_line('month_close_end END');
+    END;
+    
 END;

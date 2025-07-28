@@ -2,6 +2,7 @@ package com.WiseForce.AssemERP.domain.sh;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,11 +33,13 @@ public class Parts {
 	private int				parts_no;
     private	int				parts_status;
 	private	String			parts_name;
+	@Column(columnDefinition = "VARCHAR2(1000 CHAR)")
 	private	String			parts_context;
 	private	int				relation_status;
 	private	String			manufacture;
 	private	String			filename;
 	private int				del_status;
+    @Column(name = "emp_no", nullable = false) // 도건 : 나중에 FK(EMP) 지정 필요
     private int				registrar;
     private LocalDateTime	in_date;
 }
