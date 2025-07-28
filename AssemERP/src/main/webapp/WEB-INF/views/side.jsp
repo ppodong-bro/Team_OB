@@ -2,7 +2,6 @@
 	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="light">
-<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Collapsible Sidebar</title>
@@ -23,6 +22,7 @@ body {
 	background-color: #f8f9fa;
 	padding: 1rem;
 	border-right: 1px solid #dee2e6;
+	z-index: 1100;
 }
 
 .sidebar h5 {
@@ -67,11 +67,6 @@ body {
 		</ul>
 	</div>
 
-	<!-- Content area -->
-	<div class="container" style="margin-left: 270px; padding-top: 20px;">
-		<h1>Main Content</h1>
-		<p>This is the main content area beside the sidebar.</p>
-	</div>
 
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
