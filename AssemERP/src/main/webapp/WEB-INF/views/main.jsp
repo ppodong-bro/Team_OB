@@ -4,6 +4,14 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<style type="text/css">
+#contents {
+	margin-top: 70px;
+	margin-left: 250px;
+	margin-bottom: 60px;
+	padding: 20px; /* 내부 여백 */
+}
+</style>
 <title>Insert title here</title>
 </head>
 <body>
