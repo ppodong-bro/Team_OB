@@ -27,8 +27,8 @@
 
 
 <!-- 내맘대로 추가 -->
-<link href="sidebars.css" rel="stylesheet">
-<script src="bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" class="astro-vvvwv3sm"></script>
+<link href="${pageContext.request.contextPath}/bootstrap/sidebars.css" rel="stylesheet">
+<script src="${pageContext.request.contextPath}/bootstrap/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" class="astro-vvvwv3sm"></script>
 
 
 <%------------------------------------------------------------------------------
