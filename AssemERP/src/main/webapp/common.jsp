@@ -17,18 +17,15 @@
 	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
 <%------------------------------------------------------------------------------
+   		- Bootstrap Sidebars CSS
+    ------------------------------------------------------------------------------%>
+<link href="${pageContext.request.contextPath}/sidebars.css" rel="stylesheet">
+
+<%------------------------------------------------------------------------------
    		- 레이아웃 CSS
     ------------------------------------------------------------------------------%>
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/layout.css">
-
-
-
-
-
-<!-- 내맘대로 추가 -->
-<link href="${pageContext.request.contextPath}/bootstrap/sidebars.css" rel="stylesheet">
-<script src="${pageContext.request.contextPath}/bootstrap/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" class="astro-vvvwv3sm"></script>
 
 
 <%------------------------------------------------------------------------------
