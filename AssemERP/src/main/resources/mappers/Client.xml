@@ -68,4 +68,19 @@
     WHERE rn BETWEEN #{start} AND #{end}
     ]]>
 	</select>
+	
+	<select id="detailClient" parameterType="int" resultType="ClientDto">
+		SELECT CLIENT_NO, EMP_NO, CLIENT_NAME, CLIENT_GUBUN, CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, DEL_STATUS, MODIFY_DATE, IN_DATE 
+		FROM Client 
+		WHERE client_no = #{client_No}
+	</select>
+	
+	<insert id="createClient" parameterType="ClientDto">
+		INSERT INTO Client 
+		(CLIENT_NO, EMP_NO, CLIENT_NAME
+	   , CLIENT_GUBUN, CLIENT_EMAIL, CLIENT_MAN
+	   , CLIENT_ADDRESS, IN_DATE) 
+		VALUE 
+	    (CLIENT_SEQ_GEN, #{client_No}, #{client_Name}, #{Client_Gubun}, #{Client_Email}, #{Client_Man}, #{Client_Address}, sysout)
+	</insert>
 </mapper>

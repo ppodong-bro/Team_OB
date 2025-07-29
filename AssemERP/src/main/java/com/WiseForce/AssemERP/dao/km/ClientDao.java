@@ -15,4 +15,10 @@ public interface ClientDao {
 
 	int 			totSearch(ClientSearchDto clientSearchDto);
 
+	ClientDto 		detailClient(ClientDto clientDto1);
+
+	int 			createClient(ClientDto clientDto);
+		
 }
+
+
