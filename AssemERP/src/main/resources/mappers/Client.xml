@@ -80,7 +80,7 @@
 		(CLIENT_NO, EMP_NO, CLIENT_NAME
 	   , CLIENT_GUBUN, CLIENT_EMAIL, CLIENT_MAN
 	   , CLIENT_ADDRESS, IN_DATE) 
-		VALUE 
-	    (CLIENT_SEQ_GEN, #{client_No}, #{client_Name}, #{Client_Gubun}, #{Client_Email}, #{Client_Man}, #{Client_Address}, sysout)
+		VALUES
+	    (CLIENT_SEQ_GEN.NEXTVAL, #{emp_No}, #{client_Name}, #{client_Gubun}, #{client_Email}, #{client_Man}, #{client_Address}, SYSDATE)
 	</insert>
 </mapper>
