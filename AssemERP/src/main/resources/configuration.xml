@@ -6,11 +6,7 @@
 <configuration>
     <typeAliases>
         <package name="com.WiseForce.AssemERP.dto.km"/>
-     <!--    <package name="com.WiseForce.AssemERP.dto.sh"/> -->
+        <package name="com.WiseForce.AssemERP.dto.sh"/>
     </typeAliases>
 
-    <mappers>
-        <mapper resource="mappers/Client.xml" />
-      <!--   <mapper resource="mappers/PartsDTO.xml"/> -->
-    </mappers>
 </configuration>
