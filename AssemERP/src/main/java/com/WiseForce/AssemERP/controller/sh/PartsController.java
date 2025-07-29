@@ -5,7 +5,9 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.WiseForce.AssemERP.dto.sh.PartsDTO;
 import com.WiseForce.AssemERP.service.sh.PartsService;
@@ -19,25 +21,25 @@ import lombok.RequiredArgsConstructor;
 public class PartsController {
 
 	private final PartsService partsService;
-	
+
 	@GetMapping("partsList")
-	public String partsListPage(PartsDTO partsDTO,Model model) {
+	public String partsListPageStart(PartsDTO partsDTO,Model model) {
 		int totalcount = partsService.getTotalcount();
 		System.out.println("PartsController partsListPage totalcount => "+totalcount);
-		Paging paging = new Paging(totalcount, partsDTO.getCurrentpage());
-		partsDTO.setStart(paging.getStart());
-		partsDTO.setEnd(paging.getEnd());
-		System.out.println("PartsController partsListPage partsDTO.setStart => "+paging.getStart());
-		System.out.println("PartsController partsListPage partsDTO.setEnd => "+paging.getEnd());
+		Paging page = new Paging(totalcount, partsDTO.getCurrentPage());
+		partsDTO.setStart(page.getStart());
+		partsDTO.setEnd(page.getEnd());
+		System.out.println("PartsController partsListPage partsDTO.setStart => "+page.getStart());
+		System.out.println("PartsController partsListPage partsDTO.setEnd => "+page.getEnd());
 		
 		List<PartsDTO> partsDTOs = partsService.getPartsList(partsDTO);
 		System.out.println("PartsController partsListPage partsDTOs => "+partsDTOs);
 		
-		model.addAttribute("totalParts", totalcount);
+		model.addAttribute("totalcount", totalcount);
 		model.addAttribute("partsDTOs", partsDTOs);
-		model.addAttribute("page", paging);
+		model.addAttribute("page", page);
 		
 		return "sh/partsList";
 	}
-	
+
 }

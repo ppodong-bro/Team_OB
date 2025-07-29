@@ -11,7 +11,7 @@
 </head>
 <body>
 
-	<%@ include file="../header.jsp"%>
+	<%@ include file="header.jsp"%>
 	<%@ include file="../side.jsp"%>
 
 	<div class="main-content" style="margin-left: 260px;">
