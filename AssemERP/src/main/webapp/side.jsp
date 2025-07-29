@@ -57,7 +57,7 @@
 				aria-expanded="false">거래처</button>
 			<div class="collapse" id="client-collapse">
 				<ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-					<li><a href="#"
+					<li><a href="${pageContext.request.contextPath}/business/clientList"
 						class="link-body-emphasis d-inline-flex text-decoration-none rounded">거래처 관리</a></li>
 				</ul>
 			</div>

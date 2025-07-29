@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.WiseForce.AssemERP.dto.km.ClientDto;
@@ -48,10 +49,29 @@ public class ClientController {
 		return "km/clientList";
 	}
 	
-	@GetMapping("clientCreate")
-	public String clientCreate() {
+	@GetMapping("detailClient")
+	public String detailClient(ClientDto clientDto1, Model model) {
+		System.out.println("ClientController detailClient Start...");
+		ClientDto clientDto = clientService.detailClient(clientDto1);
+		model.addAttribute("clientDto", clientDto);
+		
+		return "km/detailClient";
+	}
+	
+	@GetMapping("createClient]")
+	public String createClient(ClientDto clientDto, Model model) {
+		System.out.println("ClientController createClient Start...");
+		int result = clientService.createClient(clientDto);
+		
 		return "km/clientCreate";
 	}
-
 	
+	@PostMapping("modifyClient")
+	public String modifyClient(ClientDto clientDto, Model model) {
+		System.out.println("ClientController modifyClient Start...");
+		
+		return "km/modifyClient";
+	}
+
 }
+
