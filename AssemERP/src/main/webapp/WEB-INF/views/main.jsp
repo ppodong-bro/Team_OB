@@ -26,5 +26,8 @@
 			<jsp:include page="/foot.jsp" />
 		</div>
 	</div>
+
+	<!-- 부트스트랩 CDN -->
+	<jsp:include page="/common_cdn.jsp" />
 </body>
 </html>
