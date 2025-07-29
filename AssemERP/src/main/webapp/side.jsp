@@ -29,9 +29,9 @@
 				aria-expanded="false">부품/제품</button>
 			<div class="collapse" id="item-collapse" style="">
 				<ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-					<li><a href="#"
+					<li><a href="${pageContext.request.contextPath}/parts/partsList "
 						class="link-body-emphasis d-inline-flex text-decoration-none rounded">부품 관리</a></li>
-					<li><a href="#"
+					<li><a href="${pageContext.request.contextPath}/product/productList "
 						class="link-body-emphasis d-inline-flex text-decoration-none rounded">제품 관리</a></li>
 				</ul>
 			</div>
