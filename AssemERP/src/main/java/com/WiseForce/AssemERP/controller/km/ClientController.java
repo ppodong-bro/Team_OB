@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.WiseForce.AssemERP.dto.km.ClientDto;
+import com.WiseForce.AssemERP.dto.km.ClientSearchDto;
 import com.WiseForce.AssemERP.service.km.ClientService;
 import com.WiseForce.AssemERP.service.km.Paging;
 
@@ -30,6 +31,20 @@ public class ClientController {
 		List<ClientDto> clientList = clientService.getList(clientDto);
 		model.addAttribute("clientList", clientList);
 		model.addAttribute("page", page);
+		return "km/clientList";
+	}
+	
+	@GetMapping("clientSearchList")
+	public String clientSearchList(ClientSearchDto clientSearchDto, Model model) {
+		int totSearch = clientService.totSearch(clientSearchDto);
+		ClientDto clientDto = new ClientDto();
+		Paging page = new Paging(totSearch, clientSearchDto.getCurrentPage());
+		clientSearchDto.setStart(page.getStart());
+		clientSearchDto.setEnd(page.getEnd());
+		List<ClientDto> searchList = clientService.searchList(clientSearchDto);
+		model.addAttribute("clientList", searchList);
+		model.addAttribute("page", page);
+		
 		return "km/clientList";
 	}
 	

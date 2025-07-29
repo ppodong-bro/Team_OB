@@ -21,4 +21,51 @@
 		 ]]>
 		 
 	</select>
+	
+	 <select id="totSearchClient" parameterType="ClientSearchDto" resultType="int">
+	 
+    SELECT COUNT(*) 
+      FROM Client
+    <where>
+      <if test="client_Name != null and client_Name.trim() != ''">
+        AND client_name LIKE '%' || #{client_Name} || '%'
+      </if>
+      <if test="client_Gubun != null">
+        AND client_gubun = #{client_Gubun}
+      </if>
+      <if test="client_Man != null and client_Man.trim() != ''">
+        AND client_man LIKE '%' || #{client_Man} || '%'
+      </if>
+      <!-- 필요하다면 inDateStart/End 조건도 추가 -->
+    </where>
+  </select>
+  
+	<!-- 검색 + 페이징 -->
+	<select id="clientSearchList" parameterType="ClientSearchDto" resultType="ClientDto">
+    <![CDATA[
+    SELECT *
+      FROM (
+        SELECT rownum rn, a.*
+          FROM (
+            SELECT *
+              FROM Client
+    ]]>
+    <where>
+      <if test="client_Name != null and client_Name.trim() != ''">
+        AND client_Name LIKE '%' || #{client_Name} || '%'
+      </if>
+      <if test="client_Gubun != null">
+        AND client_Gubun = #{client_Gubun}
+      </if>
+      <if test="client_Man != null and client_Man.trim() != ''">
+        AND client_Man LIKE '%' || #{client_Man} || '%'
+      </if>
+    </where>
+    <![CDATA[
+            ORDER BY client_no
+          ) a
+      )
+    WHERE rn BETWEEN #{start} AND #{end}
+    ]]>
+	</select>
 </mapper>

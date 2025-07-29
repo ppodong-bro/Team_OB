@@ -6,6 +6,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
 import com.WiseForce.AssemERP.dto.km.ClientDto;
+import com.WiseForce.AssemERP.dto.km.ClientSearchDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +27,21 @@ public class ClientDaoImpl implements ClientDao{
 		System.out.println("ClientDaoImpl getList listClient->"+listClient);
 		
 		return listClient;
+	}
+
+	@Override
+	public List<ClientDto> searchList(ClientSearchDto clientSearchDto) {
+		System.out.println("clientSearchDto"+clientSearchDto);
+		List<ClientDto> searchList = session.selectList("clientSearchList", clientSearchDto);
+		System.out.println("searchList-->"+searchList);
+		return searchList;
+	}
+
+	@Override
+	public int totSearch(ClientSearchDto clientSearchDto) {
+		int totSearch = session.selectOne("totSearchClient", clientSearchDto);
+		System.out.println("totSearch--->"+totSearch);
+		return totSearch;
 	}
 
 }

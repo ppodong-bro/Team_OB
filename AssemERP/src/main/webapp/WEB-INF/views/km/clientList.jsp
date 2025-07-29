@@ -3,7 +3,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html lang="ko">
-<head>…
+<head>
+<link href="<c:url value='/css/list.css'/>" rel="stylesheet" />
 </head>
 <body>
 	<%@ include file="../header.jsp"%>
@@ -24,14 +25,14 @@
 			<h2 class="mb-3 mt-2">거래처 관리</h2>
 
 			<!-- 검색 폼 -->
-			<form method="get" action="clientList"
+			<form method="get" action="clientSearchList"
 				class="row gx-2 gy-1 align-items-end mb-4">
 				<!-- 거래처명 -->
 				<div class="col-auto">
 					<div class="input-group input-group-sm">
 						<span class="input-group-text">거래처명</span> <input type="text"
 							name="client_Name" class="form-control" placeholder="거래처명 검색"
-							value="${searchDto.client_Name}">
+							value="${ClientSearchDto.client_Name}">
 					</div>
 				</div>
 
@@ -42,9 +43,9 @@
 							name="client_Gubun" class="form-select">
 							<option value="">전체</option>
 							<option value="0"
-								${searchDto.client_Gubun == 0 ? 'selected' : ''}>구매</option>
+								${ClientSearchDto.client_Gubun == 0 ? 'selected' : ''}>구매</option>
 							<option value="1"
-								${searchDto.client_Gubun == 1 ? 'selected' : ''}>판매</option>
+								${ClientSearchDto.client_Gubun == 1 ? 'selected' : ''}>판매</option>
 						</select>
 					</div>
 				</div>
@@ -63,7 +64,7 @@
 					<div class="input-group input-group-sm">
 						<span class="input-group-text">거래처 담당자</span> <input type="text"
 							name="client_Man" class="form-control" placeholder="거래처 담당자 검색"
-							value="${searchDto.client_Man}">
+							value="${ClientSearchDto.client_Man}">
 					</div>
 				</div>
 
@@ -93,7 +94,9 @@
 						<c:forEach var="client" items="${clientList}" varStatus="st">
 							<tr>
 								<td class="text-center">${st.index + 1}</td>
-								<td class="text-center">${client.client_No}</td>
+								<td class="text-center"><a
+									href="<c:url value='/clients/${client.client_No}'/>">
+										${client.client_No} </a></td>
 								<td>${client.client_Name}</td>
 								<td class="text-center">${client.client_Gubun == 0 ? '구매' : '판매'}
 								</td>
@@ -120,26 +123,93 @@
 					<ul class="pagination pagination-sm justify-content-center">
 						<!-- 이전 -->
 						<li class="page-item ${page.startPage == 1 ? 'disabled' : ''}">
-							<a class="page-link"
-							href="clientList?currentPage=${page.startPage-1}"
-							aria-label="Previous">‹</a>
+							<c:url var="prevUrl" value="/business/clientSearchList">
+								<c:param name="currentPage" value="${page.startPage - 1}" />
+								<c:if test="${not empty clientSearchDto.client_Name}">
+									<c:param name="client_Name"
+										value="${clientSearchDto.client_Name}" />
+								</c:if>
+								<c:if test="${clientSearchDto.client_Gubun != null}">
+									<c:param name="client_Gubun"
+										value="${clientSearchDto.client_Gubun}" />
+								</c:if>
+								<c:if test="${not empty clientSearchDto.client_Man}">
+									<c:param name="client_Man"
+										value="${clientSearchDto.client_Man}" />
+								</c:if>
+								<c:if test="${not empty clientSearchDto.inDate_Start}">
+									<c:param name="inDate_Start"
+										value="${clientSearchDto.inDate_Start}" />
+								</c:if>
+								<c:if test="${not empty clientSearchDto.inDate_End}">
+									<c:param name="inDate_End"
+										value="${clientSearchDto.inDate_End}" />
+								</c:if>
+							</c:url> <a class="page-link" href="${prevUrl}" aria-label="Previous">‹</a>
 						</li>
 
-						<!-- 숫자 -->
+						<!-- 숫자 페이지 -->
 						<c:forEach begin="${page.startPage}" end="${page.endPage}" var="p">
 							<li class="page-item ${page.currentPage == p ? 'active' : ''}">
-								<a class="page-link" href="clientList?currentPage=${p}">${p}</a>
+								<c:url var="pageUrl" value="/business/clientSearchList">
+									<c:param name="currentPage" value="${p}" />
+									<!-- 검색 DTO 파라미터들 동일하게 추가 -->
+									<c:if test="${not empty clientSearchDto.client_Name}">
+										<c:param name="client_Name"
+											value="${clientSearchDto.client_Name}" />
+									</c:if>
+									<c:if test="${clientSearchDto.client_Gubun != null}">
+										<c:param name="client_Gubun"
+											value="${clientSearchDto.client_Gubun}" />
+									</c:if>
+									<c:if test="${not empty clientSearchDto.client_Man}">
+										<c:param name="client_Man"
+											value="${clientSearchDto.client_Man}" />
+									</c:if>
+									<c:if test="${not empty clientSearchDto.inDate_Start}">
+										<c:param name="inDate_Start"
+											value="${clientSearchDto.inDate_Start}" />
+									</c:if>
+									<c:if test="${not empty clientSearchDto.inDate_End}">
+										<c:param name="inDate_End"
+											value="${clientSearchDto.inDate_End}" />
+									</c:if>
+								</c:url> <a class="page-link" href="${pageUrl}">${p}</a>
 							</li>
 						</c:forEach>
 
 						<!-- 다음 -->
 						<li
 							class="page-item ${page.endPage == page.totalPage ? 'disabled' : ''}">
-							<a class="page-link"
-							href="clientList?currentPage=${page.endPage+1}" aria-label="Next">›</a>
+							<c:url var="nextUrl" value="/business/clientSearchList">
+								<c:param name="currentPage" value="${page.endPage + 1}" />
+								<!-- 검색 DTO 파라미터들 똑같이 추가 -->
+								<c:if test="${not empty clientSearchDto.client_Name}">
+									<c:param name="client_Name"
+										value="${clientSearchDto.client_Name}" />
+								</c:if>
+								<c:if test="${clientSearchDto.client_Gubun != null}">
+									<c:param name="client_Gubun"
+										value="${clientSearchDto.client_Gubun}" />
+								</c:if>
+								<c:if test="${not empty clientSearchDto.client_Man}">
+									<c:param name="client_Man"
+										value="${clientSearchDto.client_Man}" />
+								</c:if>
+								<c:if test="${not empty clientSearchDto.inDate_Start}">
+									<c:param name="inDate_Start"
+										value="${clientSearchDto.inDate_Start}" />
+								</c:if>
+								<c:if test="${not empty clientSearchDto.inDate_End}">
+									<c:param name="inDate_End"
+										value="${clientSearchDto.inDate_End}" />
+								</c:if>
+							</c:url> <a class="page-link" href="${nextUrl}" aria-label="Next">›</a>
 						</li>
 					</ul>
 				</nav>
+
+
 
 			</div>
 		</div>
