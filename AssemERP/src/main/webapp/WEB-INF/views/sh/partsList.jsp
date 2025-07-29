@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+    pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -122,7 +122,7 @@ body.has-fixed-header {
 								<td>${partsDTO.parts_name}</td>
 								<td>${partsDTO.parts_status}</td>
 								<td>${partsDTO.manufacture}</td>
-								<td>${partsDTO.registrar}</td>
+								<td>${partsDTO.emp_no}</td>
 								<td>${partsDTO.in_date}</td>
 								<td class="text-center">
 									<button type="button"
