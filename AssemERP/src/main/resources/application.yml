@@ -59,7 +59,7 @@ logging.level:
 # Mybatis
 mybatis:
   config-location: classpath:configuration.xml
-  mapper-locations: classpath:mappers/*.xml 
+#  mapper-locations: classpath:mappers/*.xml 
 
 #upload Folder
 com.WiseForce.AssemERP.upload.path: upload
