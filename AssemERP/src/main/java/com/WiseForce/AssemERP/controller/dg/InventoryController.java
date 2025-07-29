@@ -10,4 +10,12 @@ public class InventoryController {
 		System.out.println("mainPage Strart...");
 		return "main";
 	}
+
+	@PutMapping("/inventory/monthClose")
+	public String monthClose() {
+		System.out.println("월마감 시작합니다.");
+		
+		return "";
+	}
+
 }
