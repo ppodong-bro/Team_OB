@@ -20,15 +20,16 @@ import lombok.RequiredArgsConstructor;
 public class ClientController {
 	private final ClientService clientService;
 	
-	@GetMapping("clientStartList")
+	@GetMapping("clientList")
 	public String listStart(ClientDto clientDto,Model model) {
 		int totCnt = clientService.totCnt();
-		String currentPage = "1";
-		Paging page = new Paging(totCnt, currentPage);
+		
+		Paging page = new Paging(totCnt, clientDto.getCurrentPage());
 		clientDto.setStart(page.getStart());
 		clientDto.setEnd(page.getEnd());
 		List<ClientDto> clientList = clientService.getList(clientDto);
-		
+		model.addAttribute("clientList", clientList);
+		model.addAttribute("page", page);
 		return "km/clientList";
 	}
 	

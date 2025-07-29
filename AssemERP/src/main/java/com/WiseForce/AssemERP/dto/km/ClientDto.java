@@ -14,15 +14,16 @@ import lombok.NoArgsConstructor;
 @Data
 public class ClientDto {
 
-	private int client_no;
-	private String 			client_name;
-	private int 			client_gubun;
-	private String  		client_email;
-	private String  		client_man;
-	private String  		client_address;
-	private int				del_statis;
+	private int client_No;
+	private String 			client_Name;
+	private int 			client_Gubun;
+	private String  		client_Email;
+	private String  		client_Man;
+	private String  		client_Address;
+	private int				del_Status;
 	private LocalDateTime   modify_date;
 	private LocalDateTime	in_date;
 	private int				start;
 	private int				end;
+	private String			currentPage;
 }
