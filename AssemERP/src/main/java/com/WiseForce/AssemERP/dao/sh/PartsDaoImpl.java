@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PartsDaoImpl implements PartsDao {
 
-	private final SqlSession sqlSession;
+	private final SqlSession session;
 
 	@Override
 	public List<PartsDTO> findPageList(PartsDTO partsDTO) {
@@ -24,7 +24,7 @@ public class PartsDaoImpl implements PartsDao {
 		List<PartsDTO> partDTOList = null;
 		
 		try {
-			partDTOList = sqlSession.selectList("com.WiseForce.AssemERP.PartsDTOMapper.shPartsListPage", partsDTO);
+			partDTOList = session.selectList("com.WiseForce.AssemERP.PartsDTOMapper.shPartsListPage", partsDTO);
 			System.out.println("PartsDaoImpl findPageList partDTOList => "+partDTOList);
 		} catch (Exception e) {
 			System.out.println("PartsDaoImpl findPageList Exception => "+e.getMessage());

@@ -17,14 +17,16 @@
 		<div id="main-area">
 			<jsp:include page="/header.jsp" />
 
-			<!-- 이곳에 자신의 코드를 작성하세요 -->
+
+	<%@ include file="header.jsp"%>
+	<%@ include file="../side.jsp"%>
+      <!-- 이곳에 자신의 코드를 작성하세요 -->
 			<div id="contents">
 				<div class="container px-3 py-4">
 					<div class="card shadow-sm border-1px bg-white col-md-6 mx-auto">
 						<div class="card-header shadow-sm border-bottom bg-light ">
 							<h5 class="mb-0">거래처 등록</h5>
 						</div>
-
 						<div class="card-body px-4 py-3">
 							<form method="post" action="/client/insert">
 								<!-- 거래처 유형 -->
