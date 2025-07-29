@@ -58,12 +58,19 @@ public class ClientController {
 		return "km/detailClient";
 	}
 	
-	@GetMapping("createClient]")
+	@GetMapping("createStartClient")
+	public String createStartClient(ClientDto clientDto, Model model) {
+		System.out.println("ClientController createStartClient Start...");
+		
+		return "km/clientCreate";
+	}
+	
+	@PostMapping("createClient")
 	public String createClient(ClientDto clientDto, Model model) {
 		System.out.println("ClientController createClient Start...");
 		int result = clientService.createClient(clientDto);
 		
-		return "km/clientCreate";
+		return "redirect:/business/clientList";
 	}
 	
 	@PostMapping("modifyClient")

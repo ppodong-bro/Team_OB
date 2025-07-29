@@ -17,108 +17,78 @@
 		<div id="main-area">
 			<jsp:include page="/header.jsp" />
 
+			<!-- 이곳에 자신의 코드를 작성하세요 -->
+			<div class="container px-3 py-4">
+				<div class="card shadow-sm bg-white col-md-6 mx-auto">
+					<div class="card-header bg-light">
+						<h5 class="mb-0">거래처 등록</h5>
+					</div>
+					<div class="card-body">
+						<form method="post"
+							action="${pageContext.request.contextPath}/business/createClient">
 
-	<%@ include file="header.jsp"%>
-	<%@ include file="../side.jsp"%>
-      <!-- 이곳에 자신의 코드를 작성하세요 -->
-			<div id="contents">
-				<div class="container px-3 py-4">
-					<div class="card shadow-sm border-1px bg-white col-md-6 mx-auto">
-						<div class="card-header shadow-sm border-bottom bg-light ">
-							<h5 class="mb-0">거래처 등록</h5>
-						</div>
-						<div class="card-body px-4 py-3">
-							<form method="post" action="/client/insert">
-								<!-- 거래처 유형 -->
-								<div class="mb-3">
-									<label for="clientType" class="form-label">거래처 유형</label> <select
-										class="form-select form-select-sm w-auto" id="clientType"
-										name="clientType" required>
-										<option value="">선택</option>
-										<option value="소매">소매</option>
-										<option value="도매">도매</option>
-										<option value="공장">공장</option>
-									</select>
-								</div>
+							<!-- 직원 번호 -->
+							<div class="mb-3">
+								<label for="empNo" class="form-label">직원 번호</label> <input
+									type="number" class="form-control form-control-sm w-auto"
+									id="empNo" name="emp_No" required>
+							</div>
 
+							<!-- 거래처명 -->
+							<div class="mb-3">
+								<label for="clientName" class="form-label">거래처명</label> <input
+									type="text" class="form-control form-control-sm"
+									id="clientName" name="client_Name" required>
+							</div>
 
-								<!-- 거래처명 -->
-								<div class="mb-3">
-									<label for="clientName" class="form-label">거래처명</label> <input
-										type="text" class="form-control form-control-sm"
-										id="clientName" name="clientName" required>
-								</div>
+							<!-- 거래처 유형 -->
+							<div class="mb-3">
+								<label for="clientGubun" class="form-label">거래처 유형</label> <select
+									class="form-select form-select-sm w-auto" id="clientGubun"
+									name="client_Gubun" required>
+									<option value="">선택</option>
+									<option value="0">구매</option>
+									<option value="1">판매</option>
+								</select>
+							</div>
 
-								<!-- 주소 -->
-								<div class="mb-3">
-									<label for="clientAddress" class="form-label">주소</label> <input
-										type="text" class="form-control form-control-sm"
-										id="clientAddress" name="clientAddress">
-								</div>
+							<!-- 주소 -->
+							<div class="mb-3">
+								<label for="clientAddress" class="form-label">주소</label> <input
+									type="text" class="form-control form-control-sm"
+									id="clientAddress" name="client_Address">
+							</div>
 
-								<!-- 이메일 -->
-								<div class="mb-3">
-									<label for="clientEmail" class="form-label">이메일</label> <input
-										type="email" class="form-control form-control-sm"
-										id="clientEmail" name="clientEmail">
-								</div>
+							<!-- 이메일 -->
+							<div class="mb-3">
+								<label for="clientEmail" class="form-label">이메일</label> <input
+									type="email" class="form-control form-control-sm"
+									id="clientEmail" name="client_Email">
+							</div>
 
-								<!-- 담당자 -->
-								<div class="mb-3">
-									<label for="clientManager" class="form-label">거래처 담당자</label> <input
-										type="text" class="form-control form-control-sm"
-										id="clientManager" name="clientManager">
-								</div>
-								<!-- 담당자 -->
-								<div class="mb-3">
-									<label for="clientType" class="form-label">담당자</label> <select
-										class="form-select form-select-sm w-auto" id="clientType"
-										name="clientType" required>
-										<option value="">선택</option>
-										<option value="소매">소매</option>
-										<option value="도매">도매</option>
-										<option value="공장">공장</option>
-									</select>
-								</div>
+							<!-- 거래처 담당자 -->
+							<div class="mb-3">
+								<label for="clientMan" class="form-label">거래처 담당자</label> <input
+									type="text" class="form-control form-control-sm" id="clientMan"
+									name="client_Man">
+							</div>
 
+							<!-- 삭제 상태 (숨김) -->
+							<input type="hidden" name="del_Status" value="0" />
 
+							<!-- 제출 버튼 -->
+							<div class="text-end mt-4">
+								<button type="submit" class="btn btn-primary btn-sm px-4">
+									등록</button>
+								<a href="${pageContext.request.contextPath}/business/clientList"
+									class="btn btn-outline-secondary btn-sm px-4"> 취소 </a>
+							</div>
 
-								<!-- 상태 -->
-								<div class="mb-3">
-									<label for="clientStatus" class="form-label">상태</label> <select
-										class="form-select form-select-sm w-auto" id="clientStatus"
-										name="clientStatus">
-										<option value="">선택</option>
-										<option value="0">요청</option>
-										<option value="1">승인</option>
-										<option value="2">완료</option>
-										<option value="3">마감</option>
-									</select>
-								</div>
-
-
-								<div class="text-end mt-4 pb-1 d-flex justify-content-end gap-2">
-									<!-- 취소 버튼 (예: 목록 페이지 이동) -->
-
-									<!-- 등록 버튼 -->
-									<button type="submit"
-										class="btn btn-outline-primary btn-sm px-4">등록</button>
-
-									<a href="/business/clientStartList"
-										class="btn btn-outline-danger btn-sm px-4">취소</a>
-
-
-									<!-- 초기화 버튼 -->
-									<button type="reset"
-										class="btn btn-outline-secondary btn-sm px-4">초기화</button>
-
-								</div>
-
-							</form>
-						</div>
+						</form>
 					</div>
 				</div>
 			</div>
+
 			<!-- 이곳에 자신의 코드를 작성하세요 -->
 
 			<jsp:include page="/foot.jsp" />
