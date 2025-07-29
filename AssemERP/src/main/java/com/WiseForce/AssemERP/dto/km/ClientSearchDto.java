@@ -17,7 +17,7 @@ public class ClientSearchDto {
     private String client_Name;
 
     // 유형: 0=구매, 1=판매
-    private int client_Gubun;
+    private Integer client_Gubun;
 
     // 담당자 이름으로 부분 검색
     private String client_Man;
@@ -26,5 +26,8 @@ public class ClientSearchDto {
     private String inDate_Start;
     
     private String inDate_End;
-  
+    
+	private int				start;
+	private int				end;
+	private String 			currentPage;
 }

@@ -16,7 +16,7 @@ public class ClientDto {
 
 	private int client_No;
 	private String 			client_Name;
-	private int 			client_Gubun;
+	private Integer			client_Gubun;
 	private String  		client_Email;
 	private String  		client_Man;
 	private String  		client_Address;
