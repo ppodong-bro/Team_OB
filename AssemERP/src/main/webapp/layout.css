@@ -12,7 +12,13 @@ html, body {
 }
 
 #side {
-	width: 250px;
+	width: 100px;
+}
+/* lg 이상: 화면 너비가 992px 이상일 때 */
+@media (min-width: 992px) {
+  #side {
+    width: 250px;
+  }
 }
 
 #main-area {
@@ -31,7 +37,7 @@ html, body {
 
 .sidebar {
 	position: sticky;
-	width: 250px;
+	width: full;
 	height: 100vh;
 	top: 0;
 	left: 0;
@@ -49,12 +55,32 @@ html, body {
 	color: black;
 }
 
+.minisidebar {
+	position: sticky;
+	width: full;
+	height: 100vh;
+	top: 0;
+	left: 0;
+	background-color: #f8f9fa;
+	padding: 1rem;
+	border-right: 1px solid #dee2e6;
+	z-index: 1100;
+}
+
+.minisidebar h5 {
+	font-weight: bold;
+}
+
+.minisidebar .sh {
+	color: black;
+}
+
 .header {
 	position: sticky;
 	top: 0;
 	left: 0;
 	right: 0;
-	height: 64px;
+	height: 83px;
 	width: 100%;
 	background-color: #fff;
 	border-bottom: #CCE4F6 solid 3px;

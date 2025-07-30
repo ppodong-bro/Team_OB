@@ -1,9 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
-<div class="sidebar flex-shrink-0 p-3" style="width: 250px;">
-	<a href="/" class="d-flex align-items-center pb-3 mb-3 link-body-emphasis text-decoration-none border-bottom"> <svg class="bi pe-none me-2"
-			width="30" height="24" aria-hidden="true">
-			<use xlink:href="#bootstrap"></use></svg> <span class="fs-5 fw-semibold">AssemERP</span>
+<!-- lg사이즈 이상일 경우 -->
+<div class="sidebar flex-shrink-0 p-3 d-none d-lg-block">
+	<a href="/" class="d-flex justify-content-center align-items-center pb-3 mb-3 link-body-emphasis text-decoration-none border-bottom"> <img
+		alt="AssemERP" src="${pageContext.request.contextPath}/img/Logo.png" style="width: 150px; height: 50px; object-fit: fill;">
 	</a>
 	<ul class="list-unstyled ps-0">
 		<li class="mb-1">
@@ -70,5 +70,32 @@
 				</ul>
 			</div>
 		</li>
+	</ul>
+</div>
+<!-- lg사이즈 이하일 경우 -->
+<div class="minisidebar flex-shrink-0 p-3 d-block d-lg-none">
+	<a href="/" class="d-flex justify-content-center align-items-center pb-3 mb-3 link-body-emphasis text-decoration-none border-bottom"> <img
+		alt="AssemERP" src="${pageContext.request.contextPath}/img/Logo_mini.png" style="width: 50px; height: 50px; object-fit: fill;">
+	</a>
+	<ul class="list-unstyled ps-0">
+		<li class="mb-1"><a href="#" class="link-body-emphasis d-flex justify-content-center align-items-center text-decoration-none rounded" style="height: 32px"> <i
+				class="bi bi-person" style="font-size: 24px"></i>
+		</a></li>
+		<li class="mb-1"><a href="#" class="link-body-emphasis d-flex justify-content-center align-items-center text-decoration-none rounded" style="height: 32px"> <i
+				class="bi bi-cpu" style="font-size: 24px"></i>
+		</a></li>
+		<li class="mb-1"><a href="#" class="link-body-emphasis d-flex justify-content-center align-items-center text-decoration-none rounded" style="height: 32px"> <i
+				class="bi bi-file-earmark-text" style="font-size: 24px"></i>
+		</a></li>
+		<li class="mb-1"><a href="#" class="link-body-emphasis d-flex justify-content-center align-items-center text-decoration-none rounded" style="height: 32px"> <i
+				class="bi bi-building" style="font-size: 24px"></i>
+		</a></li>
+		<li class="mb-1"><a href="${pageContext.request.contextPath}/inventory" class="link-body-emphasis d-flex justify-content-center align-items-center text-decoration-none rounded" style="height: 32px"> <i
+				class="bi bi-box-seam" style="font-size: 24px"></i>
+		</a></li>
+		<li class="border-top my-3"></li>
+		<li class="mb-1"><a href="#" class="link-body-emphasis d-flex justify-content-center align-items-center text-decoration-none rounded" style="height: 32px"> <i
+				class="bi bi-chat-left-text" style="font-size: 24px"></i>
+		</a></li>
 	</ul>
 </div>
