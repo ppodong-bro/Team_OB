@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import com.WiseForce.AssemERP.domain.dg.Month_Inventory;
 import com.WiseForce.AssemERP.dto.dg.Month_InventoryDTO;
 import com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO;
+import com.WiseForce.AssemERP.dto.sh.PartsDTO;
 import com.WiseForce.AssemERP.service.dg.InventoryService;
+import com.WiseForce.AssemERP.util.Paging;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,13 +23,20 @@ public class InventoryController {
 	private final InventoryService inventoryService;
 
 	@GetMapping("/inventory")
-	public String inventory(Model model) { // 현재 재고 목록
-		// 현재 재고 전체 조회
-		List<Real_InventoryDTO> real_InventoryDTOs = inventoryService.getRealInventory();
+	public String inventory(Real_InventoryDTO real_InventoryDTO, Model model) {
+		// 현재 재고의 종류 수 조회
+		int totalTypeCount = inventoryService.getTotalTypeCount(real_InventoryDTO.getItem_type());
 		
-//		System.out.println(real_InventoryDTOs);
+		// 전체 개수와 요청한 현재 페이지를 토대로 start와 end를 설정한다.
+		Paging page = new Paging(totalTypeCount, real_InventoryDTO.getCurrentPage());
+		real_InventoryDTO.setStart(page.getStart());
+		real_InventoryDTO.setEnd(page.getEnd());
 
+		// 설정한 start, end로 현재 재고 전체 조회
+		List<Real_InventoryDTO> real_InventoryDTOs = inventoryService.getRealInventory(real_InventoryDTO);
+		
 		model.addAttribute("realInventoryList", real_InventoryDTOs);
+		model.addAttribute("page", page);
 		
 		// 인벤토리 화면 이동
 		return "dg/inventoryList";

@@ -18,9 +18,10 @@ public class InventoryDaoImpl implements InventoryDao {
 
 	// 현재 재고 전체 조회 함수 실행
 	@Override
-	public List<Real_InventoryDTO> getRealInventory() {
+	public List<Real_InventoryDTO> getRealInventory(Real_InventoryDTO real_InventoryDTO) {
 		// 현재 재고 전체 조회 함수 실행
-		List<Real_InventoryDTO> real_InventoryDTOs = session.selectList("com.WiseForce.AssemERP.dg.InventoryMapper.callCalcRealInventory", 0);
+		List<Real_InventoryDTO> real_InventoryDTOs = session
+				.selectList("com.WiseForce.AssemERP.dg.InventoryMapper.callCalcRealInventory", real_InventoryDTO);
 
 		return real_InventoryDTOs;
 	}
