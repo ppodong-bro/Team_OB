@@ -1,6 +1,7 @@
 package com.WiseForce.AssemERP.dto.sh;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.WiseForce.AssemERP.domain.sh.Parts;
 import com.WiseForce.AssemERP.domain.sh.Product;
@@ -37,6 +38,8 @@ public class ProductDTO {
     // 분류명가져오기
     private String product_statusName;
     
+    // BOM LIST
+    private List<ProductBomDTO> productBOM;
     
     
     public static ProductDTO chageProductDTO(Product product) {

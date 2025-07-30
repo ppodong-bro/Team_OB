@@ -135,6 +135,7 @@
 
 	<!-- 부트스트랩 CDN -->
 	<jsp:include page="/common_cdn.jsp" />
+	<script src="…bootstrap.js"></script>
 
 </body>
 </html>

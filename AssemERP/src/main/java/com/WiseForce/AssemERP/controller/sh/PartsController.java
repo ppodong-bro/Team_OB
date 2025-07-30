@@ -42,4 +42,23 @@ public class PartsController {
 		return "sh/partsList";
 	}
 
+	@GetMapping("create")
+	public String partsCreateStart(Model model) {
+		
+		return "sh/partsCreate";
+	}
+	
+	@PostMapping("partsCreate")
+	public String partsCreate(PartsDTO partsDTO, Model model) {
+		System.out.println("PartsController partsCreate partsCreate => "+partsDTO);
+		
+		int createResult = partsService.createParts(partsDTO);
+				
+		
+		
+		model.addAttribute("createResult", createResult);
+		
+		return "redirect:parts/partsList";
+	}
+	
 }

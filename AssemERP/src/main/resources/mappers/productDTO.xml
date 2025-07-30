@@ -12,6 +12,7 @@
 					 ORDER BY product_no) a
 			 )
 		WHERE rn BETWEEN #{start} and #{end}
+		AND del_status = 0
 	</select>
 
 </mapper>

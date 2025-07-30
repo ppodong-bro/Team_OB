@@ -1,0 +1,116 @@
+<%@ page contentType="text/html; charset=UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>거래처 등록</title>
+<!-- 공통 CSS -->
+<jsp:include page="/common.jsp" />
+</head>
+<body>
+	<!-- 전체 레이아웃 -->
+	<div id="layout">
+		<div id="side">
+			<jsp:include page="/side.jsp" />
+		</div>
+		<div id="main-area">
+			<jsp:include page="/header.jsp" />
+
+			<!-- 이곳에 자신의 코드를 작성하세요 -->
+			<div class="container px-3 py-4">
+				<div class="card shadow-sm bg-white col-md-6 mx-auto">
+					<div class="card-header bg-light">
+						<h5 class="mb-0">부품 등록</h5>
+					</div>
+					<div class="card-body">
+						<form method="post"
+							action="${pageContext.request.contextPath}/parts/partsCreate">
+
+							<!-- 부품명 -->
+							<div class="mb-3">
+								<label for="partsName" class="form-label">부품명</label> <input
+									type="text" class="form-control form-control-sm" id="partsName"
+									name="parts_name" required>
+							</div>
+
+							<!-- 부품종류 -->
+							<div class="mb-3">
+								<label for="partsStatus" class="form-label">종류</label> <select
+									class="form-select form-select-sm w-auto" id="partsStatus"
+									name="parts_status" required>
+									<option value="">선택</option>
+									<option value="0">매인보드</option>
+									<option value="1">CPU</option>
+									<option value="2">GPU</option>
+									<option value="3">메모리</option>
+									<option value="4">파워</option>
+									<option value="5">HDD</option>
+									<option value="6">SSD</option>
+									<option value="7">케이스</option>
+									<option value="8">쿨러</option>
+
+								</select>
+							</div>
+
+							<!-- 제조사 -->
+							<div class="mb-3">
+								<label for="partsmanufacture" class="form-label">부품제조사</label> <input
+									type="text" class="form-control form-control-sm"
+									id="partsmanufacture" name="manufacture">
+							</div>
+
+							<!-- 등록자 -->
+							<div class="mb-3">
+								<label for="empNo" class="form-label">등록자</label> <select
+									class="form-control form-control-sm" name="emp_no" id="empNo">
+										<%-- <c:forEach var="emp">
+											<option value="${emp.emp_no }">${emp.emp_name }</option>
+										</c:forEach> --%>
+								</select>
+
+							</div>
+
+							<!-- 부품설명 -->
+							<div class="mb-3">
+								<label for="partsContext" class="form-label">부품설명</label>
+								<textarea class="form-control form-control-sm" rows="5"
+									id="partsContext" name="parts_context"
+									placeholder="설명란에 정보를 입력해주세요"></textarea>
+
+							</div>
+
+							<!-- 이미지 -->
+							<div class="mb-3">
+								<label for="partsfile" class="form-label">부품이미지</label> <input
+									type="file" class="form-control form-control-sm" id="partsfile"
+									name="filename">
+							</div>
+
+							<!-- 삭제 상태 (숨김) -->
+							<input type="hidden" name="del_Status" value="0" />
+
+							<!-- 제출 버튼 -->
+							<div class="text-end mt-4">
+								<button type="submit" class="btn btn-primary btn-sm px-4">
+									등록</button>
+								<a href="${pageContext.request.contextPath}/parts/partsList"
+									class="btn btn-outline-secondary btn-sm px-4"> 취소 </a>
+							</div>
+
+						</form>
+					</div>
+				</div>
+			</div>
+
+			<!-- 이곳에 자신의 코드를 작성하세요 -->
+
+			<jsp:include page="/foot.jsp" />
+		</div>
+	</div>
+
+
+	<!-- 부트스트랩 CDN -->
+	<jsp:include page="/common_cdn.jsp" />
+</body>
+</html>
