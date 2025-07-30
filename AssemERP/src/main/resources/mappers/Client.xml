@@ -14,6 +14,7 @@
 		FROM   (SELECT rownum rn, a.*
 				FROM   (SELECT *
 						FROM   Client
+						WHERE DEL_STATUS = 0
 						ORDER BY client_no
 						) a			
 				)
@@ -51,6 +52,7 @@
               FROM Client
     ]]>
     <where>
+        DEL_STATUS = 0
       <if test="client_Name != null and client_Name.trim() != ''">
         AND client_Name LIKE '%' || #{client_Name} || '%'
       </if>
@@ -83,4 +85,17 @@
 		VALUES
 	    (CLIENT_SEQ_GEN.NEXTVAL, #{emp_No}, #{client_Name}, #{client_Gubun}, #{client_Email}, #{client_Man}, #{client_Address}, SYSDATE)
 	</insert>
+	<update id="modifyClient" parameterType="ClientDto">
+		UPDATE client 
+		SET emp_no = #{emp_No}, client_name = #{client_Name}, client_gubun = #{client_Gubun}
+          , client_email = #{client_Email}, client_man = #{client_Man}
+          , client_address = #{client_Address}, modify_date = SYSDATE
+        WHERE client_no = #{client_No}
+	</update>
+	
+	<update id="deleteClient" parameterType="ClientDto">
+		UPDATE client
+		SET del_status = 1
+		WHERE client_no = #{client_No}
+	</update>
 </mapper>

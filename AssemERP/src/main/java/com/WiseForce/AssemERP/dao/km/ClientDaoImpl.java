@@ -60,4 +60,18 @@ public class ClientDaoImpl implements ClientDao{
 		return result;
 	}
 
+	@Override
+	public int modifyClient(ClientDto clientDto1) {
+		System.out.println("ClientDao modifyClient Start...");
+		System.out.println("ClientDao modifyClient clientDto1->"+clientDto1);
+		int result = session.update("modifyClient", clientDto1);
+		return result;
+	}
+
+	@Override
+	public int deleteClient(ClientDto clientDto1) {
+		int result = session.update("deleteClient", clientDto1);
+		return result;
+	}
+
 }
