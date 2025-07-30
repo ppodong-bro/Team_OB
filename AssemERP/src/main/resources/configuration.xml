@@ -5,6 +5,7 @@
 
 <configuration>
     <typeAliases>
+        <package name="com.WiseForce.AssemERP.dto.dg"/>
         <package name="com.WiseForce.AssemERP.dto.km"/>
         <package name="com.WiseForce.AssemERP.dto.sh"/>
     </typeAliases>
