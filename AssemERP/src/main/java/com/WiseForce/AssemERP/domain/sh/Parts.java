@@ -39,4 +39,6 @@ public class Parts {
 	private int				del_status;
     private int				emp_no;
     private LocalDateTime	in_date;
+    
+    
 }

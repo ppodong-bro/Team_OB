@@ -13,4 +13,6 @@ public interface PartsDao {
 
 	List<PartsDTO> findPageList(PartsDTO partsDTO);
 
+	List<PartsDTO> findAllPartsList();
+
 }

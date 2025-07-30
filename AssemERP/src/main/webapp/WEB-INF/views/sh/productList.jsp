@@ -27,21 +27,25 @@
 
 						<!-- 검색 폼 시작 -->
 						<form class="row gx-2 gy-1 align-items-end ">
+							<!-- 제품명 -->
 							<div class="col-auto">
 								<label for="searchName" class="form-label small mb-1">제품명</label>
 								<input type="text" id="searchName" name="name"
 									class="form-control form-control-sm" placeholder="제품명 검색">
 							</div>
+							<!-- StartDate -->
 							<div class="col-auto">
 								<label for="startDate" class="form-label small mb-1">시작일</label>
 								<input type="date" id="startDate" name="startDate"
 									class="form-control form-control-sm">
 							</div>
+							<!-- EndDate -->
 							<div class="col-auto">
 								<label for="endDate" class="form-label small mb-1">종료일</label> <input
 									type="date" id="endDate" name="endDate"
 									class="form-control form-control-sm">
 							</div>
+							<!-- 제품구분 -->
 							<div class="col-auto">
 								<label for="type" class="form-label small mb-1">제품유형</label> <select
 									id="type" name="type" class="form-select form-select-sm">
@@ -93,7 +97,7 @@
 								<!-- 이전 블록/페이지 -->
 								<li class="page-item ${page.startPage == 1 ? 'disabled' : ''}">
 									<a class="page-link"
-									href="partsList?currentPage=${page.startPage-1}"
+									href="productList?currentPage=${page.startPage-1}"
 									aria-label="Previous">‹</a>
 								</li>
 
@@ -102,7 +106,7 @@
 								<!-- 페이지 번호들 -->
 								<c:forEach begin="${page.startPage}" end="${page.endPage}" var="p">
 									<li class="page-item ${page.currentPage == p ? 'active' : ''}">
-										<a class="page-link" href="partsList?currentPage=${p}">${p}</a>
+										<a class="page-link" href="productList?currentPage=${p}">${p}</a>
 									</li>
 								</c:forEach>
 
@@ -110,7 +114,7 @@
 								<li
 									class="page-item ${page.endPage == page.totalPage ? 'disabled' : ''}">
 									<a class="page-link"
-									href="partsList?currentPage=${page.endPage+1}"
+									href="productList?currentPage=${page.endPage+1}"
 									aria-label="Next">›</a>
 								</li>
 							</ul>
@@ -123,7 +127,9 @@
 			<jsp:include page="/foot.jsp" />
 		</div>
 	</div>
-
+	<!-- 부트스트랩 CDN -->
+	<jsp:include page="/common_cdn.jsp" />
+	<script src="…bootstrap.js"></script>
 
 </body>
 </html>
