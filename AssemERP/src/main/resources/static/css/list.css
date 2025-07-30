@@ -30,8 +30,3 @@
 	background: #bfbfbf;
 }
 
-.main-content {
-  margin-left: 260px;    /* 기존 레프트 마진 유지 */
-  margin-top: 100px;      /* 헤더와 20px 간격 */
-  padding: 20px;         /* 안쪽 여백(선택) */
-}

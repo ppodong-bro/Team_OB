@@ -18,6 +18,10 @@ public interface ClientDao {
 	ClientDto 		detailClient(ClientDto clientDto1);
 
 	int 			createClient(ClientDto clientDto);
+
+	int				modifyClient(ClientDto clientDto1);
+
+	int 			deleteClient(ClientDto clientDto1);
 		
 }
 

@@ -52,5 +52,18 @@ public class ClientServiceImpl implements ClientService {
 		int result = clientDao.createClient(clientDto);
 		return result;
 	}
+
+	@Override
+	public int modifyClient(ClientDto clientDto1) {
+		int result = clientDao.modifyClient(clientDto1);
+		
+		return result;
+	}
+
+	@Override
+	public int deleteClient(ClientDto clientDto1) {
+		int result = clientDao.deleteClient(clientDto1);
+		return result;
+	}
 	
 }

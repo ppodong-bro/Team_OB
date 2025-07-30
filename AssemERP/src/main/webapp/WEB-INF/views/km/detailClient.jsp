@@ -81,12 +81,12 @@
 								</div>
 
 								<!-- 수정 일자 -->
-								<c:if test="${not empty clientDto.modify_date}">
+								<c:if test="${not empty clientDto.modify_Date}">
 									<!-- 수정 일자 -->
 									<div class="mb-3">
 										<label class="form-label">수정 일자</label> <input type="text"
 											readonly class="form-control form-control-sm w-auto"
-											value="${clientDto.modify_date}" />
+											value="${clientDto.modify_Date}" />
 									</div>
 								</c:if>
 
@@ -94,15 +94,15 @@
 								<div class="mb-3">
 									<label class="form-label">등록 일자</label> <input type="text"
 										readonly class="form-control form-control-sm w-auto"
-										value="${clientDto.in_date}" />
+										value="${clientDto.in_Date}" />
 								</div>
 
 								<!-- 버튼 그룹: 목록, 수정 -->
 								<div class="text-end mt-4 d-flex justify-content-end gap-2">
 									<a
-										href="${pageContext.request.contextPath}/business/clientList"
+										href="${pageContext.request.contextPath}/client/list"
 										class="btn btn-outline-secondary btn-sm px-4">목록</a> <a
-										href="${pageContext.request.contextPath}/business/clientEdit/${clientDto.client_No}"
+										href="${pageContext.request.contextPath}/client/modifyStart?client_No=${clientDto.client_No}"
 										class="btn btn-outline-primary btn-sm px-4">수정</a>
 								</div>
 

@@ -6,6 +6,7 @@
 <head>
 <!-- 공통 CSS -->
 <jsp:include page="/common.jsp" />
+<link rel="stylesheet" href="<c:url value='/css/list.css'/>" />
 <meta charset="UTF-8">
 <title>Insert title here</title>
 </head>
@@ -31,13 +32,11 @@
 				</div>
 			</div>	 -->
 
-					<h2 class="mb-3 mt-2">거래처 관리</h2>
+					<h2 class="mb-3 mt-2">수주 관리</h2>
 
 					<!-- 검색 폼 -->
-					<!-- 검색 폼: 전체를 오른쪽으로 정렬 -->
 					<form method="get" action="searchList"
-						class="row gx-2 gy-1 align-items-end mb-4 justify-content-end">
-
+						class="row gx-2 gy-1 align-items-end mb-4">
 						<!-- 거래처명 -->
 						<div class="col-auto">
 							<div class="input-group input-group-sm">
@@ -50,13 +49,18 @@
 						<!-- 유형 -->
 						<div class="col-auto">
 							<div class="input-group input-group-sm">
-								<span class="input-group-text">유형</span> <select
-									name="client_Gubun" class="form-select">
+								<span class="input-group-text">출고상태</span> <select
+									name="out_Status" class="form-select">
 									<option value="">전체</option>
 									<option value="0"
-										${ClientSearchDto.client_Gubun == 0 ? 'selected' : ''}>구매</option>
+										${ClientSearchDto.client_Gubun == 0 ? 'selected' : ''}>요청</option>
 									<option value="1"
-										${ClientSearchDto.client_Gubun == 1 ? 'selected' : ''}>판매</option>
+										${ClientSearchDto.client_Gubun == 1 ? 'selected' : ''}>승인</option>
+									<option value="2"
+										${ClientSearchDto.client_Gubun == 2 ? 'selected' : ''}>완료</option>
+									<option value="3"
+										${ClientSearchDto.client_Gubun == 3 ? 'selected' : ''}>마감</option>
+
 								</select>
 							</div>
 						</div>
@@ -73,8 +77,8 @@
 						<!-- 담당자 -->
 						<div class="col-auto">
 							<div class="input-group input-group-sm">
-								<span class="input-group-text">담당자</span> <input type="text"
-									name="client_Man" class="form-control" placeholder="담당자 검색"
+								<span class="input-group-text">거래처 담당자</span> <input type="text"
+									name="client_Man" class="form-control" placeholder="거래처 담당자 검색"
 									value="${ClientSearchDto.client_Man}">
 							</div>
 						</div>
@@ -82,12 +86,6 @@
 						<!-- 검색 버튼 -->
 						<div class="col-auto">
 							<button type="submit" class="btn btn-primary btn-sm">검색</button>
-						</div>
-
-						<!-- 신규 등록 버튼 -->
-						<div class="col-auto">
-							<a href="<c:url value='/client/createStart'/>"
-								class="btn btn-success btn-sm"> 등록 </a>
 						</div>
 					</form>
 
@@ -98,39 +96,95 @@
 							<thead class="table-light">
 								<tr>
 									<th class="text-center">#</th>
-									<th class="text-center">거래처번호</th>
+									<th class="text-center">수주번호</th>
 									<th class="text-center">거래처명</th>
-									<th class="text-center">유형</th>
-									<th class="text-center">주소</th>
-									<th class="text-center">이메일</th>
-									<th class="text-center">거래처 담당자</th>
+									<th class="text-center">제품명</th>
+									<th class="text-center">납기완료일</th>
+									<th class="text-center">출고상태</th>
+									<th class="text-center">담당자</th>
 									<th class="text-center">수정/삭제</th>
 								</tr>
 							</thead>
 							<tbody>
-								<c:forEach var="client" items="${clientList}" varStatus="st">
+								<%-- <c:forEach var="sales" items="${sales_OrderList}" varStatus="st">
 									<tr>
 										<td class="text-center">${st.index + 1}</td>
 										<td class="text-center"><a
-											href="<c:url value='/client/detail?client_No=${client.client_No}'/>">
-												${client.client_No} </a></td>
-										<td>${client.client_Name}</td>
-										<td class="text-center">${client.client_Gubun == 0 ? '구매' : '판매'}
+											href="<c:url value='/sales/detail?sales_No=${sales.sales_No}'/>">
+												${sales.sales_No} </a></td>
+										<td>${sales.client_Name}</td>
+										<td class="text-center">${sales.client_Gubun == 0 ? '구매' : '판매'}
 										</td>
-										<td>${client.client_Address}</td>
-										<td>${client.client_Email}</td>
-										<td class="text-center">${client.client_Man}</td>
+										<td>${sales.client_Address}</td>
+										<td>${sales.client_Email}</td>
+										<td class="text-center">${sales.client_Man}</td>
 										<td class="text-center"><a
-											href="<c:url value='/client/modifyStart?client_No=${client.client_No}'/>"
+											href="<c:url value='/business/modifyClientStart?client_No=${sales.client_No}'/>"
 											class="btn btn-sm btn-outline-primary me-1">수정</a>
 											<form
-												action="${pageContext.request.contextPath}/client/delete"
+												action="${pageContext.request.contextPath}/business/deleteClient"
 												method="post" style="display: inline;">
 												<input type="hidden" name="client_No"
 													value="${client.client_No}" />
 												<button type="submit" class="btn btn-sm btn-outline-danger">
 													삭제</button>
 											</form>
+									</tr>
+								</c:forEach> --%>
+
+								<c:forEach var="order" items="${sales_OrderList}" varStatus="st">
+									<tr>
+										<!-- 순번 -->
+										<td class="text-center">${st.index + 1}</td>
+
+										<!-- 수주번호 (detail 링크) -->
+										<td class="text-center"><a
+											href="<c:url value='/sales/detail?sales_No=${order.sales_No}'/>">
+												${order.sales_No} </a></td>
+
+										<!-- client → clientName -->
+										<td>${order.client.client_Name}</td>
+
+
+										<!-- salesItems 컬렉션 출력 -->
+										<td><c:forEach var="item" items="${order.sales_Item}"
+												varStatus="ist">
+												<!-- 예: 상품번호(수량) 형태로 표시 -->
+										        ${ist.index + 1}. 상품번호 ${item.product_No}
+										        (요청수량: ${item.sales_Item_Cnt},
+										         출고수량: ${item.sales_Item_OutCnt})<br />
+											</c:forEach></td>
+
+										<!-- 납기 완료일 -->
+										<td>${order.sales_Date}</td>
+										
+										<!-- 출고 상태 -->
+										<td class="text-center"><span class="status-text"
+											data-status="${sales.out_Status}"> <span class="dot"></span>
+												<c:choose>
+													<c:when test="${sales.out_Status == 0}">요청</c:when>
+													<c:when test="${sales.out_Status == 1}">승인</c:when>
+													<c:when test="${sales.out_Status == 2}">완료</c:when>
+													<c:when test="${sales.out_Status == 3}">마감</c:when>
+												</c:choose>
+										</span></td>
+
+										<!-- client → clientMan -->
+										<td class="text-center">${order.client.client_Man}</td>
+
+
+										<!-- 수정/삭제 버튼 -->
+										<td class="text-center"><a
+											href="<c:url value='/business/modifyClientStart?client_No=${order.client.client_No}'/>"
+											class="btn btn-sm btn-outline-primary me-1"> 수정 </a>
+											<form
+												action="${pageContext.request.contextPath}/business/deleteClient"
+												method="post" style="display: inline">
+												<input type="hidden" name="client_No"
+													value="${order.client.client_No}" />
+												<button type="submit" class="btn btn-sm btn-outline-danger">
+													삭제</button>
+											</form></td>
 									</tr>
 								</c:forEach>
 								<c:if test="${empty clientList}">
@@ -146,7 +200,7 @@
 							<ul class="pagination pagination-sm justify-content-center">
 								<!-- 이전 -->
 								<li class="page-item ${page.startPage == 1 ? 'disabled' : ''}">
-									<c:url var="prevUrl" value="/client/searchList">
+									<c:url var="prevUrl" value="/business/clientSearchList">
 										<c:param name="currentPage" value="${page.startPage - 1}" />
 										<c:if test="${not empty clientSearchDto.client_Name}">
 											<c:param name="client_Name"
@@ -160,14 +214,14 @@
 											<c:param name="client_Man"
 												value="${clientSearchDto.client_Man}" />
 										</c:if>
-								<%-- 		<c:if test="${not empty clientSearchDto.inDate_Start}">
+										<c:if test="${not empty clientSearchDto.inDate_Start}">
 											<c:param name="inDate_Start"
 												value="${clientSearchDto.inDate_Start}" />
 										</c:if>
 										<c:if test="${not empty clientSearchDto.inDate_End}">
 											<c:param name="inDate_End"
 												value="${clientSearchDto.inDate_End}" />
-										</c:if> --%>
+										</c:if>
 									</c:url> <a class="page-link" href="${prevUrl}" aria-label="Previous">‹</a>
 								</li>
 
@@ -175,7 +229,7 @@
 								<c:forEach begin="${page.startPage}" end="${page.endPage}"
 									var="p">
 									<li class="page-item ${page.currentPage == p ? 'active' : ''}">
-										<c:url var="pageUrl" value="/client/searchList">
+										<c:url var="pageUrl" value="/business/clientSearchList">
 											<c:param name="currentPage" value="${p}" />
 											<!-- 검색 DTO 파라미터들 동일하게 추가 -->
 											<c:if test="${not empty clientSearchDto.client_Name}">
@@ -190,14 +244,14 @@
 												<c:param name="client_Man"
 													value="${clientSearchDto.client_Man}" />
 											</c:if>
-										<%-- 	<c:if test="${not empty clientSearchDto.inDate_Start}">
+											<c:if test="${not empty clientSearchDto.inDate_Start}">
 												<c:param name="inDate_Start"
 													value="${clientSearchDto.inDate_Start}" />
 											</c:if>
 											<c:if test="${not empty clientSearchDto.inDate_End}">
 												<c:param name="inDate_End"
 													value="${clientSearchDto.inDate_End}" />
-											</c:if> --%>
+											</c:if>
 										</c:url> <a class="page-link" href="${pageUrl}">${p}</a>
 									</li>
 								</c:forEach>
@@ -205,7 +259,7 @@
 								<!-- 다음 -->
 								<li
 									class="page-item ${page.endPage == page.totalPage ? 'disabled' : ''}">
-									<c:url var="nextUrl" value="/client/searchList">
+									<c:url var="nextUrl" value="/business/clientSearchList">
 										<c:param name="currentPage" value="${page.endPage + 1}" />
 										<!-- 검색 DTO 파라미터들 똑같이 추가 -->
 										<c:if test="${not empty clientSearchDto.client_Name}">
@@ -220,14 +274,14 @@
 											<c:param name="client_Man"
 												value="${clientSearchDto.client_Man}" />
 										</c:if>
-									<%-- 	<c:if test="${not empty clientSearchDto.inDate_Start}">
+										<c:if test="${not empty clientSearchDto.inDate_Start}">
 											<c:param name="inDate_Start"
 												value="${clientSearchDto.inDate_Start}" />
 										</c:if>
 										<c:if test="${not empty clientSearchDto.inDate_End}">
 											<c:param name="inDate_End"
 												value="${clientSearchDto.inDate_End}" />
-										</c:if --%>>
+										</c:if>
 									</c:url> <a class="page-link" href="${nextUrl}" aria-label="Next">›</a>
 								</li>
 							</ul>
