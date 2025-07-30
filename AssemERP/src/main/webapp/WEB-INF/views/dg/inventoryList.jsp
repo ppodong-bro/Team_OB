@@ -29,6 +29,7 @@
 						<table class="table table-bordered align-middle">
 							<thead class="table-light">
 								<tr>
+									<th>#</th>
 									<th>부품 번호</th>
 									<th>부품 분류</th>
 									<th>부품 명</th>
@@ -38,8 +39,9 @@
 								</tr>
 							</thead>
 							<tbody>
-								<c:forEach var="realInventory" items="${realInventoryList}">
+								<c:forEach var="realInventory" items="${realInventoryList}" varStatus="index">
 									<tr>
+										<td>${(page.currentPage - 1) * page.rowPage + index.index + 1}</td>
 										<td>${realInventory.item_no}</td>
 										<td>${realInventory.item_status}</td>
 										<td>${realInventory.item_name}</td>
@@ -51,6 +53,32 @@
 							</tbody>
 						</table>
 						<!-- List 테이블 마지막 -->
+						
+						<nav aria-label="Page navigation" class="mt-3">
+							<ul class="pagination pagination-sm justify-content-center">
+								<!-- 이전 블록/페이지 -->
+								<li class="page-item ${page.startPage == 1 ? 'disabled' : ''}">
+									<a class="page-link"
+									href="partsList?currentPage=${page.startPage-1}"
+									aria-label="Previous">‹</a>
+								</li>
+
+								<!-- 페이지 번호들 -->
+								<c:forEach begin="${page.startPage}" end="${page.endPage}" var="p">
+									<li class="page-item ${page.currentPage == p ? 'active' : ''}">
+										<a class="page-link" href="${pageContext.request.contextPath}/inventory?currentPage=${p}">${p}</a>
+									</li>
+								</c:forEach>
+
+								<!-- 다음 블록/페이지 -->
+								<li
+									class="page-item ${page.endPage == page.totalPage ? 'disabled' : ''}">
+									<a class="page-link"
+									href="partsList?currentPage=${page.endPage+1}"
+									aria-label="Next">›</a>
+								</li>
+							</ul>
+						</nav>
 					</div>
 				</div>
 			</div>

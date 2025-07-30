@@ -1,4 +1,4 @@
-package com.oracle.AssemERP.dto.sm;
+package com.WiseForce.AssemERP.dto.sm;
 
 import java.util.Date;
 
