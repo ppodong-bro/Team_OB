@@ -21,5 +21,4 @@ public class Inventory_Close {
 	private LocalDateTime close_startdate; // 마감시작일시
 	private LocalDateTime close_enddate;// 마감종료일시
 	private int emp_no;// 마감처리담당자
-
 }
