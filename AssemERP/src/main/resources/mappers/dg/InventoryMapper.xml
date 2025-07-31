@@ -2,13 +2,70 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.WiseForce.AssemERP.dg.InventoryMapper">
 
+	<select id="callCalcRealInventoryCnt" statementType="CALLABLE"
+		parameterType="com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO"
+		resultType="int">
+		SELECT count(*) FROM TABLE(calc_real_inventory(#{item_type}))
+		<where>
+		    <if test="item_no_text != null and item_no_text != ''">
+		        AND item_no = #{item_no_text}
+		    </if>
+		    <if test="item_status_select != 999">
+		        AND item_status = (
+		        	SELECT context FROM common
+		        	WHERE 
+		   <choose>
+		       <when test="item_type == 0">
+		           big_status = 900
+		       </when>
+		       <when test="item_type == 1">
+		           big_status = 800
+		       </when>
+		       <otherwise>
+		           big_status = 900
+		       </otherwise>
+		   </choose>
+		      AND middle_status = #{item_status_select})
+		    </if>
+		    <if test="item_name_text != null and item_name_text != ''">
+		        AND item_name LIKE '%' || #{item_name_text} || '%'
+		    </if>
+		</where>
+	</select>
+	
 	<select id="callCalcRealInventory" statementType="CALLABLE"
 		parameterType="com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO"
 		resultType="com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO">
 		SELECT * 
 		FROM (
 			SELECT rownum rn, pt.* 
-			FROM (SELECT * FROM TABLE(calc_real_inventory(#{item_type})) ORDER BY item_no) pt
+			FROM (SELECT * FROM TABLE(calc_real_inventory(#{item_type}))
+			<where>
+                <if test="item_no_text != null and item_no_text != ''">
+                    AND item_no = #{item_no_text}
+                </if>
+                <if test="item_status_select != 999">
+                    AND item_status = (
+                    	SELECT context FROM common
+                    	WHERE 
+			            <choose>
+			                <when test="item_type == 0">
+			                    big_status = 900
+			                </when>
+			                <when test="item_type == 1">
+			                    big_status = 800
+			                </when>
+			                <otherwise>
+			                    big_status = 900
+			                </otherwise>
+			            </choose>
+		                AND middle_status = #{item_status_select})
+                </if>
+                <if test="item_name_text != null and item_name_text != ''">
+                    AND item_name LIKE '%' || #{item_name_text} || '%'
+                </if>
+            </where>
+			ORDER BY item_no) pt
 		)
 		WHERE rn BETWEEN #{start} and #{end}
 	</select>
