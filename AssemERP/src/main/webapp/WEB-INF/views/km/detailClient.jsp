@@ -38,9 +38,10 @@
 
 								<!-- 직원 번호 -->
 								<div class="mb-3">
-									<label class="form-label">직원 번호</label> <input type="text"
+									<label class="form-label">담당자 이름</label> <input type="text"
 										readonly class="form-control form-control-sm w-auto"
-										value="${clientDto.emp_No}" />
+										<%-- value="${clientDto.emp_No}" --%> 
+										value="${clientDto.empDTO.empName}"/>
 								</div>
 
 								<!-- 거래처 유형 -->

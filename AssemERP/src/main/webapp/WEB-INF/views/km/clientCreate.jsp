@@ -31,7 +31,7 @@
 							<div class="mb-3">
 								<label for="empNo" class="form-label">직원 번호</label> <input
 									type="number" class="form-control form-control-sm w-auto"
-									id="empNo" name="emp_No" required>
+									id="empNo" name="empDTO.empNo" required>
 							</div>
 
 							<!-- 거래처명 -->
