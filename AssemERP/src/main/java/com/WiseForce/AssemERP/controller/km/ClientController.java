@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.WiseForce.AssemERP.dto.km.ClientDto;
 import com.WiseForce.AssemERP.dto.km.ClientSearchDto;
 import com.WiseForce.AssemERP.service.km.ClientService;
-import com.WiseForce.AssemERP.service.km.Paging;
+import com.WiseForce.AssemERP.util.Paging;
 
 import lombok.RequiredArgsConstructor;
 

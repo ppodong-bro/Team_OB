@@ -34,7 +34,7 @@
 
 					<h2 class="mb-3 mt-2">수주 관리</h2>
 
-					<!-- 검색 폼 -->
+					<%-- <!-- 검색 폼 -->
 					<form method="get" action="searchList"
 						class="row gx-2 gy-1 align-items-end mb-4">
 						<!-- 거래처명 -->
@@ -66,13 +66,13 @@
 						</div>
 
 						<!-- 주소 -->
-						<%-- 		<div class="col-auto">
+								<div class="col-auto">
 					<div class="input-group input-group-sm">
 						<span class="input-group-text">주소</span> <input type="text"
 							name="client_Address" class="form-control" placeholder="주소 검색"
 							value="${searchDto.client_Address}">
 					</div>
-				</div> --%>
+				</div>
 
 						<!-- 담당자 -->
 						<div class="col-auto">
@@ -88,7 +88,7 @@
 							<button type="submit" class="btn btn-primary btn-sm">검색</button>
 						</div>
 					</form>
-
+ --%>
 
 					<!-- List 테이블 시작 -->
 					<div class="table-responsive">
@@ -132,7 +132,7 @@
 									</tr>
 								</c:forEach> --%>
 
-								<c:forEach var="order" items="${sales_OrderList}" varStatus="st">
+								<c:forEach var="order" items="${listSales}" varStatus="st">
 									<tr>
 										<!-- 순번 -->
 										<td class="text-center">${st.index + 1}</td>
@@ -143,14 +143,14 @@
 												${order.sales_No} </a></td>
 
 										<!-- client → clientName -->
-										<td>${order.client.client_Name}</td>
+										<td>${order.clientDto.client_Name}</td>
 
 
 										<!-- salesItems 컬렉션 출력 -->
 										<td><c:forEach var="item" items="${order.sales_Item}"
 												varStatus="ist">
 												<!-- 예: 상품번호(수량) 형태로 표시 -->
-										        ${ist.index + 1}. 상품번호 ${item.product_No}
+										        <%-- ${ist.index + 1}. --%> ${item.productDto.product_name}
 										        (요청수량: ${item.sales_Item_Cnt},
 										         출고수량: ${item.sales_Item_OutCnt})<br />
 											</c:forEach></td>
@@ -160,34 +160,34 @@
 										
 										<!-- 출고 상태 -->
 										<td class="text-center"><span class="status-text"
-											data-status="${sales.out_Status}"> <span class="dot"></span>
+											data-status="${order.out_Status}"> <span class="dot"></span>
 												<c:choose>
-													<c:when test="${sales.out_Status == 0}">요청</c:when>
-													<c:when test="${sales.out_Status == 1}">승인</c:when>
-													<c:when test="${sales.out_Status == 2}">완료</c:when>
-													<c:when test="${sales.out_Status == 3}">마감</c:when>
+													<c:when test="${order.out_Status == 0}">요청</c:when>
+													<c:when test="${order.out_Status == 1}">승인</c:when>
+													<c:when test="${order.out_Status == 2}">완료</c:when>
+													<c:when test="${order.out_Status == 3}">마감</c:when>
 												</c:choose>
 										</span></td>
 
 										<!-- client → clientMan -->
-										<td class="text-center">${order.client.client_Man}</td>
+										<td class="text-center">${order.empDTO.empName}</td>
 
 
 										<!-- 수정/삭제 버튼 -->
 										<td class="text-center"><a
-											href="<c:url value='/business/modifyClientStart?client_No=${order.client.client_No}'/>"
+											href="<c:url value='/sales/modify?sales_No=${order.sales_No}'/>"
 											class="btn btn-sm btn-outline-primary me-1"> 수정 </a>
 											<form
-												action="${pageContext.request.contextPath}/business/deleteClient"
+												action="${pageContext.request.contextPath}/sales/delete"
 												method="post" style="display: inline">
-												<input type="hidden" name="client_No"
-													value="${order.client.client_No}" />
+												<input type="hidden" name="sales_No"
+													value="${order.sales_No}" />
 												<button type="submit" class="btn btn-sm btn-outline-danger">
 													삭제</button>
 											</form></td>
 									</tr>
 								</c:forEach>
-								<c:if test="${empty clientList}">
+								<c:if test="${empty listSales}">
 									<tr>
 										<td colspan="9" class="text-center">조회된 데이터가 없습니다.</td>
 									</tr>
@@ -195,7 +195,7 @@
 							</tbody>
 						</table>
 
-						<!-- 페이징 -->
+						
 						<nav aria-label="Page navigation" class="mt-3">
 							<ul class="pagination pagination-sm justify-content-center">
 								<!-- 이전 -->
