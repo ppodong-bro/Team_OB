@@ -15,4 +15,8 @@ public interface PartsDao {
 
 	List<PartsDTO> findAllPartsList();
 
+	int getSearchCount(PartsDTO partsDTO);
+
+	List<PartsDTO> findSearchList(PartsDTO partsDTO);
+
 }

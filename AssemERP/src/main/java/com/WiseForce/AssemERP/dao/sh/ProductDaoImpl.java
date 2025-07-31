@@ -41,4 +41,32 @@ public class ProductDaoImpl implements ProductDao {
 		}
 		return saveresult;
 	}
+
+	@Override
+	public int getSearchCount(ProductDTO productDTO) {
+		int totalCount = 0;
+		try {
+			totalCount = session.selectOne("shsearchProductCount", productDTO);
+			System.out.println("ProductDaoImpl getSearchCount totalCount => "+totalCount);
+		} catch (Exception e) {
+			System.out.println("ProductDaoImpl getSearchCount Exception => "+e.getMessage());
+		}
+		return totalCount;
+	}
+
+	@Override
+	public List<ProductDTO> findSearchList(ProductDTO productDTO) {
+		List<ProductDTO> productDTOs = null;
+				
+		try {
+			productDTOs = session.selectList("shProductSearchList", productDTO);
+			System.out.println("ProductDaoImpl findSearchList productDTOs => "+productDTOs);
+		} catch (Exception e) {
+			System.out.println("ProductDaoImpl findSearchList Exception => "+e.getMessage());
+			
+		}
+				
+		return productDTOs;
+	}
+	
 }

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.WiseForce.AssemERP.sh.ProductDTOMapper">
+
+	<select id="shProductPageList" parameterType="ProductDTO" resultType="ProductDTO">
+		select *
+		From (
+				select rownum rn, a.*
+				From
+					(SELECT *
+					 FROM product
+					 ORDER BY product_no) a
+			 )
+		WHERE rn BETWEEN #{start} and #{end}
+		AND del_status = 0
+	</select>
+
+	<select id="shsearchProductCount" parameterType="ProductDTO" resultType="int">
+		SELECT count(*) 
+		FROM (
+		  SELECT a.*, ROWNUM rn 
+		  FROM (
+		    -- 실제 데이터 쿼리
+		    SELECT *
+		    FROM product
+		    <where>
+		      del_status = 0
+		      <if test="product_status != null">
+		        AND product_status = #{product_status}
+		      </if>
+		      <if test="product_name != null and product_name != ''">
+		        AND product_name LIKE '%' || #{product_name} || '%'
+		      </if>
+		      <if test="startDate != null">
+		        AND TRUNC(in_date) &gt;= #{startDate}
+		      </if>
+		      <if test="endDate != null">
+		        AND TRUNC(in_date) &lt;= #{endDate}
+		      </if>
+		    </where>
+		    ORDER BY product_no
+		  ) a
+		)
+	</select>
+	
+	<select id="shProductSearchList" parameterType="ProductDTO" resultType="ProductDTO">
+		SELECT * 
+		FROM (
+		  SELECT a.*, ROWNUM rn 
+		  FROM (
+		    -- 실제 데이터 쿼리
+		    SELECT *
+		    FROM product
+		    <where>
+		      del_status = 0
+		      <if test="product_status != null">
+		        AND product_status = #{product_status}
+		      </if>
+		      <if test="product_name != null and product_name != ''">
+		        AND product_name LIKE '%' || #{product_name} || '%'
+		      </if>
+		      <if test="startDate != null">
+		        AND TRUNC(in_date) &gt;= #{startDate}
+		      </if>
+		      <if test="endDate != null">
+		        AND TRUNC(in_date) &lt;= #{endDate}
+		      </if>
+		    </where>
+		    ORDER BY product_no
+		  ) a
+		  WHERE ROWNUM &lt;= #{end}   
+		)
+		WHERE rn &gt;= #{start}   
+	</select>
+</mapper>
