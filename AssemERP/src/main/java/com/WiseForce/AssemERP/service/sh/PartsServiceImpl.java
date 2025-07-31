@@ -1,5 +1,6 @@
 package com.WiseForce.AssemERP.service.sh;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -60,7 +61,7 @@ public class PartsServiceImpl implements PartsService {
 
 	@Override
 	public int createParts(PartsDTO partsDTO) {
-		if(partsDTO.getIn_date() == null) partsDTO.setIn_date(LocalDateTime.now());
+		if(partsDTO.getIn_date() == null) partsDTO.setIn_date(LocalDate.now());
 		partsDTO.setDel_status(0);
 		// emp 나올떄까지 임시
 		partsDTO.setEmp_no(1001); 
@@ -72,6 +73,24 @@ public class PartsServiceImpl implements PartsService {
 		 
 		
 		return parts.getParts_no();
+	}
+
+	@Override
+	public int getTotalSeartchcount(PartsDTO partsDTO) {
+		
+		
+		
+		return partsDao.getSearchCount(partsDTO);
+	}
+
+	@Override
+	public List<PartsDTO> getpartsSearchList(PartsDTO partsDTO) {
+		List<PartsDTO> partsDTOs = partsDao.findSearchList(partsDTO);
+		for(PartsDTO dto : partsDTOs) {
+			dto.setParts_statusName(partsStatus_IntToString(dto.getParts_status()));
+		}
+				
+		return partsDTOs;
 	}
 	
 	

@@ -11,4 +11,8 @@ public interface ProductDao {
 
 	int save(ProductBomDTO bomDTO);
 
+	int getSearchCount(ProductDTO productDTO);
+
+	List<ProductDTO> findSearchList(ProductDTO productDTO);
+
 }

@@ -1,5 +1,6 @@
 package com.WiseForce.AssemERP.service.sh;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -69,7 +70,7 @@ public class ProductServiceImpl implements ProductService {
 	public int productsave(ProductDTO productDTO) {
 		// emp 임시적용
 		productDTO.setEmp_no(1001);
-		if(productDTO.getIn_date()==null) productDTO.setIn_date(LocalDateTime.now());
+		if(productDTO.getIn_date()==null) productDTO.setIn_date(LocalDate.now());
 		productDTO.setDel_status(0);
 		Product product = productDTO.changeProduct();
 		
@@ -88,5 +89,23 @@ public class ProductServiceImpl implements ProductService {
 		
 		return saveresult;
 	}
+
+	@Override
+	public int getproductSearchcount(ProductDTO productDTO) {
+		
+		return productDao.getSearchCount(productDTO);
+	}
+
+	@Override
+	public List<ProductDTO> getproductSearchList(ProductDTO productDTO) {
+		List<ProductDTO> productDTOs = productDao.findSearchList(productDTO);
+		for(ProductDTO dto : productDTOs) {
+			dto.setProduct_statusName(productStatus_IntToString(dto.getProduct_status()));
+		}
+		
+		return productDTOs;
+	}
+
+	
 
 }

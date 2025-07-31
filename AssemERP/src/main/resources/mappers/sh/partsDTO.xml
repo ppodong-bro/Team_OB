@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.WiseForce.AssemERP.sh.PartsDTOMapper">
+
+	<select id="shPartsListPage" parameterType="PartsDTO"
+		resultType="PartsDTO">
+		select *
+		From (
+		select rownum rn, a.*
+		From
+		(SELECT *
+		FROM parts
+		ORDER BY parts_no) a
+		)
+		WHERE rn BETWEEN #{start} and #{end}
+		AND
+		del_status = 0
+	</select>
+
+	<select id="shFindPartsAllList" resultType="PartsDTO">
+		select *
+		From parts
+		where del_status = 0
+	</select>
+
+	<select id="shsearchPartsCount" parameterType="partsDTO"
+		resultType="int">
+		SELECT count(*) 
+		FROM (
+		  SELECT a.*, ROWNUM rn 
+		  FROM (
+		    -- 실제 데이터 쿼리
+		    SELECT *
+		    FROM parts
+		    <where>
+		      del_status = 0
+		      <if test="parts_status != null">
+		        AND parts_status = #{parts_status}
+		      </if>
+		      <if test="parts_name != null and parts_name != ''">
+		        AND parts_name LIKE '%' || #{parts_name} || '%'
+		      </if>
+		      <if test="startDate != null">
+		        AND TRUNC(in_date) &gt;= #{startDate}
+		      </if>
+		      <if test="endDate != null">
+		        AND TRUNC(in_date) &lt;= #{endDate}
+		      </if>
+		    </where>
+		    ORDER BY parts_no
+		  ) a
+		)
+	</select>
+	
+	<select id="shPartsSearchList" parameterType="PartsDTO" resultType="PartsDTO">
+		SELECT * 
+		FROM (
+		  SELECT a.*, ROWNUM rn 
+		  FROM (
+		    -- 실제 데이터 쿼리
+		    SELECT *
+		    FROM parts
+		    <where>
+		      del_status = 0
+		      <if test="parts_status != null">
+		        AND parts_status = #{parts_status}
+		      </if>
+		      <if test="parts_name != null and parts_name != ''">
+		        AND parts_name LIKE '%' || #{parts_name} || '%'
+		      </if>
+		      <if test="startDate != null">
+		        AND TRUNC(in_date) &gt;= #{startDate}
+		      </if>
+		      <if test="endDate != null">
+		        AND TRUNC(in_date) &lt;= #{endDate}
+		      </if>
+		    </where>
+		    ORDER BY parts_no
+		  ) a
+		  WHERE ROWNUM &lt;= #{end}   
+		)
+		WHERE rn &gt;= #{start}       
+	</select>
+</mapper>

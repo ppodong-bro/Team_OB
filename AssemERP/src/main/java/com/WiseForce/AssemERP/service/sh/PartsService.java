@@ -12,4 +12,8 @@ public interface PartsService {
 
 	int createParts(PartsDTO partsDTO);
 
+	int getTotalSeartchcount(PartsDTO partsDTO);
+
+	List<PartsDTO> getpartsSearchList(PartsDTO partsDTO);
+
 }
