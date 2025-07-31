@@ -107,6 +107,7 @@ html, body {
 	justify-content: center;
 	align-items: center;
 	border-top: #CCE4F6 solid 3px;
+	z-index: 1000;
 }
 
 .footer span {
