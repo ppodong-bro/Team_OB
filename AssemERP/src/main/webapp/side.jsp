@@ -44,7 +44,7 @@
 			<div class="collapse" id="client-collapse">
 				<ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
 					<li><a href="${pageContext.request.contextPath}/client/list" 
-					class="link-body-emphasis d-inline-flex text-decoration-none rounded">거래처관리</a></li>
+					class="link-body-emphasis d-inline-flex text-decoration-none rounded">거래처 관리</a></li>
 					<li><a href="${pageContext.request.contextPath}/client/createStart"
 						class="link-body-emphasis d-inline-flex text-decoration-none rounded">거래처 등록</a></li>
 					
