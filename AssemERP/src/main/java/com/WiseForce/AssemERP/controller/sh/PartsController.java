@@ -61,4 +61,21 @@ public class PartsController {
 		return "redirect:parts/partsList";
 	}
 	
+	@GetMapping("searchPartsList")
+	public String searchPartList(PartsDTO partsDTO,Model model ) {
+		System.out.println("PartsController searchPartList partsDTO => "+partsDTO );
+		int totalcount = partsService.getTotalSeartchcount(partsDTO);
+		Paging page = new Paging(totalcount, partsDTO.getCurrentPage());
+		partsDTO.setStart(page.getStart());
+		partsDTO.setEnd(page.getEnd());
+		
+		List<PartsDTO> partsDTOs = partsService.getpartsSearchList(partsDTO);
+		System.out.println("PartsController searchPartList partsDTOs => "+partsDTOs);
+		
+		model.addAttribute("totalcount", totalcount);
+		model.addAttribute("page", page);
+		model.addAttribute("partsDTOs", partsDTOs);
+		
+		return "sh/partsList";
+	}
 }

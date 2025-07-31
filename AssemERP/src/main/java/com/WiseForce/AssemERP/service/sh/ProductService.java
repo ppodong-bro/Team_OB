@@ -18,4 +18,8 @@ public interface ProductService {
 
 	int productsave(ProductDTO productDTO);
 
+	List<ProductDTO> getproductSearchList(ProductDTO productDTO);
+
+	int getproductSearchcount(ProductDTO productDTO);
+
 }
