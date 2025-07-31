@@ -17,8 +17,9 @@ import lombok.NoArgsConstructor;
 public class ClientDto {
 
 	private int 			client_No;
-	private int				emp_No;
-	private String			emp_Name;
+	private EmpDTO			empDTO;
+//	private int				emp_No;
+//	private String			emp_Name;
 	private String 			client_Name;
 	private Integer			client_Gubun;
 	private String  		client_Email;

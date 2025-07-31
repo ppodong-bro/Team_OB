@@ -109,30 +109,37 @@
 							</thead>
 							<tbody>
 								<c:forEach var="client" items="${clientList}" varStatus="st">
-									<tr>
+									<tr style="cursor: pointer;"
+										onclick="location.href='<c:url value='/client/detail?client_No=${client.client_No}'/>'">
 										<td class="text-center">${st.index + 1}</td>
-										<td class="text-center"><a
-											href="<c:url value='/client/detail?client_No=${client.client_No}'/>">
-												${client.client_No} </a></td>
+										<td class="text-center">${client.client_No}</td>
 										<td>${client.client_Name}</td>
-										<td class="text-center">${client.client_Gubun == 0 ? '구매' : '판매'}
-										</td>
+										<td class="text-center"><c:choose>
+												<c:when test="${client.client_Gubun == 0}">구매</c:when>
+												<c:when test="${client.client_Gubun == 1}">판매</c:when>
+												<c:otherwise>기타</c:otherwise>
+											</c:choose></td>
 										<td>${client.client_Address}</td>
 										<td>${client.client_Email}</td>
 										<td class="text-center">${client.client_Man}</td>
-										<td class="text-center"><a
+										<td class="text-center">
+											<!-- 수정 버튼 --> <a
 											href="<c:url value='/client/modifyStart?client_No=${client.client_No}'/>"
-											class="btn btn-sm btn-outline-primary me-1">수정</a>
+											class="btn btn-sm btn-outline-primary me-1"
+											onclick="event.stopPropagation();">수정</a> <!-- 삭제 버튼 -->
 											<form
 												action="${pageContext.request.contextPath}/client/delete"
-												method="post" style="display: inline;">
+												method="post" style="display: inline;"
+												onclick="event.stopPropagation();">
 												<input type="hidden" name="client_No"
 													value="${client.client_No}" />
-												<button type="submit" class="btn btn-sm btn-outline-danger">
-													삭제</button>
+												<button type="submit" class="btn btn-sm btn-outline-danger">삭제</button>
 											</form>
+										</td>
 									</tr>
 								</c:forEach>
+
+								<!-- 조회 결과 없을 때 -->
 								<c:if test="${empty clientList}">
 									<tr>
 										<td colspan="9" class="text-center">조회된 데이터가 없습니다.</td>
@@ -145,9 +152,9 @@
 						<nav aria-label="Page navigation" class="mt-3">
 							<ul class="pagination pagination-sm justify-content-center">
 								<!-- 이전 -->
-								<li class="page-item ${page.startPage == 1 ? 'disabled' : ''}">
+								<li class="page-item ${page.currentPage == 1 ? 'disabled' : ''}">
 									<c:url var="prevUrl" value="/client/searchList">
-										<c:param name="currentPage" value="${page.startPage - 1}" />
+										<c:param name="currentPage" value="${page.currentPage - 1}" />
 										<c:if test="${not empty clientSearchDto.client_Name}">
 											<c:param name="client_Name"
 												value="${clientSearchDto.client_Name}" />
@@ -160,7 +167,7 @@
 											<c:param name="client_Man"
 												value="${clientSearchDto.client_Man}" />
 										</c:if>
-								<%-- 		<c:if test="${not empty clientSearchDto.inDate_Start}">
+										<%-- 		<c:if test="${not empty clientSearchDto.inDate_Start}">
 											<c:param name="inDate_Start"
 												value="${clientSearchDto.inDate_Start}" />
 										</c:if>
@@ -190,7 +197,7 @@
 												<c:param name="client_Man"
 													value="${clientSearchDto.client_Man}" />
 											</c:if>
-										<%-- 	<c:if test="${not empty clientSearchDto.inDate_Start}">
+											<%-- 	<c:if test="${not empty clientSearchDto.inDate_Start}">
 												<c:param name="inDate_Start"
 													value="${clientSearchDto.inDate_Start}" />
 											</c:if>
@@ -204,9 +211,9 @@
 
 								<!-- 다음 -->
 								<li
-									class="page-item ${page.endPage == page.totalPage ? 'disabled' : ''}">
+									class="page-item ${page.currentPage == page.totalPage ? 'disabled' : ''}">
 									<c:url var="nextUrl" value="/client/searchList">
-										<c:param name="currentPage" value="${page.endPage + 1}" />
+										<c:param name="currentPage" value="${page.currentPage + 1}" />
 										<!-- 검색 DTO 파라미터들 똑같이 추가 -->
 										<c:if test="${not empty clientSearchDto.client_Name}">
 											<c:param name="client_Name"
@@ -220,7 +227,7 @@
 											<c:param name="client_Man"
 												value="${clientSearchDto.client_Man}" />
 										</c:if>
-									<%-- 	<c:if test="${not empty clientSearchDto.inDate_Start}">
+										<%-- 	<c:if test="${not empty clientSearchDto.inDate_Start}">
 											<c:param name="inDate_Start"
 												value="${clientSearchDto.inDate_Start}" />
 										</c:if>
