@@ -4,7 +4,9 @@ CREATE OR REPLACE PACKAGE month_close AS
     g_prod_cnt NUMBER(9) := 0;
     
     -- 월마감0 : 메인
-    PROCEDURE month_close_main(p_sum_yymm in VARCHAR2, p_regi_emp_no in VARCHAR2);
+    PROCEDURE month_close_main(
+    p_sum_yymm in VARCHAR2, p_regi_emp_no in VARCHAR2,
+    p_result OUT VARCHAR2);
     
     -- 월마감0 : 수불마감 시작 이력 등록
     PROCEDURE month_close_start (p_sum_yymm in VARCHAR2, p_regi_emp_no in VARCHAR2);
@@ -22,7 +24,9 @@ END;
 -- PACKAGE와 PACKAGE BODY 구분
 /
 CREATE OR REPLACE PACKAGE BODY month_close AS
-    PROCEDURE month_close_main(p_sum_yymm in VARCHAR2, p_regi_emp_no in VARCHAR2) 
+    PROCEDURE month_close_main(
+    p_sum_yymm in VARCHAR2, p_regi_emp_no in VARCHAR2,
+    p_result OUT VARCHAR2) 
     IS
     BEGIN
         dbms_output.put_line('월마감 시작 p_sum_yymm =>' || p_sum_yymm );
@@ -40,7 +44,16 @@ CREATE OR REPLACE PACKAGE BODY month_close AS
         -- 월마감998 : 다음달 기말 재고 등록
         -- 월마감999 : 수불마감 끝 이력 등록
         month_close_end(p_sum_yymm, p_regi_emp_no);
+        
+        p_result := 'true';
         COMMIT;
+        
+        EXCEPTION
+            WHEN OTHERS THEN
+                ROLLBACK;
+                p_result := 'false';
+                -- 에러 트리거 발동 에러 테이블 추가
+                RAISE;
     END;
     
     /***************************************************************************
@@ -62,6 +75,8 @@ CREATE OR REPLACE PACKAGE BODY month_close AS
         -- 수불마감 시작 이력 등록
         INSERT INTO inventory_close(YEARMONTH, CLOSE_STATUS, CLOSE_STARTDATE, CLOSE_ENDDATE, EMP_NO) VALUES (p_sum_yymm, 0, sysdate, null, p_regi_emp_no);
         
+        COMMIT;
+        
         dbms_output.put_line('month_close_start END');
     END;
     
@@ -82,27 +97,16 @@ CREATE OR REPLACE PACKAGE BODY month_close AS
         INTO v_count
         FROM month_inventory
         WHERE YEARMONTH = TO_CHAR(ADD_MONTHS(TO_DATE(p_sum_yymm, 'YYMM'), -1), 'YYMM')
-        AND ITEM_STATUS = '1';
+        AND startend_status = '1';
         -- 지난달 기말재고 복사하여 이번달 기초재고 등록
         IF v_count > 0 THEN
             DBMS_OUTPUT.PUT_LINE('복사시작');
-            INSERT INTO month_inventory
-            (YEARMONTH,
-            STARTEND_STATUS,
-            ITEM_STATUS,
-            ITEM_NO,
-            CNT,
-            IN_DATE)
-                (SELECT p_sum_yymm
-                    ,'0' -- 기초
-                    ,ITEM_STATUS
-                    ,ITEM_NO
-                    ,CNT
-                    ,SYSDATE
-                FROM     month_inventory   
-                WHERE    YEARMONTH  = TO_CHAR(ADD_MONTHS (TO_DATE(p_sum_yymm,'YYMM'),-1),'YYMM')
-                AND      ITEM_STATUS = '1' -- 기말
-            );
+            INSERT INTO month_inventory(YEARMONTH,STARTEND_STATUS,ITEM_STATUS,ITEM_NO,CNT,IN_DATE)
+            SELECT p_sum_yymm,'0'/*기초*/,ITEM_STATUS,ITEM_NO,CNT,SYSDATE 
+            FROM     month_inventory
+            WHERE    YEARMONTH  = TO_CHAR(ADD_MONTHS (TO_DATE(p_sum_yymm,'YYMM'),-1),'YYMM')
+            AND      startend_status = '1' -- 기말
+            ;
             DBMS_OUTPUT.PUT_LINE('복사끝');
         -- 지난달 기말재고 없음
         ELSE
@@ -110,7 +114,9 @@ CREATE OR REPLACE PACKAGE BODY month_close AS
         END IF;
         
         dbms_output.put_line('신규 재고 등록');
-        create_item_to_inventory;
+        create_item_to_inventory(p_sum_yymm);
+        
+        COMMIT;
         
         dbms_output.put_line('month_close_prc1 END');
     END;
@@ -186,6 +192,8 @@ CREATE OR REPLACE PACKAGE BODY month_close AS
             END IF;
         END LOOP;
         
+        COMMIT;
+        
         dbms_output.put_line('month_close_prc2 END');
         EXCEPTION
             WHEN OTHERS THEN
@@ -205,6 +213,8 @@ CREATE OR REPLACE PACKAGE BODY month_close AS
         -- 수불마감 끝 이력 등록
         UPDATE inventory_close SET CLOSE_STATUS = 1, CLOSE_ENDDATE = sysdate
         WHERE yearmonth = p_sum_yymm;
+        
+        COMMIT;
         
         dbms_output.put_line('month_close_end END');
     END;

@@ -1,4 +1,4 @@
-create or replace PROCEDURE create_item_to_inventory
+create or replace PROCEDURE create_item_to_inventory(p_yearMonth IN VARCHAR2)
 IS
     -- 부품 커서
     CURSOR cur_parts IS
@@ -21,7 +21,7 @@ BEGIN
             SELECT COUNT(*)
             INTO v_exists
             FROM month_inventory
-            WHERE YEARMONTH = TO_CHAR(SYSDATE, 'YYMM')
+            WHERE YEARMONTH = p_yearMonth
             AND item_no = part_rec.parts_no
             AND ITEM_STATUS = 0;
 
@@ -30,7 +30,7 @@ BEGIN
             ELSE
                 DBMS_OUTPUT.PUT_LINE('미존재');
                 -- INSERT
-                INSERT INTO month_inventory(YEARMONTH, STARTEND_STATUS, ITEM_STATUS, ITEM_NO, CNT, IN_DATE) VALUES (TO_CHAR(SYSDATE, 'YYMM'), 0, 0, part_rec.parts_no, 0, sysdate);
+                INSERT INTO month_inventory(YEARMONTH, STARTEND_STATUS, ITEM_STATUS, ITEM_NO, CNT, IN_DATE) VALUES (p_yearMonth, 0, 0, part_rec.parts_no, 0, sysdate);
             END IF;
         END;
     END LOOP;
@@ -45,7 +45,7 @@ BEGIN
             SELECT COUNT(*)
             INTO v_exists
             FROM month_inventory
-            WHERE YEARMONTH = TO_CHAR(SYSDATE, 'YYMM')
+            WHERE YEARMONTH = p_yearMonth
             AND item_no = product_rec.product_no
             AND ITEM_STATUS = 1;
 
@@ -54,7 +54,7 @@ BEGIN
             ELSE
                 DBMS_OUTPUT.PUT_LINE('미존재');
                 -- INSERT
-                INSERT INTO month_inventory(YEARMONTH, STARTEND_STATUS, ITEM_STATUS, ITEM_NO, CNT, IN_DATE) VALUES (TO_CHAR(SYSDATE, 'YYMM'), 0, 1, product_rec.product_no, 0, sysdate);
+                INSERT INTO month_inventory(YEARMONTH, STARTEND_STATUS, ITEM_STATUS, ITEM_NO, CNT, IN_DATE) VALUES (p_yearMonth, 0, 1, product_rec.product_no, 0, sysdate);
             END IF;
         END;
     END LOOP;
