@@ -14,6 +14,6 @@ import lombok.ToString;
 public class ProductBomDTO {
 
 	private int product_no;
-	private int parts_no;
-	private int cnt;
+	private Integer parts_no;
+	private Integer cnt;
 }

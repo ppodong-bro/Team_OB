@@ -116,7 +116,7 @@
 										<td>${partsDTO.emp_no}</td>
 										<td>${partsDTO.in_date}</td>
 										<td class="text-center">
-											<button type="button"
+											<button type="button" onclick="location.href='/parts/partsModify/${partsDTO.parts_no}'"
 												class="btn btn-sm btn-outline-primary me-1">수정</button>
 											<button type="button" class="btn btn-sm btn-outline-danger">삭제</button>
 										</td>

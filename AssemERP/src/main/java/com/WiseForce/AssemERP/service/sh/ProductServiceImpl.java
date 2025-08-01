@@ -81,6 +81,8 @@ public class ProductServiceImpl implements ProductService {
 		List<ProductBomDTO> productBomDTOs = productDTO.getProductBOM();
 		for(ProductBomDTO bomDTO : productBomDTOs) {
 			bomDTO.setProduct_no(product2.getProduct_no());
+			if (bomDTO.getCnt() == null) bomDTO.setCnt(0);
+			if (bomDTO.getParts_no() == null) bomDTO.setParts_no(0);
 			System.out.println("ProductServiceImpl productsave bomDTO  => "+bomDTO);
 			saveresult = productDao.save(bomDTO);
 			saveresult++;
