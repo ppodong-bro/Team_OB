@@ -5,15 +5,19 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.WiseForce.AssemERP.domain.sh.Parts;
 import com.WiseForce.AssemERP.dto.sh.PartsDTO;
 import com.WiseForce.AssemERP.service.sh.PartsService;
 import com.WiseForce.AssemERP.util.Paging;
 
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 
 @RequestMapping("parts/")
 @Controller
@@ -77,5 +81,17 @@ public class PartsController {
 		model.addAttribute("partsDTOs", partsDTOs);
 		
 		return "sh/partsList";
+	}
+	
+	@GetMapping("partsModify/{parts_no}")
+	public String partsMOdifyStart(@PathVariable(name = "parts_no") int parts_no, Model model ) {
+		System.out.println("PartsController partsMOdifyStart Start... ");
+		System.out.println("PartsController partsMOdifyStart parts_no => "+parts_no);
+		PartsDTO partsDTO = partsService.findbyID(parts_no);
+		
+		model.addAttribute("partsDTO", partsDTO);
+		
+		
+		return "sh/partsModifyForm";
 	}
 }

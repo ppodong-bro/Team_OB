@@ -34,21 +34,21 @@
 						<%------------------------------------------------------------------------------
                 			1-2. 타이틀 중앙 정렬 스타일
                  		------------------------------------------------------------------------------%>
-						<h4 class="card-title mb-0">신규 부품 등록</h4>
+						<h4 class="card-title mb-0">부품 수정</h4>
 						<%-- 타이틀의 정확한 중앙 정렬을 위한 빈 공간 --%>
 						<div style="width: 90px;"></div>
 					</div>
 					<div class="card-body">
 						<form method="post"
-							action="${pageContext.request.contextPath}/parts/partsCreate">
-
+							action="${pageContext.request.contextPath}/parts/partsUpdate">
+							<input type="hidden" value="${partsDTO.parts_no }">
 							<!-- 부품명 -->
 							<div class="mb-3">
 								<label for="partsName" class="form-label">부품명</label>
 								<div class="input-group">
 									<span class="input-group-text"> <i class="bi bi-tag"></i>
 									</span> <input type="text" class="form-control form-control-sm"
-										id="partsName" name="parts_name" required>
+										id="partsName" name="parts_name" value="${partsDTO.parts_name}" required>
 								</div>
 							</div>
 
@@ -57,18 +57,17 @@
 								<label for="partsStatus" class="form-label">종류</label>
 								<div class="input-group">
 									<span class="input-group-text"> <i class="bi bi-grid"></i></span>
-									<select class="form-control form-control-sm" id="partsStatus"
-										name="parts_status" required>
-										<option value="">선택</option>
-										<option value="0">매인보드</option>
-										<option value="1">CPU</option>
-										<option value="2">GPU</option>
-										<option value="3">메모리</option>
-										<option value="4">파워</option>
-										<option value="5">HDD</option>
-										<option value="6">SSD</option>
-										<option value="7">케이스</option>
-										<option value="8">쿨러</option>
+									<select class="form-control form-control-sm" id="partsStatus" name="parts_status" required>
+										<option value="">== 선택 ==</option>
+										<option value="0" ${partsDTO.parts_status == 0 ? 'selected' : ''}>메인보드</option>
+										<option value="1" ${partsDTO.parts_status == 1 ? 'selected' : ''}>CPU</option>
+										<option value="2" ${partsDTO.parts_status == 2 ? 'selected' : ''}>GPU</option>
+										<option value="3" ${partsDTO.parts_status == 3 ? 'selected' : ''}>메모리</option>
+										<option value="4" ${partsDTO.parts_status == 4 ? 'selected' : ''}>파워</option>
+										<option value="5" ${partsDTO.parts_status == 5 ? 'selected' : ''}>HDD</option>
+										<option value="6" ${partsDTO.parts_status == 6 ? 'selected' : ''}>SSD</option>
+										<option value="7" ${partsDTO.parts_status == 7 ? 'selected' : ''}>케이스</option>
+										<option value="8" ${partsDTO.parts_status == 8 ? 'selected' : ''}>쿨러</option>
 									</select>
 								</div>
 							</div>
@@ -80,7 +79,7 @@
 									<span class="input-group-text"><i
 										class="bi bi-buildings"></i></span> <input type="text"
 										class="form-control form-control-sm" id="partsmanufacture"
-										name="manufacture">
+										name="manufacture" value="${partsDTO.manufacture }">
 								</div>
 							</div>
 
@@ -104,7 +103,7 @@
 								<label for="partsContext" class="form-label">부품설명</label>
 								<textarea class="form-control form-control-sm" rows="5"
 									id="partsContext" name="parts_context"
-									placeholder="설명란에 정보를 입력해주세요"></textarea>
+									>${partsDTO.parts_context }</textarea>
 
 							</div>
 
@@ -112,7 +111,7 @@
 							<div class="mb-3">
 								<label for="partsfile" class="form-label">부품이미지</label> <input
 									type="file" class="form-control form-control-sm" id="partsfile"
-									name="filename">
+									name="filename" value="${partsDTO.filename}">
 							</div>
 
 							<!-- 삭제 상태 (숨김) -->

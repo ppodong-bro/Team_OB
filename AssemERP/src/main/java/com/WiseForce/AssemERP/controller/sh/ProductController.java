@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.WiseForce.AssemERP.dto.sh.PartsDTO;
 import com.WiseForce.AssemERP.dto.sh.ProductDTO;
 import com.WiseForce.AssemERP.service.sh.ProductService;
+import com.WiseForce.AssemERP.util.CustomFileUtil;
 import com.WiseForce.AssemERP.util.Paging;
 
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,8 @@ import lombok.RequiredArgsConstructor;
 public class ProductController {
 
 	private final ProductService productService;
-
+	private final CustomFileUtil fileUtil;
+	
 	@GetMapping("productList")
 	public String productListPage(ProductDTO productDTO, Model model) {
 		int totalCount = productService.getTotalCount();
@@ -56,7 +58,8 @@ public class ProductController {
 	
 	@PostMapping("productCreate")
 	public String productCreate(ProductDTO productDTO, Model model ) {
-		 
+		
+		productDTO.setFilename(fileUtil.saveFile(productDTO.getFile()));
 		int saveResult = productService.productsave(productDTO);
 		
 		
