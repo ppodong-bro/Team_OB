@@ -1,7 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <meta charset="UTF-8">
-<title>ERP - 사원 정보 수정</title>
+<!-- jquery 선언 -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <%------------------------------------------------------------------------------
    		- Bootstrap CSS
     ------------------------------------------------------------------------------%>
@@ -123,5 +125,33 @@ body {
 
 .bd-mode-toggle .dropdown-menu .active .bi {
 	display: block !important
+}
+
+/* Common Table 상태별 UI 지정 */
+.status-text {
+	display: inline-flex;
+	align-items: center;
+	font-size: 0.9rem;
+	gap: 4px;
+}
+.status-text .dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	display: inline-block;
+}
+
+/* 700 : 마감 구분 */
+.status-text-close[data-status="0"] .dot {
+	background: #ffc107;//마감 시작
+}
+.status-text-close[data-status="1"] .dot {
+	background: #0d6efd;//마감 완료
+}
+.status-text-close[data-status="2"] .dot {
+	background: #198754;//월마감 완료
+}
+.status-text-close[data-status="3"] .dot {
+	background: #dc3545;//마감 오류
 }
 </style>

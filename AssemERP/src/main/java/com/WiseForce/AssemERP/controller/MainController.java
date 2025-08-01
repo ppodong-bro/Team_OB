@@ -15,20 +15,30 @@ import lombok.RequiredArgsConstructor;
 @Controller
 @RequiredArgsConstructor
 public class MainController {
-	private final CommonService commonService; 
-	
+	private final CommonService commonService;
+
 	@GetMapping("/")
 	public String mainPage() {
 		System.out.println("mainPage Strart...");
 		return "main";
 	}
-	
-    @ResponseBody
-    @GetMapping("/common/{big_status}")
-    public List<CommonDTO> getCommon(@PathVariable("big_status") int bigStatus) {
-    	//big_status에 따라 common의 모든 상태값을 가져온다. 
-    	List<CommonDTO> commonDTOs = commonService.getAllStatus(bigStatus);
-    	
-        return commonDTOs;
-    }
+
+	@ResponseBody
+	@GetMapping("/common/{big_status}")
+	public List<CommonDTO> getCommon(@PathVariable("big_status") int bigStatus) {
+		// big_status에 따라 common의 모든 상태값을 가져온다.
+		List<CommonDTO> commonDTOs = commonService.getAllStatus(bigStatus);
+
+		return commonDTOs;
+	}
+
+	@ResponseBody
+	@GetMapping("/common/{big_status}/{middle_status}")
+	public CommonDTO getCommon(@PathVariable("big_status") int bigStatus,
+			@PathVariable("middle_status") int middleStatus) {
+		// big_status에 따라 common의 모든 상태값을 가져온다.
+		CommonDTO commonDTO = commonService.getAllStatus(bigStatus, middleStatus);
+
+		return commonDTO;
+	}
 }

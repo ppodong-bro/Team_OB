@@ -38,13 +38,22 @@ public class InventoryDaoImpl implements InventoryDao {
 
 	// 월마감 패키지 실행
 	@Override
-	public void doMonthClose(String yearMonth, int empno) {
-		// TODO Auto-generated method stub
+	public boolean doMonthClose(String yearMonth, int empno) {
+		//월마감 패키지 파라미터 등록
 		Map<String, Object> paramMap = new HashMap<>();
-		paramMap.put("yearMonth", yearMonth);
-		paramMap.put("empno", empno);
+		paramMap.put("yearmonth", yearMonth);//IN
+		paramMap.put("emp_no", empno);//IN
+		paramMap.put("result", "");//OUT
+		// 월마감 패키지 실행
+		session.selectOne("com.WiseForce.AssemERP.dg.InventoryMapper.callMonthClose", paramMap);
 
-//		session.selectOne("com.WiseForce.AssemERP.mapper.dg.InventoryMapper.callMonthClose", paramMap);
+	    // OUT 파라미터 값 읽기
+	    String resultMsg = (String) paramMap.get("result");
+	    if ("true".equalsIgnoreCase(resultMsg)) {
+	        return true;
+	    } else {
+	        return false;
+	    }
 	}
 
 
