@@ -33,8 +33,11 @@ public class PartsDTO {
     //paging
     private int start;
     private int end;
-    private String currentpage;
+    private String currentPage;
     private	String pageNum;
+    
+    // 분류명가져오기
+    private String parts_statusName;
     
     public static PartsDTO chagePartsDTO(Parts parts) {
     	return PartsDTO.builder()

@@ -40,5 +40,17 @@ public class ClientServiceImpl implements ClientService {
 		int totSearch = clientDao.totSearch(clientSearchDto);
 		return totSearch;
 	}
+
+	@Override
+	public ClientDto detailClient(ClientDto clientDto1) {
+		ClientDto clientDto = clientDao.detailClient(clientDto1);
+		return clientDto;
+	}
+
+	@Override
+	public int createClient(ClientDto clientDto) {
+		int result = clientDao.createClient(clientDto);
+		return result;
+	}
 	
 }

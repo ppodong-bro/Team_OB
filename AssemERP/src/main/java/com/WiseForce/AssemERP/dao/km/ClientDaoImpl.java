@@ -44,4 +44,20 @@ public class ClientDaoImpl implements ClientDao{
 		return totSearch;
 	}
 
+	@Override
+	public ClientDto detailClient(ClientDto clientDto1) {
+		ClientDto clientDto = session.selectOne("detailClient", clientDto1.getClient_No());
+		System.out.println("getClient clientDto->"+clientDto);
+		return clientDto;
+	}
+
+	@Override
+	public int createClient(ClientDto clientDto) {
+		System.out.println("ClientDao createClient Start...");
+		System.out.println("ClientDao createClient clientDto-->"+clientDto);
+		int result = session.insert("createClient", clientDto);
+		System.out.println("ClientDao createClient result->"+result);
+		return result;
+	}
+
 }

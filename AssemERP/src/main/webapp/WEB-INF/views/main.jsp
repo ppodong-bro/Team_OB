@@ -3,29 +3,31 @@
 <!DOCTYPE html>
 <html>
 <head>
+<!-- 공통 CSS -->
+<jsp:include page="/common.jsp" />
 <meta charset="UTF-8">
-<style type="text/css">
-#contents {
-	margin-top: 70px;
-	margin-left: 250px;
-	margin-bottom: 60px;
-	padding: 20px; /* 내부 여백 */
-}
-</style>
 <title>Insert title here</title>
 </head>
 <body>
-	<div id="header">
-		<%@ include file="header.jsp"%>
+	<!-- 전체 레이아웃 -->
+	<div id="layout">
+		<div id="side">
+			<jsp:include page="/side.jsp" />
+		</div>
+		<div id="main-area">
+			<jsp:include page="/header.jsp" />
+
+			<!-- 이곳에 자신의 코드를 작성하세요 -->
+			<div id="contents">
+				<h1>Main Page</h1>
+			</div>
+			<!-- 이곳에 자신의 코드를 작성하세요 -->
+
+			<jsp:include page="/foot.jsp" />
+		</div>
 	</div>
-	<div id="side">
-		<%@ include file="side.jsp"%>
-	</div>
-	<div id="contents">
-		<h3>main Page</h3>
-	</div>
-	<div id="footer">
-		<%@ include file="foot.jsp"%>
-	</div>
+
+	<!-- 부트스트랩 CDN -->
+	<jsp:include page="/common_cdn.jsp" />
 </body>
 </html>
