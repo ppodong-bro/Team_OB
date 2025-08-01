@@ -1,4 +1,4 @@
-package com.oracle.AssemERP.dto.sm;
+package com.WiseForce.AssemERP.dto.sm;
 
 import java.util.Date;
 
@@ -15,12 +15,20 @@ public class EmpDTO
 	private long 	sal;
 	private int 	deptCode;
 	private String 	username;
-	private String 	password;	 // 평문 비밀번호를 임시 저장
+	private String 	password;	 
 	private String 	rolesStatus; // "ROLE_ADMIN,ROLE_USER" 형태
 	private int 	delStatus;
 	private int 	registrar;
 	private Date 	inDate;
+	
+	// 페이징 처리를 위한 추가 필드
+    private int		start;
+    private int		end;
     
     // EMP_IMAGE 테이블 (대표 이미지 1개)
     private String empFilename;
+    
+    // 검색 조건
+    private String searchType;
+    private String searchKeyword;
 }

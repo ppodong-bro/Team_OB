@@ -32,9 +32,13 @@ body {
 }
 
 .card-header {
-	background-color: #198754;
-	color: white;
-} /* Green theme for editing */
+	/*  
+	    개별화면 header별 색상이 달라 
+	    개별화면별 적용이 필요해서 주석처리함.(sm)
+	*/
+	/* background-color: #198754; 
+	   color: white; */
+}   /* Green theme for editing */
 .required-field::after {
 	content: " *";
 	color: red;
