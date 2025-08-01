@@ -79,5 +79,67 @@
 		
 	</select>
 	
+	<select id="searchTotCnt" parameterType="Sales_OrderSearchDto" resultType="int">
+  		SELECT COUNT(*)
+  		FROM   SALES_ORDER S
+         	   LEFT JOIN EMP       E ON S.EMP_NO     = E.EMP_NO
+         	   LEFT JOIN CLIENT    C ON S.CLIENT_NO  = C.CLIENT_NO
+         	   LEFT JOIN SALES_ITEM I ON S.SALES_NO   = I.SALES_NO
+         	   LEFT JOIN PRODUCT   P ON I.PRODUCT_NO = P.PRODUCT_NO
+  	   <where>
+    		   S.DEL_STATUS = 0
+     <!--   <if test="sales_No != null and sales_No.trim() != ''">
+      		   AND TO_CHAR(S.SALES_NO) LIKE '%' || #{sales_No} || '%'
+       </if> -->
+       <if test="client_Name != null and client_Name.trim() != ''">
+      		   AND C.CLIENT_NAME LIKE '%' || #{client_Name} || '%'
+       </if>
+       <if test="empName != null and empName.trim() != ''">
+      		   AND E.EMP_NAME LIKE '%' || #{empName} || '%'
+       </if>
+       <if test="out_Status != null">
+  			   AND S.OUT_STATUS = #{out_Status}
+	   </if>
+       
+  	   </where>
+	</select>
+	
+	<select id="searchList" parameterType="Sales_OrderSearchDto" resultMap="sales_OrderMap">
+  	<![CDATA[
+    	SELECT S.SALES_NO, S.SALES_DATE, S.OUT_STATUS, S.DEL_STATUS
+         	 , S.IN_DATE, C.CLIENT_NO, C.CLIENT_NAME
+         	 , E.EMP_NO, E.EMP_NAME
+         	 , I.SALES_NO, I.PRODUCT_NO
+         	 , I.SALES_ITEM_CNT, I.SALES_ITEM_OUTCNT, I.SALES_ITEM_COST
+         	 , P.PRODUCT_NO, P.PRODUCT_NAME
+    	FROM (
+      	SELECT ROWNUM RN, O.*
+      	FROM SALES_ORDER O
+      	WHERE DEL_STATUS = 0
+      	ORDER BY SALES_NO
+    	) S
+    	LEFT JOIN CLIENT  C ON S.CLIENT_NO = C.CLIENT_NO
+    	LEFT JOIN EMP     E ON S.EMP_NO    = E.EMP_NO
+    	LEFT JOIN SALES_ITEM I ON S.SALES_NO = I.SALES_NO
+    	LEFT JOIN PRODUCT P ON I.PRODUCT_NO = P.PRODUCT_NO
+  ]]>
+  
+ 	 <where>
+    	S.DEL_STATUS = 0
+    	<if test="client_Name != null and client_Name.trim() != ''">
+      	AND C.CLIENT_NAME LIKE '%' || #{client_Name} || '%'
+   	 </if>
+    	<if test="empName != null and empName.trim() != ''">
+      	AND E.EMP_NAME LIKE '%' || #{empName} || '%'
+    	</if>
+    	<if test="out_Status != null">
+     	AND S.OUT_STATUS = #{out_Status}
+    	</if>
+    	<if test="start != null and end != null">
+      	AND RN <![CDATA[>=]]> #{start} AND RN <![CDATA[<=]]> #{end}
+    	</if>
+  	</where>
+	</select>
+	
 	
 </mapper>
