@@ -13,7 +13,7 @@ public class EmpDTO
 	private String 	empTel;
 	private String 	email;
 	private long 	sal;
-	private int 	deptCode;
+	private int 	deptCode; 
 	private String 	username;
 	private String 	password;	 
 	private String 	rolesStatus; // "ROLE_ADMIN,ROLE_USER" 형태
