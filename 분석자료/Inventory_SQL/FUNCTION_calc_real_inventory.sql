@@ -4,10 +4,12 @@ DROP TYPE type_calc_real_inventory;
 /
 -- 객체 타입 정의 (한 행 구조)
 CREATE OR REPLACE TYPE type_calc_real_inventory AS OBJECT (
-  item_no VARCHAR2(255),
-  item_status VARCHAR2(255),
-  item_name VARCHAR2(255),
-  cnt NUMBER
+    item_no NUMBER,
+    item_status VARCHAR2(255),
+    item_name VARCHAR2(255),
+    cnt NUMBER
+    -- proper_cnt:적정수량
+    -- diff_cnt:편차
 );
 /
 -- 객체 타입의 테이블 타입 정의 (여러 행)
@@ -21,7 +23,7 @@ IS
     v_sql VARCHAR2(10000); -- 동적 SQL
     v_cur SYS_REFCURSOR; -- 커서
     -- 속성변수
-    v_item_no VARCHAR2(255); -- 재고번호
+    v_item_no NUMBER; -- 재고번호
     v_item_status VARCHAR2(255); -- 재고분류
     v_name VARCHAR2(255); -- 재고명
     v_cnt NUMBER; -- 수량
@@ -43,9 +45,9 @@ BEGIN
         ';
     ELSIF p_itemStatus = 1 THEN
         v_sql := '
-        SELECT mi.item_no, p.product_status, p.product_name, mi.cnt FROM month_inventory mi
+        SELECT mi.item_no, c.context, p.product_name, mi.cnt FROM month_inventory mi
         JOIN product p ON mi.item_no = p.product_no -- 제품 정보를 가져오기 위한 조인
-        JOIN common c ON p.parts_status = c.middle_status AND big_status = 800 -- 제품 분류 가져오기 위한 조인
+        JOIN common c ON p.product_status = c.middle_status AND big_status = 800 -- 제품 분류 가져오기 위한 조인
         WHERE yearmonth = (
             SELECT MAX(yearmonth) FROM month_inventory
             )
@@ -74,5 +76,3 @@ EXCEPTION
 END;
 /
 SELECT * FROM TABLE(calc_real_inventory(0));
-
-

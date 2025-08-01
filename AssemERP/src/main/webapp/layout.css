@@ -113,3 +113,12 @@ html, body {
 .footer span {
 	font-size: 0.7rem;
 }
+
+/* Modal â */
+.modal {
+	position: fixed;
+	z-index: 2000;
+}
+.modal-backdrop {
+	z-index: 1999;
+}
