@@ -1,6 +1,8 @@
 package com.WiseForce.AssemERP.dto.sh;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.WiseForce.AssemERP.domain.sh.Parts;
 import com.WiseForce.AssemERP.domain.sh.Product;
@@ -20,13 +22,13 @@ import lombok.ToString;
 @Builder
 public class ProductDTO {
 	private int			product_no;
-	private int 		product_status;
+	private Integer		product_status;
 	private String 		product_name;
 	private String 		product_context;
 	private String 		filename;
     private int 		del_status;
     private int			emp_no;
-    private LocalDateTime	in_date;
+    private LocalDate	in_date;
     
     //paging
     private int start;
@@ -37,6 +39,12 @@ public class ProductDTO {
     // 분류명가져오기
     private String product_statusName;
     
+    // BOM LIST
+    private List<ProductBomDTO> productBOM;
+    
+    // Searching
+    private LocalDate startDate;
+    private LocalDate endDate;
     
     
     public static ProductDTO chageProductDTO(Product product) {

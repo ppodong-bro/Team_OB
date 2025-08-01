@@ -1,0 +1,18 @@
+package com.WiseForce.AssemERP.service.km;
+
+import java.util.List;
+
+import com.WiseForce.AssemERP.dto.km.Sales_OrderDto;
+import com.WiseForce.AssemERP.dto.km.Sales_OrderSearchDto;
+
+public interface Sales_OrderService {
+
+	int 					salesTotCnt();
+
+	List<Sales_OrderDto> 	salesList(Sales_OrderDto sales_OrderDto);
+
+	int 					searchTotCnt(Sales_OrderSearchDto sales_OrderSearchDto);
+
+	List<Sales_OrderDto> 	searchSales(Sales_OrderSearchDto sales_OrderSearchDto);
+	
+}

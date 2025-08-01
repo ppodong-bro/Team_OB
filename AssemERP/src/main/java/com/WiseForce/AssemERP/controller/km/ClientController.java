@@ -11,18 +11,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.WiseForce.AssemERP.dto.km.ClientDto;
 import com.WiseForce.AssemERP.dto.km.ClientSearchDto;
 import com.WiseForce.AssemERP.service.km.ClientService;
-import com.WiseForce.AssemERP.service.km.Paging;
+import com.WiseForce.AssemERP.util.Paging;
 
 import lombok.RequiredArgsConstructor;
 
 
-@RequestMapping("business/")
+@RequestMapping("client/")
 @RequiredArgsConstructor
 @Controller
 public class ClientController {
 	private final ClientService clientService;
 	
-	@GetMapping("clientList")
+	@GetMapping("list")
 	public String listStart(ClientDto clientDto,Model model) {
 		int totCnt = clientService.totCnt();
 		
@@ -35,7 +35,7 @@ public class ClientController {
 		return "km/clientList";
 	}
 	
-	@GetMapping("clientSearchList")
+	@GetMapping("searchList")
 	public String clientSearchList(ClientSearchDto clientSearchDto, Model model) {
 		int totSearch = clientService.totSearch(clientSearchDto);
 		ClientDto clientDto = new ClientDto();
@@ -49,7 +49,7 @@ public class ClientController {
 		return "km/clientList";
 	}
 	
-	@GetMapping("detailClient")
+	@GetMapping("detail")
 	public String detailClient(ClientDto clientDto1, Model model) {
 		System.out.println("ClientController detailClient Start...");
 		ClientDto clientDto = clientService.detailClient(clientDto1);
@@ -58,26 +58,42 @@ public class ClientController {
 		return "km/detailClient";
 	}
 	
-	@GetMapping("createStartClient")
-	public String createStartClient(ClientDto clientDto, Model model) {
+	@GetMapping("createStart")
+	public String createClientStart(ClientDto clientDto, Model model) {
 		System.out.println("ClientController createStartClient Start...");
 		
 		return "km/clientCreate";
 	}
 	
-	@PostMapping("createClient")
-	public String createClient(ClientDto clientDto, Model model) {
+	@PostMapping("create")
+	public String createClient(ClientDto clientDto) {
 		System.out.println("ClientController createClient Start...");
 		int result = clientService.createClient(clientDto);
 		
-		return "redirect:/business/clientList";
+		return "redirect:/client/list";
 	}
 	
-	@PostMapping("modifyClient")
-	public String modifyClient(ClientDto clientDto, Model model) {
+	@GetMapping("modifyStart")
+	public String modifyClientStart(ClientDto clientDto1, Model model) {
 		System.out.println("ClientController modifyClient Start...");
-		
+		ClientDto clientDto = clientService.detailClient(clientDto1);
+		model.addAttribute("clientDto", clientDto);
 		return "km/modifyClient";
+	}
+	
+	@PostMapping("modify")
+	public String modifyClient(ClientDto clientDto1) {
+		int result = clientService.modifyClient(clientDto1);
+		
+		System.out.println("ClientController modifyClient result->"+result);
+		return"redirect:/client/list";
+	}
+	
+	@PostMapping("delete")
+	public String deleteClient(ClientDto clientDto1) {
+		System.out.println("ClientController deleteClient Start...");
+		int result = clientService.deleteClient(clientDto1);
+		return "redirect:/client/list";
 	}
 
 }

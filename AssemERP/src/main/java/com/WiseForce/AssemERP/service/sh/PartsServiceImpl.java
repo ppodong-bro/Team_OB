@@ -1,10 +1,13 @@
 package com.WiseForce.AssemERP.service.sh;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import com.WiseForce.AssemERP.dao.sh.PartsDao;
+import com.WiseForce.AssemERP.domain.sh.Parts;
 import com.WiseForce.AssemERP.dto.sh.PartsDTO;
 import com.WiseForce.AssemERP.repository.sh.PartsRepository;
 
@@ -52,6 +55,42 @@ public class PartsServiceImpl implements PartsService {
 	public int getTotalcount() {
 		int Partstotalcout = (int) partsRepository.count();
 		return Partstotalcout;
+	}
+
+	
+
+	@Override
+	public int createParts(PartsDTO partsDTO) {
+		if(partsDTO.getIn_date() == null) partsDTO.setIn_date(LocalDate.now());
+		partsDTO.setDel_status(0);
+		// emp 나올떄까지 임시
+		partsDTO.setEmp_no(1001); 
+		
+		Parts parts = partsDTO.changeParts();
+		
+		
+		partsRepository.save(parts);
+		 
+		
+		return parts.getParts_no();
+	}
+
+	@Override
+	public int getTotalSeartchcount(PartsDTO partsDTO) {
+		
+		
+		
+		return partsDao.getSearchCount(partsDTO);
+	}
+
+	@Override
+	public List<PartsDTO> getpartsSearchList(PartsDTO partsDTO) {
+		List<PartsDTO> partsDTOs = partsDao.findSearchList(partsDTO);
+		for(PartsDTO dto : partsDTOs) {
+			dto.setParts_statusName(partsStatus_IntToString(dto.getParts_status()));
+		}
+				
+		return partsDTOs;
 	}
 	
 	

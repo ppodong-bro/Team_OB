@@ -27,12 +27,23 @@ public class InventoryServiceImpl implements InventoryService {
 
 	private final InventoryDao inventoryDao;
 
+	// 전체 재고의 종류 수 조회
+	@Override
+	public int getTotalTypeCount(Real_InventoryDTO real_InventoryDTO) {
+		// 이번 월 기말재고의 종류 수 조회
+		int totalTypeCount = inventoryDao.getLastestMonthInventoryCnt(real_InventoryDTO);
+		
+		return totalTypeCount;
+	}
+
 	// 현재 재고 전체 조회
 	@Override
-	public List<Real_InventoryDTO> getRealInventory() {
+	public List<Real_InventoryDTO> getRealInventory(Real_InventoryDTO real_InventoryDTO) {
 		// 현재 재고 전체 조회 함수 실행
-		List<Real_InventoryDTO> real_InventoryDTOs = inventoryDao.getRealInventory();
+		List<Real_InventoryDTO> real_InventoryDTOs = inventoryDao.getRealInventory(real_InventoryDTO);
 
+		System.out.println(real_InventoryDTOs);
+		
 		return real_InventoryDTOs;
 	}
 

@@ -25,13 +25,13 @@
 					</div>
 					<div class="card-body">
 						<form method="post"
-							action="${pageContext.request.contextPath}/business/createClient">
+							action="${pageContext.request.contextPath}/client/create">
 
 							<!-- 직원 번호 -->
 							<div class="mb-3">
 								<label for="empNo" class="form-label">직원 번호</label> <input
 									type="number" class="form-control form-control-sm w-auto"
-									id="empNo" name="emp_No" required>
+									id="empNo" name="empDTO.empNo" required>
 							</div>
 
 							<!-- 거래처명 -->
@@ -80,7 +80,7 @@
 							<div class="text-end mt-4">
 								<button type="submit" class="btn btn-primary btn-sm px-4">
 									등록</button>
-								<a href="${pageContext.request.contextPath}/business/clientList"
+								<a href="${pageContext.request.contextPath}/client/list"
 									class="btn btn-outline-secondary btn-sm px-4"> 취소 </a>
 							</div>
 

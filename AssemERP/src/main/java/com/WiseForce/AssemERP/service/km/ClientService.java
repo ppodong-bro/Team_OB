@@ -19,4 +19,8 @@ public interface ClientService {
 
 	int 				createClient(ClientDto clientDto);
 
+	int 				modifyClient(ClientDto clientDto1);
+
+	int 				deleteClient(ClientDto clientDto1);
+
 }

@@ -7,19 +7,59 @@
 		SELECT COUNT(*) FROM Client
 	</select>
 	
-	<select id="clientList" parameterType="ClientDto" resultType="ClientDto">
+	<resultMap type="ClientDto" id="clientMap">
+		<id 	column="CLIENT_NO"   	property="client_No"/>
+		<result	column="CLIENT_NAME" 	property="client_Name"/>
+		<result	column="CLIENT_GUBUN" 	property="client_Gubun"/>
+		<result column="CLIENT_EMAIL"	property="client_Email"/>
+		<result column="CLIENT_MAN"		property="client_Man"/>
+		<result	column="CLIENT_ADDRESS"	property="client_Address"/>
+		<result	column="DEL_STATUS"		property="del_Status"/>
+		<result column="MODIFY_DATE"	property="modify_Date"/>
+		<result column="IN_DATE"		property="in_Date"/>
+		
+		<association property="empDTO" javaType="EmpDTO" >
+			<id 	column="EMP_NO"			property="empNo"/>
+			<result column="EMP_NAME"  		property="empName"/>
+			<result	column="EMP_TEL"		property="empTel"/>
+			<result	column="EMAIL"			property="email"/>
+			<result	column="SAL"			property="sal"/>
+			<result	column="DEPT_CODE"		property="deptCode"/>
+			<result	column="USERNAME"		property="username"/>
+			<result column="PASSWORD"		property="password"/>
+			<result	column="ROLES_STATUS"	property="rolesStatus"/>
+			<result column="DEL_STATUS"		property="delStatus"/>
+			<result	column="REGISTRAR"		property="registrar"/>
+			<result	column="IN_DATE"		property="inDate"/>
+		</association>
+	</resultMap>
 	
-		<![CDATA[
+	<select id="clientList" parameterType="ClientDto" resultMap="clientMap">
+	
+	<!-- 	<![CDATA[
 		SELECT *
 		FROM   (SELECT rownum rn, a.*
 				FROM   (SELECT *
 						FROM   Client
+						WHERE DEL_STATUS = 0
 						ORDER BY client_no
 						) a			
 				)
 		WHERE  rn >= #{start} AND rn <= #{end}	
-		 ]]>
-		 
+		 ]]> -->
+		
+		<![CDATA[
+		SELECT C.CLIENT_NO, C.CLIENT_NAME, C.CLIENT_GUBUN, C.CLIENT_EMAIL
+			 , C.CLIENT_MAN, C.CLIENT_ADDRESS, C.DEL_STATUS
+			 , C.MODIFY_DATE, C.IN_DATE, E.EMP_NAME, E.EMP_NO
+		FROM (SELECT 	ROWNUM RN, A.*
+			  FROM	 	CLIENT A
+			  WHERE  	DEL_STATUS = 0
+			  ORDER BY 	CLIENT_NO
+			) C
+		LEFT JOIN EMP E ON C.EMP_NO = E.EMP_NO
+		WHERE RN >= #{start} AND RN <= #{end} 
+		]]>
 	</select>
 	
 	 <select id="totSearchClient" parameterType="ClientSearchDto" resultType="int">
@@ -51,6 +91,7 @@
               FROM Client
     ]]>
     <where>
+        DEL_STATUS = 0
       <if test="client_Name != null and client_Name.trim() != ''">
         AND client_Name LIKE '%' || #{client_Name} || '%'
       </if>
@@ -69,18 +110,34 @@
     ]]>
 	</select>
 	
-	<select id="detailClient" parameterType="int" resultType="ClientDto">
-		SELECT CLIENT_NO, EMP_NO, CLIENT_NAME, CLIENT_GUBUN, CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, DEL_STATUS, MODIFY_DATE, IN_DATE 
-		FROM Client 
-		WHERE client_no = #{client_No}
+	<select id="detailClient" parameterType="int" resultMap="clientMap">
+		SELECT C.CLIENT_NO, E.EMP_NO, E.EMP_NAME, C.CLIENT_NAME, C.CLIENT_GUBUN
+			 , C.CLIENT_EMAIL, C.CLIENT_MAN, C.CLIENT_ADDRESS
+			 , C.DEL_STATUS, C.MODIFY_DATE, C.IN_DATE 
+		FROM   CLIENT C LEFT JOIN EMP E ON C.EMP_NO = E.EMP_NO
+		WHERE  C.CLIENT_NO = #{client_No}
 	</select>
 	
 	<insert id="createClient" parameterType="ClientDto">
 		INSERT INTO Client 
 		(CLIENT_NO, EMP_NO, CLIENT_NAME
 	   , CLIENT_GUBUN, CLIENT_EMAIL, CLIENT_MAN
-	   , CLIENT_ADDRESS, IN_DATE) 
-		VALUES
-	    (CLIENT_SEQ_GEN.NEXTVAL, #{emp_No}, #{client_Name}, #{client_Gubun}, #{client_Email}, #{client_Man}, #{client_Address}, SYSDATE)
+	   , CLIENT_ADDRESS,DEL_STATUS ,IN_DATE) 
+		 VALUES
+	    (CLIENT_SEQ_GEN.NEXTVAL, #{empDTO.empNo}, #{client_Name}, #{client_Gubun}, #{client_Email}, #{client_Man}, #{client_Address}, 0, SYSDATE)
 	</insert>
+	
+	<update id="modifyClient" parameterType="ClientDto">
+		UPDATE client 
+		SET emp_no = #{empDTO.empNo}, client_name = #{client_Name}, client_gubun = #{client_Gubun}
+          , client_email = #{client_Email}, client_man = #{client_Man}
+          , client_address = #{client_Address}, modify_date = SYSDATE
+        WHERE client_no = #{client_No}
+	</update>
+	
+	<update id="deleteClient" parameterType="ClientDto">
+		UPDATE client
+		SET del_status = 1
+		WHERE client_no = #{client_No}
+	</update>
 </mapper>
