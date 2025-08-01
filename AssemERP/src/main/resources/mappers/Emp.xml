@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.WiseForce.AssemERP.mapper.sm.EmpMapper">
+
+	<resultMap id="empResultMap" type="com.WiseForce.AssemERP.dto.sm.EmpDTO">
+	    <id     property="empNo"        column="EMP_NO" />
+	    <result property="empName"      column="EMP_NAME" />
+	    <result property="empTel"       column="EMP_TEL" />
+	    <result property="email"        column="EMAIL" />
+	    <result property="sal"          column="SAL" />
+	    <result property="deptCode"     column="DEPT_CODE" />
+	    <!-- <result property="username"     column="USERNAME" />
+	    <result property="password"     column="PASSWORD" />
+	    <result property="rolesStatus"  column="ROLES_STATUS" /> -->
+	    <result property="delStatus"    column="DEL_STATUS" />
+	    <result property="registrar"    column="REGISTRAR" />
+	    <result property="inDate"       column="IN_DATE" />
+	</resultMap> 
+
+	<sql id="searchCondition">
+    <if test="searchKeyword != null and searchKeyword != ''">
+        <choose>
+            <when test="searchType == 'empNo'">
+                AND EMP_NO = #{searchKeyword}
+            </when>
+            <when test="searchType == 'empName'">
+                AND EMP_NAME LIKE #{searchKeyword} || '%'
+            </when>
+        </choose>
+    </if>
+    </sql>
+
+	<select id="selectTotalEmpCount" parameterType="EmpDTO"  resultType="int">
+		SELECT Count(*) 
+		  FROM emp
+		 WHERE DEL_STATUS = 0     
+		<include refid="searchCondition" />
+	</select>
+	
+	<select id="selectEmpList" parameterType="EmpDto" resultMap="empResultMap">
+		SELECT *
+        FROM (
+            SELECT ROWNUM rn, a.*
+            FROM (
+                SELECT 
+		                  EMP_NO
+						, EMP_NAME
+						, EMP_TEL
+						, EMAIL
+						, SAL
+						, DEPT_CODE
+						, DEL_STATUS
+						, REGISTRAR
+						, IN_DATE     
+                FROM EMP
+                WHERE DEL_STATUS = 0
+                <include refid="searchCondition" />
+                ORDER BY EMP_NO ASC
+            ) a
+        )
+        WHERE rn BETWEEN #{start} AND #{end}
+	</select>
+	
+	<select id="selectEmpDetail" parameterType="int"  resultMap="empResultMap">
+			SELECT
+		        e1.EMP_NO,
+		        e1.EMP_NAME,
+		        e1.EMP_TEL,
+		        e1.EMAIL,
+		        e1.SAL,
+		        e1.DEPT_CODE,
+		        e1.USERNAME,
+		        e1.ROLES_STATUS,
+		        e1.DEL_STATUS,
+		        e1.REGISTRAR,
+		        e1.IN_DATE,
+		        e2.EMP_NAME AS REGISTRAR_NAME
+		    FROM
+		        EMP e1
+		    LEFT JOIN
+		        EMP e2 ON e1.REGISTRAR = e2.EMP_NO
+		    WHERE
+		        e1.EMP_NO = #{empNo}
+	</select>
+	
+     <insert id="insertEmp" parameterType="EmpDTO">
+        INSERT INTO EMP (
+            	  EMP_NO
+            	, EMP_NAME
+            	, EMP_TEL
+            	, EMAIL
+            	, SAL
+            	, DEPT_CODE
+            	, DEL_STATUS
+            	, REGISTRAR
+            	, IN_DATE
+        ) VALUES (
+            	  EMP_NO_SEQ.NEXTVAL
+            	, #{empName}
+            	, #{empTel, 	jdbcType=VARCHAR}
+            	, #{email, 		jdbcType=VARCHAR}
+            	, #{sal, 		jdbcType=NUMERIC}
+            	, #{deptCode, 	jdbcType=NUMERIC}
+            	, #{delStatus,	jdbcType=NUMERIC}  
+            	, #{registrar,	jdbcType=NUMERIC}  
+            	, SYSDATE
+        )
+    </insert>
+    
+    <update id="updateEmp" parameterType="EmpDTO" >
+    	UPDATE   EMP
+		   SET   EMP_NAME 			= #{empName}
+		   		,EMP_TEL            = #{empTel}
+				,EMAIL				= #{email}
+				,SAL				= #{sal}
+				,DEPT_CODE			= #{deptCode}
+		 WHERE   EMP_NO  			= #{empNo}
+	</update>
+    
+    <update id="deleteEmpUpt" parameterType="int">
+    	UPDATE EMP
+		   SET DEL_STATUS = 1
+		 WHERE EMP_NO  = #{empNo}
+	</update>
+    
+    <!-- 타부서 조회용 : 사원명 조회 -->
+    <select id="searchEmpName" parameterType="EmpDTO" resultMap="empResultMap">
+		SELECT
+		        e.EMP_NO,
+		        e.EMP_NAME
+		  FROM
+		        EMP e
+		 WHERE e.EMP_NO     = #{empNo}
+		   AND e.DEL_STATUS = 0
+	</select>
+    
+    <select id="findByUsername" parameterType="string"  resultMap="empResultMap">
+        SELECT
+            e.EMP_NO,
+            e.EMP_NAME,
+            e.EMP_TEL,
+            e.EMAIL,
+            e.DEPT_CODE,
+            e.USERNAME,
+            e.PASSWORD,
+            e.ROLES_STATUS,
+            e.DEL_STATUS,
+            img.EMP_FILENAME
+        FROM
+            EMP e
+        LEFT JOIN
+            EMP_IMAGE img ON e.EMP_NO = img.EMP_NO 
+            AND img.ORDER_NUM = 1
+        WHERE
+            e.USERNAME = #{username} 
+            AND e.DEL_STATUS = 0
+        ORDER BY 1
+    </select>
+	
+</mapper>
