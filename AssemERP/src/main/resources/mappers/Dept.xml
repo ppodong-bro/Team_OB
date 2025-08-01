@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.WiseForce.AssemERP.mapper.sm.DeptMapper">
+
+	<resultMap id="deptResultMap" type="com.WiseForce.AssemERP.dto.sm.DeptDTO">
+        <id     property="deptCode"       column="DEPT_CODE" />
+        <result property="deptName"       column="DEPT_NAME" />
+        <result property="deptCaptain"    column="DEPT_CAPTAIN" />
+        <result property="parentDeptCode" column="PARENT_DEPT_CODE" />
+        <result property="deptLoc"        column="DEPT_LOC" />
+        <result property="locDetail"      column="LOC_DETAIL" />
+        <result property="delStatus"      column="DEL_STATUS" />
+        <result property="registrar"      column="REGISTRAR" />
+        <result property="inDate"         column="IN_DATE" />
+        <result property="registrarName"  column="REGISTRAR_NAME" />
+    </resultMap>
+    
+    <sql id="searchCondition">
+    <if test="searchKeyword != null and searchKeyword != ''">
+        <choose>
+            <when test="searchType == 'deptCode'">
+                AND DEPT_CODE = #{searchKeyword}
+            </when>
+            <when test="searchType == 'deptName'">
+                AND DEPT_NAME LIKE #{searchKeyword} || '%'
+            </when>
+        </choose>
+    </if>
+    </sql>
+ 
+	<select id="selectTotalDeptCount" parameterType="DeptDto" resultType="int">
+		SELECT Count(*) 
+		  FROM Dept
+		 WHERE DEL_STATUS = 0     
+		<include refid="searchCondition" />
+	</select>
+	
+	<select id="selectDeptList" parameterType="DeptDto" resultMap="deptResultMap">
+		 SELECT *
+        FROM (
+            SELECT ROWNUM rn, a.*
+            FROM (
+                SELECT 
+		                  DEPT_CODE        
+		                , DEPT_NAME        
+		                , DEPT_CAPTAIN     
+		                , PARENT_DEPT_CODE 
+		                , DEPT_LOC        
+		                , LOC_DETAIL 
+		                , DEL_STATUS       
+		                , REGISTRAR        
+		                , IN_DATE       
+                FROM DEPT
+                WHERE DEL_STATUS = 0
+                <include refid="searchCondition" />
+                ORDER BY DEPT_CODE ASC
+            ) a
+        )
+        WHERE rn BETWEEN #{start} AND #{end}
+	</select>
+	
+	<select id="selectDeptDetail" parameterType="int"  resultMap="deptResultMap">
+		SELECT 
+				  d.DEPT_CODE
+		        , d.DEPT_NAME
+		        , d.DEPT_CAPTAIN
+		        , d.PARENT_DEPT_CODE
+		        , d.DEPT_LOC
+		        , d.LOC_DETAIL
+		        , d.DEL_STATUS
+		        , d.REGISTRAR
+		        , e.EMP_NAME as REGISTRAR_NAME
+		        , d.IN_DATE
+		  FROM DEPT d
+		  LEFT OUTER JOIN EMP e
+		     ON d.REGISTRAR = e.EMP_NO
+		 WHERE d.DEPT_CODE = #{deptCode}
+		   AND d.DEL_STATUS = 0
+		 ORDER BY DEPT_CODE ASC
+	</select>
+	
+	<insert id="insertDept" parameterType="DeptDTO">
+		INSERT INTO Dept (
+			  DEPT_CODE
+			, DEPT_NAME
+			, DEPT_CAPTAIN
+			, PARENT_DEPT_CODE
+			, DEPT_LOC
+			, LOC_DETAIL
+			, DEL_STATUS
+			, REGISTRAR
+			, IN_DATE
+		) VALUES (
+			  DEPT_CODE_SEQ.NEXTVAL
+			, #{deptName}
+            , #{deptCaptain, 	jdbcType=NUMERIC}
+            , #{parentDeptCode, jdbcType=NUMERIC}
+            , #{deptLoc, 		jdbcType=VARCHAR}
+            , #{locDetail, 		jdbcType=VARCHAR}
+            , #{delStatus,	 	jdbcType=NUMERIC}  
+            , #{registrar,	 	jdbcType=NUMERIC}  
+			, SYSDATE
+		)
+	</insert>
+	
+	<update id="updateDept" parameterType="DeptDTO">
+		UPDATE   Dept
+		   SET   DEPT_NAME 			= #{deptName}
+				,DEPT_CAPTAIN		= #{deptCaptain}
+				,PARENT_DEPT_CODE	= #{parentDeptCode}
+				,DEPT_LOC			= #{deptLoc}
+				,LOC_DETAIL			= #{locDetail}
+		 WHERE   DEPT_CODE  		= #{deptCode}
+	</update>
+	
+	<update id="deleteDeptUpt" parameterType="int">
+		UPDATE Dept
+		   SET DEL_STATUS = 1
+		 WHERE DEPT_CODE  = #{deptCode}
+	</update>
+	
+</mapper> 
