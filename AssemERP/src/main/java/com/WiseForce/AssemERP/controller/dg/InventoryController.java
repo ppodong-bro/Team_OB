@@ -47,7 +47,7 @@ public class InventoryController {
 
 		model.addAttribute("search", real_InventoryDTO);
 		model.addAttribute("realInventoryList", real_InventoryDTOs);
-		model.addAttribute("page", page);
+		model.addAttribute("paging", page);
 
 		// 재고 관리 화면 이동
 		return "dg/inventoryList";
@@ -86,7 +86,7 @@ public class InventoryController {
 
 		model.addAttribute("search", inventory_CloseDTO);
 		model.addAttribute("inventoryCloseList", inventory_CloseDTOs);
-		model.addAttribute("page", page);
+		model.addAttribute("paging", page);
 
 		// 월마감 이력 화면 이동
 		return "dg/inventoryCloseList";
