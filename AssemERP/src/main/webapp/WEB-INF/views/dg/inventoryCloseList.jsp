@@ -9,6 +9,23 @@
 <title>Insert title here</title>
 </head>
 <script type="text/javascript">
+//현재시각 갱신하는 함수
+function updateCurrentTime() {
+	const now = new Date();
+	
+	const year   = now.getFullYear();
+	const month  = (now.getMonth() + 1).toString().padStart(2, "0");
+	const day    = now.getDate().toString().padStart(2, "0");
+	const hour   = now.getHours().toString().padStart(2, "0");
+	const minute = now.getMinutes().toString().padStart(2, "0");
+	const second = now.getSeconds().toString().padStart(2, "0");
+	
+	// console.log(year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second);
+	const formatted = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
+	
+	document.getElementById("currentTime").textContent = formatted;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
 	/* 마감 상태 검색 콤보박스 AJAX */
 	const closeStatusSelect = ${search.close_status != null ? search.close_status : 999};
@@ -58,20 +75,78 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 $(document).ready(function() {
-    // 월마감 버튼 클릭
-    $("#btnMonthClose").click(function() {
+	const modalEl = document.getElementById("modalMonthClose");
+	let timeInterval = null;
+	// 모달 열릴 때 시작
+	modalEl.addEventListener("shown.bs.modal", function () {
+	    updateCurrentTime();
+	    timeInterval = setInterval(updateCurrentTime, 1000);
+	});
+
+	// 모달 닫힐 때 중단
+	modalEl.addEventListener("hidden.bs.modal", function () {
+	    clearInterval(timeInterval);
+	    timeInterval = null;
+	    document.getElementById("currentTime").textContent = ""; // 초기화
+	});
+
+    // 가마감 버튼 클릭
+    $("#btnFakeMonthClose").click(function() {
+    	// 년월 구하기
+    	const now = new Date();
+    	const year = now.getFullYear().toString().slice(2); // YY
+    	const month = (now.getMonth() + 1).toString().padStart(2, "0"); // MM
+    	const yymm = year + month; //
+    	
     	// 월마감 진행중 화면으로 변경
-    	$("#modalMonthCloseText").text("월마감 진행중입니다...");
+    	$("#modalMonthCloseText").text("가마감 진행중입니다...");
     	$("#btnMonthClose").hide();// 월마감 버튼 비활성화
+    	$("#btnFakeMonthClose").hide();// 가마감 버튼 비활성화
     	
         // Ajax 요청 보내기
         $.ajax({
-            url: "/inventory/monthClose",
+            url: "/inventory/monthClose/1", // 가마감
             type: "PUT",
             dataType: "json",
             contentType: "application/json", // JSON 데이터 전송시 필요
             data: JSON.stringify({
-            	yearmonth: "2508",//년월
+            	yearmonth: yymm,
+            	emp_no: 1001//담당자
+            }),
+            success: function(response) {
+            	if(response.result === true) {
+                	$("#modalMonthCloseText").text("가마감이 완료되었습니다.");
+            	}
+            	else {
+                	$("#modalMonthCloseText").text("가마감이 실패했습니다.");
+            	}
+            },
+            error: function(xhr, status, error) {
+            	$("#modalMonthCloseText").text("가마감이 오류가 발생했습니다.");
+            }
+        });
+    });
+    // 월마감 버튼 클릭
+    $("#btnMonthClose").click(function() {
+    	// 년월 구하기
+    	const now = new Date();
+    	const year = now.getFullYear().toString().slice(2); // YY
+    	const month = (now.getMonth() + 1).toString().padStart(2, "0"); // MM
+    	const yymm = year + month; //
+    	
+    	// 월마감 진행중 화면으로 변경
+    	$("#modalMonthCloseText").text("월마감 진행중입니다...");
+    	$("#btnMonthClose").hide();// 월마감 버튼 비활성화
+    	$("#btnFakeMonthClose").hide();// 가마감 버튼 비활성화
+    	
+        // Ajax 요청 보내기
+        $.ajax({
+            url: "/inventory/monthClose/2", // (진)월마감
+            type: "PUT",
+            dataType: "json",
+            contentType: "application/json", // JSON 데이터 전송시 필요
+            data: JSON.stringify({
+            	yearmonth: yymm,
             	emp_no: 1001//담당자
             }),
             success: function(response) {
@@ -96,7 +171,6 @@ $(document).ready(function() {
         // 버튼 보이게 & 활성화
         $('#btnMonthClose').show();
     });
-    
 });
 
 </script>
@@ -111,127 +185,139 @@ $(document).ready(function() {
 
 			<!-- 이곳에 자신의 코드를 작성하세요 -->
 			<div id="contents">
-				<div class="container mt-4 ml-10">
-					<h2 class="mb-3 mt-2">월마감 이력</h2>
-
-					<!-- 검색 폼 시작 -->
-					<form method="get" action="${pageContext.request.contextPath}/inventory/close" class="row gx-2 gy-1 align-items-center mb-4">
-						<div class="col d-flex flex-wrap justify-content-end align-items-center gap-2">
-							<!-- 년월 -->
-							<div class="col-auto d-flex gap-1">
-								<div class="input-group input-group-sm" style="width: auto;">
-									<span class="input-group-text">년월</span> <input type="text" name="yearmonth_start_text" class="form-control"
-										placeholder="${search.sample_yearmonth_start_text }" value="${search.yearmonth_start_text }" style="width: 50px"> <span class="px-1">~</span>
-									<input type="text" name="yearmonth_end_text" class="form-control" placeholder="${search.sample_yearmonth_end_text }"
-										value="${search.yearmonth_end_text }" style="width: 50px">
-								</div>
-							</div>
-							<!-- 마감일 -->
-							<div class="col-auto d-flex gap-1">
-								<div class="input-group input-group-sm" style="width: auto;">
-									<span class="input-group-text">마감일</span> <input type="date" id="startDate" name="startDate" class="form-control form-control-sm"
-										value="${search.startDate }">
-									<%-- 시간까지 받는 input
+				<div class="container-fluid">
+					<div class="card shadow-sm">
+						<div class="card-header d-flex justify-content-between align-items-center">
+							<h4 class="card-title mb-0">
+								<i class="bi bi-calendar-check me-2"></i>월마감 이력
+							</h4>
+							<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalMonthClose">월마감</button>
+						</div>
+						<div class="card-body">
+							<!-- 검색 폼 시작 -->
+							<form method="get" action="${pageContext.request.contextPath}/inventory/close" class="row gx-2 gy-1 align-items-center mb-4">
+								<div class="col d-flex flex-wrap justify-content-end align-items-center gap-2">
+									<!-- 년월 -->
+									<div class="col-auto d-flex gap-1">
+										<div class="input-group input-group-sm" style="width: auto;">
+											<span class="input-group-text">년월</span> <input type="text" name="yearmonth_start_text" class="form-control"
+												placeholder="${search.sample_yearmonth_start_text }" value="${search.yearmonth_start_text }" style="width: 50px"> <span
+												class="px-1">~</span> <input type="text" name="yearmonth_end_text" class="form-control" placeholder="${search.sample_yearmonth_end_text }"
+												value="${search.yearmonth_end_text }" style="width: 50px">
+										</div>
+									</div>
+									<!-- 마감일 -->
+									<div class="col-auto d-flex gap-1">
+										<div class="input-group input-group-sm" style="width: auto;">
+											<span class="input-group-text">마감일</span> <input type="date" id="startDate" name="startDate" class="form-control form-control-sm"
+												value="${search.startDate }">
+											<%-- 시간까지 받는 input
 									<input type="datetime-local" id="startDate" name="startDate" class="form-control form-control-sm" value="${partsDTO.startDate }"> --%>
-									<span class="px-1">~</span> <input type="date" id="endDate" name="endDate" class="form-control form-control-sm" value="${search.endDate }">
+											<span class="px-1">~</span> <input type="date" id="endDate" name="endDate" class="form-control form-control-sm" value="${search.endDate }">
+										</div>
+									</div>
+									<!-- 마감 상태 -->
+									<div class="col-auto">
+										<div class="input-group input-group-sm">
+											<span class="input-group-text">마감 상태</span> <select id="close_status" name="close_status" class="form-select form-select-sm">
+												<option value="999">전체</option>
+											</select>
+										</div>
+									</div>
+									<!-- 검색 버튼 -->
+									<div class="col-auto">
+										<button type="submit" class="btn btn-secondary btn-sm text-nowrap">
+											<i class="bi bi-search"></i> 검색
+										</button>
+									</div>
 								</div>
-							</div>
-							<!-- 마감 상태 -->
-							<div class="col-auto">
-								<div class="input-group input-group-sm">
-									<span class="input-group-text">마감 상태</span> <select id="close_status" name="close_status" class="form-select form-select-sm">
-										<option value="999">전체</option>
-									</select>
-								</div>
-							</div>
-							<!-- 검색 버튼 -->
-							<div class="col-auto">
-								<button type="submit" class="btn btn-primary btn-sm">검색</button>
-							</div>
-							<!-- 월마감 버튼 -->
-							<div class="col-auto">
-								<button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalMonthClose">월마감</button>
+							</form>
+							<!-- 검색 폼 마지막 -->
+
+							<!-- List 테이블 시작 -->
+							<div class="table-responsive">
+								<table class="table table-bordered align-middle">
+									<thead class="table-light">
+										<tr>
+											<th class="text-center" style="white-space: nowrap;">년월</th>
+											<th class="text-center" style="white-space: nowrap;">시작일시</th>
+											<th class="text-center" style="white-space: nowrap;">종료일시</th>
+											<th class="text-center" style="white-space: nowrap;">마감 상태</th>
+											<th class="text-center" style="white-space: nowrap;">담당자</th>
+										</tr>
+									</thead>
+									<tbody>
+										<c:forEach var="inventoryClose" items="${inventoryCloseList}">
+											<tr>
+												<td class="text-center">${inventoryClose.yearmonth}</td>
+												<td class="text-center">${inventoryClose.close_startdate}</td>
+												<td class="text-center">${inventoryClose.close_enddate}</td>
+												<td class="text-center"><span class="status-text status-text-close" data-status="${inventoryClose.close_status}"> <span
+														class="dot"></span> <span class="text">${inventoryClose.close_status}</span>
+												</span></td>
+												<td class="text-center">${inventoryClose.emp_no}</td>
+											</tr>
+										</c:forEach>
+									</tbody>
+								</table>
+								<!-- List 테이블 마지막 -->
 							</div>
 						</div>
-					</form>
-					<!-- 검색 폼 마지막 -->
+						<div class="card-footer d-flex justify-content-center">
+							<!-- 페이징에서 사용하는 경로 변수 -->
+							<c:set var="pagingPath" value="${pageContext.request.contextPath}/inventory/close?" />
 
-					<!-- List 테이블 시작 -->
-					<div class="table-responsive">
-						<table class="table table-bordered align-middle">
-							<thead class="table-light">
-								<tr>
-									<th class="text-center" style="white-space: nowrap;">년월</th>
-									<th class="text-center" style="white-space: nowrap;">시작일시</th>
-									<th class="text-center" style="white-space: nowrap;">종료일시</th>
-									<th class="text-center" style="white-space: nowrap;">마감 상태</th>
-									<th class="text-center" style="white-space: nowrap;">담당자</th>
-								</tr>
-							</thead>
-							<tbody>
-								<c:forEach var="inventoryClose" items="${inventoryCloseList}">
-									<tr>
-										<td class="text-center">${inventoryClose.yearmonth}</td>
-										<td class="text-center">${inventoryClose.close_startdate}</td>
-										<td class="text-center">${inventoryClose.close_enddate}</td>
-										<td class="text-center"><span class="status-text status-text-close" data-status="${inventoryClose.close_status}"> <span
-												class="dot"></span> <span class="text">${inventoryClose.close_status}</span>
-										</span></td>
-										<td class="text-center">${inventoryClose.emp_no}</td>
-									</tr>
-								</c:forEach>
-							</tbody>
-						</table>
-						<!-- List 테이블 마지막 -->
+							<nav aria-label="Page navigation">
+								<ul class="pagination justify-content-center mb-0">
+									<li class="page-item ${paging.currentPage > 1 ? '' : 'disabled'}"><a class="page-link" href="${pagingPath}&currentPage=1"
+										aria-label="First"><i class="bi bi-chevron-double-left"></i></a></li>
+									<li class="page-item ${paging.currentPage > 1 ? '' : 'disabled'}"><a class="page-link"
+										href="${pagingPath}&currentPage=${paging.currentPage - 1}" aria-label="Previous"><i class="bi bi-chevron-left"></i></a></li>
+									<c:forEach begin="${paging.startPage}" end="${paging.endPage}" var="page">
+										<li class="page-item ${paging.currentPage == page ? 'active' : ''}"><a class="page-link" href="${pagingPath}&currentPage=${page}">${page}</a></li>
+									</c:forEach>
+									<li class="page-item ${paging.currentPage < paging.totalPage ? '' : 'disabled'}"><a class="page-link"
+										href="${pagingPath}&currentPage=${paging.currentPage + 1}" aria-label="Next"><i class="bi bi-chevron-right"></i></a></li>
+									<li class="page-item ${paging.currentPage < paging.totalPage ? '' : 'disabled'}"><a class="page-link"
+										href="${pagingPath}&currentPage=${paging.totalPage}" aria-label="Last"><i class="bi bi-chevron-double-right"></i></a></li>
+								</ul>
+							</nav>
+						</div>
+					</div>
 
-						<!-- 페이징에서 사용하는 경로 변수 -->
-						<c:set var="pagingPath" value="${pageContext.request.contextPath}/inventory/close?" />
+				</div>
+				<!-- 이곳에 자신의 코드를 작성하세요 -->
 
-						<nav aria-label="Page navigation" class="mt-3">
-							<ul class="pagination pagination-sm justify-content-center">
-								<!-- 이전 블록/페이지 -->
-								<li class="page-item ${page.startPage == 1 ? 'disabled' : ''}"><a class="page-link" href="${pagingPath}&currentPage=${page.startPage-1}"
-									aria-label="Previous">‹</a></li>
+			</div>
+			<jsp:include page="/foot.jsp" />
+		</div>
 
-								<!-- 페이지 번호들 -->
-								<c:forEach begin="${page.startPage}" end="${page.endPage}" var="p">
-									<li class="page-item ${page.currentPage == p ? 'active' : ''}"><a class="page-link" href="${pagingPath}&currentPage=${p}">${p}</a></li>
-								</c:forEach>
+		<!-- 모달창 -->
+		<!-- 
+		aria-hidden="true" : 페이지 로드시 해당 내용은 읽지 않도록 처리
+		tabindex="-1" : tab키로 focus받지 않도록 설정 -->
+		<div class="modal fade" id="modalMonthClose" tabindex="-1" aria-labelledby="modalMonthCloseTitle" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="modalMonthCloseTitle">월마감</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<span id="modalMonthCloseText">월마감을 진행하시겠습니까?</span>
+						<div id="currentTime"></div>
+					</div>
 
-								<!-- 다음 블록/페이지 -->
-								<li class="page-item ${page.endPage == page.totalPage ? 'disabled' : ''}"><a class="page-link"
-									href="${pagingPath}&currentPage=${page.endPage+1}" aria-label="Next">›</a></li>
-							</ul>
-						</nav>
+
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+						<button type="button" class="btn btn-success" id="btnFakeMonthClose">가마감 진행</button>
+						<button type="button" class="btn btn-success" id="btnMonthClose">월마감 진행</button>
 					</div>
 				</div>
 			</div>
-			<!-- 이곳에 자신의 코드를 작성하세요 -->
-
-			<jsp:include page="/foot.jsp" />
 		</div>
-	</div>
-
-	<!-- 모달창 -->
-	<!-- 
-	aria-hidden="true" : 페이지 로드시 해당 내용은 읽지 않도록 처리
-	tabindex="-1" : tab키로 focus받지 않도록 설정 -->
-	<div class="modal fade" id="modalMonthClose" tabindex="-1" aria-labelledby="modalMonthCloseTitle" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="modalMonthCloseTitle">월마감</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-				</div>
-				<div class="modal-body" id="modalMonthCloseText">월마감을 진행하시겠습니까?</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-					<button type="button" class="btn btn-success" id="btnMonthClose">확인</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- 부트스트랩 CDN -->
-	<jsp:include page="/common_cdn.jsp" />
+		<!-- 부트스트랩 CDN -->
+		<jsp:include page="/common_cdn.jsp" />
 </body>
 </html>

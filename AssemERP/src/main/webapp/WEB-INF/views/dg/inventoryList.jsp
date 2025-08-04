@@ -80,86 +80,93 @@
 
 			<!-- 이곳에 자신의 코드를 작성하세요 -->
 			<div id="contents">
-				<div class="container mt-4 ml-10">
-					<h2 class="mb-3 mt-2">재고 관리</h2>
 
-					<!-- 검색 폼 시작 -->
-					<form method="get" action="inventory" class="row gx-2 gy-1 align-items-center mb-4">
-						<!-- 부품/제품 -->
-						<div class="col-auto">
-							<div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-								<input type="radio" class="btn-check" name="item_type" value="0" id="btnradio_parts" onchange="inventoryTypeToggle(this);"
-									<c:if test="${search.item_type == 0}">checked</c:if>> 
-									<label class="btn btn-outline-primary" for="btnradio_parts">부품</label> 
-								<input type="radio" class="btn-check" name="item_type" value="1" id="btnradio_product" onchange="inventoryTypeToggle(this);"
-									<c:if test="${search.item_type == 1}">checked</c:if>> 
-									<label class="btn btn-outline-primary" for="btnradio_product">제품</label>
+				<div class="container-fluid">
+					<div class="card shadow-sm">
+						<div class="card-header d-flex justify-content-between align-items-center">
+							<h4 class="card-title mb-0">
+								<!-- me-2 : margin-end: 0.5rem -->
+								<i class="bi bi-box-seam me-2"></i>재고 관리
+							</h4>
+						</div>
+						<div class="card-body">
+							<!-- 검색 폼 시작 -->
+							<form method="get" action="inventory" class="row gx-2 gy-1 align-items-center mb-4">
+								<!-- 부품/제품 -->
+								<div class="col-auto">
+									<div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+										<input type="radio" class="btn-check" name="item_type" value="0" id="btnradio_parts" onchange="inventoryTypeToggle(this);"
+											<c:if test="${search.item_type == 0}">checked</c:if>> <label class="btn btn-outline-primary" for="btnradio_parts">부품</label> <input
+											type="radio" class="btn-check" name="item_type" value="1" id="btnradio_product" onchange="inventoryTypeToggle(this);"
+											<c:if test="${search.item_type == 1}">checked</c:if>> <label class="btn btn-outline-primary" for="btnradio_product">제품</label>
+									</div>
+								</div>
+
+								<div class="col d-flex flex-wrap justify-content-end align-items-center gap-2">
+									<!-- 번호 -->
+									<div class="col-auto">
+										<div class="input-group input-group-sm">
+											<span class="input-group-text">${item_type } 번호</span> <input type="text" name="item_no_text" class="form-control"
+												placeholder="${item_type } 번호 조회" value="${search.item_no_text}">
+										</div>
+									</div>
+									<!-- 분류 -->
+									<div class="col-auto">
+										<div class="input-group input-group-sm">
+											<span class="input-group-text">${item_type } 분류</span> <select id="item_status" name="item_status_select" class="form-select">
+												<option value="999">전체</option>
+											</select>
+										</div>
+									</div>
+									<!-- 명 -->
+									<div class="col-auto">
+										<div class="input-group input-group-sm">
+											<span class="input-group-text">${item_type } 명</span> <input type="text" name="item_name_text" class="form-control"
+												placeholder="${item_type } 명 조회" value="${search.item_name_text}">
+										</div>
+									</div>
+									<!-- 검색 버튼 -->
+									<div class="col-auto">
+										<button type="submit" class="btn btn-secondary btn-sm text-nowrap">
+											<i class="bi bi-search"></i> 검색
+										</button>
+									</div>
+								</div>
+							</form>
+							<!-- 검색 폼 마지막 -->
+							<!-- List 테이블 시작 -->
+							<div class="table-responsive">
+								<table class="table table-bordered align-middle">
+									<thead class="table-light">
+										<tr>
+											<th style="white-space: nowrap;">#</th>
+											<th style="white-space: nowrap;">${item_type }번호</th>
+											<th style="min-width: 115px; white-space: nowrap;">${item_type }분류</th>
+											<th style="white-space: nowrap;">${item_type }명</th>
+											<th style="white-space: nowrap;">수량</th>
+											<th style="display: none;">적정 수량</th>
+											<th style="display: none;">편차</th>
+										</tr>
+									</thead>
+									<tbody>
+										<c:forEach var="realInventory" items="${realInventoryList}" varStatus="index">
+											<tr>
+												<td>${(page.currentPage - 1) * page.rowPage + index.index + 1}</td>
+												<td>${realInventory.item_no}</td>
+												<td>${realInventory.item_status}</td>
+												<td>${realInventory.item_name}</td>
+												<td>${realInventory.cnt}</td>
+												<td style="display: none;">${realInventory.proper_cnt}</td>
+												<td style="display: none;">${realInventory.diff_cnt}</td>
+											</tr>
+										</c:forEach>
+									</tbody>
+								</table>
+								<!-- List 테이블 마지막 -->
 							</div>
 						</div>
-
-						<div class="col d-flex flex-wrap justify-content-end align-items-center gap-2">
-							<!-- 번호 -->
-							<div class="col-auto">
-								<div class="input-group input-group-sm">
-									<span class="input-group-text">${item_type } 번호</span> <input type="text" name="item_no_text" class="form-control"
-										placeholder="${item_type } 번호 조회" value="${search.item_no_text}">
-								</div>
-							</div>
-							<!-- 분류 -->
-							<div class="col-auto">
-								<div class="input-group input-group-sm">
-									<span class="input-group-text">${item_type } 분류</span>
-									<select id="item_status" name="item_status_select" class="form-select">
-										<option value="999">전체</option>
-									</select>
-								</div>
-							</div>
-							<!-- 명 -->
-							<div class="col-auto">
-								<div class="input-group input-group-sm">
-									<span class="input-group-text">${item_type } 명</span> <input type="text" name="item_name_text" class="form-control"
-										placeholder="${item_type } 명 조회" value="${search.item_name_text}">
-								</div>
-							</div>
-							<!-- 검색 버튼 -->
-							<div class="col-auto">
-								<button type="submit" class="btn btn-primary btn-sm">검색</button>
-							</div>
-						</div>
-					</form>
-					<!-- 검색 폼 마지막 -->
-					<!-- List 테이블 시작 -->
-					<div class="table-responsive">
-						<table class="table table-bordered align-middle">
-							<thead class="table-light">
-								<tr>
-									<th style="white-space: nowrap;">#</th>
-									<th style="white-space: nowrap;">${item_type } 번호</th>
-									<th style="min-width: 115px; white-space: nowrap;">${item_type } 분류</th>
-									<th style="white-space: nowrap;">${item_type } 명</th>
-									<th style="white-space: nowrap;">수량</th>
-									<th style="display: none;">적정 수량</th>
-									<th style="display: none;">편차</th>
-								</tr>
-							</thead>
-							<tbody>
-								<c:forEach var="realInventory" items="${realInventoryList}" varStatus="index">
-									<tr>
-										<td>${(page.currentPage - 1) * page.rowPage + index.index + 1}</td>
-										<td>${realInventory.item_no}</td>
-										<td>${realInventory.item_status}</td>
-										<td>${realInventory.item_name}</td>
-										<td>${realInventory.cnt}</td>
-										<td style="display: none;">${realInventory.proper_cnt}</td>
-										<td style="display: none;">${realInventory.diff_cnt}</td>
-									</tr>
-								</c:forEach>
-							</tbody>
-						</table>
-						<!-- List 테이블 마지막 -->
-					
 						<!-- 페이징에서 사용하는 경로 변수 -->
-						<c:set var="pagingPath" value="${pageContext.request.contextPath}/inventory?item_type=${search.item_type}"/>
+						<c:set var="pagingPath" value="${pageContext.request.contextPath}/inventory?item_type=${search.item_type}" />
 						<!-- 검색 조건 추가 -->
 						<c:if test="${not empty search.item_no_text}">
 							<c:set var="pagingPath" value="${pagingPath}&item_no_text=${search.item_no_text}" />
@@ -171,23 +178,23 @@
 							<c:set var="pagingPath" value="${pagingPath}&item_name_text=${search.item_name_text}" />
 						</c:if>
 
-						<nav aria-label="Page navigation" class="mt-3">
-							<ul class="pagination pagination-sm justify-content-center">
-								<!-- 이전 블록/페이지 -->
-								<li class="page-item ${page.startPage == 1 ? 'disabled' : ''}"><a class="page-link"
-									href="${pagingPath}&currentPage=${page.startPage-1}" aria-label="Previous">‹</a></li>
-
-								<!-- 페이지 번호들 -->
-								<c:forEach begin="${page.startPage}" end="${page.endPage}" var="p">
-									<li class="page-item ${page.currentPage == p ? 'active' : ''}"><a class="page-link"
-										href="${pagingPath}&currentPage=${p}">${p}</a></li>
-								</c:forEach>
-
-								<!-- 다음 블록/페이지 -->
-								<li class="page-item ${page.endPage == page.totalPage ? 'disabled' : ''}"><a class="page-link"
-									href="${pagingPath}&currentPage=${page.endPage+1}" aria-label="Next">›</a></li>
-							</ul>
-						</nav>
+						<div class="card-footer d-flex justify-content-center">
+							<nav aria-label="Page navigation">
+								<ul class="pagination justify-content-center mb-0">
+									<li class="page-item ${paging.currentPage > 1 ? '' : 'disabled'}"><a class="page-link" href="${pagingPath}&currentPage=1"
+										aria-label="First"><i class="bi bi-chevron-double-left"></i></a></li>
+									<li class="page-item ${paging.currentPage > 1 ? '' : 'disabled'}"><a class="page-link"
+										href="${pagingPath}&currentPage=${paging.currentPage - 1}" aria-label="Previous"><i class="bi bi-chevron-left"></i></a></li>
+									<c:forEach begin="${paging.startPage}" end="${paging.endPage}" var="page">
+										<li class="page-item ${paging.currentPage == page ? 'active' : ''}"><a class="page-link" href="${pagingPath}&currentPage=${page}">${page}</a></li>
+									</c:forEach>
+									<li class="page-item ${paging.currentPage < paging.totalPage ? '' : 'disabled'}"><a class="page-link"
+										href="${pagingPath}&currentPage=${paging.currentPage + 1}" aria-label="Next"><i class="bi bi-chevron-right"></i></a></li>
+									<li class="page-item ${paging.currentPage < paging.totalPage ? '' : 'disabled'}"><a class="page-link"
+										href="${pagingPath}&currentPage=${paging.totalPage}" aria-label="Last"><i class="bi bi-chevron-double-right"></i></a></li>
+								</ul>
+							</nav>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -197,7 +204,7 @@
 		</div>
 	</div>
 
-	<!-- 부트스트랩 CDN -->
+			<!-- 부트스트랩 CDN -->
 	<jsp:include page="/common_cdn.jsp" />
 </body>
 </html>
