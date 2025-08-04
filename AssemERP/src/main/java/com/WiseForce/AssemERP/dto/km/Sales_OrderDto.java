@@ -1,5 +1,6 @@
 package com.WiseForce.AssemERP.dto.km;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class Sales_OrderDto {
 	private int sales_No;
 	private EmpDTO empDTO;
 	private String empName;
-	private LocalDateTime sales_Date;
+	private LocalDate sales_Date;
 	private int out_Status;
 	private int del_Status;
 	private LocalDateTime in_Date;
@@ -32,9 +33,11 @@ public class Sales_OrderDto {
 	private int end;
 	
 	// 총 요청수량, 총 출고수량, 제품 총액
-	private int totCnt;    // 모든 품목에 대한 요청 수량 합
-	private int totOutCnt; // 모든 품목에 대한 출고 수량 합
-	private Long totCost;  // 제품 총액
+	private int  totCnt;     // 모든 품목에 대한 요청 수량 합
+	private int  totOutCnt;  // 모든 품목에 대한 출고 수량 합
+	private int  totWaitingCnt; // 모든 품목에 대한 출고 대기 수량 합
+	private Long totCost;    // 모든 제품 총액
+	private Long totOutCost; // 출고 제품 기준 총액
 		// TODO Auto-generated method stub
 		
 	}

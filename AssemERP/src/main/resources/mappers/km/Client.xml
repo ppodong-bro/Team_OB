@@ -34,80 +34,52 @@
 		</association>
 	</resultMap>
 	
-	<select id="clientList" parameterType="ClientDto" resultMap="clientMap">
 	
-	<!-- 	<![CDATA[
-		SELECT *
-		FROM   (SELECT rownum rn, a.*
-				FROM   (SELECT *
-						FROM   Client
-						WHERE DEL_STATUS = 0
-						ORDER BY client_no
-						) a			
-				)
-		WHERE  rn >= #{start} AND rn <= #{end}	
-		 ]]> -->
-		
-		<![CDATA[
-		SELECT C.CLIENT_NO, C.CLIENT_NAME, C.CLIENT_GUBUN, C.CLIENT_EMAIL
-			 , C.CLIENT_MAN, C.CLIENT_ADDRESS, C.DEL_STATUS
-			 , C.MODIFY_DATE, C.IN_DATE, E.EMP_NAME, E.EMP_NO
-		FROM (SELECT 	ROWNUM RN, A.*
-			  FROM	 	CLIENT A
-			  WHERE  	DEL_STATUS = 0
-			  ORDER BY 	CLIENT_NO
-			) C
-		LEFT JOIN EMP E ON C.EMP_NO = E.EMP_NO
-		WHERE RN >= #{start} AND RN <= #{end} 
-		]]>
-	</select>
-	
-	 <select id="totSearchClient" parameterType="ClientSearchDto" resultType="int">
+	 <select id="totClient" parameterType="ClientSearchDto" resultType="int">
 	 
     SELECT COUNT(*) 
       FROM Client
-    <where>
-      <if test="client_Name != null and client_Name.trim() != ''">
-        AND client_name LIKE '%' || #{client_Name} || '%'
-      </if>
-      <if test="client_Gubun != null">
-        AND client_gubun = #{client_Gubun}
-      </if>
-      <if test="client_Man != null and client_Man.trim() != ''">
-        AND client_man LIKE '%' || #{client_Man} || '%'
-      </if>
-      <!-- 필요하다면 inDateStart/End 조건도 추가 -->
-    </where>
-  </select>
+	    <where>
+	        DEL_STATUS = 0
+	      <if test="client_Name != null and client_Name.trim() != ''">
+	        AND client_name LIKE '%' || #{client_Name} || '%'
+	      </if>
+	      <if test="client_Gubun != null">
+	        AND client_gubun = #{client_Gubun}
+	      </if>
+	      <if test="client_Man != null and client_Man.trim() != ''">
+	        AND client_man LIKE '%' || #{client_Man} || '%'
+	      </if>
+	      <!-- 필요하다면 inDateStart/End 조건도 추가 -->
+	    </where>
+  	</select>
   
-	<!-- 검색 + 페이징 -->
-	<select id="clientSearchList" parameterType="ClientSearchDto" resultType="ClientDto">
+	<select id="clientList" parameterType="ClientSearchDto" resultType="ClientDto">
     <![CDATA[
-    SELECT *
+    SELECT A.*
       FROM (
-        SELECT rownum rn, a.*
+        SELECT ROWNUM RN, B.*
           FROM (
-            SELECT *
-              FROM Client
-    ]]>
-    <where>
-        DEL_STATUS = 0
-      <if test="client_Name != null and client_Name.trim() != ''">
-        AND client_Name LIKE '%' || #{client_Name} || '%'
-      </if>
-      <if test="client_Gubun != null">
-        AND client_Gubun = #{client_Gubun}
-      </if>
-      <if test="client_Man != null and client_Man.trim() != ''">
-        AND client_Man LIKE '%' || #{client_Man} || '%'
-      </if>
-    </where>
-    <![CDATA[
-            ORDER BY client_no
-          ) a
-      )
-    WHERE rn BETWEEN #{start} AND #{end}
-    ]]>
+            	SELECT *
+                FROM Client
+ 	]]>
+			    <where>
+			        DEL_STATUS = 0
+			      <if test="client_Name != null and client_Name.trim() != ''">
+			        AND client_Name LIKE '%' || #{client_Name} || '%'
+			      </if>
+			      <if test="client_Gubun != null">
+			        AND client_Gubun = #{client_Gubun}
+			      </if>
+			      <if test="client_Man != null and client_Man.trim() != ''">
+			        AND client_Man LIKE '%' || #{client_Man} || '%'
+			      </if>
+			    </where>
+			      ORDER BY client_No DESC
+    	)B
+    ) A
+    WHERE A.RN <![CDATA[>=]]>#{start} AND A.RN <![CDATA[<=]]> #{end}
+    ORDER BY RN
 	</select>
 	
 	<select id="detailClient" parameterType="int" resultMap="clientMap">

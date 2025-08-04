@@ -38,7 +38,7 @@
 					<h2 class="mb-3 mt-2">수주 관리</h2>
 
 					<!-- 검색 폼 -->
-					<form method="get" action="searchList"
+					<form method="get" action="list"
 						class="row gx-2 gy-1 align-items-end mb-4">
 						<!-- 거래처명 -->
 						<div class="col-auto">
@@ -76,6 +76,18 @@
 							</div>
 						</div>
 
+						<!-- 납기완료일 범위 -->
+						<div class="col-auto">
+							<div class="input-group input-group-sm">
+								<span class="input-group-text">납기완료일</span> <input type="date"
+									name="sales_Date_Start" class="form-control" placeholder="시작일"
+									value="${Sales_OrderSearchDto.sales_Date_Start}" /> <span
+									class="input-group-text">~</span> <input type="date"
+									name="sales_Date_End" class="form-control" placeholder="종료일"
+									value="${Sales_OrderSearchDto.sales_Date_End}" />
+							</div>
+						</div>
+
 						<!-- 검색 버튼 -->
 						<div class="col-auto">
 							<button type="submit" class="btn btn-primary btn-sm">검색</button>
@@ -108,9 +120,7 @@
 										<td class="text-center">${st.index + 1}</td>
 
 										<!-- 수주번호 (detail 링크) -->
-										<td class="text-center"><a
-											href="<c:url value='/sales/detail?sales_No=${order.sales_No}'/>">
-												${order.sales_No} </a></td>
+										<td class="text-center">${order.sales_No}</td>
 
 										<!-- client → clientName -->
 										<td>${order.clientDto.client_Name}</td>
@@ -208,19 +218,20 @@
 							<ul class="pagination pagination-sm justify-content-center">
 								<!-- 이전 -->
 								<li class="page-item ${page.startPage == 1 ? 'disabled' : ''}">
-									<c:url var="prevUrl" value="/business/clientSearchList">
+									<c:url var="prevUrl" value="/sales/list">
 										<c:param name="currentPage" value="${page.startPage - 1}" />
-										<c:if test="${not empty clientSearchDto.client_Name}">
+										<c:if test="${not empty sales_OrderSearchDto.client_Name}">
 											<c:param name="client_Name"
-												value="${clientSearchDto.client_Name}" />
+												value="${sales_OrderSearchDto.client_Name}" />
 										</c:if>
-										<c:if test="${clientSearchDto.client_Gubun != null}">
-											<c:param name="client_Gubun"
-												value="${clientSearchDto.client_Gubun}" />
+										<c:if
+											test="${not empty sales_OrderSearchDto.out_Status != null}">
+											<c:param name="out_Status"
+												value="${sales_OrderSearchDto.out_Status}" />
 										</c:if>
-										<c:if test="${not empty clientSearchDto.client_Man}">
-											<c:param name="client_Man"
-												value="${clientSearchDto.client_Man}" />
+										<c:if test="${not empty sales_OrderSearchDto.empName}">
+											<c:param name="empName"
+												value="${sales_OrderSearchDto.empName}" />
 										</c:if>
 										<c:if test="${not empty clientSearchDto.inDate_Start}">
 											<c:param name="inDate_Start"
@@ -237,20 +248,21 @@
 								<c:forEach begin="${page.startPage}" end="${page.endPage}"
 									var="p">
 									<li class="page-item ${page.currentPage == p ? 'active' : ''}">
-										<c:url var="pageUrl" value="/business/clientSearchList">
+										<c:url var="pageUrl" value="/sales/list">
 											<c:param name="currentPage" value="${p}" />
 											<!-- 검색 DTO 파라미터들 동일하게 추가 -->
-											<c:if test="${not empty clientSearchDto.client_Name}">
+											<c:if test="${not empty sales_OrderSearchDto.client_Name}">
 												<c:param name="client_Name"
-													value="${clientSearchDto.client_Name}" />
+													value="${sales_OrderSearchDto.client_Name}" />
 											</c:if>
-											<c:if test="${clientSearchDto.client_Gubun != null}">
-												<c:param name="client_Gubun"
-													value="${clientSearchDto.client_Gubun}" />
+											<c:if
+												test="${not empty Sales_OrderSearchDto.out_Status != null}">
+												<c:param name="out_Status"
+													value="${sales_OrderSearchDto.out_Status}" />
 											</c:if>
-											<c:if test="${not empty clientSearchDto.client_Man}">
-												<c:param name="client_Man"
-													value="${clientSearchDto.client_Man}" />
+											<c:if test="${not empty sales_OrderSearchDto.empName}">
+												<c:param name="empName"
+													value="${sales_OrderSearchDto.empName}" />
 											</c:if>
 											<c:if test="${not empty clientSearchDto.inDate_Start}">
 												<c:param name="inDate_Start"
@@ -267,20 +279,21 @@
 								<!-- 다음 -->
 								<li
 									class="page-item ${page.endPage == page.totalPage ? 'disabled' : ''}">
-									<c:url var="nextUrl" value="/business/clientSearchList">
+									<c:url var="nextUrl" value="/sales/list">
 										<c:param name="currentPage" value="${page.endPage + 1}" />
 										<!-- 검색 DTO 파라미터들 똑같이 추가 -->
-										<c:if test="${not empty clientSearchDto.client_Name}">
+										<c:if test="${not empty sales_OrderSearchDto.client_Name}">
 											<c:param name="client_Name"
-												value="${clientSearchDto.client_Name}" />
+												value="${sales_OrderSearchDto.client_Name}" />
 										</c:if>
-										<c:if test="${clientSearchDto.client_Gubun != null}">
-											<c:param name="client_Gubun"
-												value="${clientSearchDto.client_Gubun}" />
+										<c:if
+											test="${not empty sales_OrderSearchDto.out_Status != null}">
+											<c:param name="out_Status"
+												value="${sales_OrderSearchDto.empName}" />
 										</c:if>
-										<c:if test="${not empty clientSearchDto.client_Man}">
-											<c:param name="client_Man"
-												value="${clientSearchDto.client_Man}" />
+										<c:if test="${not empty sales_OrderSearchDto.empName}">
+											<c:param name="empName"
+												value="${sales_OrderSearchDto.empName}" />
 										</c:if>
 										<c:if test="${not empty clientSearchDto.inDate_Start}">
 											<c:param name="inDate_Start"
