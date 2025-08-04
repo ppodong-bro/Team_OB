@@ -8,4 +8,6 @@ public interface CommonService {
 
 	List<CommonDTO> getAllStatus(int big_status);
 
+	CommonDTO getAllStatus(int bigStatus, int middleStatus);
+
 }

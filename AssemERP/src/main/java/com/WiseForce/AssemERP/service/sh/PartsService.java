@@ -16,4 +16,6 @@ public interface PartsService {
 
 	List<PartsDTO> getpartsSearchList(PartsDTO partsDTO);
 
+	PartsDTO findbyID(int parts_no);
+
 }

@@ -11,8 +11,8 @@
 				aria-expanded="false">인사</button>
 			<div class="collapse" id="humanresource-collapse" style="">
 				<ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-					<li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">부서 관리</a></li>
-					<li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">사원 관리</a></li>
+					<li><a href="${pageContext.request.contextPath}/dept/deptListForm" class="link-body-emphasis d-inline-flex text-decoration-none rounded">부서 관리</a></li>
+					<li><a href="${pageContext.request.contextPath}/emp/empListForm"   class="link-body-emphasis d-inline-flex text-decoration-none rounded">사원 관리</a></li>
 				</ul>
 			</div>
 		</li>
@@ -59,7 +59,7 @@
 					<li><a href="${pageContext.request.contextPath}/inventory" class="link-body-emphasis d-inline-flex text-decoration-none rounded">재고 관리</a></li>
 					<li><a href="${pageContext.request.contextPath}/inventory" class="link-body-emphasis d-inline-flex text-decoration-none rounded">재고 입출고
 							이력</a></li>
-					<li><a href="${pageContext.request.contextPath}/inventory" class="link-body-emphasis d-inline-flex text-decoration-none rounded">마감 이력</a></li>
+					<li><a href="${pageContext.request.contextPath}/inventory/close" class="link-body-emphasis d-inline-flex text-decoration-none rounded">월마감 이력</a></li>
 				</ul>
 			</div>
 		</li>

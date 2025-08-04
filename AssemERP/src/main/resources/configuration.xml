@@ -10,5 +10,4 @@
         <package name="com.WiseForce.AssemERP.dto.sh"/>
         <package name="com.WiseForce.AssemERP.dto.sm"/>
     </typeAliases>
-
 </configuration>

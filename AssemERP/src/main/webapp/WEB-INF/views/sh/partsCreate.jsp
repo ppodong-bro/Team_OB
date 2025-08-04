@@ -4,7 +4,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>거래처 등록</title>
+<title>부품 등록</title>
 <!-- 공통 CSS -->
 <jsp:include page="/common.jsp" />
 </head>
@@ -20,8 +20,23 @@
 			<!-- 이곳에 자신의 코드를 작성하세요 -->
 			<div class="container px-3 py-4">
 				<div class="card shadow-sm bg-white col-md-6 mx-auto">
-					<div class="card-header bg-light">
-						<h5 class="mb-0">부품 등록</h5>
+					<%------------------------------------------------------------------------------
+                			1. Card Header 정중앙
+                	 ------------------------------------------------------------------------------%>
+					<div
+						class="card-header d-flex justify-content-between align-items-center">
+						<%------------------------------------------------------------------------------
+                			1-1. 목록 버튼 스타일
+                 		------------------------------------------------------------------------------%>
+						<a href="/parts/partsList" class="btn btn-outline-light btn-sm">
+							<i class="bi bi-list-ul me-1"></i> 목록
+						</a>
+						<%------------------------------------------------------------------------------
+                			1-2. 타이틀 중앙 정렬 스타일
+                 		------------------------------------------------------------------------------%>
+						<h4 class="card-title mb-0">신규 부품 등록</h4>
+						<%-- 타이틀의 정확한 중앙 정렬을 위한 빈 공간 --%>
+						<div style="width: 90px;"></div>
 					</div>
 					<div class="card-body">
 						<form method="post"
@@ -29,46 +44,59 @@
 
 							<!-- 부품명 -->
 							<div class="mb-3">
-								<label for="partsName" class="form-label">부품명</label> <input
-									type="text" class="form-control form-control-sm" id="partsName"
-									name="parts_name" required>
+								<label for="partsName" class="form-label">부품명</label>
+								<div class="input-group">
+									<span class="input-group-text"> <i class="bi bi-tag"></i>
+									</span> <input type="text" class="form-control form-control-sm"
+										id="partsName" name="parts_name" required>
+								</div>
 							</div>
 
 							<!-- 부품종류 -->
 							<div class="mb-3">
-								<label for="partsStatus" class="form-label">종류</label> <select
-									class="form-select form-select-sm w-auto" id="partsStatus"
-									name="parts_status" required>
-									<option value="">선택</option>
-									<option value="0">매인보드</option>
-									<option value="1">CPU</option>
-									<option value="2">GPU</option>
-									<option value="3">메모리</option>
-									<option value="4">파워</option>
-									<option value="5">HDD</option>
-									<option value="6">SSD</option>
-									<option value="7">케이스</option>
-									<option value="8">쿨러</option>
-
-								</select>
+								<label for="partsStatus" class="form-label">종류</label>
+								<div class="input-group">
+									<span class="input-group-text"> <i class="bi bi-grid"></i></span>
+									<select class="form-control form-control-sm" id="partsStatus"
+										name="parts_status" required>
+										<option value="">선택</option>
+										<option value="0">매인보드</option>
+										<option value="1">CPU</option>
+										<option value="2">GPU</option>
+										<option value="3">메모리</option>
+										<option value="4">파워</option>
+										<option value="5">HDD</option>
+										<option value="6">SSD</option>
+										<option value="7">케이스</option>
+										<option value="8">쿨러</option>
+									</select>
+								</div>
 							</div>
 
 							<!-- 제조사 -->
 							<div class="mb-3">
-								<label for="partsmanufacture" class="form-label">부품제조사</label> <input
-									type="text" class="form-control form-control-sm"
-									id="partsmanufacture" name="manufacture">
+								<label for="partsmanufacture" class="form-label">부품제조사</label>
+								<div class="input-group">
+									<span class="input-group-text"><i
+										class="bi bi-buildings"></i></span> <input type="text"
+										class="form-control form-control-sm" id="partsmanufacture"
+										name="manufacture">
+								</div>
 							</div>
 
 							<!-- 등록자 -->
 							<div class="mb-3">
-								<label for="empNo" class="form-label">등록자</label> <select
-									class="form-control form-control-sm" name="emp_no" id="empNo">
+
+								<label for="empNo" class="form-label">등록자</label>
+								<div class="input-group">
+									<span class="input-group-text"><i class="bi bi-person"></i></span>
+									<select class="form-control form-control-sm" name="emp_no"
+										id="empNo">
 										<%-- <c:forEach var="emp">
 											<option value="${emp.emp_no }">${emp.emp_name }</option>
 										</c:forEach> --%>
-								</select>
-
+									</select>
+								</div>
 							</div>
 
 							<!-- 부품설명 -->
@@ -92,7 +120,7 @@
 
 							<!-- 제출 버튼 -->
 							<div class="text-end mt-4">
-								<button type="submit" class="btn btn-primary btn-sm px-4">
+								<button type="submit" class="btn btn-success btn-sm px-4 ">
 									등록</button>
 								<a href="${pageContext.request.contextPath}/parts/partsList"
 									class="btn btn-outline-secondary btn-sm px-4"> 취소 </a>

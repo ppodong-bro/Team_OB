@@ -1,8 +1,11 @@
 package com.WiseForce.AssemERP.dto.sh;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import com.WiseForce.AssemERP.domain.sh.Parts;
 import com.WiseForce.AssemERP.domain.sh.Product;
@@ -45,6 +48,9 @@ public class ProductDTO {
     // Searching
     private LocalDate startDate;
     private LocalDate endDate;
+    
+    
+    private MultipartFile file;
     
     
     public static ProductDTO chageProductDTO(Product product) {
