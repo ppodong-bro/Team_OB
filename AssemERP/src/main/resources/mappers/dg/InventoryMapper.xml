@@ -75,6 +75,7 @@
 		{ CALL month_close.month_close_main(
 		#{yearmonth, mode=IN, jdbcType=VARCHAR},
 		#{emp_no, mode=IN, jdbcType=VARCHAR},
+		#{realStatus, mode=IN, jdbcType=VARCHAR},
 		#{result, mode=OUT, jdbcType=VARCHAR}
 		) }
 	</select>

@@ -17,6 +17,6 @@ public interface InventoryService {
 	// 월마감 이력 목록 조회
 	List<Inventory_CloseDTO> getInventoryCloseList(Inventory_CloseDTO inventory_CloseDTO);
 	// 월마감 실행
-	boolean doMonthClose(String yearMonth, int empno);
+	boolean doMonthClose(String yearMonth, int empno, int realStatus);
 
 }
