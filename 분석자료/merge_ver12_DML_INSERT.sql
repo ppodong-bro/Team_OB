@@ -13,10 +13,10 @@ DELETE FROM INVENTORY;
 DELETE FROM INVENTORY_CLOSE;
 DELETE FROM MONTH_INVENTORY;
 DELETE FROM PARTS;
-DELETE FROM PARTS_COSTHIS;
+DELETE FROM PARTS_PRICE_HIS;
 DELETE FROM PRODUCT;
 DELETE FROM PRODUCT_BOM;
-DELETE FROM PARTS_COSTHIS;
+DELETE FROM PRODUCT_PRICE_HIS;
 DELETE FROM PURCHASE_ITEM ;
 DELETE FROM PURCHASE_ORDER ;
 DELETE FROM PURCHASE_PERFORM ;
@@ -172,6 +172,59 @@ VALUES (1009, '한지훈', '010-9999-0000', 'jhhan@company.com', 82000000, 2001, 'j
 -- 10. 송예은 -> 인사팀(1001)
 INSERT INTO emp (EMP_NO, EMP_NAME, EMP_TEL, EMAIL, SAL, DEPT_CODE, USERNAME, PASSWORD, ROLES_STATUS, DEL_STATUS, REGISTRAR, IN_DATE)
 VALUES (1010, '송예은', '010-0000-1111', 'yesong@company.com', 47000000, 1001, 'yesong', 'hashed_password_placeholder', 'ROLE_USER', 0, 1001, SYSDATE);
+
+-- 가상 관리자 사원(100:ADMIN) 초기 정보 등록
+INSERT INTO EMP (
+    EMP_NO, EMP_NAME, USERNAME, PASSWORD, ROLES_STATUS, DEL_STATUS, IN_DATE
+) VALUES (
+    100, 'ADMIN', 'ADMIN', 'not_applicable', 'ROLE_ADMIN', 0, SYSDATE
+);       
+
+COMMIT;
+
+/************************************************** 
+ *  게시판 : BOARD
+ **************************************************/
+
+-- 1. ERP 시스템 정기 점검
+INSERT INTO BOARD (BOARD_NO, EMP_NO, TITLE, CONTENT, READ_COUNT, REF, RE_LVL, RE_STEP, IN_DATE)
+VALUES (BOARD_NO_SEQ.NEXTVAL, 100, '[시스템] ERP 서버 정기 점검 안내 (8/8 금 22:00~)', '안녕하세요. IT관리팀입니다. 8월 8일 금요일 22:00 부터 2시간 동안 시스템 안정성 확보를 위한 정기 점검이 진행됩니다. 해당 시간에는 시스템 접속이 불가하오니 업무에 참고하시기 바랍니다.', 152, BOARD_NO_SEQ.CURRVAL, 0, 0, SYSDATE);
+
+-- 2. 신규 기능 오픈
+INSERT INTO BOARD (BOARD_NO, EMP_NO, TITLE, CONTENT, READ_COUNT, REF, RE_LVL, RE_STEP, IN_DATE)
+VALUES (BOARD_NO_SEQ.NEXTVAL, 100, '[업데이트] 신규 "실시간 재고 추적" 모듈 오픈 안내', '사용자 편의성 증대를 위해 실시간 재고 추적 모듈이 새롭게 오픈되었습니다. 이제 각 창고별 재고 현황을 실시간으로 확인할 수 있습니다. 많은 활용 바랍니다.', 210, BOARD_NO_SEQ.CURRVAL, 0, 0, SYSDATE - 1);
+
+-- 3. 데이터 입력 규칙
+INSERT INTO BOARD (BOARD_NO, EMP_NO, TITLE, CONTENT, READ_COUNT, REF, RE_LVL, RE_STEP, IN_DATE)
+VALUES (BOARD_NO_SEQ.NEXTVAL, 100, '[중요] 고객 정보 입력 시 주소 표준화 규칙 준수 요청', '데이터 정합성을 위해, 고객 정보 등록 시 반드시 새로운 주소 검색 API를 통해 표준화된 주소를 입력해주시기 바랍니다. 오류 데이터 발생 시 영업 실적 집계에서 누락될 수 있습니다.', 350, BOARD_NO_SEQ.CURRVAL, 0, 0, SYSDATE - 2);
+
+-- 4. 영업 목표 공지
+INSERT INTO BOARD (BOARD_NO, EMP_NO, TITLE, CONTENT, READ_COUNT, REF, RE_LVL, RE_STEP, IN_DATE)
+VALUES (BOARD_NO_SEQ.NEXTVAL, 100, '[영업] 2025년 3분기 영업 목표 및 인센티브 정책 공지', '2025년 3분기 전사 영업 목표와 이에 따른 인센티브 정책을 공지합니다. 자세한 내용은 영업관리 > 목표관리 메뉴에서 확인 가능합니다.', 180, BOARD_NO_SEQ.CURRVAL, 0, 0, SYSDATE - 3);
+
+-- 5. 생산 계획 업데이트
+INSERT INTO BOARD (BOARD_NO, EMP_NO, TITLE, CONTENT, READ_COUNT, REF, RE_LVL, RE_STEP, IN_DATE)
+VALUES (BOARD_NO_SEQ.NEXTVAL, 100, '[생산] 생산 라인 증설에 따른 ERP 생산 계획 모듈 업데이트', 'A라인 증설이 완료됨에 따라, ERP 생산 계획 모듈에 관련 로직이 업데이트되었습니다. 8월 11일부터 새로운 기준으로 생산 계획을 수립해주시기 바랍니다.', 120, BOARD_NO_SEQ.CURRVAL, 0, 0, SYSDATE - 4);
+
+-- 6. 재고 실사 안내
+INSERT INTO BOARD (BOARD_NO, EMP_NO, TITLE, CONTENT, READ_COUNT, REF, RE_LVL, RE_STEP, IN_DATE)
+VALUES (BOARD_NO_SEQ.NEXTVAL, 100, '[물류] 하반기 정기 재고 실사 안내 (8/29~30)', '2025년 하반기 정기 재고 실사가 8월 29일, 30일 양일간 진행됩니다. 실사 기간 동안에는 재고 이동이 통제되오니, 각 팀에서는 업무 일정을 조율해주시기 바랍니다.', 255, BOARD_NO_SEQ.CURRVAL, 0, 0, SYSDATE - 5);
+
+-- 7. 보안 강화 안내
+INSERT INTO BOARD (BOARD_NO, EMP_NO, TITLE, CONTENT, READ_COUNT, REF, RE_LVL, RE_STEP, IN_DATE)
+VALUES (BOARD_NO_SEQ.NEXTVAL, 100, '[보안] ERP 시스템 비밀번호 정기 변경 안내', '정보보호 정책에 따라, 모든 임직원께서는 8월 말까지 ERP 시스템 접속 비밀번호를 변경해주시기 바랍니다. (영문/숫자/특수문자 포함 9자 이상)', 412, BOARD_NO_SEQ.CURRVAL, 0, 0, SYSDATE - 6);
+
+-- 8. 오류 수정 공지
+INSERT INTO BOARD (BOARD_NO, EMP_NO, TITLE, CONTENT, READ_COUNT, REF, RE_LVL, RE_STEP, IN_DATE)
+VALUES (BOARD_NO_SEQ.NEXTVAL, 100, '[수정] 견적서 출력 시 일부 항목 누락 오류 수정 완료', '일부 사용자에게서 발생하던 견적서 출력 오류가 수정되었습니다. 현재 정상적으로 모든 항목이 포함되어 출력됩니다. 이용에 불편을 드려 죄송합니다.', 99, BOARD_NO_SEQ.CURRVAL, 0, 0, SYSDATE - 7);
+
+-- 9. 사용자 교육
+INSERT INTO BOARD (BOARD_NO, EMP_NO, TITLE, CONTENT, READ_COUNT, REF, RE_LVL, RE_STEP, IN_DATE)
+VALUES (BOARD_NO_SEQ.NEXTVAL, 100, '[교육] 신입사원을 위한 ERP 시스템 사용자 교육 (8/12 화)', '8월 신규 입사자들을 대상으로 ERP 시스템 기본 사용법 교육을 실시합니다. 일시: 8월 12일(화) 14:00~16:00, 장소: 3층 교육장', 75, BOARD_NO_SEQ.CURRVAL, 0, 0, SYSDATE - 8);
+
+-- 10. 연휴 기간 운영
+INSERT INTO BOARD (BOARD_NO, EMP_NO, TITLE, CONTENT, READ_COUNT, REF, RE_LVL, RE_STEP, IN_DATE)
+VALUES (BOARD_NO_SEQ.NEXTVAL, 100, '[안내] 추석 연휴 기간 ERP 시스템 운영 및 긴급 지원 안내', '추석 연휴 기간(9/5~9/8) 동안 시스템은 정상 운영됩니다. 긴급 장애 발생 시 IT관리팀 비상 연락망으로 연락주시기 바랍니다.', 198, BOARD_NO_SEQ.CURRVAL, 0, 0, SYSDATE - 9);
 
 COMMIT;
 
@@ -504,22 +557,6 @@ Insert into PRODUCT_BOM (PRODUCT_NO,PARTS_NO,CNT) values (10,45,1);
 COMMIT;
 
 /************************************************** 
- *  재고 : INVENTORY
- **************************************************/
--- 부품
-INSERT INTO inventory VALUES (INVENTORY_SEQ.nextval, 0, 1, 0, sysdate, 100, 0);
-INSERT INTO inventory VALUES (INVENTORY_SEQ.nextval, 0, 2, 0, sysdate, 150, 0);
-INSERT INTO inventory VALUES (INVENTORY_SEQ.nextval, 0, 3, 0, sysdate, 150, 0);
-INSERT INTO inventory VALUES (INVENTORY_SEQ.nextval, 0, 4, 0, sysdate, 200, 0);
-INSERT INTO inventory VALUES (INVENTORY_SEQ.nextval, 0, 5, 0, sysdate, 100, 0);
--- 제품
-INSERT INTO inventory VALUES (INVENTORY_SEQ.nextval, 1, 1, 0, sysdate, 150, 0);
-INSERT INTO inventory VALUES (INVENTORY_SEQ.nextval, 1, 2, 0, sysdate, 100, 0);
-INSERT INTO inventory VALUES (INVENTORY_SEQ.nextval, 1, 3, 0, sysdate, 200, 0);
-INSERT INTO inventory VALUES (INVENTORY_SEQ.nextval, 1, 4, 0, sysdate, 300, 0);
-INSERT INTO inventory VALUES (INVENTORY_SEQ.nextval, 1, 5, 0, sysdate, 250, 0);
-
-/************************************************** 
  *  월재고 : MONTH_INVENTORY
  **************************************************/
 -- 2406 기말재고
@@ -614,425 +651,450 @@ COMMIT;
  **************************************************/
 INSERT INTO CLIENT (
     CLIENT_NO, EMP_NO, CLIENT_NAME, CLIENT_GUBUN,
-    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS,
+    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
     1001, 1003, '부품나라', 0,
-    'sales@bupumnara.com', '김수빈', '서울 강남구',
+    'sales@bupumnara.com', '김수빈', '서울 강남구', '010-3333-1223',
      0, NULL, TO_DATE('2025-07-24', 'YYYY-MM-DD')
 );
 
 INSERT INTO CLIENT (
     CLIENT_NO, EMP_NO, CLIENT_NAME, CLIENT_GUBUN,
-    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS,
+    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS ,MODIFY_DATE, IN_DATE
 ) VALUES (
     1002, 1003, '모두파츠', 0,
-    'sales@moduparts.co.kr', '박수문', '서울 용산구',
+    'sales@moduparts.co.kr', '박수문', '서울 용산구', '010-3323-1293',
     0, NULL, TO_DATE('2025-07-24', 'YYYY-MM-DD')
 );
 
 INSERT INTO CLIENT (
     CLIENT_NO, EMP_NO, CLIENT_NAME, CLIENT_GUBUN,
-    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS,
+    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
     1003, 1003, '바로파츠', 0,
-    'sales@baroparts.kr', '김성주', '서울 용산구',
+    'sales@baroparts.kr', '김성주', '서울 용산구', '010-2494-9923',
     0, NULL, TO_DATE('2025-07-24', 'YYYY-MM-DD')
 );
 
 INSERT INTO CLIENT (
     CLIENT_NO, EMP_NO, CLIENT_NAME, CLIENT_GUBUN,
-    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS,
+    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
     1004, 1003, '한빛부품', 0,
-    'sales@hanbitparts.co.kr', '이민주', '서울 용산구',
+    'sales@hanbitparts.co.kr', '이민주', '서울 용산구', '010-3360-2323',
     0, NULL, TO_DATE('2025-07-24', 'YYYY-MM-DD')
 );
 
 INSERT INTO CLIENT (
     CLIENT_NO, EMP_NO, CLIENT_NAME, CLIENT_GUBUN,
-    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS,
+    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
     1005, 1003, '티앤피', 0,
-    'sales@tnp.parts', '주성진', '서울 마포구',
+    'sales@tnp.parts', '주성진', '서울 마포구', '010-3045-9239',
     0, NULL, TO_DATE('2025-07-24', 'YYYY-MM-DD')
 );
 
 INSERT INTO CLIENT (
     CLIENT_NO, EMP_NO, CLIENT_NAME, CLIENT_GUBUN,
-    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS,
+    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
     1006, 1003, '파츠링크', 0,
-    'sales@partslink.co.kr', '김성주', '서울 종로구',
+    'sales@partslink.co.kr', '김성주', '서울 종로구', '010-1223-9323',
     0, TO_DATE('2024-12-14', 'YYYY-MM-DD'), TO_DATE('2024-07-04', 'YYYY-MM-DD')
 );
 
 INSERT INTO CLIENT (
     CLIENT_NO, EMP_NO, CLIENT_NAME, CLIENT_GUBUN,
-    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS,
+    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
     1007, 1003, '모두부품', 0,
-    'sales@modu.kr', '민종국', '인천 계양구',
+    'sales@modu.kr', '민종국', '인천 계양구', '010-9283-2939',
     0, TO_DATE('2023-01-14', 'YYYY-MM-DD'), TO_DATE('2022-03-24', 'YYYY-MM-DD')
 );
 
 INSERT INTO CLIENT (
     CLIENT_NO, EMP_NO, CLIENT_NAME, CLIENT_GUBUN,
-    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS,
+    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
     1008, 1003, '마스터파츠', 0,
-    'sales@masterparts.kr', '김성주', '서울 성동구',
+    'sales@masterparts.kr', '김성주', '서울 성동구', '010-4304-9313',
     0, TO_DATE('2023-12-02', 'YYYY-MM-DD'), TO_DATE('2021-05-11', 'YYYY-MM-DD')
 );
 
 INSERT INTO CLIENT (
     CLIENT_NO, EMP_NO, CLIENT_NAME, CLIENT_GUBUN,
-    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS,
+    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
     1009, 1003, '파워컴포넌트', 0,
-    'sales@power.kr', '이주용', '수원시 장안구',
+    'sales@power.kr', '이주용', '수원시 장안구', '010-7583-9212',
     0, TO_DATE('2023-01-14', 'YYYY-MM-DD'), TO_DATE('2022-03-24', 'YYYY-MM-DD')
 );
 
 INSERT INTO CLIENT (
     CLIENT_NO, EMP_NO, CLIENT_NAME, CLIENT_GUBUN,
-    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS,
+    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
     1010, 1003, '요기파츠', 0,
-    'sales@yogiparts.kr', '박평호', '서울 용산구',
+    'sales@yogiparts.kr', '박평호', '서울 용산구', '010-9232-1923',
     0, TO_DATE('2024-01-11', 'YYYY-MM-DD'), TO_DATE('2021-11-28', 'YYYY-MM-DD')
 );
 
 INSERT INTO CLIENT (
     CLIENT_NO, EMP_NO, CLIENT_NAME, CLIENT_GUBUN,
-    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS,
+    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
     1011, 1003, '부품마스터', 0,
-    'sales@bumaster.kr', '장송무', '경기도 군포시',
+    'sales@bumaster.kr', '장송무', '경기도 군포시', '010-0232-9322',
     0, TO_DATE('2025-02-11', 'YYYY-MM-DD'), TO_DATE('2022-05-28', 'YYYY-MM-DD')
 );
 
 INSERT INTO CLIENT (
     CLIENT_NO, EMP_NO, CLIENT_NAME, CLIENT_GUBUN,
-    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS,
+    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
     2001, 1003, '테크부품', 1,
-    'purchase@techparts.com', '정승우', '서울 금천구',
+    'purchase@techparts.com', '정승우', '서울 금천구', '010-2032-1203',
     0, TO_DATE('2024-06-09', 'YYYY-MM-DD'), TO_DATE('2021-07-16', 'YYYY-MM-DD')
 );
 
 INSERT INTO CLIENT (
     CLIENT_NO, EMP_NO, CLIENT_NAME, CLIENT_GUBUN,
-    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS,
+    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
     2002, 1003, '이지파츠', 1,
-    'purchase@ezparts.kr', '하유정', '서울 구로구',
+    'purchase@ezparts.kr', '하유정', '서울 구로구', '010-9596-9232',
     0, NULL, TO_DATE('2024-07-10', 'YYYY-MM-DD')
 );
 
 INSERT INTO CLIENT (
     CLIENT_NO, EMP_NO, CLIENT_NAME, CLIENT_GUBUN,
-    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS,
+    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
     2003, 1003, '스마트모듈', 1,
-    'purchase@smartmod.co.kr', '윤정수', '서울 양천구',
+    'purchase@smartmod.co.kr', '윤정수', '서울 양천구', '010-2392-2932',
     0, NULL, TO_DATE('2024-07-14', 'YYYY-MM-DD')
 );
 
 INSERT INTO CLIENT (
     CLIENT_NO, EMP_NO, CLIENT_NAME, CLIENT_GUBUN,
-    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS,
+    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
     2004, 1003, '탑커넥트', 1,
-    'purchase@topconnect.kr', '오지훈', '경기 고양시',
+    'purchase@topconnect.kr', '오지훈', '경기 고양시', '010-3423-1223',
     0, TO_DATE('2024-06-10', 'YYYY-MM-DD'), TO_DATE('2022-07-09', 'YYYY-MM-DD')
 );
 
 INSERT INTO CLIENT (
     CLIENT_NO, EMP_NO, CLIENT_NAME, CLIENT_GUBUN,
-    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS,
+    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
     2005, 1003, '오토라인', 1,
-    'purchase@autoline.kr', '서지민', '인천 남동구',
+    'purchase@autoline.kr', '서지민', '인천 남동구', '010-9242-1223',
     0, NULL, TO_DATE('2024-07-24', 'YYYY-MM-DD')
 );
 
 INSERT INTO CLIENT (
     CLIENT_NO, EMP_NO, CLIENT_NAME, CLIENT_GUBUN,
-    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS,
+    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
     2006, 1003, '네오파츠', 1,
-    'purchase@neoparts.kr', '김태린', '서울 동작구',
+    'purchase@neoparts.kr', '김태린', '서울 동작구', '010-2334-9988',
     0, TO_DATE('2024-06-01', 'YYYY-MM-DD'), TO_DATE('2024-03-02', 'YYYY-MM-DD')
 );
 
 INSERT INTO CLIENT (
     CLIENT_NO, EMP_NO, CLIENT_NAME, CLIENT_GUBUN,
-    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS,
+    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
     2007, 1003, '탑이노텍', 1,
-    'purchase@topinotech.com', '윤호민', '서울 관악구',
+    'purchase@topinotech.com', '윤호민', '서울 관악구', '010-5655-3523',
     0, TO_DATE('2024-06-16', 'YYYY-MM-DD'), TO_DATE('2024-02-14', 'YYYY-MM-DD')
 );
 
 INSERT INTO CLIENT (
     CLIENT_NO, EMP_NO, CLIENT_NAME, CLIENT_GUBUN,
-    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS,
+    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
     2008, 1003, '지엠파츠', 1,
-    'purchase@gmparts.kr', '박정화', '대전 유성구',
+    'purchase@gmparts.kr', '박정화', '대전 유성구', '010-3333-4343',
     0, TO_DATE('2024-06-06', 'YYYY-MM-DD'), TO_DATE('2024-01-14', 'YYYY-MM-DD')
 );
 
 INSERT INTO CLIENT (
     CLIENT_NO, EMP_NO, CLIENT_NAME, CLIENT_GUBUN,
-    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS,
+    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
     2009, 1003, '파트에이스', 1,
-    'purchase@partace.kr', '배동진', '광주 북구',
+    'purchase@partace.kr', '배동진', '광주 북구', '010-3420-9887',
     0, NULL, TO_DATE('2024-07-21', 'YYYY-MM-DD')
 );
 
 INSERT INTO CLIENT (
     CLIENT_NO, EMP_NO, CLIENT_NAME, CLIENT_GUBUN,
-    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS,
+    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
     2010, 1003, '다온전자', 1,
-    'purchase@daon.co.kr', '류세영', '경기 성남시',
+    'purchase@daon.co.kr', '류세영', '경기 성남시', '010-5676-7666',
     0, NULL, TO_DATE('2024-07-15', 'YYYY-MM-DD')
 );
 
 INSERT INTO CLIENT (
     CLIENT_NO, EMP_NO, CLIENT_NAME, CLIENT_GUBUN,
-    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS,
+    CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
     2011, 1003, '이노파워', 1,
-    'purchase@innopower.kr', '정하윤', '경기 안양시',
+    'purchase@innopower.kr', '정하윤', '경기 안양시', '010-3343-3433',
     0, TO_DATE('2024-06-17', 'YYYY-MM-DD'), TO_DATE('2022-07-19', 'YYYY-MM-DD')
 );
 
 COMMIT;
 
-INSERT ALL
-  INTO CLIENT_HIS (
+/************************************************** 
+ *  거래처이력 : CLIENT_HIS
+ **************************************************/
+  INSERT INTO CLIENT_HIS (
     CLIENT_NO, START_DATE, END_DATE, EMP_NO,
-    CLIENT_NAME, CLIENT_GUBUN, CLIENT_EMAIL,
+    CLIENT_NAME, CLIENT_GUBUN, CLIENT_MAN, CLIENT_EMAIL, CLIENT_TEL,
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
     (2002, TO_DATE('20240710','YYYYMMDD'), TO_DATE('99991231','YYYYMMDD'), 1003,
-     '이지파츠',   0, 'purchase@ezparts.kr', '서울 구로구', TO_DATE('2024/07/10','YYYY/MM/DD'))
-  INTO CLIENT_HIS (
+     '이지파츠',   0, '하유정', 'purchase@ezparts.kr', '010-3233-1243', '서울 구로구', TO_DATE('2024/07/10','YYYY/MM/DD'))
+     ;
+  INSERT INTO CLIENT_HIS (
     CLIENT_NO, START_DATE, END_DATE, EMP_NO,
-    CLIENT_NAME, CLIENT_GUBUN, CLIENT_EMAIL,
+    CLIENT_NAME, CLIENT_GUBUN, CLIENT_MAN, CLIENT_EMAIL, CLIENT_TEL,
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
     (1001, TO_DATE('20250724','YYYYMMDD'), TO_DATE('99991231','YYYYMMDD'), 1003,
-     '부품나라',   0, 'sales@bupumnara.com', '서울 강남구', TO_DATE('2025/07/24','YYYY/MM/DD'))
-  INTO CLIENT_HIS (
+     '부품나라',   0, '김수빈', 'sales@bupumnara.com', '010-9923-1234', '서울 강남구', TO_DATE('2025/07/24','YYYY/MM/DD'))
+     ;
+  INSERT INTO CLIENT_HIS (
     CLIENT_NO, START_DATE, END_DATE, EMP_NO,
-    CLIENT_NAME, CLIENT_GUBUN, CLIENT_EMAIL,
+    CLIENT_NAME, CLIENT_GUBUN, CLIENT_MAN, CLIENT_EMAIL, CLIENT_TEL,
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
     (1002, TO_DATE('20250724','YYYYMMDD'), TO_DATE('99991231','YYYYMMDD'), 1003,
-     '모두파츠',   0, 'sales@moduparts.co.kr', '서울 용산구', TO_DATE('2025/07/24','YYYY/MM/DD'))
-  INTO CLIENT_HIS (
+     '모두파츠',   0, '박수문', 'sales@moduparts.co.kr', '010-9349-1223', '서울 용산구', TO_DATE('2025/07/24','YYYY/MM/DD'))
+     ;
+  INSERT INTO CLIENT_HIS (
     CLIENT_NO, START_DATE, END_DATE, EMP_NO,
-    CLIENT_NAME, CLIENT_GUBUN, CLIENT_EMAIL,
+    CLIENT_NAME, CLIENT_GUBUN, CLIENT_MAN, CLIENT_EMAIL, CLIENT_TEL,
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
     (1003, TO_DATE('20250724','YYYYMMDD'), TO_DATE('99991231','YYYYMMDD'), 1003,
-     '바로파츠',   0, 'sales@baroparts.kr', '서울 용산구', TO_DATE('2025/07/24','YYYY/MM/DD'))
-  INTO CLIENT_HIS (
+     '바로파츠',   0, '김성주', 'sales@baroparts.kr', '010-9232-1223', '서울 용산구', TO_DATE('2025/07/24','YYYY/MM/DD'))
+     ;
+  INSERT INTO CLIENT_HIS (
     CLIENT_NO, START_DATE, END_DATE, EMP_NO,
-    CLIENT_NAME, CLIENT_GUBUN, CLIENT_EMAIL,
+    CLIENT_NAME, CLIENT_GUBUN, CLIENT_MAN, CLIENT_EMAIL, CLIENT_TEL,
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
     (1004, TO_DATE('20250724','YYYYMMDD'), TO_DATE('99991231','YYYYMMDD'), 1003,
-     '한빛부품',   0, 'sales@hanbitparts.co.kr', '서울 용산구', TO_DATE('2025/07/24','YYYY/MM/DD'))
-  INTO CLIENT_HIS (
+     '한빛부품',   0, '이민주',  'sales@hanbitparts.co.kr', '010-3333-2323','서울 용산구', TO_DATE('2025/07/24','YYYY/MM/DD'))
+     ;
+  INSERT INTO CLIENT_HIS (
     CLIENT_NO, START_DATE, END_DATE, EMP_NO,
-    CLIENT_NAME, CLIENT_GUBUN, CLIENT_EMAIL,
+    CLIENT_NAME, CLIENT_GUBUN, CLIENT_MAN, CLIENT_EMAIL, CLIENT_TEL,
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
     (1005, TO_DATE('20240704','YYYYMMDD'), TO_DATE('99991231','YYYYMMDD'), 1003,
-     '탑앤텍',     0, 'sales@tnp.parts', '서울 마포구', TO_DATE('2024/07/04','YYYY/MM/DD'))
-  INTO CLIENT_HIS (
+     '탑앤텍', 0, '주성진', 'sales@tnp.parts', '010-3333-2343', '서울 마포구', TO_DATE('2024/07/04','YYYY/MM/DD'))
+     ;
+  INSERT INTO CLIENT_HIS (
     CLIENT_NO, START_DATE, END_DATE, EMP_NO,
-    CLIENT_NAME, CLIENT_GUBUN, CLIENT_EMAIL,
+    CLIENT_NAME, CLIENT_GUBUN, CLIENT_MAN, CLIENT_EMAIL, CLIENT_TEL,
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
     (1006, TO_DATE('20240704','YYYYMMDD'), TO_DATE('99991231','YYYYMMDD'), 1003,
-     '파츠링크',   0, 'sales@partslink.co.kr', '서울 종로구', TO_DATE('2024/07/04','YYYY/MM/DD'))
-  INTO CLIENT_HIS (
+     '파츠링크',   0, '김성주', 'sales@partslink.co.kr', '010-3333-2233', '서울 종로구', TO_DATE('2024/07/04','YYYY/MM/DD'))
+     ;
+  INSERT INTO CLIENT_HIS (
     CLIENT_NO, START_DATE, END_DATE, EMP_NO,
-    CLIENT_NAME, CLIENT_GUBUN, CLIENT_EMAIL,
+    CLIENT_NAME, CLIENT_GUBUN, CLIENT_MAN, CLIENT_EMAIL, CLIENT_TEL,
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
     (1007, TO_DATE('20250724','YYYYMMDD'), TO_DATE('99991231','YYYYMMDD'), 1003,
-     '모두부품',   0, 'sales@modu.kr',       '인천 계양구', TO_DATE('2025/07/24','YYYY/MM/DD'))
-  INTO CLIENT_HIS (
+     '모두부품',   0, '민종국', 'sales@modu.kr', '010-9343-1223', '인천 계양구', TO_DATE('2025/07/24','YYYY/MM/DD'))
+     ;
+  INSERT INTO CLIENT_HIS (
     CLIENT_NO, START_DATE, END_DATE, EMP_NO,
-    CLIENT_NAME, CLIENT_GUBUN, CLIENT_EMAIL,
+    CLIENT_NAME, CLIENT_GUBUN, CLIENT_MAN, CLIENT_EMAIL, CLIENT_TEL,
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
     (1008, TO_DATE('20210511','YYYYMMDD'), TO_DATE('99991231','YYYYMMDD'), 1003,
-     '마스터파츠', 0, 'purchase@masterparts.kr', '서울 성동구', TO_DATE('2021/05/11','YYYY/MM/DD'))
-  INTO CLIENT_HIS (
+     '마스터파츠', 0, '김성주', 'purchase@masterparts.kr', '010-9232-1223', '서울 성동구', TO_DATE('2021/05/11','YYYY/MM/DD'))
+     ;
+  INSERT INTO CLIENT_HIS (
     CLIENT_NO, START_DATE, END_DATE, EMP_NO,
-    CLIENT_NAME, CLIENT_GUBUN, CLIENT_EMAIL,
+    CLIENT_NAME, CLIENT_GUBUN, CLIENT_MAN, CLIENT_EMAIL, CLIENT_TEL,
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
     (1009, TO_DATE('20220313','YYYYMMDD'), TO_DATE('99991231','YYYYMMDD'), 1003,
-     '파워엠포넌트',0, 'sales@power.kr',     '수원시 장안구', TO_DATE('2022/03/13','YYYY/MM/DD'))
-  INTO CLIENT_HIS (
+     '파워엠포넌트',0, '이주용', 'sales@power.kr', '010-3423-1223', '수원시 장안구', TO_DATE('2022/03/13','YYYY/MM/DD'))
+     ;
+  INSERT INTO CLIENT_HIS (
     CLIENT_NO, START_DATE, END_DATE, EMP_NO,
-    CLIENT_NAME, CLIENT_GUBUN, CLIENT_EMAIL,
+    CLIENT_NAME, CLIENT_GUBUN, CLIENT_MAN, CLIENT_EMAIL, CLIENT_TEL,
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
     (1010, TO_DATE('20221128','YYYYMMDD'), TO_DATE('99991231','YYYYMMDD'), 1003,
-     '요기파츠',   0, 'sales@yogiparts.kr',  '서울 용산구', TO_DATE('2022/11/28','YYYY/MM/DD'))
-  INTO CLIENT_HIS (
+     '요기파츠', 0, '박평호', 'sales@yogiparts.kr', '010-3333-2023',  '서울 용산구', TO_DATE('2022/11/28','YYYY/MM/DD'))
+     ;
+  INSERT INTO CLIENT_HIS (
     CLIENT_NO, START_DATE, END_DATE, EMP_NO,
-    CLIENT_NAME, CLIENT_GUBUN, CLIENT_EMAIL,
+    CLIENT_NAME, CLIENT_GUBUN, CLIENT_MAN, CLIENT_EMAIL, CLIENT_TEL,
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
     (2001, TO_DATE('20240528','YYYYMMDD'), TO_DATE('99991231','YYYYMMDD'), 1003,
-     '부품마스터', 1, 'purchase@bmaster.kr', '경기도 군포시', TO_DATE('2024/05/28','YYYY/MM/DD'))
-  INTO CLIENT_HIS (
+     '부품마스터', 1, '장송무', 'purchase@bmaster.kr', '010-3333-1222', '경기도 군포시', TO_DATE('2024/05/28','YYYY/MM/DD'))
+     ;
+  INSERT INTO CLIENT_HIS (
     CLIENT_NO, START_DATE, END_DATE, EMP_NO,
-    CLIENT_NAME, CLIENT_GUBUN, CLIENT_EMAIL,
+    CLIENT_NAME, CLIENT_GUBUN, CLIENT_MAN, CLIENT_EMAIL, CLIENT_TEL,
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
     (2003, TO_DATE('20240701','YYYYMMDD'), TO_DATE('99991231','YYYYMMDD'), 1003,
-     '스마트모듈', 1, 'purchase@smartmod.co.kr', '서울 양천구', TO_DATE('2024/07/01','YYYY/MM/DD'))
-  INTO CLIENT_HIS (
+     '스마트모듈', 1, '윤정수', 'purchase@smartmod.co.kr', '010-3333-2323','서울 양천구', TO_DATE('2024/07/01','YYYY/MM/DD'))
+     ;
+  INSERT INTO CLIENT_HIS (
     CLIENT_NO, START_DATE, END_DATE, EMP_NO,
-    CLIENT_NAME, CLIENT_GUBUN, CLIENT_EMAIL,
+    CLIENT_NAME, CLIENT_GUBUN, CLIENT_MAN, CLIENT_EMAIL, CLIENT_TEL,
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
     (2004, TO_DATE('20240709','YYYYMMDD'), TO_DATE('99991231','YYYYMMDD'), 1003,
-     '탑커넥트',   1, 'purchase@topconnect.kr', '광명시 광암동', TO_DATE('2024/07/09','YYYY/MM/DD'))
-  INTO CLIENT_HIS (
+     '탑커넥트',   1, '오지훈',  'purchase@topconnect.kr', '010-2222-1223','광명시 광암동', TO_DATE('2024/07/09','YYYY/MM/DD'))
+     ;
+  INSERT INTO CLIENT_HIS (
     CLIENT_NO, START_DATE, END_DATE, EMP_NO,
-    CLIENT_NAME, CLIENT_GUBUN, CLIENT_EMAIL,
+    CLIENT_NAME, CLIENT_GUBUN, CLIENT_MAN, CLIENT_EMAIL, CLIENT_TEL,
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
     (2005, TO_DATE('20240711','YYYYMMDD'), TO_DATE('99991231','YYYYMMDD'), 1003,
-     '오토라인',   1, 'purchase@autoline.kr','인천 남동구', TO_DATE('2024/07/11','YYYY/MM/DD'))
-  INTO CLIENT_HIS (
+     '오토라인',   1, '서지민', 'purchase@autoline.kr','010-3333-2223','인천 남동구', TO_DATE('2024/07/11','YYYY/MM/DD'))
+     ;
+  INSERT INTO CLIENT_HIS (
     CLIENT_NO, START_DATE, END_DATE, EMP_NO,
-    CLIENT_NAME, CLIENT_GUBUN, CLIENT_EMAIL,
+    CLIENT_NAME, CLIENT_GUBUN, CLIENT_MAN, CLIENT_EMAIL, CLIENT_TEL,
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
     (2006, TO_DATE('20240324','YYYYMMDD'), TO_DATE('99991231','YYYYMMDD'), 1003,
-     '네오파츠',   1, 'purchase@neoparts.kr', '서울 동작구', TO_DATE('2024/03/24','YYYY/MM/DD'))
-  INTO CLIENT_HIS (
+     '네오파츠',   1, '김태린', 'purchase@neoparts.kr','010-3388-3234', '서울 동작구', TO_DATE('2024/03/24','YYYY/MM/DD'))
+     ;
+  INSERT INTO CLIENT_HIS (
     CLIENT_NO, START_DATE, END_DATE, EMP_NO,
-    CLIENT_NAME, CLIENT_GUBUN, CLIENT_EMAIL,
+    CLIENT_NAME, CLIENT_GUBUN, CLIENT_MAN, CLIENT_EMAIL, CLIENT_TEL,
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
     (2007, TO_DATE('20240501','YYYYMMDD'), TO_DATE('99991231','YYYYMMDD'), 1003,
-     '정인파츠',   1, 'purchase@topinotech.com', '서울 금천구', TO_DATE('2024/05/01','YYYY/MM/DD'))
-  INTO CLIENT_HIS (
+     '정인파츠',   1, '윤호민', 'purchase@topinotech.com', '010-9233-9232', '서울 금천구', TO_DATE('2024/05/01','YYYY/MM/DD'))
+     ;
+  INSERT INTO CLIENT_HIS (
     CLIENT_NO, START_DATE, END_DATE, EMP_NO,
-    CLIENT_NAME, CLIENT_GUBUN, CLIENT_EMAIL,
+    CLIENT_NAME, CLIENT_GUBUN, CLIENT_MAN, CLIENT_EMAIL, CLIENT_TEL,
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
     (2008, TO_DATE('20240714','YYYYMMDD'), TO_DATE('99991231','YYYYMMDD'), 1003,
-     '에이스파츠', 1, 'purchase@gmparts.kr','서울 중랑구', TO_DATE('2024/07/14','YYYY/MM/DD'))
-  INTO CLIENT_HIS (
+     '에이스파츠', 1, '박정화', 'purchase@gmparts.kr', '010-9323-1223','서울 중랑구', TO_DATE('2024/07/14','YYYY/MM/DD'))
+     ;
+  INSERT INTO CLIENT_HIS (
     CLIENT_NO, START_DATE, END_DATE, EMP_NO,
-    CLIENT_NAME, CLIENT_GUBUN, CLIENT_EMAIL,
+    CLIENT_NAME, CLIENT_GUBUN, CLIENT_MAN, CLIENT_EMAIL, CLIENT_TEL,
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
     (2009, TO_DATE('20240715','YYYYMMDD'), TO_DATE('99991231','YYYYMMDD'), 1003,
-     '다온전자',   1, 'purchase@daon.co.kr', '경기 성남시', TO_DATE('2024/07/15','YYYY/MM/DD'))
-  INTO CLIENT_HIS (
+     '다온전자', 1, '류세영', 'purchase@daon.co.kr', '010-3922-2233','경기 성남시', TO_DATE('2024/07/15','YYYY/MM/DD'))
+     ;
+  INSERT INTO CLIENT_HIS (
     CLIENT_NO, START_DATE, END_DATE, EMP_NO,
-    CLIENT_NAME, CLIENT_GUBUN, CLIENT_EMAIL,
+    CLIENT_NAME, CLIENT_GUBUN, CLIENT_MAN, CLIENT_EMAIL, CLIENT_TEL,
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
     (2010, TO_DATE('20220725','YYYYMMDD'), TO_DATE('99991231','YYYYMMDD'), 1003,
-     '이노파워',   1, 'purchase@innopower.kr','경기 안양시', TO_DATE('2022/07/25','YYYY/MM/DD'))
-  INTO CLIENT_HIS (
+     '이노파워',   1, '정하윤',  'purchase@innopower.kr', '010-2293-1223','경기 안양시', TO_DATE('2022/07/25','YYYY/MM/DD'))
+     ;
+  INSERT INTO CLIENT_HIS (
     CLIENT_NO, START_DATE, END_DATE, EMP_NO,
-    CLIENT_NAME, CLIENT_GUBUN, CLIENT_EMAIL,
+    CLIENT_NAME, CLIENT_GUBUN, CLIENT_MAN, CLIENT_EMAIL, CLIENT_TEL,
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
     (2011, TO_DATE('20210716','YYYYMMDD'), TO_DATE('20240608','YYYYMMDD'), 1003,
-     '테크부품',   1, 'purchase@techparts.com', '서울 금천구', TO_DATE('2021/07/16','YYYY/MM/DD'))
-SELECT * FROM dual;
+     '테크부품',   1, '박승주', 'purchase@techparts.com', '010-9293-9232', '서울 금천구', TO_DATE('2021/07/16','YYYY/MM/DD'))
+     ;
 
 COMMIT;
 
-INSERT ALL
-  INTO CLIENT_PERFORM (YEARMONTH, CLIENT_NO, CNT, TOTAL_AMT)
-    VALUES ('2507', 1001, 3,   300000)
-  INTO CLIENT_PERFORM (YEARMONTH, CLIENT_NO, CNT, TOTAL_AMT)
-    VALUES ('2507', 1002, 5,   750000)
-  INTO CLIENT_PERFORM (YEARMONTH, CLIENT_NO, CNT, TOTAL_AMT)
-    VALUES ('2506', 1003, 2,   200000)
-  INTO CLIENT_PERFORM (YEARMONTH, CLIENT_NO, CNT, TOTAL_AMT)
-    VALUES ('2506', 1005, 4,   400000)
-  INTO CLIENT_PERFORM (YEARMONTH, CLIENT_NO, CNT, TOTAL_AMT)
-    VALUES ('2505', 1007, 1,   120000)
-  INTO CLIENT_PERFORM (YEARMONTH, CLIENT_NO, CNT, TOTAL_AMT)
-    VALUES ('2504', 1008, 7,   840000)
-  INTO CLIENT_PERFORM (YEARMONTH, CLIENT_NO, CNT, TOTAL_AMT)
-    VALUES ('2503', 1009, 6,   900000)
-  INTO CLIENT_PERFORM (YEARMONTH, CLIENT_NO, CNT, TOTAL_AMT)
-    VALUES ('2502', 1010, 8,  1600000)
-  INTO CLIENT_PERFORM (YEARMONTH, CLIENT_NO, CNT, TOTAL_AMT)
-    VALUES ('2501', 2001, 2,   220000)
-  INTO CLIENT_PERFORM (YEARMONTH, CLIENT_NO, CNT, TOTAL_AMT)
-    VALUES ('2507', 2003, 9,  1800000)
-SELECT * FROM dual;
 
+/************************************************** 
+ *  거래처별실적 : CLIENT_PERFORM
+ **************************************************/
+    INSERT INTO CLIENT_PERFORM (YEARMONTH, CLIENT_NO, CNT, TOTAL_AMT)
+    VALUES ('2507', 1001, 3,   300000);
+    INSERT INTO CLIENT_PERFORM (YEARMONTH, CLIENT_NO, CNT, TOTAL_AMT)
+    VALUES ('2507', 1002, 5,   750000);
+    INSERT INTO CLIENT_PERFORM (YEARMONTH, CLIENT_NO, CNT, TOTAL_AMT)
+    VALUES ('2506', 1003, 2,   200000);
+    INSERT INTO CLIENT_PERFORM (YEARMONTH, CLIENT_NO, CNT, TOTAL_AMT)
+    VALUES ('2506', 1005, 4,   400000);
+    INSERT INTO CLIENT_PERFORM (YEARMONTH, CLIENT_NO, CNT, TOTAL_AMT)
+    VALUES ('2505', 1007, 1,   120000);
+    INSERT INTO CLIENT_PERFORM (YEARMONTH, CLIENT_NO, CNT, TOTAL_AMT)
+    VALUES ('2504', 1008, 7,   840000);
+    INSERT INTO CLIENT_PERFORM (YEARMONTH, CLIENT_NO, CNT, TOTAL_AMT)
+    VALUES ('2502', 1010, 8,  1600000);
+    INSERT INTO CLIENT_PERFORM (YEARMONTH, CLIENT_NO, CNT, TOTAL_AMT)
+    VALUES ('2501', 2001, 2,   220000);
+    INSERT INTO CLIENT_PERFORM (YEARMONTH, CLIENT_NO, CNT, TOTAL_AMT)
+    VALUES ('2507', 2003, 9,  1800000);
+    INSERT INTO CLIENT_PERFORM (YEARMONTH, CLIENT_NO, CNT, TOTAL_AMT)
+    VALUES ('2503', 2004, 6,   900000);
 COMMIT;
 
---발주 INSERT
+/************************************************** 
+ *  발주 : PURCHASE_ORDER
+ **************************************************/
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, DEL_STATUS, IN_DATE)
 VALUES (4101, 1001, 1003, TO_DATE('2025-07-20', 'YYYY-MM-DD'), 1, 0, TO_DATE('2025-07-20', 'YYYY-MM-DD'));
 
@@ -1065,7 +1127,9 @@ VALUES (4110, 1010, 1003, TO_DATE('2025-07-08', 'YYYY-MM-DD'), 0, 0, TO_DATE('20
 
 COMMIT;
 
---발주 아이템 INSERT
+/************************************************** 
+ *  발주부품 : PURCHASE_ITEM
+ **************************************************/
 INSERT INTO PURCHASE_ITEM (PURCHASE_NO, PARTS_NO, PURCHASE_ITEM_CNT, PURCHASE_ITEM_INCNT, PURCHASE_ITEM_COST) VALUES (4101, 1, 10, 10, 1500);
 INSERT INTO PURCHASE_ITEM (PURCHASE_NO, PARTS_NO, PURCHASE_ITEM_CNT, PURCHASE_ITEM_INCNT, PURCHASE_ITEM_COST) VALUES (4101, 2, 5, 5, 3000);
 INSERT INTO PURCHASE_ITEM (PURCHASE_NO, PARTS_NO, PURCHASE_ITEM_CNT, PURCHASE_ITEM_INCNT, PURCHASE_ITEM_COST) VALUES (4102, 3, 20, 20, 500);
@@ -1080,7 +1144,9 @@ INSERT INTO PURCHASE_ITEM (PURCHASE_NO, PARTS_NO, PURCHASE_ITEM_CNT, PURCHASE_IT
 
 COMMIT;
 
---수주 INSERT
+/************************************************** 
+ *  수주 : SALES_ORDER
+ **************************************************/
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, DEL_STATUS, IN_DATE) VALUES
 (3001, 2001, 1003, TO_DATE('2024-07-01', 'YYYY-MM-DD'), 0, 0, TO_DATE('2024-07-01', 'YYYY-MM-DD'));
 
@@ -1113,6 +1179,9 @@ INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, DE
 
 COMMIT;
 
+/************************************************** 
+ *  수주제품 : SALES_ITEM
+ **************************************************/
 INSERT INTO SALES_ITEM (SALES_NO, PRODUCT_NO, SALES_ITEM_CNT, SALES_ITEM_OUTCNT, SALES_ITEM_COST)
 VALUES (3001, 1, 10, 5, 1200);
 

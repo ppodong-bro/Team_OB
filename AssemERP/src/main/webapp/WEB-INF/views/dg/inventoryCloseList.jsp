@@ -9,6 +9,23 @@
 <title>Insert title here</title>
 </head>
 <script type="text/javascript">
+//현재시각 갱신하는 함수
+function updateCurrentTime() {
+	const now = new Date();
+	
+	const year   = now.getFullYear();
+	const month  = (now.getMonth() + 1).toString().padStart(2, "0");
+	const day    = now.getDate().toString().padStart(2, "0");
+	const hour   = now.getHours().toString().padStart(2, "0");
+	const minute = now.getMinutes().toString().padStart(2, "0");
+	const second = now.getSeconds().toString().padStart(2, "0");
+	
+	// console.log(year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second);
+	const formatted = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
+	
+	document.getElementById("currentTime").textContent = formatted;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
 	/* 마감 상태 검색 콤보박스 AJAX */
 	const closeStatusSelect = ${search.close_status != null ? search.close_status : 999};
@@ -58,20 +75,78 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 $(document).ready(function() {
-    // 월마감 버튼 클릭
-    $("#btnMonthClose").click(function() {
+	const modalEl = document.getElementById("modalMonthClose");
+	let timeInterval = null;
+	// 모달 열릴 때 시작
+	modalEl.addEventListener("shown.bs.modal", function () {
+	    updateCurrentTime();
+	    timeInterval = setInterval(updateCurrentTime, 1000);
+	});
+
+	// 모달 닫힐 때 중단
+	modalEl.addEventListener("hidden.bs.modal", function () {
+	    clearInterval(timeInterval);
+	    timeInterval = null;
+	    document.getElementById("currentTime").textContent = ""; // 초기화
+	});
+
+    // 가마감 버튼 클릭
+    $("#btnFakeMonthClose").click(function() {
+    	// 년월 구하기
+    	const now = new Date();
+    	const year = now.getFullYear().toString().slice(2); // YY
+    	const month = (now.getMonth() + 1).toString().padStart(2, "0"); // MM
+    	const yymm = year + month; //
+    	
     	// 월마감 진행중 화면으로 변경
-    	$("#modalMonthCloseText").text("월마감 진행중입니다...");
+    	$("#modalMonthCloseText").text("가마감 진행중입니다...");
     	$("#btnMonthClose").hide();// 월마감 버튼 비활성화
+    	$("#btnFakeMonthClose").hide();// 가마감 버튼 비활성화
     	
         // Ajax 요청 보내기
         $.ajax({
-            url: "/inventory/monthClose",
+            url: "/inventory/monthClose/1", // 가마감
             type: "PUT",
             dataType: "json",
             contentType: "application/json", // JSON 데이터 전송시 필요
             data: JSON.stringify({
-            	yearmonth: "2508",//년월
+            	yearmonth: yymm,
+            	emp_no: 1001//담당자
+            }),
+            success: function(response) {
+            	if(response.result === true) {
+                	$("#modalMonthCloseText").text("가마감이 완료되었습니다.");
+            	}
+            	else {
+                	$("#modalMonthCloseText").text("가마감이 실패했습니다.");
+            	}
+            },
+            error: function(xhr, status, error) {
+            	$("#modalMonthCloseText").text("가마감이 오류가 발생했습니다.");
+            }
+        });
+    });
+    // 월마감 버튼 클릭
+    $("#btnMonthClose").click(function() {
+    	// 년월 구하기
+    	const now = new Date();
+    	const year = now.getFullYear().toString().slice(2); // YY
+    	const month = (now.getMonth() + 1).toString().padStart(2, "0"); // MM
+    	const yymm = year + month; //
+    	
+    	// 월마감 진행중 화면으로 변경
+    	$("#modalMonthCloseText").text("월마감 진행중입니다...");
+    	$("#btnMonthClose").hide();// 월마감 버튼 비활성화
+    	$("#btnFakeMonthClose").hide();// 가마감 버튼 비활성화
+    	
+        // Ajax 요청 보내기
+        $.ajax({
+            url: "/inventory/monthClose/2", // (진)월마감
+            type: "PUT",
+            dataType: "json",
+            contentType: "application/json", // JSON 데이터 전송시 필요
+            data: JSON.stringify({
+            	yearmonth: yymm,
             	emp_no: 1001//담당자
             }),
             success: function(response) {
@@ -96,7 +171,6 @@ $(document).ready(function() {
         // 버튼 보이게 & 활성화
         $('#btnMonthClose').show();
     });
-    
 });
 
 </script>
@@ -223,10 +297,16 @@ $(document).ready(function() {
 					<h5 class="modal-title" id="modalMonthCloseTitle">월마감</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
-				<div class="modal-body" id="modalMonthCloseText">월마감을 진행하시겠습니까?</div>
+				<div class="modal-body">
+					<span id="modalMonthCloseText">월마감을 진행하시겠습니까?</span>
+					<div id="currentTime"></div>
+				</div>
+				
+
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-					<button type="button" class="btn btn-success" id="btnMonthClose">확인</button>
+					<button type="button" class="btn btn-success" id="btnFakeMonthClose">가마감 진행</button>
+					<button type="button" class="btn btn-success" id="btnMonthClose">월마감 진행</button>
 				</div>
 			</div>
 		</div>
