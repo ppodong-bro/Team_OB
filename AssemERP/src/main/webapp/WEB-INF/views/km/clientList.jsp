@@ -35,7 +35,7 @@
 
 					<!-- 검색 폼 -->
 					<!-- 검색 폼: 전체를 오른쪽으로 정렬 -->
-					<form method="get" action="searchList"
+					<form method="get" action="list"
 						class="row gx-2 gy-1 align-items-end mb-4 justify-content-end">
 
 						<!-- 거래처명 -->
@@ -153,7 +153,7 @@
 							<ul class="pagination pagination-sm justify-content-center">
 								<!-- 이전 -->
 								<li class="page-item ${page.currentPage == 1 ? 'disabled' : ''}">
-									<c:url var="prevUrl" value="/client/searchList">
+									<c:url var="prevUrl" value="/client/list">
 										<c:param name="currentPage" value="${page.currentPage - 1}" />
 										<c:if test="${not empty clientSearchDto.client_Name}">
 											<c:param name="client_Name"
@@ -182,7 +182,7 @@
 								<c:forEach begin="${page.startPage}" end="${page.endPage}"
 									var="p">
 									<li class="page-item ${page.currentPage == p ? 'active' : ''}">
-										<c:url var="pageUrl" value="/client/searchList">
+										<c:url var="pageUrl" value="/client/list">
 											<c:param name="currentPage" value="${p}" />
 											<!-- 검색 DTO 파라미터들 동일하게 추가 -->
 											<c:if test="${not empty clientSearchDto.client_Name}">
@@ -212,7 +212,7 @@
 								<!-- 다음 -->
 								<li
 									class="page-item ${page.currentPage == page.totalPage ? 'disabled' : ''}">
-									<c:url var="nextUrl" value="/client/searchList">
+									<c:url var="nextUrl" value="/client/list">
 										<c:param name="currentPage" value="${page.currentPage + 1}" />
 										<!-- 검색 DTO 파라미터들 똑같이 추가 -->
 										<c:if test="${not empty clientSearchDto.client_Name}">

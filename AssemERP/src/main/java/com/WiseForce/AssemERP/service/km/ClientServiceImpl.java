@@ -18,26 +18,14 @@ public class ClientServiceImpl implements ClientService {
 	private final ClientDao clientDao;
 	
 	@Override
-	public int totCnt() {
-		int totCnt = clientDao.totCnt();
-		return totCnt;
-	}
-
-	@Override
-	public List<ClientDto> getList(ClientDto clientDto) {
-		List<ClientDto> listClient = clientDao.getList(clientDto);
-		return listClient;
-	}
-
-	@Override
-	public List<ClientDto> searchList(ClientSearchDto clientSearchDto) {
-		List<ClientDto> searchList = clientDao.searchList(clientSearchDto);
+	public List<ClientDto> listClient(ClientSearchDto clientSearchDto) {
+		List<ClientDto> searchList = clientDao.listClient(clientSearchDto);
 		return searchList;
 	}
 
 	@Override
-	public int totSearch(ClientSearchDto clientSearchDto) {
-		int totSearch = clientDao.totSearch(clientSearchDto);
+	public int totClient(ClientSearchDto clientSearchDto) {
+		int totSearch = clientDao.totClient(clientSearchDto);
 		return totSearch;
 	}
 
