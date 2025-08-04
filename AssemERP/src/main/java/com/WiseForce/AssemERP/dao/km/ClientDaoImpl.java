@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.WiseForce.AssemERP.dto.km.ClientDto;
 import com.WiseForce.AssemERP.dto.km.ClientSearchDto;
+import com.WiseForce.AssemERP.dto.km.Client_HisDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -58,6 +59,18 @@ public class ClientDaoImpl implements ClientDao{
 	public int deleteClient(ClientDto clientDto1) {
 		int result = session.update("deleteClient", clientDto1);
 		return result;
+	}
+
+	@Override
+	public void modifyClient_HisEnd(Client_HisDto client_HisDto) {
+		session.update("client_HisEnd", client_HisDto);
+		
+	}
+
+	@Override
+	public void modifyClient_His(Client_HisDto client_HisDto1) {
+		session.insert("client_His", client_HisDto1);
+		
 	}
 
 }

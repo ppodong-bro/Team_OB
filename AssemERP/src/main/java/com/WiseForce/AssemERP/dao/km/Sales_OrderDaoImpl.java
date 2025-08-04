@@ -56,4 +56,10 @@ public class Sales_OrderDaoImpl implements Sales_OrderDao {
 		return sales_OrderDto;
 	}
 
+	@Override
+	public List<Sales_OrderDto> createList() {
+		List<Sales_OrderDto> createList = session.selectList("createList");
+		return createList;
+	}
+
 }

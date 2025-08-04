@@ -42,6 +42,13 @@ public class Sales_OrderController {
 		model.addAttribute("sales_OrderDto", sales_OrderDto);
 		return "km/detailSales";
 	}
+	
+	@GetMapping("/createStart")
+	public String createStartSales(Model model) {
+		System.out.println("Sales_OrderController createStart Start...");
+		List<Sales_OrderDto> createList = sales_OrderService.createList();
+		return "km/salesCreate";
+	}
 
 
 	

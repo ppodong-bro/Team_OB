@@ -53,6 +53,7 @@ public class Client {
 	private String  		client_email;
 	private String  		client_man;
 	private String  		client_address;
+	private String			client_Tel;
 	private int				del_status;
 	private LocalDateTime   modify_date;
 	private LocalDateTime	in_date;

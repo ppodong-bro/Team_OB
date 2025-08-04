@@ -17,4 +17,6 @@ public interface Sales_OrderDao {
 
 	Sales_OrderDto 			detailSales(Sales_OrderDto sales_OrderDto1);
 
+	List<Sales_OrderDto> 	createList();
+
 }

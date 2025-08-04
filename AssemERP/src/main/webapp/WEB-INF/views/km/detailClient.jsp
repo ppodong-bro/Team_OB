@@ -73,6 +73,13 @@
 										readonly class="form-control form-control-sm"
 										value="${clientDto.client_Email}" />
 								</div>
+								
+									<!-- 거래처전화번호 -->
+								<div class="mb-3">
+									<label class="form-label">거래처전화번호</label> <input type="text"
+										readonly class="form-control form-control-sm"
+										value="${clientDto.client_Tel}" />
+								</div>
 
 								<!-- 거래처 담당자 -->
 								<div class="mb-3">

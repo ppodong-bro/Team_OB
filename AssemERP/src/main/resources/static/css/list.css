@@ -30,3 +30,107 @@
 	background: #bfbfbf;
 }
 
+/*  이 페이지 전용 스타일: 카드형 상세, 테이블 정렬, 숫자 정리 등 */
+
+/* 제품 목록 테이블 기본 설정 */
+.product-table {
+	width: 100%;
+	border-collapse: collapse;
+	table-layout: auto;
+}
+
+/* 헤더 고정, 배경, 패딩 */
+.product-table thead th {
+	position: sticky;
+	top: 0;
+	background: #f8f9fa;
+	z-index: 2;
+	vertical-align: bottom;
+	padding: 0.6rem;
+}
+
+/* 본문/풋터 셀 패딩 정리 */
+.product-table tbody td, .product-table tfoot td {
+	padding: 0.5rem 0.6rem;
+	vertical-align: middle;
+}
+
+/* 숫자 정렬 스타일 */
+.numeric {
+	text-align: right;
+	white-space: nowrap;
+}
+
+/* 이름 등 줄바꿈 막기 */
+.name {
+	white-space: nowrap;
+}
+
+/* 합계 행 강조 */
+.total-row {
+	font-weight: 600;
+	background-color: #e9ecef;
+}
+
+/* 카드 스타일 (정보 블록 감싸는 용도) */
+.info-card {
+	background: #fff;
+	border: 1px solid #d8e0ea;
+	border-radius: 0.75rem;
+	padding: 1rem 1.25rem;
+	margin-bottom: 1.5rem;
+	max-width: 100%;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+/* 카드 제목 스타일 */
+.info-card-title {
+	font-weight: 700;
+	font-size: 1.1rem;
+	margin-bottom: .75rem;
+	letter-spacing: .5px;
+}
+
+/* 2열 그리드 배치 (필드들) */
+.info-grid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 1rem 1.25rem;
+}
+
+/* 각 필드(레이블+값) 컨테이너 */
+.field {
+	display: flex;
+	flex-direction: column;
+}
+
+/* 필드 레이블 스타일 */
+.field-label {
+	font-size: .65rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	margin-bottom: .25rem;
+	color: #515a6b;
+	letter-spacing: .5px;
+}
+
+/* 값 영역 박스 */
+.field-box {
+	background: #f7f9fc;
+	border: 1px solid #dfe4ea;
+	border-radius: .5rem;
+	padding: 0.4rem .75rem;
+	display: flex;
+	align-items: center;
+	gap: .5rem;
+	min-height: 32px;
+}
+
+/* 이메일 앞부분 등 보조 텍스트 */
+.small-addon {
+	flex: 0 0 auto;
+	font-size: .9rem;
+	color: #495057;
+	padding-right: 4px;
+}
+
