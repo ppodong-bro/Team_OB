@@ -68,8 +68,14 @@ public class ClientDaoImpl implements ClientDao{
 	}
 
 	@Override
-	public void modifyClient_His(Client_HisDto client_HisDto1) {
-		session.insert("client_His", client_HisDto1);
+	public void modifyClient_His(Client_HisDto client_HisDto) {
+		
+		session.update("client_HisEnd", client_HisDto);
+		
+		// 중복 제거를 위한 delete문
+		session.delete("client_HisDelete", client_HisDto);
+		
+		session.insert("client_His", client_HisDto);
 		
 	}
 

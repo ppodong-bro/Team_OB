@@ -124,8 +124,13 @@
 		INSERT INTO CLIENT_HIS (CLIENT_NO, START_DATE, END_DATE, EMP_NO, CLIENT_NAME
 							  , CLIENT_GUBUN, CLIENT_MAN, CLIENT_EMAIL, CLIENT_TEL
 							  , CLIENT_ADDRESS, IN_DATE)
-		VALUES (#{client_No}, #{start_Date}, #{end_Date}, #{emp_No}
+		VALUES (#{client_No}, #{start_Date}, '99991231', #{emp_No}
 			  , #{client_Name}, #{client_Gubun}, #{client_Man}
 			  , #{client_Email}, #{client_Tel}, #{client_Address}, SYSDATE)
 	</insert>
+	
+	<delete id="client_HisDelete" parameterType="Client_HisDto">
+		DELETE FROM CLIENT_HIS
+		WHERE CLIENT_NO = #{client_No} AND START_DATE = #{start_Date}
+	</delete>
 </mapper>
