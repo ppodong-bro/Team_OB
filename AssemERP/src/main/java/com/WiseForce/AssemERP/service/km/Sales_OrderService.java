@@ -16,5 +16,7 @@ public interface Sales_OrderService {
 	List<Sales_OrderDto> 	listSales(Sales_OrderSearchDto sales_OrderSearchDto);
 
 	Sales_OrderDto 			detailSales(Sales_OrderDto sales_OrderDto1);
+
+	List<Sales_OrderDto> 	createList();
 	
 }

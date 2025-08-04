@@ -17,11 +17,12 @@ public class Client_His {
 	@EmbeddedId
 	private Client_His_Id client_His_Id;
 	private String end_Date;
-	/* private Emp emp; */
+	private String emp_No;
 	private String client_Name;
 	private int	   client_Gubun;
 	private String client_Email;
 	private String client_Man;
+	private String client_Tel;
 	private String client_Address;
 	private LocalDateTime in_Date;
 }

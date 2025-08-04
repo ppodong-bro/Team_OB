@@ -92,6 +92,12 @@
 						<div class="col-auto">
 							<button type="submit" class="btn btn-primary btn-sm">검색</button>
 						</div>
+						
+							<!-- 신규 등록 버튼 -->
+						<div class="col-auto">
+							<a href="<c:url value='/sales/createStart'/>"
+								class="btn btn-success btn-sm"> 등록 </a>
+						</div>
 					</form>
 
 					<!-- List 테이블 시작 -->

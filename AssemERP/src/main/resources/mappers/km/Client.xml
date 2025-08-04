@@ -13,6 +13,7 @@
 		<result	column="CLIENT_GUBUN" 	property="client_Gubun"/>
 		<result column="CLIENT_EMAIL"	property="client_Email"/>
 		<result column="CLIENT_MAN"		property="client_Man"/>
+		<result column="CLIENT_TEL"     property="client_Tel"/>
 		<result	column="CLIENT_ADDRESS"	property="client_Address"/>
 		<result	column="DEL_STATUS"		property="del_Status"/>
 		<result column="MODIFY_DATE"	property="modify_Date"/>
@@ -85,7 +86,7 @@
 	<select id="detailClient" parameterType="int" resultMap="clientMap">
 		SELECT C.CLIENT_NO, E.EMP_NO, E.EMP_NAME, C.CLIENT_NAME, C.CLIENT_GUBUN
 			 , C.CLIENT_EMAIL, C.CLIENT_MAN, C.CLIENT_ADDRESS
-			 , C.DEL_STATUS, C.MODIFY_DATE, C.IN_DATE 
+			 , C.DEL_STATUS, C.MODIFY_DATE, C.IN_DATE, C.CLIENT_TEL
 		FROM   CLIENT C LEFT JOIN EMP E ON C.EMP_NO = E.EMP_NO
 		WHERE  C.CLIENT_NO = #{client_No}
 	</select>
@@ -93,16 +94,16 @@
 	<insert id="createClient" parameterType="ClientDto">
 		INSERT INTO Client 
 		(CLIENT_NO, EMP_NO, CLIENT_NAME
-	   , CLIENT_GUBUN, CLIENT_EMAIL, CLIENT_MAN
-	   , CLIENT_ADDRESS,DEL_STATUS ,IN_DATE) 
+	   , CLIENT_GUBUN, CLIENT_EMAIL, CLIENT_MAN, CLIENT_TEL
+	   , CLIENT_ADDRESS,DEL_STATUS ,IN_DATE)
 		 VALUES
-	    (CLIENT_SEQ_GEN.NEXTVAL, #{empDTO.empNo}, #{client_Name}, #{client_Gubun}, #{client_Email}, #{client_Man}, #{client_Address}, 0, SYSDATE)
+	    (CLIENT_SEQ_GEN.NEXTVAL, #{empDTO.empNo}, #{client_Name}, #{client_Gubun}, #{client_Email}, #{client_Man}, #{client_Tel}, #{client_Address}, 0, SYSDATE)
 	</insert>
 	
 	<update id="modifyClient" parameterType="ClientDto">
 		UPDATE client 
 		SET emp_no = #{empDTO.empNo}, client_name = #{client_Name}, client_gubun = #{client_Gubun}
-          , client_email = #{client_Email}, client_man = #{client_Man}
+          , client_email = #{client_Email}, client_man = #{client_Man}, client_tel= #{client_Tel}
           , client_address = #{client_Address}, modify_date = SYSDATE
         WHERE client_no = #{client_No}
 	</update>
@@ -112,4 +113,19 @@
 		SET del_status = 1
 		WHERE client_no = #{client_No}
 	</update>
+	
+	<update id="client_HisEnd" parameterType="Client_HisDto">
+		UPDATE client_His
+		SET end_date = #{end_Date}
+		WHERE client_no = #{client_No} AND end_Date = '99991231'
+	</update>
+	
+	<insert id="client_His" parameterType="Client_HisDto">
+		INSERT INTO CLIENT_HIS (CLIENT_NO, START_DATE, END_DATE, EMP_NO, CLIENT_NAME
+							  , CLIENT_GUBUN, CLIENT_MAN, CLIENT_EMAIL, CLIENT_TEL
+							  , CLIENT_ADDRESS, IN_DATE)
+		VALUES (#{client_No}, #{start_Date}, #{end_Date}, #{emp_No}
+			  , #{client_Name}, #{client_Gubun}, #{client_Man}
+			  , #{client_Email}, #{client_Tel}, #{client_Address}, SYSDATE)
+	</insert>
 </mapper>
