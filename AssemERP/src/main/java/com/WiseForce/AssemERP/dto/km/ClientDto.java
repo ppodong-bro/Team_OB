@@ -1,6 +1,7 @@
 package com.WiseForce.AssemERP.dto.km;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.WiseForce.AssemERP.dto.sm.EmpDTO;
 
@@ -18,13 +19,12 @@ public class ClientDto {
 
 	private int 			client_No;
 	private EmpDTO			empDTO;
-//	private int				emp_No;
-//	private String			emp_Name;
 	private String 			client_Name;
 	private Integer			client_Gubun;
 	private String  		client_Email;
 	private String  		client_Man;
 	private String  		client_Address;
+	private String			client_Tel;
 	private int				del_Status;
 	private LocalDateTime   modify_Date;
 	private LocalDateTime	in_Date;

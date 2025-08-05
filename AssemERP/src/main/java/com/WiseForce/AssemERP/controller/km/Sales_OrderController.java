@@ -22,32 +22,34 @@ public class Sales_OrderController {
 	private final Sales_OrderService sales_OrderService;
 	
 	@GetMapping("/list")
-	public String salesList(Sales_OrderDto sales_OrderDto, Model model) {
-		System.out.println("Sales_OrderController list Start...");
-		int totCnt = sales_OrderService.salesTotCnt();
-		Paging page = new Paging(totCnt, sales_OrderDto.getCurrentPage());
-		sales_OrderDto.setStart(page.getStart());
-		sales_OrderDto.setEnd(page.getEnd());
-		List<Sales_OrderDto> listSales = sales_OrderService.salesList(sales_OrderDto);
-		model.addAttribute("listSales", listSales);
-		model.addAttribute("page", page);
-		return "km/sales_OrderList";
-	}
-	
-	@GetMapping("/searchList")
-	public String salesSearchList(Sales_OrderSearchDto sales_OrderSearchDto, Model model ) {
+	public String listSales(Sales_OrderSearchDto sales_OrderSearchDto, Model model ) {
 		System.out.println("Sales_OrderController salesSearchList Start...");
-		int searchTotCnt = sales_OrderService.searchTotCnt(sales_OrderSearchDto);
-		Paging page = new Paging(searchTotCnt, sales_OrderSearchDto.getCurrentPage());
+		int totCnt = sales_OrderService.totSales(sales_OrderSearchDto);
+		Paging page = new Paging(totCnt, sales_OrderSearchDto.getCurrentPage());
 		sales_OrderSearchDto.setStart(page.getStart());
 		sales_OrderSearchDto.setEnd(page.getEnd());
-		List<Sales_OrderDto> searchList = sales_OrderService.searchSales(sales_OrderSearchDto);
+		List<Sales_OrderDto> searchList = sales_OrderService.listSales(sales_OrderSearchDto);
 		model.addAttribute("listSales", searchList);
 		model.addAttribute("page", page);
 		
 		return "km/sales_OrderList";
-		
 	}
+	
+	@GetMapping("/detail")
+	public String detailSales(Sales_OrderDto sales_OrderDto1,Model model){
+		
+		Sales_OrderDto sales_OrderDto = sales_OrderService.detailSales(sales_OrderDto1);
+		model.addAttribute("sales_OrderDto", sales_OrderDto);
+		return "km/detailSales";
+	}
+	
+	@GetMapping("/createStart")
+	public String createStartSales(Model model) {
+		System.out.println("Sales_OrderController createStart Start...");
+		List<Sales_OrderDto> createList = sales_OrderService.createList();
+		return "km/salesCreate";
+	}
+
 
 	
 	

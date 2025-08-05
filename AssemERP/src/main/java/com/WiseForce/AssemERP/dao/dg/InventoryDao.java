@@ -12,7 +12,7 @@ public interface InventoryDao {
 	List<Real_InventoryDTO> getRealInventory(Real_InventoryDTO real_InventoryDTO);
 
 	// 월마감 패키지 실행
-	boolean doMonthClose(String yearMonth, int empno);
+	boolean doMonthClose(String yearMonth, int empno, int realStatus);
 
 
 }

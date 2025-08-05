@@ -9,6 +9,7 @@ import java.util.Map;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -46,7 +47,7 @@ public class InventoryController {
 
 		model.addAttribute("search", real_InventoryDTO);
 		model.addAttribute("realInventoryList", real_InventoryDTOs);
-		model.addAttribute("page", page);
+		model.addAttribute("paging", page);
 
 		// 재고 관리 화면 이동
 		return "dg/inventoryList";
@@ -85,17 +86,17 @@ public class InventoryController {
 
 		model.addAttribute("search", inventory_CloseDTO);
 		model.addAttribute("inventoryCloseList", inventory_CloseDTOs);
-		model.addAttribute("page", page);
+		model.addAttribute("paging", page);
 
 		// 월마감 이력 화면 이동
 		return "dg/inventoryCloseList";
 	}
 
-	@PutMapping("/inventory/monthClose")
+	@PutMapping("/inventory/monthClose/{real_status}")
 	@ResponseBody
-	public Map<String, Object> monthClose(@RequestBody Inventory_CloseDTO inventory_CloseDTO) {
+	public Map<String, Object> monthClose(@RequestBody Inventory_CloseDTO inventory_CloseDTO, @PathVariable("real_status") int realStatus) {
 		// 월마감 실행
-		boolean result = inventoryService.doMonthClose(inventory_CloseDTO.getYearmonth(), inventory_CloseDTO.getEmp_no());
+		boolean result = inventoryService.doMonthClose(inventory_CloseDTO.getYearmonth(), inventory_CloseDTO.getEmp_no(), realStatus);
 		
 		Map<String, Object> response = new HashMap<>();
 	    response.put("result", result);

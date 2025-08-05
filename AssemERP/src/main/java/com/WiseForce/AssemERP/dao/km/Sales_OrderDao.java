@@ -7,12 +7,16 @@ import com.WiseForce.AssemERP.dto.km.Sales_OrderSearchDto;
 
 public interface Sales_OrderDao {
 
-	int 					salesTotCnt();
+//	int 					salesTotCnt();
+//
+//	List<Sales_OrderDto> 	salesList(Sales_OrderDto sales_OrderDto);
 
-	List<Sales_OrderDto> 	salesList(Sales_OrderDto sales_OrderDto);
+	int 					totSales(Sales_OrderSearchDto sales_OrderSearchDto);
 
-	int 					searchTotCnt(Sales_OrderSearchDto sales_OrderSearchDto);
+	List<Sales_OrderDto> 	listSales(Sales_OrderSearchDto sales_OrderSearchDto);
 
-	List<Sales_OrderDto> 	searchSales(Sales_OrderSearchDto sales_OrderSearchDto);
+	Sales_OrderDto 			detailSales(Sales_OrderDto sales_OrderDto1);
+
+	List<Sales_OrderDto> 	createList();
 
 }

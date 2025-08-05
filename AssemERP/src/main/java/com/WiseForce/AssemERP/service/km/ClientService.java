@@ -7,13 +7,10 @@ import com.WiseForce.AssemERP.dto.km.ClientSearchDto;
 
 public interface ClientService {
 
-	int 				totCnt();
 
-	List<ClientDto> 	getList(ClientDto clientDto);
+	List<ClientDto> 	listClient(ClientSearchDto clientSearchDto);
 
-	List<ClientDto> 	searchList(ClientSearchDto clientSearchDto);
-
-	int 				totSearch(ClientSearchDto clientSearchDto);
+	int 				totClient(ClientSearchDto clientSearchDto);
 
 	ClientDto 			detailClient(ClientDto clientDto1);
 

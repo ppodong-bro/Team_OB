@@ -127,6 +127,11 @@ body {
 	display: block !important
 }
 
+/* 페이징 크기 조절 */
+.page-link {
+  height: 100%;
+}
+
 /* Common Table 상태별 UI 지정 */
 .status-text {
 	display: inline-flex;

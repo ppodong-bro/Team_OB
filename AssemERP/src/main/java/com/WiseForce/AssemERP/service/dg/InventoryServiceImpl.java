@@ -88,9 +88,9 @@ public class InventoryServiceImpl implements InventoryService {
 
 	// 월마감 실행
 	@Override
-	public boolean doMonthClose(String yearMonth, int empno) {
+	public boolean doMonthClose(String yearMonth, int empno, int realStatus) {
 		// 월마감 패키지 실행
-		return inventoryDao.doMonthClose(yearMonth, empno);
+		return inventoryDao.doMonthClose(yearMonth, empno, realStatus);
 	}
 
 }
