@@ -75,6 +75,22 @@ INCREMENT BY 1 -- 증가값
 NOCACHE -- 캐시 안 함 (옵션)
 NOCYCLE; -- 마지막 값 이후 다시 1로 돌아가지 않음
 
+-- 부품(PARTS) 시퀀스
+DROP SEQUENCE PARTS_SEQ;
+CREATE SEQUENCE PARTS_SEQ
+START WITH 1 -- 시작 숫자
+INCREMENT BY 1 -- 증가값
+NOCACHE -- 캐시 안 함 (옵션)
+NOCYCLE; -- 마지막 값 이후 다시 1로 돌아가지 않음
+
+--  제품(PRODUCT) 시퀀스
+DROP SEQUENCE PRODUCT_SEQ;
+CREATE SEQUENCE PRODUCT_SEQ
+START WITH 1 -- 시작 숫자
+INCREMENT BY 1 -- 증가값
+NOCACHE -- 캐시 안 함 (옵션)
+NOCYCLE; -- 마지막 값 이후 다시 1로 돌아가지 않음
+
 
 /************************************************** 
  *  CREATE TABLE
@@ -157,9 +173,8 @@ CREATE TABLE parts (
 	parts_status NUMBER(1), /* 분류번호 */
 	parts_name VARCHAR2(100), /* 부품명 */
 	parts_context VARCHAR2(1000), /* 부품내용 */
-	relation_status NUMBER(1), /* 호환성여부 */
 	manufacture VARCHAR2(100), /* 제조사 */
-	parts_filename VARCHAR2(1000), /* 사진 */
+	filename VARCHAR2(1000), /* 사진 */
 	del_status NUMBER(1), /* 삭제구분 */
 	emp_no NUMBER(7), /* 사원번호 */
 	in_date DATE /* 등록일자 */
@@ -187,11 +202,9 @@ COMMENT ON COLUMN parts.parts_name IS '부품명';
 
 COMMENT ON COLUMN parts.parts_context IS '부품내용';
 
-COMMENT ON COLUMN parts.relation_status IS '호환성여부';
-
 COMMENT ON COLUMN parts.manufacture IS '제조사';
 
-COMMENT ON COLUMN parts.parts_filename IS '사진';
+COMMENT ON COLUMN parts.filename IS '사진';
 
 COMMENT ON COLUMN parts.del_status IS '삭제구분';
 

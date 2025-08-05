@@ -14,11 +14,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.WiseForce.AssemERP.domain.dg.Month_Inventory;
+import com.WiseForce.AssemERP.dto.dg.InventoryDTO;
 import com.WiseForce.AssemERP.dto.dg.Inventory_CloseDTO;
-import com.WiseForce.AssemERP.dto.dg.Month_InventoryDTO;
 import com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO;
-import com.WiseForce.AssemERP.dto.sh.PartsDTO;
 import com.WiseForce.AssemERP.service.dg.InventoryService;
 import com.WiseForce.AssemERP.util.Paging;
 
@@ -52,12 +50,36 @@ public class InventoryController {
 		// 재고 관리 화면 이동
 		return "dg/inventoryList";
 	}
+	
+	@GetMapping("/inventory/history")
+	public String inventoryHistory(InventoryDTO inventoryDTO, Model model) {
+		// 재고 입출고 이력의 수 조회
+		int totalCount = inventoryService.getInventoryHistoryCnt(inventoryDTO);
 
+		// 전체 개수와 요청한 현재 페이지를 토대로 start와 end를 설정한다.
+		Paging page = new Paging(totalCount, inventoryDTO.getCurrentPage());
+		inventoryDTO.setStart(page.getStart());
+		inventoryDTO.setEnd(page.getEnd());
+
+		// 설정한 start, end로 현재 재고 전체 조회
+		List<InventoryDTO> inventoryDTOs = inventoryService.getInventoryHistory(inventoryDTO);
+
+		model.addAttribute("search", inventoryDTO);
+		model.addAttribute("InventoryHistoryList", inventoryDTOs);
+		model.addAttribute("paging", page);
+		
+		System.out.println(page.getCurrentPage());
+		System.out.println(page.getRowPage());
+
+		// 재고 관리 화면 이동
+		return "dg/inventoryHistoryList";
+	}
+	
 	@GetMapping("/inventory/close")
 	public String inventoryClose(Inventory_CloseDTO inventory_CloseDTO, Model model) {
 		// 검색을 위한 기본 설정을 정해준다.
 		// 기본 날짜
-		String default_yearmonth_start = "0001";
+		String default_yearmonth_start = "2001";
 		String default_yearmonth_end = LocalDate.now().format(DateTimeFormatter.ofPattern("yyMM"));
 		// 년월 예시
 		inventory_CloseDTO.setSample_yearmonth_start_text(default_yearmonth_start);
