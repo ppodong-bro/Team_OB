@@ -1,16 +1,43 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function() {
+	// 1. 현재 URL 경로 가져오기
+	const currentPath = window.location.pathname;
+	// 정규식 사용하기
+	const match = currentPath.match(/\/([^\/]+)/);
+	const parentPath = match ? match[1] : '';
+	// console.log(parentPath); 
+	
+	// 2. 사이드바의 모든 메뉴(collapse) 가져오기
+	const collapses = document.querySelectorAll('.collapse');
+	
+	// 3. 각 메뉴가 현재 URL과 일치하는지 확인
+	collapses.forEach(menu => {
+		// console.log(menu.id);
+		if(menu.id.includes(parentPath)){
+			// Bootstrap Collapse 객체 생성 후 show() 호출
+	        const bsCollapse = new bootstrap.Collapse(menu, {
+	            toggle: false // 자동으로 토글하지 않음
+	        });
+	        bsCollapse.show();
+			// console.log(menu.id);
+		}
+	});
+});
+</script>
+
 <!-- lg사이즈 이상일 경우 -->
 <div class="sidebar flex-shrink-0 p-3 d-none d-lg-block">
-	<a href="/" class="d-flex justify-content-center align-items-center pb-3 mb-3 link-body-emphasis text-decoration-none border-bottom"> <img
-		alt="AssemERP" src="${pageContext.request.contextPath}/img/Logo.png" style="width: 150px; height: 50px; object-fit: fill;">
+	<a href="/" class="d-flex justify-content-center align-items-center pb-3 mb-3 link-body-emphasis text-decoration-none border-bottom">
+	<img alt="AssemERP" src="${pageContext.request.contextPath}/img/Logo.png" style="width: 150px; height: 50px; object-fit: fill;">
 	</a>
 	<ul class="list-unstyled ps-0">
 		<li class="mb-1">
-			<button class="btn btn-toggle d-inline-flex align-items-center rounded border-0" data-bs-toggle="collapse" data-bs-target="#humanresource-collapse"
+			<button class="btn btn-toggle d-inline-flex align-items-center rounded border-0" data-bs-toggle="collapse" data-bs-target="#deptemp-collapse"
 				aria-expanded="false">인사</button>
-			<div class="collapse" id="humanresource-collapse" style="">
-				<ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+			<div class="collapse" id="deptemp-collapse" style="">
+				<ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small list-group">
 					<li><a href="${pageContext.request.contextPath}/dept/deptListForm" class="link-body-emphasis d-inline-flex text-decoration-none rounded">부서 관리</a></li>
 					<li><a href="${pageContext.request.contextPath}/emp/empListForm"   class="link-body-emphasis d-inline-flex text-decoration-none rounded">사원 관리</a></li>
 				</ul>
@@ -18,8 +45,8 @@
 		</li>
 		<li class="mb-1">
 			<button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse"
-				data-bs-target="#item-collapse" aria-expanded="false">부품/제품</button>
-			<div class="collapse" id="item-collapse" style="">
+				data-bs-target="#partsproduct-collapse" aria-expanded="false">부품/제품</button>
+			<div class="collapse" id="partsproduct-collapse" style="">
 				<ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
 					<li><a href="${pageContext.request.contextPath}/parts/partsList " class="link-body-emphasis d-inline-flex text-decoration-none rounded">부품
 							관리</a></li>
@@ -30,8 +57,8 @@
 		</li>
 		<li class="mb-1">
 			<button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse"
-				data-bs-target="#orders-collapse" aria-expanded="false">수주/발주</button>
-			<div class="collapse" id="orders-collapse">
+				data-bs-target="#salespurchase-collapse" aria-expanded="false">수주/발주</button>
+			<div class="collapse" id="salespurchase-collapse">
 				<ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
 					<li><a href="${pageContext.request.contextPath}/sales/list" class="link-body-emphasis d-inline-flex text-decoration-none rounded">수주 관리</a></li>
 					<li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">발주 관리</a></li>
@@ -57,7 +84,7 @@
 			<div class="collapse" id="inventory-collapse">
 				<ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
 					<li><a href="${pageContext.request.contextPath}/inventory" class="link-body-emphasis d-inline-flex text-decoration-none rounded">재고 관리</a></li>
-					<li><a href="${pageContext.request.contextPath}/inventory" class="link-body-emphasis d-inline-flex text-decoration-none rounded">재고 입출고
+					<li><a href="${pageContext.request.contextPath}/inventory/history" class="link-body-emphasis d-inline-flex text-decoration-none rounded">재고 입출고
 							이력</a></li>
 					<li><a href="${pageContext.request.contextPath}/inventory/close" class="link-body-emphasis d-inline-flex text-decoration-none rounded">월마감 이력</a></li>
 				</ul>
@@ -77,7 +104,7 @@
 </div>
 <!-- lg사이즈 이하일 경우 -->
 <div class="minisidebar flex-shrink-0 p-3 d-block d-lg-none">
-	<a href="/" class="d-flex justify-content-center align-items-center pb-3 mb-3 link-body-emphasis text-decoration-none border-bottom"> <img
+	<a href="/" class="d-flex justify-content-center align-items-center pb-3 mb-3 text-decoration-none border-bottom"> <img
 		alt="AssemERP" src="${pageContext.request.contextPath}/img/Logo_mini.png" style="width: 50px; height: 50px; object-fit: fill;">
 	</a>
 	<ul class="list-unstyled ps-0">

@@ -55,6 +55,28 @@ html, body {
 	color: black;
 }
 
+.sidebar .btn-toggle {
+  width: 100%; /* 버튼 너비를 부모 요소의 100%로 설정 */
+  padding: 0.25rem 0.5rem; /* 패딩 추가해서 하이라이트 영역 확보 */
+  border-radius: 0.25rem; /* 모서리 둥글게 */
+  transition: all 0.2s ease; /* 부드러운 전환 효과 */
+}
+
+.sidebar .btn-toggle:hover {
+  background-color: #e9ecef; /* 배경색 변경 */
+}
+
+.sidebar .btn-toggle-nav a {
+  width: 80%; /* 버튼 너비를 부모 요소의 100%로 설정 */
+  padding: 0.25rem 0.5rem; /* 패딩 추가해서 하이라이트 영역 확보 */
+  border-radius: 0.25rem; /* 모서리 둥글게 */
+  transition: all 0.2s ease; /* 부드러운 전환 효과 */
+}
+
+.sidebar .btn-toggle-nav a:hover {
+  background-color: #e9ecef; /* 배경색 변경 */
+}
+
 .minisidebar {
 	position: sticky;
 	width: full;
@@ -73,6 +95,16 @@ html, body {
 
 .minisidebar .sh {
 	color: black;
+}
+
+.minisidebar .link-body-emphasis {
+  padding: 0.25rem 0.5rem; /* 패딩 추가해서 하이라이트 영역 확보 */
+  border-radius: 0.25rem; /* 모서리 둥글게 */
+  transition: all 0.2s ease; /* 부드러운 전환 효과 */
+}
+
+.minisidebar .link-body-emphasis:hover {
+  background-color: #e9ecef; /* 배경색 변경 */
 }
 
 .header {
