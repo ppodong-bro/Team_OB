@@ -23,11 +23,11 @@
 			<!-- 이곳에 자신의 코드를 작성하세요 -->
 			<div id="contents">
 
-				<div class="container-fluid">
+				<div class="container-fluid px-4">
 				    <div class="card shadow-sm">
 				        <div class="card-header d-flex justify-content-between align-items-center">
-				            <h4 class="card-title mb-0"><i class="bi bi-people-fill me-2"></i>사원 목록</h4>
-				            <a href="/emp/empRegisterForm" class="btn btn-primary"><i class="bi bi-person-plus-fill me-2"></i>신규 사원 등록</a>
+				            <h4 class="card-title mb-0"><i class="bi bi-list-ul"></i> 사원 목록</h4>
+            					<a href="/emp/empRegisterForm" class="btn btn-primary"><i class="bi bi-plus-lg"></i>	등록</a>
 				        </div>
 				        <div class="card-body">
 				            <%-- ==================== 1. 디버깅 코드 추가 ==================== --%>
@@ -69,15 +69,17 @@
 							        </button>
 							    </form>
 							</div>
-				            <table class="table table-hover table-striped text-center align-middle">
-				                <thead class="table-dark">
+				            <!--  <table class="table table-hover table-striped text-center align-middle">
+				                <thead class="table-dark"> -->
+				            <table class="table table-bordered align-middle text-center">
+				                <thead class="table-light">
 				                    <tr>
 				                        <th>사원번호</th>
 				                        <th>사원명</th>
 				                        <th>부서코드</th>
 				                        <th>전화번호</th>
 				                        <th>이메일</th>
-				                        <th>관리</th>
+				                        <th>수정</th>
 				                    </tr>
 				                </thead>
 				                <tbody>
@@ -87,7 +89,7 @@
 				                            <td>${emp.empName}</td>
 				                            <td>${emp.deptCode}</td>
 				                            <td>${emp.empTel}</td>
-				                            <td>${emp.email}</td>
+				                            <td align="left">${emp.email}</td>
 				                            <td>
 				                                <%-- 3. 수정 버튼 링크 경로 수정 --%>
 				                                <a href="/emp/empModifyForm?empNo=${emp.empNo}" class="btn btn-sm btn-outline-success">
