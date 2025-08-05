@@ -12,10 +12,13 @@ import org.springframework.stereotype.Service;
 import com.WiseForce.AssemERP.dao.dg.InventoryDao;
 import com.WiseForce.AssemERP.domain.dg.Common;
 import com.WiseForce.AssemERP.domain.dg.Common_ID;
+import com.WiseForce.AssemERP.domain.dg.Inventory;
 import com.WiseForce.AssemERP.domain.dg.Inventory_Close;
+import com.WiseForce.AssemERP.dto.dg.InventoryDTO;
 import com.WiseForce.AssemERP.dto.dg.Inventory_CloseDTO;
 import com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO;
 import com.WiseForce.AssemERP.repository.dg.CommonRepository;
+import com.WiseForce.AssemERP.repository.dg.EmpRepository;
 import com.WiseForce.AssemERP.repository.dg.InventoryCloseRepository;
 import com.WiseForce.AssemERP.repository.dg.InventoryRepository;
 
@@ -27,8 +30,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class InventoryServiceImpl implements InventoryService {
 	private final ModelMapper modelMapper;
-	// 공통
+	// 외부
 	private final CommonRepository commonRepository;
+	private final EmpRepository empRepository;
 
 	// 재고
 	private final InventoryRepository inventoryRepository;
@@ -52,9 +56,24 @@ public class InventoryServiceImpl implements InventoryService {
 		// 현재 재고 전체 조회 함수 실행
 		List<Real_InventoryDTO> real_InventoryDTOs = inventoryDao.getRealInventory(real_InventoryDTO);
 
-		System.out.println(real_InventoryDTOs);
-
 		return real_InventoryDTOs;
+	}
+
+	// 재고 입출고 이력 목록 수 조회
+	@Override
+	public int getInventoryHistoryCnt(InventoryDTO inventoryDTO) {
+		// 재고 입출고 이력 목록 조회
+		int inventories = inventoryRepository.getInventoryHistoryCnt(inventoryDTO);
+		
+		return inventories;
+	}
+	// 재고 입출고 이력 목록 조회
+	@Override
+	public List<InventoryDTO> getInventoryHistory(InventoryDTO inventoryDTO) {
+		// 재고 입출고 이력 목록 조회
+		List<InventoryDTO> inventoryDTOs = inventoryRepository.getInventoryHistory(inventoryDTO);
+		
+		return inventoryDTOs;
 	}
 
 	// 월마감 이력 개수 조회
@@ -70,7 +89,7 @@ public class InventoryServiceImpl implements InventoryService {
 	public List<Inventory_CloseDTO> getInventoryCloseList(Inventory_CloseDTO inventory_CloseDTO) {
 		// 월마감 이력 목록 조회
 		List<Inventory_Close> inventory_Closes = inventoryCloseRepository.findAllBySearch(inventory_CloseDTO);
-
+		
 		// Entity -> DTO
 		List<Inventory_CloseDTO> inventory_CloseDTOs = inventory_Closes.stream()
 				.map(entity -> Inventory_CloseDTO.builder()
@@ -80,6 +99,7 @@ public class InventoryServiceImpl implements InventoryService {
 					.close_startdate(entity.getClose_startdate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
 					.close_enddate(entity.getClose_enddate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
 					.emp_no(entity.getEmp_no())
+					.emp_no_text(empRepository.getEmpNameFromEmpNo(entity.getEmp_no()))
 					.build())
 					.collect(Collectors.toList());
 		
@@ -92,5 +112,4 @@ public class InventoryServiceImpl implements InventoryService {
 		// 월마감 패키지 실행
 		return inventoryDao.doMonthClose(yearMonth, empno, realStatus);
 	}
-
 }
