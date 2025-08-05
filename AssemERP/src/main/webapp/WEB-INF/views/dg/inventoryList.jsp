@@ -14,7 +14,7 @@
 }
 </style>
 <script type="text/javascript">
-	// 부품,제품 분류
+	// 부품,제품 구분
 	const itemType = ${search.item_type != null ? search.item_type : 0};
 	const itemStatusSelect = ${search.item_status_select != null ? search.item_status_select : 999};
 	
@@ -110,10 +110,10 @@
 												placeholder="${item_type } 번호 조회" value="${search.item_no_text}">
 										</div>
 									</div>
-									<!-- 분류 -->
+									<!-- 구분 -->
 									<div class="col-auto">
 										<div class="input-group input-group-sm">
-											<span class="input-group-text">${item_type } 분류</span> <select id="item_status" name="item_status_select" class="form-select">
+											<span class="input-group-text">${item_type } 구분</span> <select id="item_status" name="item_status_select" class="form-select">
 												<option value="999">전체</option>
 											</select>
 										</div>
@@ -141,7 +141,7 @@
 										<tr>
 											<th style="white-space: nowrap;">#</th>
 											<th style="white-space: nowrap;">${item_type }번호</th>
-											<th style="min-width: 115px; white-space: nowrap;">${item_type }분류</th>
+											<th style="min-width: 115px; white-space: nowrap;">${item_type }구분</th>
 											<th style="white-space: nowrap;">${item_type }명</th>
 											<th style="white-space: nowrap;">수량</th>
 											<th style="display: none;">적정 수량</th>
@@ -151,7 +151,7 @@
 									<tbody>
 										<c:forEach var="realInventory" items="${realInventoryList}" varStatus="index">
 											<tr>
-												<td>${(page.currentPage - 1) * page.rowPage + index.index + 1}</td>
+												<td>${(paging.currentPage - 1) * paging.rowPage + index.index + 1}</td>
 												<td>${realInventory.item_no}</td>
 												<td>${realInventory.item_status}</td>
 												<td>${realInventory.item_name}</td>
@@ -204,7 +204,7 @@
 		</div>
 	</div>
 
-			<!-- 부트스트랩 CDN -->
+	<!-- 부트스트랩 CDN -->
 	<jsp:include page="/common_cdn.jsp" />
 </body>
 </html>
