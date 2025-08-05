@@ -83,5 +83,17 @@ public class ClientServiceImpl implements ClientService {
 		int result = clientDao.deleteClient(clientDto1);
 		return result;
 	}
+
+	@Override
+	public List<ClientDto> searchByName(String client_Name) {
+			
+		return clientDao.searchByName(client_Name);
+	}
+
+	@Override
+	public List<ClientDto> clientAll() {
+		List<ClientDto> clientList = clientDao.clientAll();
+		return clientList;
+	}
 	
 }

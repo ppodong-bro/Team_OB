@@ -5,8 +5,10 @@ import java.util.List;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
+import com.WiseForce.AssemERP.dto.km.ClientDto;
 import com.WiseForce.AssemERP.dto.km.Sales_OrderDto;
 import com.WiseForce.AssemERP.dto.km.Sales_OrderSearchDto;
+import com.WiseForce.AssemERP.dto.sh.ProductDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -57,9 +59,17 @@ public class Sales_OrderDaoImpl implements Sales_OrderDao {
 	}
 
 	@Override
-	public List<Sales_OrderDto> createList() {
-		List<Sales_OrderDto> createList = session.selectList("createList");
-		return createList;
+	public List<ProductDTO> productList() {
+		List<ProductDTO> productList = session.selectList("salesProductList");
+		return productList;
 	}
+
+	@Override
+	public List<ClientDto> clientList() {
+		List<ClientDto> clientList = session.selectList("salesClientList");
+		return clientList;
+	}
+
+
 
 }

@@ -8,8 +8,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.WiseForce.AssemERP.dto.km.ClientDto;
 import com.WiseForce.AssemERP.dto.km.Sales_OrderDto;
 import com.WiseForce.AssemERP.dto.km.Sales_OrderSearchDto;
+import com.WiseForce.AssemERP.dto.sh.ProductDTO;
+import com.WiseForce.AssemERP.dto.sm.EmpDTO;
 import com.WiseForce.AssemERP.service.km.Sales_OrderService;
 import com.WiseForce.AssemERP.util.Paging;
 
@@ -46,9 +49,13 @@ public class Sales_OrderController {
 	@GetMapping("/createStart")
 	public String createStartSales(Model model) {
 		System.out.println("Sales_OrderController createStart Start...");
-		List<Sales_OrderDto> createList = sales_OrderService.createList();
+		List<ProductDTO> productList = sales_OrderService.productList();
+	    List<ClientDto> clientList = sales_OrderService.clientList();
+	    model.addAttribute("productList", productList);
+	    model.addAttribute("clientList", clientList);
 		return "km/salesCreate";
 	}
+	
 
 
 	

@@ -11,6 +11,26 @@
 <link rel="stylesheet" href="<c:url value='/css/list.css'/>" />
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<!-- 거래처 팝업 연동 스크립트 -->
+<script>
+	function openClientPopup() {
+		window.open(
+			'${pageContext.request.contextPath}/client/popup',
+			'clientPopup',
+			'width=600,height=500,scrollbars=yes'
+		);
+	}
+
+	function setClientInfo(client_No, client_Name, client_Address, client_Email, client_Man, in_Date) {
+		document.getElementById('clientNoInput').value = client_No;
+		document.getElementById('clientNameInput').value = client_Name;
+		document.getElementById('clientAddressInput').value = client_Address;
+		document.getElementById('clientEmailInput').value = client_Email;
+		document.getElementById('clientManInput').value = client_Man;
+		document.getElementById('clientDateInput').value = in_Date?.substring(0, 10);
+		window.close();
+	}
+</script>
 </head>
 <body>
 	<!-- 전체 레이아웃 -->
@@ -31,21 +51,28 @@
 						<section class="info-card mb-4">
 							<div class="info-card-title mb-2">수주 / 거래처 정보</div>
 							<div class="row g-3">
-
-								<!-- 거래처 이름 (직접 입력 또는 추후 select로 바꾸기) -->
+								<!-- 거래처 이름 (팝업 조회) -->
 								<div class="col-md-4">
 									<label class="form-label">거래처 이름<span
-										class="text-danger">*</span></label> <input type="text"
-										class="form-control form-control-sm"
-										name="sales_OrderDto.clientDto.client_Name"
-										value="${sales_OrderDto.clientDto.client_Name}" required />
-									<div class="invalid-feedback">거래처 이름은 필수입니다.</div>
+										class="text-danger">*</span></label>
+									<div class="input-group input-group-sm">
+										<input type="hidden" id="clientNoInput"
+											name="sales_OrderDto.clientDto.client_No"
+											value="${sales_OrderDto.clientDto.client_No}" /> <input
+											type="text" id="clientNameInput"
+											class="form-control form-control-sm"
+											name="sales_OrderDto.clientDto.client_Name"
+											value="${sales_OrderDto.clientDto.client_Name}" readonly
+											required placeholder="조회 버튼으로 선택" />
+										<button type="button" class="btn btn-outline-secondary"
+											onclick="openClientPopup()">조회</button>
+									</div>
 								</div>
 
 								<!-- 거래처 주소 -->
 								<div class="col-md-4">
 									<label class="form-label">주소</label> <input type="text"
-										class="form-control form-control-sm"
+										class="form-control form-control-sm" id="clientAddressInput"
 										name="sales_OrderDto.clientDto.client_Address"
 										value="${sales_OrderDto.clientDto.client_Address}" />
 								</div>
@@ -55,7 +82,7 @@
 									<label class="form-label">이메일</label>
 									<div class="input-group input-group-sm">
 										<span class="input-group-text">@</span> <input type="email"
-											class="form-control"
+											class="form-control" id="clientEmailInput"
 											name="sales_OrderDto.clientDto.client_Email"
 											value="${sales_OrderDto.clientDto.client_Email}" />
 									</div>
@@ -64,12 +91,12 @@
 								<!-- 거래처 담당자 -->
 								<div class="col-md-4">
 									<label class="form-label">거래처 담당자</label> <input type="text"
-										class="form-control form-control-sm"
+										class="form-control form-control-sm" id="clientManInput"
 										name="sales_OrderDto.clientDto.client_Man"
 										value="${sales_OrderDto.clientDto.client_Man}" />
 								</div>
 
-								<!-- 내부 담당자 (로그인 사용자로 자동 채우는 게 좋음) -->
+								<!-- 담당자 이름 -->
 								<div class="col-md-4">
 									<label class="form-label">담당자 이름</label> <input type="text"
 										readonly class="form-control form-control-sm"
@@ -77,14 +104,13 @@
 										value="${sales_OrderDto.empDTO.empName}" />
 								</div>
 
-								<!-- 수주일자 / 등록일자 -->
+								<!-- 등록 일자 -->
 								<div class="col-md-4">
 									<label class="form-label">등록 일자</label> <input type="date"
-										class="form-control form-control-sm"
+										class="form-control form-control-sm" id="clientDateInput"
 										name="sales_OrderDto.in_Date"
 										value="${fn:substring(sales_OrderDto.in_Date,0,10)}" />
 								</div>
-
 							</div>
 						</section>
 
