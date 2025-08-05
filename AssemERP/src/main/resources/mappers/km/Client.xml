@@ -133,4 +133,16 @@
 		DELETE FROM CLIENT_HIS
 		WHERE CLIENT_NO = #{client_No} AND START_DATE = #{start_Date}
 	</delete>
+	
+	<select id="clientSearchList" parameterType="String" resultType="ClientDto">
+		SELECT *
+		FROM CLIENT
+		WHERE CLIENT_NAME LIKE '%' || #{value} || '%'
+	</select>
+	
+	<select id="clientAll" resultType="ClientDto">
+		SELECT C.CLIENT_NO, C.CLIENT_NAME, C.CLIENT_EMAIL, C.CLIENT_ADDRESS, C.CLIENT_MAN, E.EMP_NO, E.EMP_NAME
+		FROM CLIENT C LEFT JOIN EMP E ON C.EMP_NO = E.EMP_NO 
+		WHERE C.CLIENT_GUBUN = 1 AND C.DEL_STATUS = 0
+	</select>
 </mapper>

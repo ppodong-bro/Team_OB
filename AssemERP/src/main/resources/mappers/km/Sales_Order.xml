@@ -58,6 +58,8 @@
 		</collection>
 
 	</resultMap>
+	
+	<resultMap type="Sales_OrderDto" id="createListMap"></resultMap>
 
 	<select id="totSales" parameterType="Sales_OrderSearchDto"
 		resultType="int">
@@ -153,8 +155,14 @@
         WHERE S.SALES_NO = #{sales_No}
 	</select>
 	
-	<select id="createList" resultMap="sales_OrderMap">
-		SELECT E.EMP_NO, E.EMP_NAME, C.CLIENT_NO, C.CLIENT_NAME, C.CLIENT_ADDRESS, C.CLIENT_MAN, C.CLIENT_TEL, C.CLIENT_EMAIL,
+	<select id="salesProductList" resultType="productDTO">
+		SELECT PRODUCT_NO, PRODUCT_NAME
+		FROM PRODUCT
+	</select>
+	
+	<select id="salesClientList" resultType="clientDto">
+		SELECT *
+		FROM CLIENT
 	</select>
 	
 
