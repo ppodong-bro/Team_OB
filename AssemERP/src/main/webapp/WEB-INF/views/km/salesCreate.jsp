@@ -21,19 +21,20 @@
 		);
 	}
 
-	function setClientInfo(client_No, client_Name, client_Address, client_Email, client_Man, in_Date) {
-		document.getElementById('clientNoInput').value = client_No;
-		document.getElementById('clientNameInput').value = client_Name;
-		document.getElementById('clientAddressInput').value = client_Address;
-		document.getElementById('clientEmailInput').value = client_Email;
-		document.getElementById('clientManInput').value = client_Man;
-		document.getElementById('clientDateInput').value = in_Date?.substring(0, 10);
-		window.close();
+	function setClientInfo(client_No, client_Name, client_Address, client_Email, client_Man, empName /* , in_Date */) {
+		  document.getElementById('clientNoInput').value = client_No;
+		  document.getElementById('clientNameInput').value = client_Name;
+		  document.getElementById('clientAddressInput').value = client_Address;
+		  document.getElementById('clientEmailInput').value = client_Email;
+		  document.getElementById('clientManInput').value = client_Man;
+		  document.getElementById('empNameInput').value = empName;
+		  // document.getElementById('clientDateInput').value = in_Date?.substring(0, 10); ← 일단 주석처리
+		  window.close();
 	}
 </script>
 </head>
 <body>
-	<!-- 전체 레이아웃 -->
+	<!-- 전체 레이아웃 --> 
 	<div id="layout">
 		<div id="side">
 			<jsp:include page="/side.jsp" />
@@ -99,7 +100,7 @@
 								<!-- 담당자 이름 -->
 								<div class="col-md-4">
 									<label class="form-label">담당자 이름</label> <input type="text"
-										readonly class="form-control form-control-sm"
+										readonly class="form-control form-control-sm" id="empNameInput"
 										name="sales_OrderDto.empDTO.empName"
 										value="${sales_OrderDto.empDTO.empName}" />
 								</div>

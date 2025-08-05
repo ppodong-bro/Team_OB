@@ -35,6 +35,21 @@
 		</association>
 	</resultMap>
 	
+	<resultMap type="ClientDto" id="popupMap">
+		<id		column="CLIENT_NO" 		property="client_No"/>
+		<result column="CLIENT_NAME" 	property="client_Name"/>
+		<result column="CLIENT_EMAIL" 	property="client_Email"/>
+		<result column="CLIENT_MAN"		property="client_Man"/>
+		<result	column="CLIENT_TEL"		property="client_Tel"/>
+		<result column="CLIENT_ADDRESS" property="client_Address"/>
+		
+		<association property="empDTO" javaType="EmpDTO">
+			<id	column="EMP_NO"			property="empNo"/>
+			<result column="EMP_NAME" 	property="empName"/>
+		</association>
+	
+	</resultMap>
+	
 	
 	 <select id="totClient" parameterType="ClientSearchDto" resultType="int">
 	 
@@ -140,9 +155,9 @@
 		WHERE CLIENT_NAME LIKE '%' || #{value} || '%'
 	</select>
 	
-	<select id="clientAll" resultType="ClientDto">
+	<select id="clientAll" resultMap="popupMap">
 		SELECT C.CLIENT_NO, C.CLIENT_NAME, C.CLIENT_EMAIL, C.CLIENT_ADDRESS, C.CLIENT_MAN, E.EMP_NO, E.EMP_NAME
-		FROM CLIENT C LEFT JOIN EMP E ON C.EMP_NO = E.EMP_NO 
+		FROM CLIENT C LEFT JOIN EMP E ON C.EMP_NO = E.EMP_NO
 		WHERE C.CLIENT_GUBUN = 1 AND C.DEL_STATUS = 0
 	</select>
 </mapper>
