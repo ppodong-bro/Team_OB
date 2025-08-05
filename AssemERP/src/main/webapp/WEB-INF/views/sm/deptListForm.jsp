@@ -26,8 +26,8 @@
 				<div class="container-fluid px-4">
 				    <div class="card shadow-sm">
 				        <div class="card-header d-flex justify-content-between align-items-center">
-						    <h4 class="card-title mb-0"><i class="bi bi-building me-2"></i>부서 목록</h4>
-						    <a href="/dept/deptRegisterForm" class="btn btn-primary"><i class="bi bi-building-add me-2"></i>신규 부서 등록</a>
+						    <h4 class="card-title mb-0"><i class="bi bi-list-ul"></i> 부서 목록</h4>
+		    				<a href="/dept/deptRegisterForm" class="btn btn-primary"><i class="bi bi-plus-lg"></i> 등록</a>
 						</div>
 				        <div class="card-body">
 				        	<div class="d-flex justify-content-end mb-3">
@@ -64,15 +64,17 @@
 							        </button>
 							    </form>
 							</div>
-				            <table class="table table-hover table-striped text-center align-middle">
-				                <thead class="table-dark">
+				             <!-- <table class="table table-hover table-striped text-center align-middle"> -->
+				            <table class="table table-bordered align-middle text-center">
+				                <thead class="table-light">
+				                <!-- <thead class="table-dark"> -->
 				                    <tr>
 				                        <th style="width: 10%;">부서코드</th>
 				                        <th style="width: 25%;">부서명</th>
 				                        <th style="width: 15%;">부서장(사번)</th>
 				                        <th style="width: 20%;">위치</th>
 				                        <th style="width: 15%;">위치상세</th>
-				                        <th style="width: 15%;">관리</th>
+				                        <th style="width: 15%;">수정</th>
 				                    </tr>
 				                </thead>
 				                <tbody>
