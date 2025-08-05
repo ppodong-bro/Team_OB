@@ -1,7 +1,6 @@
 package com.WiseForce.AssemERP.service.sh;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,8 +69,9 @@ public class PartsServiceImpl implements PartsService {
 
 	@Override
 	public int createParts(PartsDTO partsDTO) {
-		if (partsDTO.getIn_date() == null)
+		if (partsDTO.getIn_date() == null) {
 			partsDTO.setIn_date(LocalDate.now());
+		}
 		partsDTO.setDel_status(0);
 		// emp 나올떄까지 임시
 		partsDTO.setEmp_no(1001);
@@ -113,6 +113,11 @@ public class PartsServiceImpl implements PartsService {
 		System.out.println("PartsServiceImpl findbyID partsDTO => " + partsDTO);
 
 		return partsDTO;
+	}
+
+	@Override
+	public void updateParts(Parts parts) {
+		partsRepository.save(parts);
 	}
 
 }
