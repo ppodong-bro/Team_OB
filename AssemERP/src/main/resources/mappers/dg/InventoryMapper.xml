@@ -70,4 +70,13 @@
 		WHERE rn BETWEEN #{start} and #{end}
 	</select>
 
+	<!-- {전체} : 로 CallableStatement용 SQL이라는것을 명확히 함 -->
+	<select id="callMonthClose" parameterType="Inventory_CloseDTO" statementType="CALLABLE">
+		{ CALL month_close.month_close_main(
+		#{yearmonth, mode=IN, jdbcType=VARCHAR},
+		#{emp_no, mode=IN, jdbcType=VARCHAR},
+		#{realStatus, mode=IN, jdbcType=VARCHAR},
+		#{result, mode=OUT, jdbcType=VARCHAR}
+		) }
+	</select>
 </mapper>

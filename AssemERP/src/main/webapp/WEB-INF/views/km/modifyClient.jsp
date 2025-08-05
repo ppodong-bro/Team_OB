@@ -94,7 +94,14 @@
 									id="clientEmail" name="client_Email"
 									value="${clientDto.client_Email}">
 							</div>
-
+							
+							<!-- 거래처전화번호 -->
+							<div class="mb-3">
+								<label for="clientTel" class="form-label">거래처전화번호</label> <input
+									type="text" class="form-control form-control-sm" id="clientTel"
+									name="client_Tel" value="${clientDto.client_Tel}">
+							</div>
+							
 							<!-- 거래처 담당자 -->
 							<div class="mb-3">
 								<label for="clientMan" class="form-label">거래처 담당자</label> <input

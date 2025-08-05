@@ -59,7 +59,7 @@
 					<li><a href="${pageContext.request.contextPath}/inventory" class="link-body-emphasis d-inline-flex text-decoration-none rounded">재고 관리</a></li>
 					<li><a href="${pageContext.request.contextPath}/inventory" class="link-body-emphasis d-inline-flex text-decoration-none rounded">재고 입출고
 							이력</a></li>
-					<li><a href="${pageContext.request.contextPath}/inventory" class="link-body-emphasis d-inline-flex text-decoration-none rounded">마감 이력</a></li>
+					<li><a href="${pageContext.request.contextPath}/inventory/close" class="link-body-emphasis d-inline-flex text-decoration-none rounded">월마감 이력</a></li>
 				</ul>
 			</div>
 		</li>

@@ -21,28 +21,15 @@ import lombok.RequiredArgsConstructor;
 @Controller
 public class ClientController {
 	private final ClientService clientService;
-	
+
 	@GetMapping("list")
-	public String listStart(ClientDto clientDto,Model model) {
-		int totCnt = clientService.totCnt();
-		
-		Paging page = new Paging(totCnt, clientDto.getCurrentPage());
-		clientDto.setStart(page.getStart());
-		clientDto.setEnd(page.getEnd());
-		List<ClientDto> clientList = clientService.getList(clientDto);
-		model.addAttribute("clientList", clientList);
-		model.addAttribute("page", page);
-		return "km/clientList";
-	}
-	
-	@GetMapping("searchList")
-	public String clientSearchList(ClientSearchDto clientSearchDto, Model model) {
-		int totSearch = clientService.totSearch(clientSearchDto);
+	public String listClient(ClientSearchDto clientSearchDto, Model model) {
+		int totSearch = clientService.totClient(clientSearchDto);
 		ClientDto clientDto = new ClientDto();
 		Paging page = new Paging(totSearch, clientSearchDto.getCurrentPage());
 		clientSearchDto.setStart(page.getStart());
 		clientSearchDto.setEnd(page.getEnd());
-		List<ClientDto> searchList = clientService.searchList(clientSearchDto);
+		List<ClientDto> searchList = clientService.listClient(clientSearchDto);
 		model.addAttribute("clientList", searchList);
 		model.addAttribute("page", page);
 		
@@ -59,7 +46,7 @@ public class ClientController {
 	}
 	
 	@GetMapping("createStart")
-	public String createClientStart(ClientDto clientDto, Model model) {
+	public String createStartClient(ClientDto clientDto, Model model) {
 		System.out.println("ClientController createStartClient Start...");
 		
 		return "km/clientCreate";
@@ -74,7 +61,7 @@ public class ClientController {
 	}
 	
 	@GetMapping("modifyStart")
-	public String modifyClientStart(ClientDto clientDto1, Model model) {
+	public String modifyStartClient(ClientDto clientDto1, Model model) {
 		System.out.println("ClientController modifyClient Start...");
 		ClientDto clientDto = clientService.detailClient(clientDto1);
 		model.addAttribute("clientDto", clientDto);

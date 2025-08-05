@@ -1,10 +1,10 @@
 package com.WiseForce.AssemERP.dto.sh;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
-import com.WiseForce.AssemERP.domain.sh.Parts;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.WiseForce.AssemERP.domain.sh.Product;
 
 import lombok.AllArgsConstructor;
@@ -29,24 +29,27 @@ public class ProductDTO {
     private int 		del_status;
     private int			emp_no;
     private LocalDate	in_date;
-    
+
     //paging
     private int start;
     private int end;
     private String currentPage;
     private	String pageNum;
-    
+
     // 분류명가져오기
     private String product_statusName;
-    
+
     // BOM LIST
     private List<ProductBomDTO> productBOM;
-    
+
     // Searching
     private LocalDate startDate;
     private LocalDate endDate;
-    
-    
+
+
+    private MultipartFile file;
+
+
     public static ProductDTO chageProductDTO(Product product) {
     	return ProductDTO.builder()
     			.product_no(product.getProduct_no())
@@ -59,7 +62,7 @@ public class ProductDTO {
     			.in_date(product.getIn_date())
     			.build();
     }
-    
+
     public Product changeProduct() {
     	return Product.builder()
     			.product_no(this.product_no)

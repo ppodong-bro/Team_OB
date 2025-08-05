@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.WiseForce.AssemERP.dto.km.ClientDto;
 import com.WiseForce.AssemERP.dto.km.ClientSearchDto;
+import com.WiseForce.AssemERP.dto.km.Client_HisDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -14,32 +15,18 @@ import lombok.RequiredArgsConstructor;
 @Repository
 public class ClientDaoImpl implements ClientDao{
 	private final SqlSession session;
-	@Override
-	public int totCnt() {
-		int totCnt = session.selectOne("com.WiseForce.AssemERP.ClientMapper.clientTotCnt");
-		System.out.println("ClientDaoImpl totCnt totCnt->"+totCnt);
-		return totCnt;
-	}
-	
-	@Override
-	public List<ClientDto> getList(ClientDto clientDto) {
-		List<ClientDto> listClient = session.selectList("clientList", clientDto);
-		System.out.println("ClientDaoImpl getList listClient->"+listClient);
-		
-		return listClient;
-	}
 
 	@Override
-	public List<ClientDto> searchList(ClientSearchDto clientSearchDto) {
+	public List<ClientDto> listClient (ClientSearchDto clientSearchDto) {
 		System.out.println("clientSearchDto"+clientSearchDto);
-		List<ClientDto> searchList = session.selectList("clientSearchList", clientSearchDto);
+		List<ClientDto> searchList = session.selectList("clientList", clientSearchDto);
 		System.out.println("searchList-->"+searchList);
 		return searchList;
 	}
 
 	@Override
-	public int totSearch(ClientSearchDto clientSearchDto) {
-		int totSearch = session.selectOne("totSearchClient", clientSearchDto);
+	public int totClient(ClientSearchDto clientSearchDto) {
+		int totSearch = session.selectOne("totClient", clientSearchDto);
 		System.out.println("totSearch--->"+totSearch);
 		return totSearch;
 	}
@@ -72,6 +59,24 @@ public class ClientDaoImpl implements ClientDao{
 	public int deleteClient(ClientDto clientDto1) {
 		int result = session.update("deleteClient", clientDto1);
 		return result;
+	}
+
+	@Override
+	public void modifyClient_HisEnd(Client_HisDto client_HisDto) {
+		session.update("client_HisEnd", client_HisDto);
+		
+	}
+
+	@Override
+	public void modifyClient_His(Client_HisDto client_HisDto) {
+		
+		session.update("client_HisEnd", client_HisDto);
+		
+		// 중복 제거를 위한 delete문
+		session.delete("client_HisDelete", client_HisDto);
+		
+		session.insert("client_His", client_HisDto);
+		
 	}
 
 }
