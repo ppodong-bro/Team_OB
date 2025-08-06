@@ -28,6 +28,7 @@ public class Inventory_CloseDTO {
 	private String yearmonth_end_text;// 년월 끝
 	private LocalDate startDate; // 마감 검색 시작일
 	private LocalDate endDate; // 마감 검색 종료일
+//	private String emp_no_text;// 마감처리담당자 검색
 //	private int close_status_select; // 마감 상태
 	// 담당자
 

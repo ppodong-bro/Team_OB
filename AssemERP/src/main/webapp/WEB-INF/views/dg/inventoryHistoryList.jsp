@@ -135,14 +135,14 @@ const itemStatusSelect = ${search.item_status_select != null ? search.item_statu
 												<td class="text-center">
 													<c:import url="${pageContext.request.contextPath}/commonText/600/${inventoryHistory.item_status}" var="order_status_text" charEncoding="UTF-8"/>${order_status_text}
 												</td>
-												<td class="text-center">${inventoryHistory.item_no_text}</td>
+												<td>${inventoryHistory.item_no_text}</td>
 												<td class="text-center">
 													<c:choose>
 														<c:when test="${inventoryHistory.inout_status == 0}">
-															<span style="color: red;">+${inventoryHistory.item_cnt}</span>
+															${inventoryHistory.item_totalcnt}<span style="color: red;">(+${inventoryHistory.item_cnt})</span>
 														</c:when>
 														<c:otherwise>
-															<span style="color: blue;">-${inventoryHistory.item_cnt}</span>
+															${inventoryHistory.item_totalcnt}<span style="color: blue;">(-${inventoryHistory.item_cnt})</span>
 														</c:otherwise>
 													</c:choose>
 												</td>

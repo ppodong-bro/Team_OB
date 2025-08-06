@@ -30,8 +30,6 @@ public class InventoryController {
 
 	@GetMapping("/inventory")
 	public String inventory(Real_InventoryDTO real_InventoryDTO, Model model) {
-//		System.out.println(real_InventoryDTO);
-
 		// 현재 재고의 종류 수 조회
 		int totalTypeCount = inventoryService.getTotalTypeCount(real_InventoryDTO);
 
