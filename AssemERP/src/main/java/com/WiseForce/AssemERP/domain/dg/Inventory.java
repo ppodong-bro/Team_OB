@@ -29,6 +29,7 @@ public class Inventory {
 	private int inout_status; // 입/출고 구분
 	private LocalDateTime inout_date; // 입/출고일시
 	private int item_cnt; // 수량
+	private int item_totalcnt; // 수량
 	private int item_quality; // 품질
 
 }

@@ -19,6 +19,16 @@ import lombok.RequiredArgsConstructor;
 public class InventoryRepositoryImpl implements InventoryRepository {
 	private final EntityManager entityManager;
 
+	// 재고 입출고 이력의 총 수량 계산하는 프로시저 실행
+	@Override
+	public void execProcedureClacInventoryTot() {
+		// 프로시저 실행
+		entityManager.createNativeQuery(""
+				+ "BEGIN "
+				+ "	procedure_clac_inventory_tot; "
+				+ "END;").executeUpdate();
+	}
+	
 	// JPA에서는 NVL와 COALESCE를 사용하지 말라고 한다...
 	// 재고 입출고 이력 목록 수 조회
 	@Override
@@ -57,11 +67,11 @@ public class InventoryRepositoryImpl implements InventoryRepository {
 		System.out.println("whereOrderNo: " + whereItemName);
 		
 		// createNativeQuery : 실제 DB의 테이블명, 칼럼명을 사용하여 쿼리 진행
-		String findAllBySearchSql = "SELECT inventory_his_no, order_status, order_no, item_status, item_no, item_no_text, inout_status, inout_date, item_cnt, item_quality "
+		String findAllBySearchSql = "SELECT inventory_his_no, order_status, order_no, item_status, item_no, item_no_text, inout_status, inout_date, item_cnt, item_totalcnt, item_quality "
 				+ "FROM ( "
 				+ "    SELECT ROWNUM rn, i0.* "
 				+ "    FROM ( "
-				+ "        	SELECT inventory_his_no, order_status, order_no, item_status, item_no, NVL(parts_name, product_name) AS item_no_text, inout_status, inout_date, item_cnt, item_quality"
+				+ "        	SELECT inventory_his_no, order_status, order_no, item_status, item_no, NVL(parts_name, product_name) AS item_no_text, inout_status, inout_date, item_cnt, item_totalcnt, item_quality"
 				+ "        	FROM inventory i1 "
 				+ "			LEFT JOIN parts pa ON i1.item_status = 0 AND i1.item_no = pa.parts_no "
 				+ "			LEFT JOIN product pr ON i1.item_status = 1 AND i1.item_no = pr.product_no "
@@ -105,7 +115,8 @@ public class InventoryRepositoryImpl implements InventoryRepository {
 						.inout_date(((Timestamp)row[7]).toLocalDateTime())
 						.inout_date_text(((Timestamp)row[7]).toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
 						.item_cnt((int)row[8])
-						.item_quality((int)row[9])						
+						.item_totalcnt((int)row[9])
+						.item_quality((int)row[10])						
 						.build())
 				.collect(Collectors.toList());
 		
