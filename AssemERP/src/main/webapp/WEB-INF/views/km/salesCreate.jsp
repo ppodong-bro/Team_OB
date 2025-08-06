@@ -21,20 +21,140 @@
 		);
 	}
 
-	function setClientInfo(client_No, client_Name, client_Address, client_Email, client_Man, empName /* , in_Date */) {
+	function setClientInfo(client_No, client_Name, client_Address, client_Email, client_Man, empNo, empName) {
 		  document.getElementById('clientNoInput').value = client_No;
 		  document.getElementById('clientNameInput').value = client_Name;
 		  document.getElementById('clientAddressInput').value = client_Address;
 		  document.getElementById('clientEmailInput').value = client_Email;
 		  document.getElementById('clientManInput').value = client_Man;
+		  document.getElementById('empNoInput').value = empNo;
 		  document.getElementById('empNameInput').value = empName;
 		  // document.getElementById('clientDateInput').value = in_Date?.substring(0, 10); ← 일단 주석처리
 		  window.close();
 	}
+	
+	let targetProductInput = null; // 값을 넣을 타겟 input(한 줄만 기억)
+
+	function openProductPopup(btn) {
+	    // btn: 사용자가 클릭한 "조회" 버튼(this)
+	    // 해당 버튼이 속한 tr에서 class가 'productNoInput'인 input을 찾음
+	    targetProductInput = btn.closest('tr').querySelector('.productNoInput');
+	  
+	    targetProductNameInput = btn.closest('tr').querySelector('.productNameInput');
+
+	    window.open(
+	        '${pageContext.request.contextPath}/sales/productPopup',
+	        'productPopup',
+	        'width=600,height=500,scrollbars=yes'
+	    );
+	}
+	
+	// 팝업창에서 선택 버튼 클릭 시 실행되는 함수
+	function setProductInfo(product_no, product_name) {
+	    if (targetProductInput) {
+	        targetProductInput.value = product_no;
+	 	if (targetProductNameInput) 
+	 		targetProductNameInput.value = product_name;
+	    }
+	    window.close();
+	}
+	
+	
+	document.addEventListener('DOMContentLoaded', function () {
+		  const addItemBtn = document.getElementById('add-item-btn');
+		  const itemsTbody = document.getElementById('items-tbody');
+
+		  addItemBtn.addEventListener('click', function () {
+			  const idx = itemsTbody.querySelectorAll('tr').length;
+
+			  const newRow = document.createElement('tr');
+			  newRow.className = 'item-row';
+			  newRow.innerHTML =
+				  '<td>' +
+				    '<div class="input-group input-group-sm">' +
+				      '<input type="hidden" class="productNoInput" ' +
+				             'name="sales_Item[' + idx + '].product_No" />' +
+				      '<input type="text" class="form-control form-control-sm productNameInput" ' +
+				             'readonly tabindex="-1" style="background:#f6f6f6;" />' +
+				      '<button type="button" class="btn btn-outline-secondary" ' +
+				              'onclick="openProductPopup(this)">조회</button>' +
+				    '</div>' +
+				  '</td>' +
+
+				  // ────────────────────────────────────────────────────────────────────────
+				  // 두 번째 셀: 요청수량
+				  '<td>' +
+				    '<input type="number" min="0" ' +
+				           'name="sales_Item[' + idx + '].sales_Item_Cnt" ' +
+				           'class="form-control form-control-sm qty-input" required />' +
+				  '</td>' +
+
+				  // 세 번째 셀: 제품 단가
+				  '<td>' +
+				    '<input type="number" step="0.01" min="0" ' +
+				           'name="sales_Item[' + idx + '].sales_Item_Cost" ' +
+				           'class="form-control form-control-sm cost-input" required />' +
+				  '</td>' +
+
+				  // 네 번째 셀: 요청 총액 (readonly)
+				  '<td>' +
+				    '<input type="text" readonly ' +
+				           'class="form-control form-control-plaintext form-control-sm tot-cost" />' +
+				  '</td>' +
+
+				  // 다섯 번째 셀: 삭제 버튼
+				  '<td class="text-center">' +
+				    '<button type="button" ' +
+				            'class="btn btn-sm btn-outline-danger remove-item-btn" ' +
+				            'onclick="this.closest(\'tr\').remove(); recalcTotal();">' +
+				      '&times;' +
+				    '</button>' +
+				  '</td>';
+			    // … 나머지 칸도 동일하게 문자열 연결로 name 속성에 idx 삽입
+			  itemsTbody.appendChild(newRow);
+			});
+		});
+
+	function recalcTotal() {
+		  let sumReq = 0;
+		  let sumCost = 0;
+
+		  document.querySelectorAll('#items-tbody tr').forEach(function(row) {
+		    // 요청수량
+		    const qty = Number(row.querySelector('.qty-input')?.value) || 0;
+		    // 단가
+		    const cost = Number(row.querySelector('.cost-input')?.value) || 0;
+		    // 요청 총액 계산
+		    const totCost = qty * cost;
+
+		    // 각 행의 요청 기준 총액 표시
+		    const totCostInput = row.querySelector('.tot-cost');
+		    if (totCostInput) totCostInput.value = totCost ? totCost.toLocaleString() : '';
+
+		    sumReq += qty;
+		    sumCost += totCost;
+		  });
+
+		  // 합계 영역 업데이트
+		  document.getElementById('sum-req').innerText = sumReq.toLocaleString();
+		  document.getElementById('sum-cost').innerText = sumCost.toLocaleString();
+		}
+
+		// 수량/단가 input 입력시마다 합계 다시 계산
+		document.addEventListener('input', function(e) {
+		  if (e.target.classList.contains('qty-input') || e.target.classList.contains('cost-input')) {
+		    recalcTotal();
+		  }
+		});
+
+		// 항목 추가/삭제 후에도 호출 필요
+		document.addEventListener('DOMContentLoaded', function() {
+		  recalcTotal();
+		});
 </script>
 </head>
 <body>
-	<!-- 전체 레이아웃 --> 
+	<!-- 전체 레이아웃 -->
 	<div id="layout">
 		<div id="side">
 			<jsp:include page="/side.jsp" />
@@ -62,7 +182,7 @@
 											value="${sales_OrderDto.clientDto.client_No}" /> <input
 											type="text" id="clientNameInput"
 											class="form-control form-control-sm"
-											name="sales_OrderDto.clientDto.client_Name"
+											name="clientDto.client_Name"
 											value="${sales_OrderDto.clientDto.client_Name}" readonly
 											required placeholder="조회 버튼으로 선택" />
 										<button type="button" class="btn btn-outline-secondary"
@@ -74,7 +194,7 @@
 								<div class="col-md-4">
 									<label class="form-label">주소</label> <input type="text"
 										class="form-control form-control-sm" id="clientAddressInput"
-										name="sales_OrderDto.clientDto.client_Address"
+										name="clientDto.client_Address"
 										value="${sales_OrderDto.clientDto.client_Address}" />
 								</div>
 
@@ -84,7 +204,7 @@
 									<div class="input-group input-group-sm">
 										<span class="input-group-text">@</span> <input type="email"
 											class="form-control" id="clientEmailInput"
-											name="sales_OrderDto.clientDto.client_Email"
+											name="clientDto.client_Email"
 											value="${sales_OrderDto.clientDto.client_Email}" />
 									</div>
 								</div>
@@ -93,26 +213,26 @@
 								<div class="col-md-4">
 									<label class="form-label">거래처 담당자</label> <input type="text"
 										class="form-control form-control-sm" id="clientManInput"
-										name="sales_OrderDto.clientDto.client_Man"
+										name="clientDto.client_Man"
 										value="${sales_OrderDto.clientDto.client_Man}" />
 								</div>
 
 								<!-- 담당자 이름 -->
 								<div class="col-md-4">
-									<label class="form-label">담당자 이름</label> <input type="text"
-										readonly class="form-control form-control-sm" id="empNameInput"
-										name="sales_OrderDto.empDTO.empName"
-										value="${sales_OrderDto.empDTO.empName}" />
+									<label class="form-label">담당자 이름</label> 
+									<input type="hidden" name="empDTO.empNo" id="empNoInput" 
+										   value="${sales_OrderDto.empDTO.empNo}" />
+									<input type="text" readonly class="form-control form-control-sm"
+										id="empNameInput" value="${sales_OrderDto.empDTO.empName}" />
 								</div>
 
 								<!-- 등록 일자 -->
 								<div class="col-md-4">
-									<label class="form-label">등록 일자</label> <input type="date"
-										class="form-control form-control-sm" id="clientDateInput"
-										name="sales_OrderDto.in_Date"
-										value="${fn:substring(sales_OrderDto.in_Date,0,10)}" />
+									<label class="form-label">납기 완료일</label> <input type="date"
+										class="form-control form-control-sm"
+										name="sales_Date"
+										value="$(sales_OrderDto.sales_Date}" />
 								</div>
-							</div>
 						</section>
 
 						<!-- 제품 항목 추가 -->
@@ -134,45 +254,31 @@
 										<tr>
 											<th scope="col">제품</th>
 											<th scope="col" class="numeric">요청수량</th>
-											<th scope="col" class="numeric">출고수량</th>
-											<th scope="col" class="numeric">출고대기</th>
 											<th scope="col" class="numeric">제품 단가</th>
-											<th scope="col" class="numeric">출고 기준 총액</th>
-											<th scope="col" class="numeric">요청 기준 총액</th>
+											<th scope="col" class="numeric">요청 총액</th>
 											<th scope="col">삭제</th>
 										</tr>
 									</thead>
-									<tbody>
+									<tbody id="items-tbody">
 										<!-- 초기에는 한 줄 비어있게 -->
 										<tr class="item-row">
-											<td><select
-												name="sales_OrderDto.sales_Item[0].productDto.product_no"
-												class="form-select form-select-sm" required>
-													<option value="">선택</option>
-													<c:forEach var="prod" items="${products}">
-														<option value="${prod.product_no}">${prod.product_name}</option>
-													</c:forEach>
-											</select></td>
+											<td><div class="input-group input-group-sm">
+													<input type="hidden" class="productNoInput"
+														name="sales_Item[0].product_No" /> <input
+														type="text"
+														class="form-control form-control-sm productNameInput"
+														value="${sales_OrderDto.clientDto.client_Name}">
+													<button type="button" class="btn btn-outline-secondary"
+														onclick=openProductPopup(this)>조회</button>
+												</div></td>
 											<td><input type="number" min="0"
-												name="sales_OrderDto.sales_Item[0].sales_Item_Cnt"
+												name="sales_Item[0].sales_Item_Cnt"
 												class="form-control form-control-sm qty-input" required /></td>
-											<td><input type="number" min="0"
-												name="sales_OrderDto.sales_Item[0].sales_Item_OutCnt"
-												class="form-control form-control-sm outcnt-input" value="0"
-												required /></td>
-											<td><input type="number" readonly
-												class="form-control form-control-sm waiting-input" value="0" />
-											</td>
 											<td><input type="number" step="0.01" min="0"
-												name="sales_OrderDto.sales_Item[0].sales_Item_Cost"
-												class="form-control form-control-sm cost-input" required />
-											</td>
+												name="sales_Item[0].sales_Item_Cost"
+												class="form-control form-control-sm cost-input" required /></td>
 											<td><input type="text" readonly
-												class="form-control form-control-plaintext form-control-sm tot-outcost" />
-											</td>
-											<td><input type="text" readonly
-												class="form-control form-control-plaintext form-control-sm tot-cost" />
-											</td>
+												class="form-control form-control-plaintext form-control-sm tot-cost" /></td>
 											<td class="text-center">
 												<button type="button"
 													class="btn btn-sm btn-outline-danger remove-item-btn">&times;</button>
@@ -183,10 +289,7 @@
 										<tr class="total-row">
 											<td>합계</td>
 											<td class="numeric"><span id="sum-req">0</span></td>
-											<td class="numeric"><span id="sum-out">0</span></td>
-											<td class="numeric"><span id="sum-wait">0</span></td>
 											<td></td>
-											<td class="numeric"><span id="sum-outcost">0</span></td>
 											<td class="numeric"><span id="sum-cost">0</span></td>
 											<td></td>
 										</tr>

@@ -23,5 +23,7 @@ public interface Sales_OrderService {
 	List<ProductDTO> 		productList();
 
 	List<ClientDto> 		clientList();
+
+	void 					createSales(Sales_OrderDto sales_OrderDto);
 	
 }

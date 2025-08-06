@@ -93,6 +93,7 @@ public class ClientController {
 	public String searchByName(Model model){
 		List<ClientDto>listClientDto = clientService.clientAll();
 		model.addAttribute("clientList", listClientDto);
+		System.out.println("listClientDto"+listClientDto);
 		return "km/salesPop";
 	}
 	
