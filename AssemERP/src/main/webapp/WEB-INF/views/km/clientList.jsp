@@ -95,7 +95,7 @@
 
 							<!-- List 테이블 시작 -->
 							<div class="table-responsive">
-								<table class="table table-bordered align-middle product-table">
+								<table class="table table-bordered align-middle list-table">
 									<thead class="table-light">
 										<tr>
 											<th class="text-center">#</th>

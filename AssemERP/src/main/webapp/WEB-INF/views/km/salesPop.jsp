@@ -15,7 +15,7 @@
   </style>
   <script>
     // 부모창으로 값 전달
-    function selectClient(client_No, client_Name, client_Address, client_Email, client_Man, empName) {
+    function selectClient(client_No, client_Name, client_Address, client_Email, client_Man, empNo,empName) {
       if (window.opener && !window.opener.closed) {
         window.opener.setClientInfo(
           client_No,
@@ -23,6 +23,7 @@
           client_Address,
           client_Email,
           client_Man,
+          empNo,
       	  empName
         );
       }
@@ -50,12 +51,14 @@
               '${empty client.client_Address ? "" : fn:replace(client.client_Address, "'", "\\'")}',
               '${empty client.client_Email ? "" : fn:replace(client.client_Email, "'", "\\'")}',
               '${empty client.client_Man ? "" : fn:replace(client.client_Man, "'", "\\'")}',
+              '${empty client.empDTO.empNo ? "" : fn:replace(client.empDTO.empNo, "'", "\\'")}',
               '${empty client.empDTO.empName ? "" : fn:replace(client.empDTO.empName, "'", "\\'")}'
           )">
           <td>${client.client_Name}</td>
           <td>${client.client_Address}</td>
           <td>${client.client_Email}</td>
           <td>${client.client_Man}</td>
+          <td>${client.empDTO.empNo}</td>  
           <td>${client.empDTO.empName}</td>
         </tr>
       </c:forEach>

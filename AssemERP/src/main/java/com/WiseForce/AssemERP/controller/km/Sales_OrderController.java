@@ -56,6 +56,24 @@ public class Sales_OrderController {
 		return "km/salesCreate";
 	}
 	
+	@GetMapping("/productPopup")
+	public String productPopup(Model model){
+		
+		List<ProductDTO> productList = sales_OrderService.productList();
+		model.addAttribute("productList", productList);
+		return "km/productPop";
+	}
+	
+	/*
+	 * @PostMapping("/create") public String createSales(Sales_OrderDto
+	 * sales_OrderDto) {
+	 * System.out.println("createSales sales_OrderDto--->"+sales_OrderDto);
+	 * sales_OrderService.createSales(sales_OrderDto);
+	 * 
+	 * return "redirect:/sales/list"; }
+	 */
+	
+	
 
 
 	

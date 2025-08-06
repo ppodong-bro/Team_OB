@@ -123,6 +123,12 @@ public class Sales_OrderServiceImpl implements Sales_OrderService {
 		List<ClientDto> clientList = sales_OrderDao.clientList();
 		return clientList;
 	}
+
+	@Override
+	public void createSales(Sales_OrderDto sales_OrderDto) {
+		sales_OrderDao.createSales(sales_OrderDto);
+		
+	}
 	
 	
 }

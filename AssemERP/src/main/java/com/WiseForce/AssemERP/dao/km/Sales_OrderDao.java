@@ -23,5 +23,7 @@ public interface Sales_OrderDao {
 
 	List<ClientDto> 		clientList();
 
+	void 					createSales(Sales_OrderDto sales_OrderDto);
+
 
 }

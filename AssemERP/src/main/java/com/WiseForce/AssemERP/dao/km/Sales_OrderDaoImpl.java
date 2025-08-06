@@ -69,6 +69,13 @@ public class Sales_OrderDaoImpl implements Sales_OrderDao {
 		List<ClientDto> clientList = session.selectList("salesClientList");
 		return clientList;
 	}
+	
+	@Override 
+	public void createSales(Sales_OrderDto sales_OrderDto) {
+	  session.insert("createSales",sales_OrderDto);
+	 
+	}
+	
 
 
 

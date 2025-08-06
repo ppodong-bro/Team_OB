@@ -155,7 +155,7 @@
         WHERE S.SALES_NO = #{sales_No}
 	</select>
 	
-	<select id="salesProductList" resultType="productDTO">
+	<select id="salesProductList" resultType="ProductDTO">
 		SELECT PRODUCT_NO, PRODUCT_NAME
 		FROM PRODUCT
 	</select>
@@ -164,6 +164,11 @@
 		SELECT *
 		FROM CLIENT
 	</select>
+	
+<!-- 	<insert id="createSales" parameterType="Sales_OrderDto">
+		INSERT INTO SALES_ORDER SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, DEL_STATUS, IN_DATE 
+		VALUES #{sales_No}, #{clientDto.client_No}, #{empDTO.empNo), #{sales_Date}, 0, 0, SYSDATE
+	</insert> -->
 	
 
 
