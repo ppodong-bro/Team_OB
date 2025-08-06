@@ -2,18 +2,15 @@ package com.WiseForce.AssemERP.repository.dg;
 
 import java.util.List;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import com.WiseForce.AssemERP.domain.dg.Inventory;
+import com.WiseForce.AssemERP.dto.dg.InventoryDTO;
 
-import com.WiseForce.AssemERP.domain.dg.Month_Inventory;
-import com.WiseForce.AssemERP.domain.dg.Month_Inventory_ID;
+public interface InventoryRepository {
 
-public interface InventoryRepository extends JpaRepository<Month_Inventory, Month_Inventory_ID> {
-	// 이번 월 기초재고 조회 : 가장 최신 기초재고 조회
-	// 도건 : yearmonth는 Month_Inventory_ID에 있는 데이터이기 떄문에 추가로 지정해주어야 한다.
-	@Query("SELECT mi0 FROM Month_Inventory mi0 "
-			+ "WHERE mi0.id.yearmonth = (SELECT MAX(mi1.id.yearmonth) FROM Month_Inventory mi1) "
-			+ "AND mi0.id.startend_status = 0")
-	List<Month_Inventory> getLastestMonthInventory();
+	// 재고 입출고 이력의 총 수량 계산하는 프로시저 실행
+	void execProcedureClacInventoryTot();
+
+	// 재고 입출고 이력 목록 조회
+	int getInventoryHistoryCnt(InventoryDTO inventoryDTO);// 재고 입출고 이력 목록 수 조회
+	List<InventoryDTO> getInventoryHistory(InventoryDTO inventoryDTO);
 }

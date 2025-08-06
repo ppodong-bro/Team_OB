@@ -1,7 +1,6 @@
 package com.WiseForce.AssemERP.domain.sh;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -34,12 +33,11 @@ public class Parts {
     private	int				parts_status;
 	private	String			parts_name;
 	private	String			parts_context;
-	private	int				relation_status;
 	private	String			manufacture;
 	private	String			filename;
 	private int				del_status;
     private int				emp_no;
     private LocalDate		in_date;
-    
-    
+
+
 }

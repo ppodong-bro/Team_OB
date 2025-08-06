@@ -23,6 +23,10 @@ public interface ClientDao {
 	void 			modifyClient_HisEnd(Client_HisDto client_HisDto);
 
 	void 			modifyClient_His(Client_HisDto client_HisDto1);
+
+	List<ClientDto> searchByName(String client_Name);
+
+	List<ClientDto> clientAll();
 		
 }
 

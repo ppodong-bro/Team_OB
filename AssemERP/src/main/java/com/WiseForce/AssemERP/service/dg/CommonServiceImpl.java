@@ -45,4 +45,16 @@ public class CommonServiceImpl implements CommonService {
 		return commonDTO;
 	}
 
+	@Override
+	public String getAllStatusText(int big_status, int middle_status) {
+		Common_ID common_ID = new Common_ID(big_status, middle_status);
+		
+		Optional<Common> optional = commonRepository.findById(common_ID);
+
+		// Entity -> DTO
+		CommonDTO commonDTO = modelMapper.map(optional.orElseThrow(), CommonDTO.class);
+		
+		return commonDTO.getContext();
+	}
+
 }

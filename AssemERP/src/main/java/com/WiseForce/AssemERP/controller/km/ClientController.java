@@ -5,8 +5,11 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.WiseForce.AssemERP.dto.km.ClientDto;
 import com.WiseForce.AssemERP.dto.km.ClientSearchDto;
@@ -24,6 +27,7 @@ public class ClientController {
 
 	@GetMapping("list")
 	public String listClient(ClientSearchDto clientSearchDto, Model model) {
+		System.out.println("clientSearchDto--->"+clientSearchDto);
 		int totSearch = clientService.totClient(clientSearchDto);
 		ClientDto clientDto = new ClientDto();
 		Paging page = new Paging(totSearch, clientSearchDto.getCurrentPage());
@@ -31,7 +35,8 @@ public class ClientController {
 		clientSearchDto.setEnd(page.getEnd());
 		List<ClientDto> searchList = clientService.listClient(clientSearchDto);
 		model.addAttribute("clientList", searchList);
-		model.addAttribute("page", page);
+		model.addAttribute("paging", page);
+		model.addAttribute("clientSearchDto", clientSearchDto);
 		
 		return "km/clientList";
 	}
@@ -82,6 +87,16 @@ public class ClientController {
 		int result = clientService.deleteClient(clientDto1);
 		return "redirect:/client/list";
 	}
+	
+	@GetMapping("popup")
+
+	public String searchByName(Model model){
+		List<ClientDto>listClientDto = clientService.clientAll();
+		model.addAttribute("clientList", listClientDto);
+		System.out.println("listClientDto"+listClientDto);
+		return "km/salesPop";
+	}
+	
 
 }
 

@@ -10,4 +10,6 @@ public interface CommonService {
 
 	CommonDTO getAllStatus(int bigStatus, int middleStatus);
 
+	String getAllStatusText(int bigStatus, int middleStatus);
+
 }

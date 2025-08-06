@@ -2,8 +2,11 @@ package com.WiseForce.AssemERP.service.km;
 
 import java.util.List;
 
+
+import com.WiseForce.AssemERP.dto.km.ClientDto;
 import com.WiseForce.AssemERP.dto.km.Sales_OrderDto;
 import com.WiseForce.AssemERP.dto.km.Sales_OrderSearchDto;
+import com.WiseForce.AssemERP.dto.sh.ProductDTO;
 
 public interface Sales_OrderService {
 
@@ -17,6 +20,10 @@ public interface Sales_OrderService {
 
 	Sales_OrderDto 			detailSales(Sales_OrderDto sales_OrderDto1);
 
-	List<Sales_OrderDto> 	createList();
+	List<ProductDTO> 		productList();
+
+	List<ClientDto> 		clientList();
+
+	void 					createSales(Sales_OrderDto sales_OrderDto);
 	
 }

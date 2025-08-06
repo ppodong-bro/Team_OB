@@ -11,21 +11,21 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-	
+
 	public BCryptPasswordEncoder encodePwd() {
 		return new BCryptPasswordEncoder();
 	}
 
 	@Bean
 	protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		
+
 		http.cors(cors->cors.disable())
-		    .csrf(csrf->csrf.disable()) 
+		    .csrf(csrf->csrf.disable())
 		;
-		
+
 		return http.build();
 	}
-	
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

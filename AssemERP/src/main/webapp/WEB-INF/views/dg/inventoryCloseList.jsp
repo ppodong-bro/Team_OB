@@ -88,6 +88,8 @@ $(document).ready(function() {
 	    clearInterval(timeInterval);
 	    timeInterval = null;
 	    document.getElementById("currentTime").textContent = ""; // 초기화
+	    
+	    location.reload(); // 페이지 새로고침
 	});
 
     // 가마감 버튼 클릭
@@ -100,6 +102,7 @@ $(document).ready(function() {
     	
     	// 월마감 진행중 화면으로 변경
     	$("#modalMonthCloseText").text("가마감 진행중입니다...");
+    	$("#spinner").removeClass("d-none");// 스피너 보이기
     	$("#btnMonthClose").hide();// 월마감 버튼 비활성화
     	$("#btnFakeMonthClose").hide();// 가마감 버튼 비활성화
     	
@@ -116,13 +119,16 @@ $(document).ready(function() {
             success: function(response) {
             	if(response.result === true) {
                 	$("#modalMonthCloseText").text("가마감이 완료되었습니다.");
+                	$("#spinner").addClass("d-none");// 스피너 보이기
             	}
             	else {
                 	$("#modalMonthCloseText").text("가마감이 실패했습니다.");
+                	$("#spinner").addClass("d-none");// 스피너 보이기
             	}
             },
             error: function(xhr, status, error) {
             	$("#modalMonthCloseText").text("가마감이 오류가 발생했습니다.");
+            	$("#spinner").addClass("d-none");// 스피너 보이기
             }
         });
     });
@@ -136,6 +142,7 @@ $(document).ready(function() {
     	
     	// 월마감 진행중 화면으로 변경
     	$("#modalMonthCloseText").text("월마감 진행중입니다...");
+    	$("#spinner").removeClass("d-none");// 스피너 보이기
     	$("#btnMonthClose").hide();// 월마감 버튼 비활성화
     	$("#btnFakeMonthClose").hide();// 가마감 버튼 비활성화
     	
@@ -152,13 +159,16 @@ $(document).ready(function() {
             success: function(response) {
             	if(response.result === true) {
                 	$("#modalMonthCloseText").text("월마감이 완료되었습니다.");
+                	$("#spinner").addClass("d-none");// 스피너 보이기
             	}
             	else {
                 	$("#modalMonthCloseText").text("월마감이 실패했습니다.");
+                	$("#spinner").addClass("d-none");// 스피너 보이기
             	}
             },
             error: function(xhr, status, error) {
             	$("#modalMonthCloseText").text("월마감이 오류가 발생했습니다.");
+            	$("#spinner").addClass("d-none");// 스피너 보이기
             }
         });
     });
@@ -224,6 +234,13 @@ $(document).ready(function() {
 											</select>
 										</div>
 									</div>
+									<!-- 담당자 -->
+									<div class="col-auto">
+										<div class="input-group input-group-sm">
+											<span class="input-group-text">담당자</span><input type="text" name="emp_no_text" class="form-control"
+												placeholder="담당자명" value="${search.emp_no_text }" style="width: 80px">
+										</div>
+									</div>
 									<!-- 검색 버튼 -->
 									<div class="col-auto">
 										<button type="submit" class="btn btn-secondary btn-sm text-nowrap">
@@ -255,13 +272,13 @@ $(document).ready(function() {
 												<td class="text-center"><span class="status-text status-text-close" data-status="${inventoryClose.close_status}"> <span
 														class="dot"></span> <span class="text">${inventoryClose.close_status}</span>
 												</span></td>
-												<td class="text-center">${inventoryClose.emp_no}</td>
+												<td class="text-center">${inventoryClose.emp_no_text}</td>
 											</tr>
 										</c:forEach>
 									</tbody>
 								</table>
-								<!-- List 테이블 마지막 -->
 							</div>
+							<!-- List 테이블 마지막 -->
 						</div>
 						<div class="card-footer d-flex justify-content-center">
 							<!-- 페이징에서 사용하는 경로 변수 -->
@@ -304,10 +321,14 @@ $(document).ready(function() {
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 					<div class="modal-body">
-						<span id="modalMonthCloseText">월마감을 진행하시겠습니까?</span>
+						<div id="modalMonthCloseText">월마감을 진행하시겠습니까?</div>
 						<div id="currentTime"></div>
+						<div id="spinner" class="d-flex justify-content-center d-none">
+							<div class="spinner-border" role="status">
+								<span class="visually-hidden">Loading...</span>
+							</div>
+						</div>
 					</div>
-
 
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
@@ -317,7 +338,8 @@ $(document).ready(function() {
 				</div>
 			</div>
 		</div>
-		<!-- 부트스트랩 CDN -->
-		<jsp:include page="/common_cdn.jsp" />
+	</div>
+	<!-- 부트스트랩 CDN -->
+	<jsp:include page="/common_cdn.jsp" />
 </body>
 </html>

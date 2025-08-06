@@ -29,10 +29,11 @@
 			<!-- 이곳에 자신의 코드를 작성하세요 -->
 			<div id="contents">
 	   
-				<div class="container px-4">
-				    <div class="row justify-content-center">
-				        <div class="col-lg-8">
-				            <div class="card shadow-sm">
+				<!-- <div class="container px-4"> --><!-- 기존영역 주석처리 -->
+				<div class="container-fluid px-4"><!-- container-fluid 추가 -->
+				    <!-- <div class="row justify-content-center">
+				        <div class="col-lg-8">--><!-- 기존영역 주석처리 -->
+				            <div class="card shadow-sm"> 
 				                <div class="card-header d-flex justify-content-between align-items-center">
 				                    <a href="/dept/deptListForm" class="btn btn-outline-light btn-sm">
 				                        <i class="bi bi-list-ul me-1"></i> 목록
@@ -142,8 +143,8 @@
 				                </div>
 				            </div>
 				        </div>
-				    </div>
-				</div>
+				    <!-- </div>
+				</div> -->
 				
 				</div>
 			<!-- 이곳에 자신의 코드를 작성하세요 -->

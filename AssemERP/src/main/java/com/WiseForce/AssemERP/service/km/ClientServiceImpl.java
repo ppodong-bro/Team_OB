@@ -49,31 +49,29 @@ public class ClientServiceImpl implements ClientService {
 		
 		int result = clientDao.modifyClient(clientDto1);
 		
-		LocalDateTime localDateTime = LocalDateTime.now();
+		LocalDateTime minusModifyDay 		= LocalDateTime.now().minusDays(1);
+		LocalDateTime modifyDay 			= LocalDateTime.now();
+		
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-		String modifyDate = localDateTime.format(dateTimeFormatter);
+		
+		String modifyEndDate 				= minusModifyDay.format(dateTimeFormatter);
+		String modifyStartDate    			= modifyDay.format(dateTimeFormatter);
 		
 		Client_HisDto client_HisDto = Client_HisDto.builder()
-												   .client_No(clientDto1.getClient_No())
-												   .end_Date(modifyDate)
-												   .build()
-												   ;
+												    .client_No(clientDto1.getClient_No())
+												    .start_Date(modifyStartDate)
+												    .end_Date(modifyEndDate)
+												    .emp_No(clientDto1.getEmpDTO().getEmpNo())
+												    .client_Name(clientDto1.getClient_Name())
+												    .client_Gubun(clientDto1.getClient_Gubun())
+												    .client_Man(clientDto1.getClient_Man())
+												    .client_Email(clientDto1.getClient_Email())
+												    .client_Tel(clientDto1.getClient_Tel())
+												    .client_Address(clientDto1.getClient_Address())
+												    .build()
+												    ;
 		
-		Client_HisDto client_HisDto1 = Client_HisDto.builder()
-												   .client_No(clientDto1.getClient_No())
-												   .start_Date(modifyDate)
-												   .end_Date("99991231")
-												   .emp_No(clientDto1.getEmpDTO().getEmpNo())
-												   .client_Name(clientDto1.getClient_Name())
-												   .client_Gubun(clientDto1.getClient_Gubun())
-												   .client_Man(clientDto1.getClient_Man())
-												   .client_Email(clientDto1.getClient_Email())
-												   .client_Tel(clientDto1.getClient_Tel())
-												   .client_Address(clientDto1.getClient_Address())
-												   .build()
-												   ;
-		clientDao.modifyClient_HisEnd(client_HisDto);
-		clientDao.modifyClient_His(client_HisDto1);
+		clientDao.modifyClient_His(client_HisDto);
 		
 		
 													   
@@ -84,6 +82,18 @@ public class ClientServiceImpl implements ClientService {
 	public int deleteClient(ClientDto clientDto1) {
 		int result = clientDao.deleteClient(clientDto1);
 		return result;
+	}
+
+	@Override
+	public List<ClientDto> searchByName(String client_Name) {
+			
+		return clientDao.searchByName(client_Name);
+	}
+
+	@Override
+	public List<ClientDto> clientAll() {
+		List<ClientDto> clientList = clientDao.clientAll();
+		return clientList;
 	}
 	
 }
