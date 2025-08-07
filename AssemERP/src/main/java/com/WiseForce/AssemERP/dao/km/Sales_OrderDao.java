@@ -25,5 +25,9 @@ public interface Sales_OrderDao {
 
 	void 					createSales(Sales_OrderDto sales_OrderDto);
 
+	void 					modifySales(Sales_OrderDto sales_OrderDto);
+
+	void 					deleteSales(Sales_OrderDto sales_OrderDto);
+
 
 }

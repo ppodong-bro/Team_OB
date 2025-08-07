@@ -21,11 +21,12 @@
 		);
 	}
 
-	function setClientInfo(client_No, client_Name, client_Address, client_Email, client_Man, empNo, empName) {
+	function setClientInfo(client_No, client_Name, client_Address, client_Email, client_Tel, client_Man, empNo, empName) {
 		  document.getElementById('clientNoInput').value = client_No;
 		  document.getElementById('clientNameInput').value = client_Name;
 		  document.getElementById('clientAddressInput').value = client_Address;
 		  document.getElementById('clientEmailInput').value = client_Email;
+		  document.getElementById('clientTelInput').value = client_Tel;
 		  document.getElementById('clientManInput').value = client_Man;
 		  document.getElementById('empNoInput').value = empNo;
 		  document.getElementById('empNameInput').value = empName;
@@ -34,13 +35,13 @@
 	}
 	
 	let targetProductInput = null; // 값을 넣을 타겟 input(한 줄만 기억)
-
+	let targetProductNameInput = null;
+	
 	function openProductPopup(btn) {
 	    // btn: 사용자가 클릭한 "조회" 버튼(this)
 	    // 해당 버튼이 속한 tr에서 class가 'productNoInput'인 input을 찾음
 	    targetProductInput = btn.closest('tr').querySelector('.productNoInput');
-	  
-	    targetProductNameInput = btn.closest('tr').querySelector('.productNameInput');
+	  	targetProductNameInput = btn.closest('tr').querySelector('.productNameInput');
 
 	    window.open(
 	        '${pageContext.request.contextPath}/sales/productPopup',
@@ -51,6 +52,7 @@
 	
 	// 팝업창에서 선택 버튼 클릭 시 실행되는 함수
 	function setProductInfo(product_no, product_name) {
+		console.log('setProductInfo called with', product_no, product_name);
 	    if (targetProductInput) {
 	        targetProductInput.value = product_no;
 	 	if (targetProductNameInput) 
@@ -58,8 +60,7 @@
 	    }
 	    window.close();
 	}
-	
-	
+
 	document.addEventListener('DOMContentLoaded', function () {
 		  const addItemBtn = document.getElementById('add-item-btn');
 		  const itemsTbody = document.getElementById('items-tbody');
@@ -178,7 +179,7 @@
 										class="text-danger">*</span></label>
 									<div class="input-group input-group-sm">
 										<input type="hidden" id="clientNoInput"
-											name="sales_OrderDto.clientDto.client_No"
+											name="clientDto.client_No"
 											value="${sales_OrderDto.clientDto.client_No}" /> <input
 											type="text" id="clientNameInput"
 											class="form-control form-control-sm"
@@ -209,6 +210,14 @@
 									</div>
 								</div>
 
+								<!-- 거래처 주소 -->
+								<div class="col-md-4">
+									<label class="form-label">거래처 전화번호</label> <input type="text"
+										class="form-control form-control-sm" id="clientTelInput"
+										name="clientDto.client_Tel"
+										value="${sales_OrderDto.clientDto.client_Tel}" />
+								</div>
+
 								<!-- 거래처 담당자 -->
 								<div class="col-md-4">
 									<label class="form-label">거래처 담당자</label> <input type="text"
@@ -219,18 +228,17 @@
 
 								<!-- 담당자 이름 -->
 								<div class="col-md-4">
-									<label class="form-label">담당자 이름</label> 
-									<input type="hidden" name="empDTO.empNo" id="empNoInput" 
-										   value="${sales_OrderDto.empDTO.empNo}" />
-									<input type="text" readonly class="form-control form-control-sm"
-										id="empNameInput" value="${sales_OrderDto.empDTO.empName}" />
+									<label class="form-label">담당자 이름</label> <input type="hidden"
+										name="empDTO.empNo" id="empNoInput" value="${empDTO.empNo}" />
+									<input type="text" readonly
+										class="form-control form-control-sm" id="empNameInput"
+										value="${sales_OrderDto.empDTO.empName}" />
 								</div>
 
 								<!-- 등록 일자 -->
 								<div class="col-md-4">
 									<label class="form-label">납기 완료일</label> <input type="date"
-										class="form-control form-control-sm"
-										name="sales_Date"
+										class="form-control form-control-sm" name="sales_Date"
 										value="$(sales_OrderDto.sales_Date}" />
 								</div>
 						</section>
@@ -263,11 +271,15 @@
 										<!-- 초기에는 한 줄 비어있게 -->
 										<tr class="item-row">
 											<td><div class="input-group input-group-sm">
+													<!-- ① 숨김 필드에 번호 바인딩 -->
 													<input type="hidden" class="productNoInput"
-														name="sales_Item[0].product_No" /> <input
-														type="text"
+														name="sales_Item[0].product_No"
+														value="${item.productDTO.product_no}" />
+													<!-- ② 보이는 텍스트 필드에 이름 바인딩 -->
+													<input type="text"
 														class="form-control form-control-sm productNameInput"
-														value="${sales_OrderDto.clientDto.client_Name}">
+														name="sales_Item[0].product_Name" readonly
+														value="${item.productDTO.product_name}" />
 													<button type="button" class="btn btn-outline-secondary"
 														onclick=openProductPopup(this)>조회</button>
 												</div></td>

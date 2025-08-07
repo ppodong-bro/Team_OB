@@ -19,15 +19,35 @@
 			<jsp:include page="/header.jsp" />
 
 			<!-- 이곳에 자신의 코드를 작성하세요 -->
-			<div id="contents">
-
-				<div class="container px-3 py-4">
-					<div class="card shadow-sm border-1px bg-white col-md-6 mx-auto">
-						<div class="card-header shadow-sm border-bottom bg-light">
-							<h5 class="mb-0">거래처 상세</h5>
+				<div id="contents">
+				<!-- <div class="container px-4"> -->
+				<!-- 기존영역 주석처리 -->
+				<div class="container-fluid px-4">
+					<!-- container-fluid 추가 -->
+					<!-- <div class="row justify-content-center">
+				        <div class="col-lg-8">-->
+					<!-- 기존영역 주석처리 -->
+					<div class="card shadow-sm">
+						<%------------------------------------------------------------------------------
+				                		1. Card Header 정중앙
+				                 ------------------------------------------------------------------------------%>
+						<div
+							class="card-header d-flex justify-content-between align-items-center">
+							<%------------------------------------------------------------------------------
+				                		1-1. 목록 버튼 스타일
+				                 	------------------------------------------------------------------------------%>
+							<a href="/sales/list" class="btn btn-outline-light btn-sm">
+								<i class="bi bi-list-ul me-1"></i> 목록
+							</a>
+							<%------------------------------------------------------------------------------
+				                		1-2. 타이틀 중앙 정렬 스타일
+				                 	------------------------------------------------------------------------------%>
+							<h4 class="card-title mb-0">
+								<i class="bi bi-pencil-square me-2"></i>거래처 상세
+							</h4>
+							<div style="width: 90px;"></div>
 						</div>
-
-						<div class="card-body px-4 py-3">
+						<div class="card-body p-4">
 							<form>
 								<!-- 거래처 번호 -->
 								<div class="mb-3">
@@ -76,7 +96,7 @@
 								
 									<!-- 거래처전화번호 -->
 								<div class="mb-3">
-									<label class="form-label">거래처전화번호</label> <input type="text"
+									<label class="form-label">거래처 전화번호</label> <input type="text"
 										readonly class="form-control form-control-sm"
 										value="${clientDto.client_Tel}" />
 								</div>

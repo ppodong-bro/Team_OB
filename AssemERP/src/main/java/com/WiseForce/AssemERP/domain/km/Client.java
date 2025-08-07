@@ -25,7 +25,7 @@ import lombok.ToString;
 @SequenceGenerator(
 		name = 			"client_seq",
 		sequenceName = 	"client_seq_gen",
-		initialValue = 1001,
+		initialValue = 1011,
 		allocationSize = 1
 		)
 @Builder

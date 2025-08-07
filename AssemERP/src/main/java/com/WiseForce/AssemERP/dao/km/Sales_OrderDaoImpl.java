@@ -6,6 +6,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
 import com.WiseForce.AssemERP.dto.km.ClientDto;
+import com.WiseForce.AssemERP.dto.km.Sales_ItemDto;
 import com.WiseForce.AssemERP.dto.km.Sales_OrderDto;
 import com.WiseForce.AssemERP.dto.km.Sales_OrderSearchDto;
 import com.WiseForce.AssemERP.dto.sh.ProductDTO;
@@ -72,8 +73,24 @@ public class Sales_OrderDaoImpl implements Sales_OrderDao {
 	
 	@Override 
 	public void createSales(Sales_OrderDto sales_OrderDto) {
+	  
 	  session.insert("createSales",sales_OrderDto);
+	  session.insert("createSales_Item", sales_OrderDto);
+	  
 	 
+	}
+
+	@Override
+	public void modifySales(Sales_OrderDto sales_OrderDto) {
+		session.update("modifySales", sales_OrderDto);
+		
+	}
+
+	@Override
+	public void deleteSales(Sales_OrderDto sales_OrderDto) {
+		System.out.println("Sales_OrderDaoImpl deleteSales sales_OrderDto-->"+sales_OrderDto);
+		session.update("deleteSales", sales_OrderDto);
+		
 	}
 	
 
