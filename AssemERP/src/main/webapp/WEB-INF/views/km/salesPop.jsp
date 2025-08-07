@@ -15,13 +15,14 @@
   </style>
   <script>
     // 부모창으로 값 전달
-    function selectClient(client_No, client_Name, client_Address, client_Email, client_Man, empNo,empName) {
+    function selectClient(client_No, client_Name, client_Address, client_Email, client_Tel, client_Man, empNo,empName) {
       if (window.opener && !window.opener.closed) {
         window.opener.setClientInfo(
           client_No,
           client_Name,
           client_Address,
           client_Email,
+          client_Tel,
           client_Man,
           empNo,
       	  empName
@@ -50,6 +51,7 @@
               '${empty client.client_Name ? "" : fn:replace(client.client_Name, "'", "\\'")}',
               '${empty client.client_Address ? "" : fn:replace(client.client_Address, "'", "\\'")}',
               '${empty client.client_Email ? "" : fn:replace(client.client_Email, "'", "\\'")}',
+              '${empty client.client_Tel ? "" : fn:replace(client.client_Tel, "'", "\\'")}',
               '${empty client.client_Man ? "" : fn:replace(client.client_Man, "'", "\\'")}',
               '${empty client.empDTO.empNo ? "" : fn:replace(client.empDTO.empNo, "'", "\\'")}',
               '${empty client.empDTO.empName ? "" : fn:replace(client.empDTO.empName, "'", "\\'")}'

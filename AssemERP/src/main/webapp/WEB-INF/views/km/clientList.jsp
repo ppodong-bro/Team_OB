@@ -22,17 +22,13 @@
 			<!-- 이곳에 자신의 코드를 작성하세요 -->
 			<div id="contents">
 
-				<div class="container-fluid">
-					<div class="card shadow-sm">
-						<div
-							class="card-header d-flex justify-content-between align-items-center">
-							<h4 class="card-title mb-0">
-								<i class="bi bi-people-fill me-2"></i>거래처 관리
-							</h4>
-							<a href="/emp/empRegisterForm" class="btn btn-primary"><i
-								class="bi bi-person-plus-fill me-2"></i>신규 사원 등록</a>
-						</div>
-						<div class="card-body">
+				<div class="container-fluid px-4">
+				    <div class="card shadow-sm">
+				        <div class="card-header d-flex justify-content-between align-items-center">
+				            <h4 class="card-title mb-0"><i class="bi bi-list-ul"></i> 거래처 목록</h4>
+            					<a href="/client/createStart" class="btn btn-primary"><i class="bi bi-plus-lg"></i>등록</a>
+				        </div>
+				        <div class="card-body">
 
 							<!-- 검색 폼 -->
 							<!-- 검색 폼: 전체를 오른쪽으로 정렬 -->
@@ -83,12 +79,6 @@
 								<!-- 검색 버튼 -->
 								<div class="col-auto">
 									<button type="submit" class="btn btn-primary btn-sm">검색</button>
-								</div>
-
-								<!-- 신규 등록 버튼 -->
-								<div class="col-auto">
-									<a href="<c:url value='/client/createStart'/>"
-										class="btn btn-success btn-sm"> 등록 </a>
 								</div>
 							</form>
 

@@ -30,7 +30,7 @@ import lombok.ToString;
 @SequenceGenerator(
 		name 		 = 	"sales_seq",
 		sequenceName = 	"sales_seq_gen",
-		initialValue =  3001,
+		initialValue =  3011,
 		allocationSize = 1
 		)
 public class Sales_Order {

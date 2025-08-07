@@ -25,7 +25,7 @@ import lombok.ToString;
 @SequenceGenerator(
 		name 		 	= "purchase_seq",
 		sequenceName 	= "purchase_seq_gen",
-		initialValue 	= 4101,
+		initialValue 	= 4111,
 		allocationSize 	= 1
 		)
 public class Purchase_Order {
