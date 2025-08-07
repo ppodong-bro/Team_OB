@@ -30,25 +30,27 @@ public class ProductDTO {
     private int			emp_no;
     private LocalDate	in_date;
 
-    //paging
+    // paging
     private int start;
     private int end;
     private String currentPage;
     private	String pageNum;
 
-    // 분류명가져오기
+    // 분류명파싱
     private String product_statusName;
 
     // BOM LIST
-    private List<ProductBomDTO> productBOM;
+    private List<ProductBomDTO> productBOMList;
 
     // Searching
     private LocalDate startDate;
     private LocalDate endDate;
 
-
+    // 이미지 file업로드용
     private MultipartFile file;
 
+    // 사원명파싱 
+    private String emp_name;
 
     public static ProductDTO chageProductDTO(Product product) {
     	return ProductDTO.builder()

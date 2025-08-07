@@ -21,4 +21,6 @@ public interface PartsService {
 
 	void updateParts(Parts parts);
 
+	void deleteParts(int parts_no);
+
 }

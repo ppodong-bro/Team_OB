@@ -4,8 +4,26 @@
 
 	<select id="shProductBomCreate" parameterType="ProductBomDTO" resultType="int">
 		INSERT INTO product_bom
-		VALUES (#{product_no},#{parts_no},#{cnt})
+		VALUES (product_seq.CURRVAL,#{parts_no},#{cnt})
 		
 	</select>
 
+	<select id="shGetBomList" parameterType="int" resultType="ProductBomDTO">
+		select a.*, p.parts_status, p.parts_name
+		FROM   (select *
+			 	From product_Bom
+			 	WHERE product_no = #{product_no}) a, parts p
+	 	where a.parts_no = p.parts_no
+	</select>
+	
+	<delete id="shProductBOMDelete" parameterType="int">
+		DELETE FROM product_bom
+		where product_no = #{product_no}
+	</delete>
+	
+	<insert id="shPrdouctBOMUpdate" parameterType="productBomDTO">
+		INSERT INTO product_bom (product_no, parts_no, cnt)
+		VALUES (#{product_no}, #{parts_no}, #{cnt})
+	</insert>
+	
 </mapper>
