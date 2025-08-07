@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -23,9 +24,9 @@ import lombok.RequiredArgsConstructor;
 @Controller
 public class Sales_OrderController {
 	private final Sales_OrderService sales_OrderService;
-	
+
 	@GetMapping("/list")
-	public String listSales(Sales_OrderSearchDto sales_OrderSearchDto, Model model ) {
+	public String listSales(Sales_OrderSearchDto sales_OrderSearchDto, Model model) {
 		System.out.println("Sales_OrderController salesSearchList Start...");
 		int totCnt = sales_OrderService.totSales(sales_OrderSearchDto);
 		Paging page = new Paging(totCnt, sales_OrderSearchDto.getCurrentPage());
@@ -33,49 +34,66 @@ public class Sales_OrderController {
 		sales_OrderSearchDto.setEnd(page.getEnd());
 		List<Sales_OrderDto> searchList = sales_OrderService.listSales(sales_OrderSearchDto);
 		model.addAttribute("listSales", searchList);
-		model.addAttribute("page", page);
-		
+		model.addAttribute("paging", page);
+		model.addAttribute("Sales_OrderSearchDto", sales_OrderSearchDto);
+
 		return "km/sales_OrderList";
 	}
-	
+
 	@GetMapping("/detail")
-	public String detailSales(Sales_OrderDto sales_OrderDto1,Model model){
-		
+	public String detailSales(Sales_OrderDto sales_OrderDto1, Model model) {
+
 		Sales_OrderDto sales_OrderDto = sales_OrderService.detailSales(sales_OrderDto1);
 		model.addAttribute("sales_OrderDto", sales_OrderDto);
 		return "km/detailSales";
 	}
-	
+
 	@GetMapping("/createStart")
 	public String createStartSales(Model model) {
 		System.out.println("Sales_OrderController createStart Start...");
 		List<ProductDTO> productList = sales_OrderService.productList();
-	    List<ClientDto> clientList = sales_OrderService.clientList();
-	    model.addAttribute("productList", productList);
-	    model.addAttribute("clientList", clientList);
+		List<ClientDto> clientList = sales_OrderService.clientList();
+		model.addAttribute("productList", productList);
+		model.addAttribute("clientList", clientList);
 		return "km/salesCreate";
 	}
-	
+
 	@GetMapping("/productPopup")
-	public String productPopup(Model model){
-		
+	public String productPopup(Model model) {
+
 		List<ProductDTO> productList = sales_OrderService.productList();
 		model.addAttribute("productList", productList);
 		return "km/productPop";
 	}
+
+	@PostMapping("/create")
+	public String createSales(Sales_OrderDto sales_OrderDto) {
+		System.out.println("createSales sales_OrderDto--->" + sales_OrderDto);
+		sales_OrderService.createSales(sales_OrderDto);
+
+		return "redirect:/sales/list";
+	}
 	
-	/*
-	 * @PostMapping("/create") public String createSales(Sales_OrderDto
-	 * sales_OrderDto) {
-	 * System.out.println("createSales sales_OrderDto--->"+sales_OrderDto);
-	 * sales_OrderService.createSales(sales_OrderDto);
-	 * 
-	 * return "redirect:/sales/list"; }
-	 */
+	@PostMapping("/modify")
+	public String modify(Sales_OrderDto sales_OrderDto) {
+		sales_OrderService.modifySales(sales_OrderDto);
+		
+		return "redirect:/sales/detail?sales_No="+sales_OrderDto.getSales_No();
+	}
 	
+	@PostMapping("/deleteCreate")
+	public String delete(Sales_OrderDto sales_OrderDto) {
+		System.out.println("Sales_OrderController sales_OrderDto-->"+sales_OrderDto);
+		sales_OrderService.deleteSales(sales_OrderDto);
+		return"redirect:/sales/createStart";
+	}
+	
+	@PostMapping("/delete")
+	public String deleteSales(Sales_OrderDto sales_OrderDto) {
+		System.out.println("Sales_OrderController sales_OrderDto-->"+sales_OrderDto);
+		sales_OrderService.deleteSales(sales_OrderDto);
+		return"redirect:/sales/list";
+	}
 	
 
-
-	
-	
 }

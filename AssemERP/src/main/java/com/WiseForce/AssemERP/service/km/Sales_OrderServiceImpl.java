@@ -10,6 +10,7 @@ import com.WiseForce.AssemERP.dto.km.Sales_ItemDto;
 import com.WiseForce.AssemERP.dto.km.Sales_OrderDto;
 import com.WiseForce.AssemERP.dto.km.Sales_OrderSearchDto;
 import com.WiseForce.AssemERP.dto.sh.ProductDTO;
+import com.oracle.wls.shaded.org.apache.bcel.generic.RETURN;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -127,6 +128,16 @@ public class Sales_OrderServiceImpl implements Sales_OrderService {
 	@Override
 	public void createSales(Sales_OrderDto sales_OrderDto) {
 		sales_OrderDao.createSales(sales_OrderDto);
+	}
+
+	@Override
+	public void modifySales(Sales_OrderDto sales_OrderDto) {
+		sales_OrderDao.modifySales(sales_OrderDto);
+	}
+
+	@Override
+	public void deleteSales(Sales_OrderDto sales_OrderDto) {
+		sales_OrderDao.deleteSales(sales_OrderDto);
 		
 	}
 	
