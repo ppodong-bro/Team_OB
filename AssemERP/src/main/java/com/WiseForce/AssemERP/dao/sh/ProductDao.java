@@ -15,4 +15,12 @@ public interface ProductDao {
 
 	List<ProductDTO> findSearchList(ProductDTO productDTO);
 
+	List<ProductBomDTO> getBomList(int product_no);
+
+	void productBOMDelete(int product_no);
+	
+	void productBOMUpdate(List<ProductBomDTO> list, int product_no);
+
+	void deleteProduct(int product_no);
+
 }

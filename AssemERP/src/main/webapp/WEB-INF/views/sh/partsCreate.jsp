@@ -72,9 +72,9 @@
 												</div>
 											</div>
 
-											<!-- 부품종류 -->
+											<!-- 부품구분 -->
 											<div class="col-md-6 mb-3">
-												<label for="partsStatus" class="form-label">종류</label>
+												<label for="partsStatus" class="form-label">구분</label>
 												<div class="input-group">
 													<span class="input-group-text"> <i
 														class="bi bi-grid"></i></span> <select

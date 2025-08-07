@@ -16,4 +16,13 @@ public class ProductBomDTO {
 	private int product_no;
 	private Integer parts_no;
 	private Integer cnt;
+	
+	
+	// 이름전환
+	private String product_name;
+	private String parts_name;
+	
+	// 파츠분류
+	private int parts_status;
+	private String parts_statusName;
 }

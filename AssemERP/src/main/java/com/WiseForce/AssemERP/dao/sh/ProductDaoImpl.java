@@ -69,4 +69,47 @@ public class ProductDaoImpl implements ProductDao {
 		return productDTOs;
 	}
 
+	@Override
+	public List<ProductBomDTO> getBomList(int product_no) {
+		List<ProductBomDTO> productBomDTOs = null;
+		
+		try {
+			productBomDTOs = session.selectList("shGetBomList", product_no);
+			System.out.println("ProductDaoImpl getBomList productBomDTOs => "+productBomDTOs);
+		} catch (Exception e) {
+			System.out.println("ProductDaoImpl getBomList Exception => "+e.getMessage());
+		}
+		
+		
+		return productBomDTOs;
+	}
+
+	@Override
+	public void productBOMDelete(int product_no) {
+		session.delete("shProductBOMDelete", product_no);
+	}
+	
+	@Override
+	public void productBOMUpdate(List<ProductBomDTO> list, int product_no) {
+		
+		System.out.println("ProductDaoImpl productBOMUpdate list =>"+list);
+		
+		for(ProductBomDTO bomDTO : list) {
+			bomDTO.setProduct_no(product_no);
+			System.out.println("ProductDaoImpl productBOMUpdate bomDTO => "+bomDTO);
+			session.insert("shPrdouctBOMUpdate", bomDTO);
+		}
+		
+	}
+
+	@Override
+	public void deleteProduct(int product_no) {
+		session.update("shProductDelete", product_no);
+		
+	}
+
+		
+
+	
+
 }

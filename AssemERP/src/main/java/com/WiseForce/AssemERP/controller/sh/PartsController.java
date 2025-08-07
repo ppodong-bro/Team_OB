@@ -1,5 +1,6 @@
 package com.WiseForce.AssemERP.controller.sh;
 
+import java.beans.BeanProperty;
 import java.util.List;
 import java.util.Optional;
 
@@ -143,5 +144,16 @@ public class PartsController {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류");
 	    }
 	}
+	
+	
+	@PostMapping("partsDeletePro")
+	public String partsDeletePro(PartsDTO partsDTO) {
+		
+		partsService.deleteParts(partsDTO.getParts_no());
+		
+		
+		return "redirect:partsList";
+	}
+	
 	
 }
