@@ -61,6 +61,7 @@ body {
 									<div style="width: 90px;"></div>
 								</div>
 								<div class="card-body p-4">
+									<!-- 제품박스 -->
 									<form action="/product/productCreate" method="post"
 										class="needs-validation" 
 										enctype="multipart/form-data"
@@ -68,7 +69,6 @@ body {
 										<input type="hidden" name="${_csrf.parameterName}"
 											value="${_csrf.token}" />
 
-										<!-- 제품박스 -->
 										<h5 class="mb-3">기본 정보</h5>
 										<div class="row">
 
@@ -89,41 +89,38 @@ body {
 											<div class="col-md-6 mb-3">
 												<label for="productStatus" class="form-label">구분</label>
 												<div class="input-group">
-													<span class="input-group-text"> <i
-														class="bi bi-grid"></i></span> <select
-														class="form-select form-select-sm w-auto"
-														id="productStatus" name="product_status" required>
-														<option value="">선택</option>
-														<option value="0">데스크탑</option>
-														<option value="1">노트북</option>
-														<option value="2">워크스테이션</option>
-													</select>
+													<span class="input-group-text"> 
+														<i class="bi bi-grid"></i></span> 
+														<select	class="form-select form-select-sm w-auto" id="productStatus" name="product_status" required>
+															<option value="">선택</option>
+															<option value="0">데스크탑</option>
+															<option value="1">노트북</option>
+															<option value="2">워크스테이션</option>
+														</select>
 													<div class="invalid-feedback">제품종류를 선택해주세요.</div>
 												</div>
 											</div>
 										</div>
 
-										<!-- 등록자 -->
 										<div class="row">
+										<!-- 등록자 -->
 											<div class="col-md-6 mb-3">
 												<label for="empNo" class="form-label">등록자</label>
 												<div class="input-group">
-													<span class="input-group-text"><i
-														class="bi bi-person"></i></span> <select
-														class="form-control form-control-sm" name="emp_no"
-														id="empNo">
-														<%-- <c:forEach var="emp">
-											<option value="${emp.emp_no }">${emp.emp_name }</option>
-										</c:forEach> --%>
+													<span class="input-group-text">
+													<i class="bi bi-person"></i></span> 
+													<select class="form-control form-control-sm" name="emp_no" id="empNo">
+														<c:forEach var="emp" items="${EmpList}">
+															<option value="${emp.empNo }">${emp.empName }</option>
+														</c:forEach>
 													</select>
 
 												</div>
 											</div>
 											<!-- 이미지 -->
 											<div class="col-md-6 mb-3">
-												<label for="productfile" class="form-label">제품이미지</label> <input
-													type="file" class="form-control form-control-sm"
-													id="productfile" name="file">
+												<label for="productfile" class="form-label">제품이미지</label> 
+												<input type="file" class="form-control form-control-sm" id="productfile" name="file">
 											</div>
 										</div>
 
@@ -133,25 +130,22 @@ body {
 											<textarea class="form-control form-control-sm" rows="5"
 												id="productContext" name="product_context"
 												placeholder="설명란에 정보를 입력해주세요"></textarea>
-
 										</div>
-
-										
-
+										<!-- 제품 기본정보 종료 -->
 
 										<hr class="my-4">
 
 										<!-- BOM 영역 -->
 										<div class="container mt-4">
 											<!-- 👇 제목과 버튼을 같은 줄, 양쪽 정렬 -->
-											<div
-												class="d-flex justify-content-between align-items-center mb-3">
+											<div class="d-flex justify-content-between align-items-center mb-3">
 												<h5 class="mb-0">제품 구성</h5>
-												<button type="button" class="btn btn-primary" id="addRowBtn">+
-													부품 추가</button>
+												<button type="button" class="btn btn-primary" id="addRowBtn">
+													<i class="bi bi-plus-lg"></i>부품 추가</button>
 											</div>
 
 											<table class="table table-bordered" id="bomTable">
+												<!-- 테이블 헤더 비율 설정 -->
 												<colgroup>
 													<col style="width: 20%;">
 													<col style="width: 5%%;">
@@ -166,7 +160,7 @@ body {
 														<th>삭제</th>
 													</tr>
 												</thead>
-												<tbody>
+												<tbody id="bomTableBody">
 													<!-- JavaScript로 행이 추가됨 -->
 												</tbody>
 											</table>
@@ -210,145 +204,178 @@ body {
 	<jsp:include page="/common_cdn.jsp" />
 	
 <script>
-    let rowIndex = 0;
+let rowIndex = document.querySelectorAll("#bomTableBody tr").length;
 
-    document.getElementById("addRowBtn").addEventListener("click", function () {
-        const table = document.getElementById("bomTable").getElementsByTagName("tbody")[0];
-        const newRow = table.insertRow();
-		        
-        const typeCell = newRow.insertCell(0);
-        const partCell = newRow.insertCell(1);
-        const cntCell = newRow.insertCell(2);
-        const actionCell = newRow.insertCell(3);
+// 페이지초기 select name값 설정
+document.addEventListener("DOMContentLoaded", function () {
+    reindexBOMRows(); // 기존 행들도 name 설정
+});
 
-        // 부품구분 select
-        const typeSelect = document.createElement("select");
-        typeSelect.className = "form-select";
-        typeSelect.name = "productBOMList[" + rowIndex + "].parts_status";
+// 행 삭제버튼 동작시 로우 인덱스 최신화
+function handleRowDelete(button) {
+    const row = button.closest("tr");
+    row.remove();
+    reindexBOMRows();
+}
 
-        const defaultOption = new Option("선택", "");
-        typeSelect.appendChild(defaultOption);
+// 행 추가
+document.getElementById("addRowBtn").addEventListener("click", function () {
+    const tableBody = document.getElementById("bomTableBody");
+    const newRow = document.createElement("tr");
+	
+    // 부품구분
+    const typeCell = document.createElement("td");
+    const typeSelect = document.createElement("select");
+    typeSelect.className = "form-select";
+    typeSelect.required = true;
+    typeSelect.appendChild(new Option("선택", ""));
+    typeCell.appendChild(typeSelect);
 
-        // 부품 구분 목록 AJAX 호출
-        fetch("/common/900")
-            .then(res => res.json())
-            .then(types => {
-       		 	console.log("서버 응답:", types); // 👈 콘솔에서 구조 확인
-                types.forEach(type => {
-		            console.log("type:", type);
-                    const option = new Option(type.context, type.middle_status);
-                    typeSelect.appendChild(option);
-                });
-            })
-            .catch(err => console.error('부품 구분 목록 로드 실패:', err));
+    // MainController API로 분류값 받아오기
+    fetch("/common/900")
+        .then(res => res.json())
+        .then(types => {
+            types.forEach(type => {
+                const option = new Option(type.context, type.middle_status);
+                typeSelect.appendChild(option);
+            });
+        })
+        .catch(err => console.error("부품 구분 로드 실패:", err));
 
-        typeCell.appendChild(typeSelect);
-
-        
-        // 부품명 select
-        const partSelect = document.createElement("select");
-        partSelect.className = "form-select";
-        partSelect.name = "productBOMList[" + rowIndex + "].parts_no";
-        partCell.appendChild(partSelect);
-
-        typeSelect.addEventListener("change", function () {
-            const selectedValue = this.value;
-            
-            // 부품명 select 항상 초기화
-            partSelect.innerHTML = "";
-            partSelect.appendChild(new Option("선택", ""));
-
-            // 선택된 값이 있고 유효한 숫자인 경우에만 API 호출
-            if (selectedValue && !isNaN(parseInt(selectedValue, 10))) {
-                const selectedType = parseInt(selectedValue, 10);
-                console.log("API 호출:", selectedType);
-                const url = "/product/getPartsByStatus/" + selectedType;
-                console.log("API 호출 URL:", url); // URL 확인용
-
-                fetch(url)
-                    .then(res => {
-                        if (!res.ok) {
-                            throw new Error("서버 오류: ${res.status}");
-                        }
-                        return res.json();
-                    })
-                    .then(parts => {
-                        if (Array.isArray(parts) && parts.length > 0) {
-                            parts.forEach(part => {
-                                const option = new Option(part.parts_name, part.parts_no);
-                                partSelect.appendChild(option);
-                            });
-                        }
-                    })
-                    .catch(err => console.error('부품명 목록 로드 실패:', err));
-            } else {
-                console.log("유효하지 않은 값 선택됨:", selectedValue);
-                // 유효하지 않은 값일 때는 API 호출하지 않고 select만 초기화
-            }
-        });
-        // 수량 input
-        const quantityInput = document.createElement("input");
-        quantityInput.type = "number";
-        quantityInput.className = "form-control";
-        quantityInput.name = "productBOMList[" + rowIndex + "].cnt";
-        quantityInput.min = "1";
-        quantityInput.value = "1";
-        cntCell.appendChild(quantityInput);
-
-        // 삭제 버튼
-        const deleteBtn = document.createElement("button");
-        deleteBtn.type = "button";
-        deleteBtn.className = "btn btn-danger";
-        deleteBtn.innerText = "삭제";
-        deleteBtn.onclick = () => newRow.remove();
-        actionCell.appendChild(deleteBtn);
-
-        rowIndex++;
+    // 부품명
+    const partCell = document.createElement("td");
+    const partSelect = document.createElement("select");
+    partSelect.className = "form-select";
+    partSelect.required = true;
+    partSelect.appendChild(new Option("선택", ""));
+    partCell.appendChild(partSelect);
+	
+    // 부품구분 변경시 변경값에 맞는 부품리스트 받아오기
+    typeSelect.addEventListener("change", function () {
+        const selectedValue = this.value;
+        partSelect.innerHTML = "";
+        partSelect.appendChild(new Option("선택", ""));
+        if (selectedValue && !isNaN(parseInt(selectedValue, 10))) {
+            fetch("/product/getPartsByStatus/" + selectedValue)
+                .then(res => res.json())
+                .then(parts => {
+                    parts.forEach(part => {
+                        partSelect.appendChild(new Option(part.parts_name, part.parts_no));
+                    });
+                })
+                .catch(err => console.error("부품명 로드 실패:", err));
+        }
     });
+
+    // 수량
+    const cntCell = document.createElement("td");
+    const cntInput = document.createElement("input");
+    cntInput.type = "number";
+    cntInput.className = "form-control";
+    cntInput.min = "1";
+    cntInput.value = "1";
+    cntInput.required = true;
+    cntCell.appendChild(cntInput);
+
+    // 삭제 버튼
+    const delCell = document.createElement("td");
+    const delBtn = document.createElement("button");
+    delBtn.type = "button";
+    delBtn.className = "btn btn-danger";
+    delBtn.innerText = "삭제";
+    delBtn.onclick = () => handleRowDelete(delBtn);
+    delCell.appendChild(delBtn);
+
+    // 행에 각 셀 append
+    newRow.appendChild(typeCell);
+    newRow.appendChild(partCell);
+    newRow.appendChild(cntCell);
+    newRow.appendChild(delCell);
+
+    tableBody.appendChild(newRow);
+    reindexBOMRows();
+});
+// name 인덱스 재정렬
+function reindexBOMRows() {
+    const rows = document.querySelectorAll("#bomTableBody tr");
+	console.log("rows length:", rows.length);
+	
+	rows.forEach((row, idx) => {
+	    const selects = row.querySelectorAll("select");
+	    const input = row.querySelector("input");
+
+	    const type = selects[0];
+	    const part = selects[1];
+	    const cnt = input;
+
+	    if (!type || !part || !cnt) {
+	        console.warn(`⚠️ Row ${idx} is missing elements`);
+	        return;
+	    }
+
+	    type.name = 'productBOMList['+idx+'].parts_status';
+	    part.name = 'productBOMList['+idx+'].parts_no';
+	    cnt.name = 'productBOMList['+idx+'].cnt';
+
+	    console.log(`✅ Row ${idx} - type.name: ${type.name}, part.name: ${part.name}, cnt.name: ${cnt.name}`);
+	});
+}
+
+// 유효성 검사
+document.querySelector("form").addEventListener("submit", function (e) {
+    const rows = document.querySelectorAll("#bomTableBody tr");
+    const partsNoSet = new Set();
+
+ 	// 제품구성이 비었을 경우 확인창띄우기
+    if (rows.length === 0) {
+        const confirmResult = confirm("제품 구성이 설정되지 않았습니다. 이대로 등록하시겠습니까?");
+        if (!confirmResult) {
+            e.preventDefault();
+            return;
+        }
+    }
     
-    document.querySelector("form").addEventListener("submit", function (e) {
-        const rows = document.querySelectorAll("#bomTable tbody tr");
+    let hasError = false;
+    let errorMessage = "";
+    let firstError = null;
+	
+    
+    rows.forEach(row => {
+        const type = row.cells[0].querySelector("select");
+        const part = row.cells[1].querySelector("select");
+        const cnt = row.cells[2].querySelector("input");
+		
+        if (!type.value || !part.value) {
+            errorMessage = "모든 항목을 입력해주세요.";
+            firstError = type;
+            hasError = true;
+            return;
+        }
 
-        const partsNoSet = new Set(); // 중복 체크용 Set
+        if (!cnt.value || parseInt(cnt.value) <= 0) {
+            errorMessage = "수량을 입력해주세요.";
+            firstError = cnt;
+            hasError = true;
+            return;
+        }
 
-        let hasError = false;
+        if (partsNoSet.has(part.value)) {
+            errorMessage = "같은 부품을 중복으로 추가할 수 없습니다.";
+            firstError = part;
+            hasError = true;
+            return;
+        }
 
-        rows.forEach((row, idx) => {
-            const type = row.querySelector('select[name^="productBOMList"][name$=".parts_status"]');
-            const part = row.querySelector('select[name^="productBOMList"][name$=".parts_no"]');
-            const cnt = row.querySelector('input[name^="productBOMList"][name$=".cnt"]');
-
-            // 빈 값 체크
-            if (!type.value || !part.value) {
-                alert("모든 항목을 입력해주세요.");
-                type.focus();
-                e.preventDefault();
-                hasError = true;
-                return;
-            }
-
-            if (!cnt.value || parseInt(cnt.value) <= 0) {
-                alert("수량을 입력해주세요.");
-                cnt.focus();
-                e.preventDefault();
-                hasError = true;
-                return;
-            }
-
-            // 중복 체크
-            if (partsNoSet.has(part.value)) {
-                alert("같은 부품을 두 번 추가할 수 없습니다.");
-                part.focus();
-                e.preventDefault();
-                hasError = true;
-                return;
-            }
-
-            partsNoSet.add(part.value);
-        });
-
-        if (hasError) return;
+        partsNoSet.add(part.value);
     });
+
+    if (hasError) {
+        alert(errorMessage);
+        firstError?.focus();
+        e.preventDefault();
+    }
+});
+
 </script> 
 </body>
 </html>

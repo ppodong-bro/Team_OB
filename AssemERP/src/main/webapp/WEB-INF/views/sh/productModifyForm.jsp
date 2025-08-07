@@ -78,8 +78,8 @@ body {
 
 												<label for="productName" class="form-label">제품명</label>
 												<div class="input-group">
-													<span class="input-group-text"> <i class="bi bi-tag"></i>
-													</span> <input type="text" class="form-control form-control-sm"
+													<span class="input-group-text"> <i class="bi bi-tag"></i></span>
+													<input type="text" class="form-control form-control-sm"
 														id="productName" name="product_name"
 														value="${productDTO.product_name }" required>
 													<div class="invalid-feedback">제품명을 입력해주세요.</div>
@@ -116,9 +116,10 @@ body {
 														class="bi bi-person"></i></span> <select
 														class="form-control form-control-sm" name="emp_no"
 														id="empNo">
-														<%-- <c:forEach var="emp">
-											<option value="${emp.emp_no }">${emp.emp_name }</option>
-										</c:forEach> --%>
+														<c:forEach var="emp" items="${EmpList}">
+															<option value="${emp.empNo }"
+																${emp.empNo == productDTO.emp_no ? 'selected' : ''}>${emp.empName }</option>
+														</c:forEach>
 													</select>
 
 												</div>
@@ -165,10 +166,9 @@ body {
 														</c:choose>
 														<!-- X 삭제 버튼 -->
 														<c:if test="${!empty productDTO.filename}">
-															<button type="button"
+															<i class="bi bi-x"
 																onclick="deleteFile(${productDTO.product_no})"
-																style="position: absolute; top: -10px; right: -10px; background-color: red; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 14px; line-height: 24px; text-align: center; cursor: pointer;">
-																X</button>
+																style="position: absolute; background-color:red; top: -10px; right: -10px; font-size: 15px; border: solid; border-width: 1px; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;"></i>
 														</c:if>
 													</div>
 													<input type="file" class="form-control form-control-sm"
@@ -186,8 +186,9 @@ body {
 											<div
 												class="d-flex justify-content-between align-items-center mb-3">
 												<h5 class="mb-0">제품 구성</h5>
-												<button type="button" class="btn btn-primary" id="addRowBtn">+
-													부품 추가</button>
+												<button type="button" class="btn btn-primary" id="addRowBtn">
+													<i class="bi bi-plus-lg"></i>부품 추가
+												</button>
 											</div>
 
 											<table class="table table-bordered" id="bomTable">
@@ -258,8 +259,8 @@ body {
 											<div class="row mt-4 g-2">
 												<%------------------------------------------------------------------------------
 					                     		4. Bootstrap 버튼 클릭
-					                     			 - 초기화   : 화면 Clear
-					                     			 - XX 등록 : 등록 이벤트
+					                     			 - 삭제	: 삭제 이벤트
+					                     			 - 수정	: 수정 이벤트
 					                    	------------------------------------------------------------------------------%>
 												<div class="col-md-4 d-grid">
 													<button type="button" id="deleteBtn" class="btn btn-danger">
@@ -303,8 +304,12 @@ body {
 	<!-- 부트스트랩 CDN -->
 	<jsp:include page="/common_cdn.jsp" />
 
-<script>
+	<script>
 let rowIndex = document.querySelectorAll("#bomTableBody tr").length;
+
+document.addEventListener("DOMContentLoaded", function () {
+    reindexBOMRows(); // 기존 행들도 name 설정
+});
 
 // 행 삭제
 function handleRowDelete(button) {
@@ -317,7 +322,7 @@ function handleRowDelete(button) {
 document.getElementById("addRowBtn").addEventListener("click", function () {
     const tableBody = document.getElementById("bomTableBody");
     const newRow = document.createElement("tr");
-
+	
     // 부품구분
     const typeCell = document.createElement("td");
     const typeSelect = document.createElement("select");
@@ -419,6 +424,15 @@ document.querySelector("form").addEventListener("submit", function (e) {
     const rows = document.querySelectorAll("#bomTableBody tr");
     const partsNoSet = new Set();
 
+ 	// 제품구성이 비었을 경우 확인창띄우기
+    if (rows.length === 0) {
+        const confirmResult = confirm("제품 구성이 설정되지 않았습니다. 이대로 등록하시겠습니까?");
+        if (!confirmResult) {
+            e.preventDefault();
+            return;
+        }
+    }
+    
     let hasError = false;
     let errorMessage = "";
     let firstError = null;
@@ -458,7 +472,7 @@ document.querySelector("form").addEventListener("submit", function (e) {
         e.preventDefault();
     }
 });
-
+	// 파일삭제 버튼
     function deleteFile(prdouctNo) {
         if (confirm('파일을 삭제하시겠습니까?')) {
             fetch('${pageContext.request.contextPath}/product/deleteFile/' + prdouctNo, {
@@ -473,7 +487,8 @@ document.querySelector("form").addEventListener("submit", function (e) {
             }).catch(e => alert('오류가 발생했습니다.'));
         }
     }
-
+	
+	// DB 삭제버튼
     const deleteBtn = document.getElementById('deleteBtn');
     if (deleteBtn) {
         deleteBtn.addEventListener('click', function () {

@@ -75,23 +75,18 @@ body {
 									<div style="width: 90px;"></div>
 								</div>
 								<div class="card-body">
-									<form method="post"
-										action="${pageContext.request.contextPath}/parts/partsUpdate"
-										enctype="multipart/form-data">
-										<input type="hidden" name="parts_no"
-											value="${partsDTO.parts_no }">
-
+									<form method="post" action="${pageContext.request.contextPath}/parts/partsUpdate" enctype="multipart/form-data">
+										<input type="hidden" name="parts_no" value="${partsDTO.parts_no }">
+										
 										<h5 class="mb-3">기본 정보</h5>
-
-
+										
 										<div class="row">
 											<!-- 부품명 -->
 											<div class="col-md-6 mb-3">
 												<label for="partsName" class="form-label">부품명</label>
 												<div class="input-group">
-													<span class="input-group-text"> <i class="bi bi-tag"></i>
-													</span> <input type="text" class="form-control form-control-sm"
-														id="partsName" name="parts_name"
+													<span class="input-group-text"> <i class="bi bi-tag"></i></span> 
+													<input type="text" class="form-control form-control-sm" id="partsName" name="parts_name"
 														value="${partsDTO.parts_name}" required>
 												</div>
 											</div>
@@ -100,10 +95,8 @@ body {
 											<div class="col-md-6 mb-3">
 												<label for="partsStatus" class="form-label">구분</label>
 												<div class="input-group">
-													<span class="input-group-text"> <i
-														class="bi bi-grid"></i></span> <select
-														class="form-control form-control-sm" id="partsStatus"
-														name="parts_status" required>
+													<span class="input-group-text"> <i class="bi bi-grid"></i></span>
+													<select class="form-control form-control-sm" id="partsStatus" name="parts_status" required>
 														<option value="">== 선택 ==</option>
 														<option value="0"
 															${partsDTO.parts_status == 0 ? 'selected' : ''}>메인보드</option>
@@ -133,9 +126,8 @@ body {
 											<div class="col-md-6 mb-3">
 												<label for="partsmanufacture" class="form-label">부품제조사</label>
 												<div class="input-group">
-													<span class="input-group-text"><i
-														class="bi bi-buildings"></i></span> <input type="text"
-														class="form-control form-control-sm" id="partsmanufacture"
+													<span class="input-group-text"><i class="bi bi-buildings"></i></span> 
+													<input type="text" class="form-control form-control-sm" id="partsmanufacture"
 														name="manufacture" value="${partsDTO.manufacture }">
 												</div>
 											</div>
@@ -145,13 +137,12 @@ body {
 
 												<label for="empNo" class="form-label">등록자</label>
 												<div class="input-group">
-													<span class="input-group-text"><i
-														class="bi bi-person"></i></span> <select
-														class="form-control form-control-sm" name="emp_no"
-														id="empNo">
-														<%-- <c:forEach var="emp">
-											<option value="${emp.emp_no }">${emp.emp_name }</option>
-										</c:forEach> --%>
+													<span class="input-group-text"><i class="bi bi-person"></i></span>
+													<select class="form-control form-control-sm" name="emp_no" id="empNo">
+														<c:forEach var="emp" items="${EmpList}">
+															<option value="${emp.empNo }"
+																${emp.empNo == partsDTO.emp_no ? 'selected' : ''}>${emp.empName }</option>
+														</c:forEach>
 													</select>
 												</div>
 											</div>
@@ -160,9 +151,8 @@ body {
 										<div class="mb-3">
 											<label for="partsIndate" class="form-label">등록일</label>
 											<div class="input-group">
-												<input type="date" class="form-control form-control-sm"
-													id="partsIndate" name="in_date" readonly="readonly"
-													value="${partsDTO.in_date }">
+												<input type="date" class="form-control form-control-sm" id="partsIndate" name="in_date" 
+													readonly="readonly" value="${partsDTO.in_date }">
 											</div>
 										</div>
 
@@ -179,8 +169,7 @@ body {
 										<div class="mb-3">
 											<label for="partsfile" class="form-label">부품이미지</label>
 											<div class="input-group">
-												<div
-													style="position: relative; display: inline-flex; margin-right: 15px;">
+												<div style="position: relative; display: inline-flex; margin-right: 15px;">
 													<c:choose>
 														<c:when test="${empty partsDTO.filename}">
 															<img
@@ -195,14 +184,11 @@ body {
 													</c:choose>
 													<!-- X 삭제 버튼 -->
 													<c:if test="${!empty partsDTO.filename}">
-														<button type="button"
-															onclick="deleteFile(${partsDTO.parts_no})"
-															style="position: absolute; top: -10px; right: -10px; background-color: red; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 14px; line-height: 24px; text-align: center; cursor: pointer;">
-															X</button>
+														<i class="bi bi-x" onclick="deleteFile(${partsDTO.parts_no})"
+															style="position: absolute; background-color:red; top: -10px; right: -10px; font-size: 15px; border: solid; border-width: 1px; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;"></i>
 													</c:if>
 												</div>
-												<input type="file" class="form-control form-control-sm"
-													id="partsfile" name="file">
+												<input type="file" class="form-control form-control-sm" id="partsfile" name="file">
 											</div>
 										</div>
 

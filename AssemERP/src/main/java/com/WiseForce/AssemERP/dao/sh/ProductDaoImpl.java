@@ -22,10 +22,10 @@ public class ProductDaoImpl implements ProductDao {
 
 		try {
 			productDTOs = session.selectList("shProductPageList", productDTO);
+			System.out.println("ProductDaoImpl findPageList productDTOs => " + productDTOs.size());
 		} catch (Exception e) {
 			System.out.println("ProductDaoImpl findPageList Exception => " + e.getMessage());
 		}
-		System.out.println("ProductDaoImpl findPageList productDTOs => " + productDTOs);
 		return productDTOs;
 	}
 
@@ -60,7 +60,7 @@ public class ProductDaoImpl implements ProductDao {
 
 		try {
 			productDTOs = session.selectList("shProductSearchList", productDTO);
-			System.out.println("ProductDaoImpl findSearchList productDTOs => "+productDTOs);
+			System.out.println("ProductDaoImpl findSearchList productDTOs => "+productDTOs.size());
 		} catch (Exception e) {
 			System.out.println("ProductDaoImpl findSearchList Exception => "+e.getMessage());
 
@@ -75,7 +75,7 @@ public class ProductDaoImpl implements ProductDao {
 		
 		try {
 			productBomDTOs = session.selectList("shGetBomList", product_no);
-			System.out.println("ProductDaoImpl getBomList productBomDTOs => "+productBomDTOs);
+			System.out.println("ProductDaoImpl getBomList productBomDTOs => "+productBomDTOs.size());
 		} catch (Exception e) {
 			System.out.println("ProductDaoImpl getBomList Exception => "+e.getMessage());
 		}
@@ -92,8 +92,9 @@ public class ProductDaoImpl implements ProductDao {
 	@Override
 	public void productBOMUpdate(List<ProductBomDTO> list, int product_no) {
 		
-		System.out.println("ProductDaoImpl productBOMUpdate list =>"+list);
+		System.out.println("ProductDaoImpl productBOMUpdate list =>"+list.size());
 		
+		// 제품번호주입
 		for(ProductBomDTO bomDTO : list) {
 			bomDTO.setProduct_no(product_no);
 			System.out.println("ProductDaoImpl productBOMUpdate bomDTO => "+bomDTO);
@@ -106,6 +107,20 @@ public class ProductDaoImpl implements ProductDao {
 	public void deleteProduct(int product_no) {
 		session.update("shProductDelete", product_no);
 		
+	}
+
+	@Override
+	public int getTotalProduct() {
+		int result = 0;
+		
+		try {
+			result = session.selectOne("shProductTotalCount");
+			System.out.println("ProductDaoImpl getTotalProduct result => "+result);
+		} catch (Exception e) {
+			System.out.println("ProductDaoImpl getTotalProduct Exception => "+e.getMessage());
+		}
+		
+		return result;
 	}
 
 		

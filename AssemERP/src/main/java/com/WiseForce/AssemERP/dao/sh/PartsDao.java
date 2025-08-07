@@ -18,4 +18,6 @@ public interface PartsDao {
 
 	void deleteParts(int parts_no);
 
+	int getTotalParts();
+
 }
