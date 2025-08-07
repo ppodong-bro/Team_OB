@@ -37,7 +37,7 @@
 								<!-- 제품구분 -->
 								<div class="col-auto">
 									<div class="input-group input-group-sm">
-										<span class="input-group-text">종류</span> <select
+										<span class="input-group-text">구분</span> <select
 											name="product_status" class="form-select form-select-sm">
 											<option value="">전체</option>
 											<option value="0"
@@ -77,8 +77,9 @@
 								<!-- 날짜검색종료 -->
 
 								<div class="col-auto">
-									<button type="submit" class="btn btn-primary btn-sm w-100">
-										검색</button>
+									<button type="submit" class="btn btn-secondary text-nowrap">
+							            <i class="bi bi-search"></i> 검색
+							        </button>
 								</div>
 
 							</form>
@@ -94,7 +95,7 @@
 											<th>종류</th>
 											<th>등록자</th>
 											<th>등록일</th>
-											<th class="text-center">수정/삭제</th>
+											<th class="text-center">수정</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -107,8 +108,10 @@
 												<td style="text-align: center;">${productDTO.in_date}</td>
 												<td class="text-center">
 													<button type="button"
-														class="btn btn-sm btn-outline-primary me-1">수정</button>
-													<button type="button" class="btn btn-sm btn-outline-danger">삭제</button>
+														onclick="location.href='/product/productModify/${productDTO.product_no}'"
+														class="btn btn-sm btn-outline-success">
+														<i class="bi bi-pencil-square"></i> 수정
+													</button>
 												</td>
 											</tr>
 										</c:forEach>

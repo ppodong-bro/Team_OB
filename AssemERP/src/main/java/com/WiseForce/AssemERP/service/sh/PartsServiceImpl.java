@@ -34,32 +34,6 @@ public class PartsServiceImpl implements PartsService {
 		return partsDtoList;
 	}
 
-	// 부품상태 코드를 이름으로 변환메소드
-	// common Table 변경시 수정 필요
-	private String partsStatus_IntToString(int status) {
-		switch (status) {
-		case 0:
-			return "메인보드";
-		case 1:
-			return "CPU";
-		case 2:
-			return "GPU";
-		case 3:
-			return "메모리";
-		case 4:
-			return "POWER";
-		case 5:
-			return "HDD";
-		case 6:
-			return "SSD";
-		case 7:
-			return "CASE";
-		case 8:
-			return "COOLER";
-		default:
-			return "";
-		}
-	}
 
 	@Override
 	public int getTotalcount() {
@@ -118,6 +92,38 @@ public class PartsServiceImpl implements PartsService {
 	@Override
 	public void updateParts(Parts parts) {
 		partsRepository.save(parts);
+	}
+
+	@Override
+	public void deleteParts(int parts_no) {
+		partsDao.deleteParts(parts_no);
+		
+	}
+	// 부품상태 코드를 이름으로 변환메소드
+	// common Table 변경시 수정 필요
+	private String partsStatus_IntToString(int status) {
+		switch (status) {
+		case 0:
+			return "메인보드";
+		case 1:
+			return "CPU";
+		case 2:
+			return "GPU";
+		case 3:
+			return "메모리";
+		case 4:
+			return "POWER";
+		case 5:
+			return "HDD";
+		case 6:
+			return "SSD";
+		case 7:
+			return "CASE";
+		case 8:
+			return "COOLER";
+		default:
+			return "";
+		}
 	}
 
 }

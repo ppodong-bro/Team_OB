@@ -57,19 +57,19 @@ body {
 						<div class="col-lg-8">
 							<div class="card shadow-sm">
 								<%------------------------------------------------------------------------------
-                			1. Card Header 정중앙
-                	 ------------------------------------------------------------------------------%>
+                					1. Card Header 정중앙
+                	 			------------------------------------------------------------------------------%>
 								<div
 									class="card-header d-flex justify-content-between align-items-center">
 									<%------------------------------------------------------------------------------
-                			1-1. 목록 버튼 스타일
-                 		------------------------------------------------------------------------------%>
+                						1-1. 목록 버튼 스타일
+                 					------------------------------------------------------------------------------%>
 									<a href="/parts/partsList" class="btn btn-outline-light btn-sm">
 										<i class="bi bi-list-ul me-1"></i> 목록
 									</a>
 									<%------------------------------------------------------------------------------
-                			1-2. 타이틀 중앙 정렬 스타일
-                 		------------------------------------------------------------------------------%>
+                						1-2. 타이틀 중앙 정렬 스타일
+                 					------------------------------------------------------------------------------%>
 									<h4 class="card-title mb-0">부품 수정</h4>
 									<%-- 타이틀의 정확한 중앙 정렬을 위한 빈 공간 --%>
 									<div style="width: 90px;"></div>
@@ -96,9 +96,9 @@ body {
 												</div>
 											</div>
 
-											<!-- 부품종류 -->
+											<!-- 부품구분 -->
 											<div class="col-md-6 mb-3">
-												<label for="partsStatus" class="form-label">종류</label>
+												<label for="partsStatus" class="form-label">구분</label>
 												<div class="input-group">
 													<span class="input-group-text"> <i
 														class="bi bi-grid"></i></span> <select
@@ -227,11 +227,11 @@ body {
 									<%------------------------------------------------------------------------------
 				                   		5. 삭제 처리를 위한 별도 form
 				                  	------------------------------------------------------------------------------%>
-									<form id="deleteForm" action="/emp/empDeletePro" method="post"
-										class="d-none">
+									<form id="deleteForm" action="/parts/partsDeletePro"
+										method="post" class="d-none">
 										<input type="hidden" name="${_csrf.parameterName}"
-											value="${_csrf.token}" /> <input type="hidden" name="empNo"
-											value="${emp.empNo}">
+											value="${_csrf.token}" /> <input type="hidden"
+											name="parts_no" value="${partsDTO.parts_no}">
 									</form>
 								</div>
 							</div>
@@ -247,5 +247,16 @@ body {
 
 	<!-- 부트스트랩 CDN -->
 	<jsp:include page="/common_cdn.jsp" />
+	<script>
+	 // 삭제 버튼 확인 스크립트
+    const deleteBtn = document.getElementById('deleteBtn');
+    if(deleteBtn) {
+        deleteBtn.addEventListener('click', function() {
+            if(confirm('정말로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+                document.getElementById('deleteForm').submit();
+            }
+        });
+    }
+</script>
 </body>
 </html>

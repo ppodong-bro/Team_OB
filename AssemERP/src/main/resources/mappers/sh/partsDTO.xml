@@ -5,16 +5,16 @@
 	<select id="shPartsListPage" parameterType="PartsDTO"
 		resultType="PartsDTO">
 		select *
-		From (
-		select rownum rn, a.*
-		From
-		(SELECT *
-		FROM parts
-		ORDER BY parts_no) a
+			From (
+					select rownum rn, a.*
+					From
+						(SELECT *
+						 FROM parts
+						 WHERE del_status = 0
+						 ORDER BY parts_no) a
 		)
 		WHERE rn BETWEEN #{start} and #{end}
-		AND
-		del_status = 0
+		
 	</select>
 
 	<select id="shFindPartsAllList" resultType="PartsDTO">
@@ -81,4 +81,18 @@
 		)
 		WHERE rn &gt;= #{start}       
 	</select>
+	
+	<select id="shfindPartsByStatus" parameterType="int" resultType="partsDTO">
+		SELECT *
+		FROM PARTS
+		WHERE PARTS_STATUS = #{parts_status}
+		
+	</select>
+	
+	<update id="shPartsDelete" parameterType="int">
+		UPDATE parts
+		SET del_status = 1
+		WHERE parts_no = #{parts_no}
+	</update>
+	
 </mapper>

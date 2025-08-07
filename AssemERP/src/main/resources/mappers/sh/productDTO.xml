@@ -9,10 +9,10 @@
 				From
 					(SELECT *
 					 FROM product
+					 WHERE del_status = 0
 					 ORDER BY product_no) a
 			 )
 		WHERE rn BETWEEN #{start} and #{end}
-		AND del_status = 0
 	</select>
 
 	<select id="shsearchProductCount" parameterType="ProductDTO" resultType="int">
@@ -72,4 +72,10 @@
 		)
 		WHERE rn &gt;= #{start}   
 	</select>
+	
+	<update id="shProductDelete" parameterType="int">
+		UPDATE product
+		SET del_status = 1
+		WHERE product_no = #{product_no}
+	</update>
 </mapper>
