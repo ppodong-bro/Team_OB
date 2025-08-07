@@ -63,6 +63,7 @@
 										</select>
 									</div>
 								</div>
+								
 								<!-- 부품명 -->
 								<div class="col-auto">
 									<div class="input-group input-group-sm">
@@ -71,6 +72,7 @@
 											value="${partsDTO.parts_name }">
 									</div>
 								</div>
+								
 								<!-- 날짜검색 -->
 								<div class="col-auto">
 									<div class="input-group input-group-sm">
@@ -89,6 +91,7 @@
 									</div>
 								</div>
 								<!-- 날짜검색종료 -->
+								<!-- 검색버튼 -->
 								<div class="col-auto">
 									<button type="submit" class="btn btn-secondary text-nowrap">
 							            <i class="bi bi-search"></i> 검색
@@ -119,7 +122,7 @@
 												<td>${partsDTO.parts_name}</td>
 												<td style="text-align: center;">${partsDTO.parts_statusName}</td>
 												<td style="text-align: center;">${partsDTO.manufacture}</td>
-												<td style="text-align: center;">${partsDTO.emp_no}</td>
+												<td style="text-align: center;">${partsDTO.emp_name}</td>
 												<td style="text-align: center;">${partsDTO.in_date}</td>
 												<td class="text-center">
 													<button type="button"
@@ -134,11 +137,11 @@
 								</table>
 							</div>
 						</div>
-						<div class="card-footer d-flex justify-content-center">
 							<!-- List 테이블 마지막 -->
+							
+						<div class="card-footer d-flex justify-content-center">
 							<nav aria-label="Page navigation">
 								<ul class="pagination justify-content-center mb-0">
-
 									<c:choose>
 										<c:when test="${partsDTO.currentPage > 1}">
 
@@ -207,7 +210,7 @@
 											<li class="page-item"><a class="page-link"
 												href="${nextUrl}" aria-label="Next"> <i
 													class="bi bi-chevron-right"></i></a></li>
-
+											<!-- 마지막페이지 -->
 											<c:url var="finishUrl" value="searchPartsList">
 												<c:param name="currentPage" value="${page.totalPage}" />
 												<c:param name="parts_status"

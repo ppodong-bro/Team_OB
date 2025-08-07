@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import com.WiseForce.AssemERP.dao.sh.PartsDao;
 import com.WiseForce.AssemERP.domain.sh.Parts;
 import com.WiseForce.AssemERP.dto.sh.PartsDTO;
+import com.WiseForce.AssemERP.dto.sm.EmpDTO;
+import com.WiseForce.AssemERP.repository.dg.EmpRepository;
 import com.WiseForce.AssemERP.repository.sh.PartsRepository;
 
 import jakarta.transaction.Transactional;
@@ -21,13 +23,16 @@ public class PartsServiceImpl implements PartsService {
 
 	private final PartsRepository partsRepository;
 	private final PartsDao partsDao;
-
+	private final EmpRepository empRepository;
+	
 	@Override
 	public List<PartsDTO> getPartsList(PartsDTO partsDTO) {
 		List<PartsDTO> partsDtoList = partsDao.findPageList(partsDTO);
 
+		// 부품분류에 따른 분류명가져오기
+		// 사원정보 번호 -> 이름변경
 		for (PartsDTO dto : partsDtoList) {
-			// 부품상태 코드를 이름으로 변환
+			dto.setEmp_name(empRepository.getEmpNameFromEmpNo(dto.getEmp_no()));
 			dto.setParts_statusName(partsStatus_IntToString(dto.getParts_status()));
 		}
 
@@ -37,19 +42,20 @@ public class PartsServiceImpl implements PartsService {
 
 	@Override
 	public int getTotalcount() {
-		int Partstotalcout = (int) partsRepository.count();
+		int Partstotalcout = partsDao.getTotalParts(); 
+				
 		return Partstotalcout;
 	}
-
+	
 	@Override
 	public int createParts(PartsDTO partsDTO) {
+		// 등록일 세팅
 		if (partsDTO.getIn_date() == null) {
 			partsDTO.setIn_date(LocalDate.now());
 		}
 		partsDTO.setDel_status(0);
-		// emp 나올떄까지 임시
-		partsDTO.setEmp_no(1001);
-
+		
+		// DTO -> Entity전환
 		Parts parts = partsDTO.changeParts();
 
 		partsRepository.save(parts);
@@ -65,8 +71,13 @@ public class PartsServiceImpl implements PartsService {
 
 	@Override
 	public List<PartsDTO> getpartsSearchList(PartsDTO partsDTO) {
+		
 		List<PartsDTO> partsDTOs = partsDao.findSearchList(partsDTO);
+		
+		// 부품분류에 따른 분류명가져오기
+		// 사원정보 번호 -> 이름변경
 		for (PartsDTO dto : partsDTOs) {
+			dto.setEmp_name(empRepository.getEmpNameFromEmpNo(dto.getEmp_no()));
 			dto.setParts_statusName(partsStatus_IntToString(dto.getParts_status()));
 		}
 
@@ -75,13 +86,19 @@ public class PartsServiceImpl implements PartsService {
 
 	@Override
 	public PartsDTO findbyID(int parts_no) {
-
+		// null값을 포함한 모든 컬럼데이터 가져오기 
 		Optional<Parts> parts = partsRepository.findById(parts_no);
 		PartsDTO partsDTO = new PartsDTO();
 		System.out.println("PartsServiceImpl findbyID parts.parts_no() => " + parts.get().getParts_no());
 		System.out.println("PartsServiceImpl findbyID parts => " + parts);
+		
+		// null이 아닌것 == 데이터가 존재하는것만
+		// Parts -> PartsDTO 형변환
+		// 부품분류에 따른 분류명가져오기
+		// 사원정보 번호 -> 이름변경
 		if (parts.isPresent()) {
 			partsDTO = PartsDTO.chagePartsDTO(parts.get());
+			partsDTO.setEmp_name(empRepository.getEmpNameFromEmpNo(partsDTO.getEmp_no()));
 			partsDTO.setParts_statusName(partsStatus_IntToString(partsDTO.getParts_status()));
 		}
 		System.out.println("PartsServiceImpl findbyID partsDTO => " + partsDTO);
@@ -125,5 +142,7 @@ public class PartsServiceImpl implements PartsService {
 			return "";
 		}
 	}
+
+
 
 }

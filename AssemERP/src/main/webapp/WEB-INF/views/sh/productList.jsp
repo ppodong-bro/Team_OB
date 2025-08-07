@@ -34,6 +34,7 @@
 						<div class="card-body">
 							<form method="get" action="searchProductList"
 								class="row gx-2 gy-1 align-items-end mb-4 justify-content-end">
+								
 								<!-- 제품구분 -->
 								<div class="col-auto">
 									<div class="input-group input-group-sm">
@@ -49,6 +50,7 @@
 										</select>
 									</div>
 								</div>
+								
 								<!-- 제품명 -->
 								<div class="col-auto">
 									<div class="input-group input-group-sm">
@@ -57,6 +59,7 @@
 											value="${productDTO.product_name }">
 									</div>
 								</div>
+								
 								<!-- 날짜검색 -->
 								<div class="col-auto">
 									<div class="input-group input-group-sm">
@@ -104,7 +107,7 @@
 												<td style="text-align: center;">${productDTO.product_no}</td>
 												<td>${productDTO.product_name}</td>
 												<td style="text-align: center;">${productDTO.product_statusName}</td>
-												<td style="text-align: center;">${productDTO.emp_no}</td>
+												<td style="text-align: center;">${productDTO.emp_name}</td>
 												<td style="text-align: center;">${productDTO.in_date}</td>
 												<td class="text-center">
 													<button type="button"
@@ -127,7 +130,7 @@
 									<c:choose>
 										<c:when test="${productDTO.currentPage > 1}">
 
-											<!-- 첫페이지 블록 -->
+											<!-- 첫페이지 버튼-->
 											<c:url var="firstUrl" value="searchProductList">
 												<c:param name="currentPage" value="1" />
 												<c:param name="product_status"
@@ -165,7 +168,7 @@
 										</c:otherwise>
 									</c:choose>
 
-									<!-- 페이지 번호들 -->
+									<!-- 블럭페이지 -->
 									<c:forEach begin="${page.startPage}" end="${page.endPage}"
 										var="p">
 										<c:url var="pageUrl" value="searchProductList">
@@ -181,7 +184,8 @@
 											<a class="page-link" href="${pageUrl}">${p}</a>
 										</li>
 									</c:forEach>
-
+									
+									<!-- 다음페이지 -->
 									<c:choose>
 										<c:when test="${page.currentPage < page.totalPage}">
 											<!-- 다음 블록 -->
@@ -197,7 +201,8 @@
 											<li class="page-item"><a class="page-link"
 												href="${nextUrl}" aria-label="Next"> <i
 													class="bi bi-chevron-right"></i></a></li>
-
+													
+											<!-- 마지막페이지 -->
 											<c:url var="finishUrl" value="searchProductList">
 												<c:param name="currentPage" value="${page.totalPage}" />
 												<c:param name="product_status"

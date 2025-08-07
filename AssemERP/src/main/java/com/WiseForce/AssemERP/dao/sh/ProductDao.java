@@ -23,4 +23,6 @@ public interface ProductDao {
 
 	void deleteProduct(int product_no);
 
+	int getTotalProduct();
+
 }
