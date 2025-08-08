@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.WiseForce.AssemERP.domain.dg.Inventory;
 import com.WiseForce.AssemERP.dto.dg.InventoryDTO;
+import com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO;
 
 public interface InventoryRepository {
 

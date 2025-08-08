@@ -2,72 +2,96 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.WiseForce.AssemERP.dg.InventoryMapper">
 
-	<select id="callCalcRealInventoryCnt" statementType="CALLABLE"
+	<select id="callCalcRealInventoryAllCnt" statementType="CALLABLE"
 		parameterType="com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO"
 		resultType="int">
-		SELECT count(*) FROM TABLE(calc_real_inventory(#{item_type}))
-		<where>
-		    <if test="item_no_text != null and item_no_text != ''">
-		        AND item_no = #{item_no_text}
-		    </if>
-		    <if test="item_status_select != 999">
-		        AND item_status = (
-		        	SELECT context FROM common
-		        	WHERE 
-		   <choose>
-		       <when test="item_type == 0">
-		           big_status = 900
-		       </when>
-		       <when test="item_type == 1">
-		           big_status = 800
-		       </when>
-		       <otherwise>
-		           big_status = 900
-		       </otherwise>
-		   </choose>
-		      AND middle_status = #{item_status_select})
-		    </if>
-		    <if test="item_name_text != null and item_name_text != ''">
-		        AND item_name LIKE '%' || #{item_name_text} || '%'
-		    </if>
-		</where>
+		<!-- 검색 조건 처리 : 부품제품구분, 재고번호, 재고구분, 재고명 -->
+		SELECT count(*) FROM (
+			<!-- 필요한 DTO로 변환 : 부품제품구분(item_type), 재고번호(item_no), 재고구분(item_status), 재고명(item_name), 실수량(cnt) -->			
+			SELECT RI.item_status AS item_type, RI.item_no, NVL(PA.parts_status, PR.product_status) AS item_status_no, NVL(PA.parts_name, PR.product_name) AS item_name, RI.cnt
+			<!-- calc_real_inventory_all : 모든 재고 현재 수량 가져오기 --> 
+			FROM (SELECT * FROM TABLE(calc_real_inventory_all())) RI
+			LEFT JOIN 
+			    (SELECT product_no, product_status, product_name FROM product) PR 
+			    ON RI.item_status = 1 -- 제품
+			    AND RI.item_no = PR.product_no
+			LEFT JOIN
+			    (SELECT parts_no, parts_status, parts_name FROM parts) PA 
+			    ON RI.item_status = 0 -- 부품
+			    AND RI.item_no = PA.parts_no
+		) I 
+		LEFT JOIN
+	    (SELECT * FROM common) C
+	    ON I.item_type = 
+	        CASE 
+	            WHEN C.big_status = 900 THEN 0 -- 부품
+	            WHEN C.big_status = 800 THEN 1 -- 제품
+	            ELSE -1
+	        END
+	    AND I.item_status_no = C.middle_status
+		WHERE item_type = #{item_type} 
+		<if test="item_no_text != null and item_no_text != ''">
+		    AND item_no = #{item_no_text}
+		</if>
+		<if test="item_status_select != 999">
+		    AND item_status_no = #{item_status_select}
+		</if>
+		<if test="item_name_text != null and item_name_text != ''">
+		    AND item_name LIKE '%' || #{item_name_text} || '%'
+		</if>
 	</select>
 	
-	<select id="callCalcRealInventory" statementType="CALLABLE"
+	<select id="callCalcRealInventoryAll" statementType="CALLABLE"
 		parameterType="com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO"
 		resultType="com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO">
-		SELECT * 
-		FROM (
-			SELECT rownum rn, pt.* 
-			FROM (SELECT * FROM TABLE(calc_real_inventory(#{item_type}))
-			<where>
-                <if test="item_no_text != null and item_no_text != ''">
-                    AND item_no = #{item_no_text}
-                </if>
-                <if test="item_status_select != 999">
-                    AND item_status = (
-                    	SELECT context FROM common
-                    	WHERE 
-			            <choose>
-			                <when test="item_type == 0">
-			                    big_status = 900
-			                </when>
-			                <when test="item_type == 1">
-			                    big_status = 800
-			                </when>
-			                <otherwise>
-			                    big_status = 900
-			                </otherwise>
-			            </choose>
-		                AND middle_status = #{item_status_select})
-                </if>
-                <if test="item_name_text != null and item_name_text != ''">
-                    AND item_name LIKE '%' || #{item_name_text} || '%'
-                </if>
-            </where>
-			ORDER BY item_no) pt
-		)
+		SELECT * FROM  
+			<!-- 순번 처리 -->
+			(SELECT rownum rn, RID.* FROM 
+				<!-- 검색 조건 처리 : 부품제품구분, 재고번호, 재고구분, 재고명 -->
+				(SELECT I.*, C.context AS item_status FROM (
+					<!-- 필요한 DTO로 변환 : 부품제품구분(item_type), 재고번호(item_no), 재고구분(item_status), 재고명(item_name), 실수량(cnt) -->			
+					SELECT RI.item_status AS item_type, RI.item_no, NVL(PA.parts_status, PR.product_status) AS item_status_no, NVL(PA.parts_name, PR.product_name) AS item_name, RI.cnt
+					<!-- calc_real_inventory_all : 모든 재고 현재 수량 가져오기 --> 
+					FROM (SELECT * FROM TABLE(calc_real_inventory_all())) RI
+					LEFT JOIN 
+					    (SELECT product_no, product_status, product_name FROM product) PR 
+					    ON RI.item_status = 1 -- 제품
+					    AND RI.item_no = PR.product_no
+					LEFT JOIN
+					    (SELECT parts_no, parts_status, parts_name FROM parts) PA 
+					    ON RI.item_status = 0 -- 부품
+					    AND RI.item_no = PA.parts_no
+				) I 
+				LEFT JOIN
+			    (SELECT * FROM common) C
+			    ON I.item_type = 
+			        CASE 
+			            WHEN C.big_status = 900 THEN 0 -- 부품
+			            WHEN C.big_status = 800 THEN 1 -- 제품
+			            ELSE -1
+			        END
+			    AND I.item_status_no = C.middle_status
+				WHERE item_type = #{item_type} 
+				<if test="item_no_text != null and item_no_text != ''">
+				    AND item_no = #{item_no_text}
+				</if>
+				<if test="item_status_select != 999">
+				    AND item_status_no = #{item_status_select}
+				</if>
+				<if test="item_name_text != null and item_name_text != ''">
+				    AND item_name LIKE '%' || #{item_name_text} || '%'
+				</if>
+				ORDER BY item_no
+				) RID 
+			) 
 		WHERE rn BETWEEN #{start} and #{end}
+	</select>
+	
+	<select id="callCalcRealInventoryById" statementType="CALLABLE"
+		parameterType="com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO"
+		resultType="com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO">
+		SELECT * FROM TABLE(calc_real_inventory(#{item_type}))
+		WHERE item_no = #{item_no}
 	</select>
 
 	<!-- {전체} : 로 CallableStatement용 SQL이라는것을 명확히 함 -->

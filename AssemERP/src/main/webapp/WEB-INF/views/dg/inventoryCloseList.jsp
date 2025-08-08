@@ -6,7 +6,7 @@
 <!-- 공통 CSS -->
 <jsp:include page="/common.jsp" />
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Assem ERP</title>
 </head>
 <script type="text/javascript">
 //현재시각 갱신하는 함수

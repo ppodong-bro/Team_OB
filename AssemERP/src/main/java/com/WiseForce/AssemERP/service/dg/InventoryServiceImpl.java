@@ -59,6 +59,14 @@ public class InventoryServiceImpl implements InventoryService {
 		return real_InventoryDTOs;
 	}
 
+	// 현재 재고 조회
+	@Override
+	public Real_InventoryDTO getRealInventoryById(Real_InventoryDTO real_InventoryDTO) {
+		Real_InventoryDTO target_Real_InventoryDTO = inventoryDao.getRealInventoryById(real_InventoryDTO);
+		
+		return target_Real_InventoryDTO;
+	}
+	
 	// 재고 입출고 이력 목록 수 조회
 	@Override
 	public int getInventoryHistoryCnt(InventoryDTO inventoryDTO) {

@@ -5,6 +5,8 @@
 <head>
 <!-- 공통 CSS -->
 <jsp:include page="/common.jsp" />
+<meta charset="UTF-8">
+<title>Assem ERP</title>
 </head>
 <style>
 /* 기본 상태 (선택되지 않은 부품/제품)의 폰트 색상을 회색으로 */
@@ -139,25 +141,31 @@
 								<table class="table table-bordered align-middle">
 									<thead class="table-light">
 										<tr>
-											<th style="white-space: nowrap;">#</th>
-											<th style="white-space: nowrap;">${item_type }번호</th>
-											<th style="min-width: 115px; white-space: nowrap;">${item_type }구분</th>
-											<th style="white-space: nowrap;">${item_type }명</th>
-											<th style="white-space: nowrap;">수량</th>
-											<th style="display: none;">적정 수량</th>
-											<th style="display: none;">편차</th>
+											<th class="text-center" style="white-space: nowrap;">#</th>
+											<th class="text-center" style="white-space: nowrap;">${item_type }번호</th>
+											<th class="text-center" style="min-width: 115px; white-space: nowrap;">${item_type }구분</th>
+											<th class="text-center" style="white-space: nowrap;">${item_type }명</th>
+											<th class="text-center" style="white-space: nowrap;">수량</th>
+											<th class="text-center" style="white-space: nowrap;">수정</th>
+											<th class="text-center" style="display: none;">적정 수량</th>
+											<th class="text-center" style="display: none;">편차</th>
 										</tr>
 									</thead>
 									<tbody>
 										<c:forEach var="realInventory" items="${realInventoryList}" varStatus="index">
 											<tr>
-												<td>${(paging.currentPage - 1) * paging.rowPage + index.index + 1}</td>
-												<td>${realInventory.item_no}</td>
-												<td>${realInventory.item_status}</td>
+												<td class="text-center">${(paging.currentPage - 1) * paging.rowPage + index.index + 1}</td>
+												<td class="text-center">${realInventory.item_no}</td>
+												<td class="text-center">${realInventory.item_status}</td>
 												<td>${realInventory.item_name}</td>
-												<td>${realInventory.cnt}</td>
-												<td style="display: none;">${realInventory.proper_cnt}</td>
-												<td style="display: none;">${realInventory.diff_cnt}</td>
+												<td class="text-center">${realInventory.cnt}</td>
+												<td class="text-center">
+					                                <a href="${pageContext.request.contextPath}/inventory/adjust?item_type=${search.item_type}&item_no=${realInventory.item_no}" class="btn btn-sm btn-outline-success">
+					                                    <i class="bi bi-pencil-square"></i> 수정
+					                                </a>
+				                                </td>
+												<td class="text-center" style="display: none;">${realInventory.proper_cnt}</td>
+												<td class="text-center" style="display: none;">${realInventory.diff_cnt}</td>
 											</tr>
 										</c:forEach>
 									</tbody>
