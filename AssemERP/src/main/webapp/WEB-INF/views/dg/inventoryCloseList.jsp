@@ -234,6 +234,13 @@ $(document).ready(function() {
 											</select>
 										</div>
 									</div>
+									<!-- 담당자 -->
+									<div class="col-auto">
+										<div class="input-group input-group-sm">
+											<span class="input-group-text">담당자</span><input type="text" name="emp_no_text" class="form-control"
+												placeholder="담당자명" value="${search.emp_no_text }" style="width: 80px">
+										</div>
+									</div>
 									<!-- 검색 버튼 -->
 									<div class="col-auto">
 										<button type="submit" class="btn btn-secondary btn-sm text-nowrap">

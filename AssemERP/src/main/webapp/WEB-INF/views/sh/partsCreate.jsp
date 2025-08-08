@@ -57,8 +57,7 @@
 									<div style="width: 90px;"></div>
 								</div>
 								<div class="card-body">
-									<form method="post" enctype="multipart/form-data"
-										action="${pageContext.request.contextPath}/parts/partsCreate">
+									<form method="post" enctype="multipart/form-data" action="${pageContext.request.contextPath}/parts/partsCreate">
 
 										<!-- 부품명 -->
 										<h5 class="mb-3">기본 정보</h5>
@@ -67,19 +66,16 @@
 												<label for="partsName" class="form-label">부품명</label>
 												<div class="input-group">
 													<span class="input-group-text"> <i class="bi bi-tag"></i>
-													</span> <input type="text" class="form-control form-control-sm"
-														id="partsName" name="parts_name" required>
+													</span> <input type="text" class="form-control form-control-sm" id="partsName" name="parts_name" required>
 												</div>
 											</div>
 
-											<!-- 부품종류 -->
+											<!-- 부품구분 -->
 											<div class="col-md-6 mb-3">
-												<label for="partsStatus" class="form-label">종류</label>
+												<label for="partsStatus" class="form-label">구분</label>
 												<div class="input-group">
-													<span class="input-group-text"> <i
-														class="bi bi-grid"></i></span> <select
-														class="form-control form-control-sm" id="partsStatus"
-														name="parts_status" required>
+													<span class="input-group-text"> <i class="bi bi-grid"></i></span> 
+													<select class="form-control form-control-sm" id="partsStatus" name="parts_status" required>
 														<option value="">부품을 선택하세요</option>
 														<option value="0">매인보드</option>
 														<option value="1">CPU</option>
@@ -101,10 +97,8 @@
 											<div class="col-md-6 mb-3">
 												<label for="partsmanufacture" class="form-label">부품제조사</label>
 												<div class="input-group">
-													<span class="input-group-text"><i
-														class="bi bi-buildings"></i></span> <input type="text"
-														class="form-control form-control-sm" id="partsmanufacture"
-														name="manufacture">
+													<span class="input-group-text"><i class="bi bi-buildings"></i></span> 
+													<input type="text" class="form-control form-control-sm" id="partsmanufacture" name="manufacture">
 												</div>
 											</div>
 
@@ -113,13 +107,11 @@
 
 												<label for="empNo" class="form-label">등록자</label>
 												<div class="input-group">
-													<span class="input-group-text"><i
-														class="bi bi-person"></i></span> <select
-														class="form-control form-control-sm" name="emp_no"
-														id="empNo">
-														<%-- <c:forEach var="emp">
-											<option value="${emp.emp_no }">${emp.emp_name }</option>
-										</c:forEach> --%>
+													<span class="input-group-text"><i class="bi bi-person"></i></span> 
+													<select class="form-control form-control-sm" name="emp_no" id="empNo">
+														<c:forEach var="emp" items="${EmpList}">
+															<option value="${emp.empNo }">${emp.empName }</option>
+														</c:forEach>
 													</select>
 												</div>
 											</div>
@@ -128,17 +120,15 @@
 										<!-- 부품설명 -->
 										<div class="mb-3">
 											<label for="partsContext" class="form-label">부품설명</label>
-											<textarea class="form-control form-control-sm" rows="5"
-												id="partsContext" name="parts_context"
+											<textarea class="form-control form-control-sm" rows="5" id="partsContext" name="parts_context"
 												placeholder="설명란에 정보를 입력해주세요"></textarea>
 
 										</div>
 
 										<!-- 이미지 -->
 										<div class="mb-3">
-											<label for="partsfile" class="form-label">부품이미지</label> <input
-												type="file" class="form-control form-control-sm"
-												id="partsfile" name="file">
+											<label for="partsfile" class="form-label">부품이미지</label> 
+											<input type="file" class="form-control form-control-sm" id="partsfile" name="file">
 										</div>
 
 										<div class="row mt-4 g-2">

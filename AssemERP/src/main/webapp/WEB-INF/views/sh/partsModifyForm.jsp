@@ -57,53 +57,46 @@ body {
 						<div class="col-lg-8">
 							<div class="card shadow-sm">
 								<%------------------------------------------------------------------------------
-                			1. Card Header 정중앙
-                	 ------------------------------------------------------------------------------%>
+                					1. Card Header 정중앙
+                	 			------------------------------------------------------------------------------%>
 								<div
 									class="card-header d-flex justify-content-between align-items-center">
 									<%------------------------------------------------------------------------------
-                			1-1. 목록 버튼 스타일
-                 		------------------------------------------------------------------------------%>
+                						1-1. 목록 버튼 스타일
+                 					------------------------------------------------------------------------------%>
 									<a href="/parts/partsList" class="btn btn-outline-light btn-sm">
 										<i class="bi bi-list-ul me-1"></i> 목록
 									</a>
 									<%------------------------------------------------------------------------------
-                			1-2. 타이틀 중앙 정렬 스타일
-                 		------------------------------------------------------------------------------%>
+                						1-2. 타이틀 중앙 정렬 스타일
+                 					------------------------------------------------------------------------------%>
 									<h4 class="card-title mb-0">부품 수정</h4>
 									<%-- 타이틀의 정확한 중앙 정렬을 위한 빈 공간 --%>
 									<div style="width: 90px;"></div>
 								</div>
 								<div class="card-body">
-									<form method="post"
-										action="${pageContext.request.contextPath}/parts/partsUpdate"
-										enctype="multipart/form-data">
-										<input type="hidden" name="parts_no"
-											value="${partsDTO.parts_no }">
-
+									<form method="post" action="${pageContext.request.contextPath}/parts/partsUpdate" enctype="multipart/form-data">
+										<input type="hidden" name="parts_no" value="${partsDTO.parts_no }">
+										
 										<h5 class="mb-3">기본 정보</h5>
-
-
+										
 										<div class="row">
 											<!-- 부품명 -->
 											<div class="col-md-6 mb-3">
 												<label for="partsName" class="form-label">부품명</label>
 												<div class="input-group">
-													<span class="input-group-text"> <i class="bi bi-tag"></i>
-													</span> <input type="text" class="form-control form-control-sm"
-														id="partsName" name="parts_name"
+													<span class="input-group-text"> <i class="bi bi-tag"></i></span> 
+													<input type="text" class="form-control form-control-sm" id="partsName" name="parts_name"
 														value="${partsDTO.parts_name}" required>
 												</div>
 											</div>
 
-											<!-- 부품종류 -->
+											<!-- 부품구분 -->
 											<div class="col-md-6 mb-3">
-												<label for="partsStatus" class="form-label">종류</label>
+												<label for="partsStatus" class="form-label">구분</label>
 												<div class="input-group">
-													<span class="input-group-text"> <i
-														class="bi bi-grid"></i></span> <select
-														class="form-control form-control-sm" id="partsStatus"
-														name="parts_status" required>
+													<span class="input-group-text"> <i class="bi bi-grid"></i></span>
+													<select class="form-control form-control-sm" id="partsStatus" name="parts_status" required>
 														<option value="">== 선택 ==</option>
 														<option value="0"
 															${partsDTO.parts_status == 0 ? 'selected' : ''}>메인보드</option>
@@ -133,9 +126,8 @@ body {
 											<div class="col-md-6 mb-3">
 												<label for="partsmanufacture" class="form-label">부품제조사</label>
 												<div class="input-group">
-													<span class="input-group-text"><i
-														class="bi bi-buildings"></i></span> <input type="text"
-														class="form-control form-control-sm" id="partsmanufacture"
+													<span class="input-group-text"><i class="bi bi-buildings"></i></span> 
+													<input type="text" class="form-control form-control-sm" id="partsmanufacture"
 														name="manufacture" value="${partsDTO.manufacture }">
 												</div>
 											</div>
@@ -145,13 +137,12 @@ body {
 
 												<label for="empNo" class="form-label">등록자</label>
 												<div class="input-group">
-													<span class="input-group-text"><i
-														class="bi bi-person"></i></span> <select
-														class="form-control form-control-sm" name="emp_no"
-														id="empNo">
-														<%-- <c:forEach var="emp">
-											<option value="${emp.emp_no }">${emp.emp_name }</option>
-										</c:forEach> --%>
+													<span class="input-group-text"><i class="bi bi-person"></i></span>
+													<select class="form-control form-control-sm" name="emp_no" id="empNo">
+														<c:forEach var="emp" items="${EmpList}">
+															<option value="${emp.empNo }"
+																${emp.empNo == partsDTO.emp_no ? 'selected' : ''}>${emp.empName }</option>
+														</c:forEach>
 													</select>
 												</div>
 											</div>
@@ -160,9 +151,8 @@ body {
 										<div class="mb-3">
 											<label for="partsIndate" class="form-label">등록일</label>
 											<div class="input-group">
-												<input type="date" class="form-control form-control-sm"
-													id="partsIndate" name="in_date" readonly="readonly"
-													value="${partsDTO.in_date }">
+												<input type="date" class="form-control form-control-sm" id="partsIndate" name="in_date" 
+													readonly="readonly" value="${partsDTO.in_date }">
 											</div>
 										</div>
 
@@ -179,8 +169,7 @@ body {
 										<div class="mb-3">
 											<label for="partsfile" class="form-label">부품이미지</label>
 											<div class="input-group">
-												<div
-													style="position: relative; display: inline-flex; margin-right: 15px;">
+												<div style="position: relative; display: inline-flex; margin-right: 15px;">
 													<c:choose>
 														<c:when test="${empty partsDTO.filename}">
 															<img
@@ -195,14 +184,11 @@ body {
 													</c:choose>
 													<!-- X 삭제 버튼 -->
 													<c:if test="${!empty partsDTO.filename}">
-														<button type="button"
-															onclick="deleteFile(${partsDTO.parts_no})"
-															style="position: absolute; top: -10px; right: -10px; background-color: red; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 14px; line-height: 24px; text-align: center; cursor: pointer;">
-															X</button>
+														<i class="bi bi-x" onclick="deleteFile(${partsDTO.parts_no})"
+															style="position: absolute; background-color:red; top: -10px; right: -10px; font-size: 15px; border: solid; border-width: 1px; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;"></i>
 													</c:if>
 												</div>
-												<input type="file" class="form-control form-control-sm"
-													id="partsfile" name="file">
+												<input type="file" class="form-control form-control-sm" id="partsfile" name="file">
 											</div>
 										</div>
 
@@ -227,11 +213,11 @@ body {
 									<%------------------------------------------------------------------------------
 				                   		5. 삭제 처리를 위한 별도 form
 				                  	------------------------------------------------------------------------------%>
-									<form id="deleteForm" action="/emp/empDeletePro" method="post"
-										class="d-none">
+									<form id="deleteForm" action="/parts/partsDeletePro"
+										method="post" class="d-none">
 										<input type="hidden" name="${_csrf.parameterName}"
-											value="${_csrf.token}" /> <input type="hidden" name="empNo"
-											value="${emp.empNo}">
+											value="${_csrf.token}" /> <input type="hidden"
+											name="parts_no" value="${partsDTO.parts_no}">
 									</form>
 								</div>
 							</div>
@@ -247,5 +233,16 @@ body {
 
 	<!-- 부트스트랩 CDN -->
 	<jsp:include page="/common_cdn.jsp" />
+	<script>
+	 // 삭제 버튼 확인 스크립트
+    const deleteBtn = document.getElementById('deleteBtn');
+    if(deleteBtn) {
+        deleteBtn.addEventListener('click', function() {
+            if(confirm('정말로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+                document.getElementById('deleteForm').submit();
+            }
+        });
+    }
+</script>
 </body>
 </html>

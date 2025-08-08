@@ -46,7 +46,9 @@ public class PartsDTO {
     // 이미지
     private MultipartFile file;
     
-
+    // 사원명가져오기
+    private String emp_name;
+    
     public static PartsDTO chagePartsDTO(Parts parts) {
     	return PartsDTO.builder()
     			.parts_no(parts.getParts_no())

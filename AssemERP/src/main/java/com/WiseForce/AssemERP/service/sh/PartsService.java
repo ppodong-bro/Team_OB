@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.WiseForce.AssemERP.domain.sh.Parts;
 import com.WiseForce.AssemERP.dto.sh.PartsDTO;
+import com.WiseForce.AssemERP.dto.sm.EmpDTO;
 
 public interface PartsService {
 
@@ -20,5 +21,8 @@ public interface PartsService {
 	PartsDTO findbyID(int parts_no);
 
 	void updateParts(Parts parts);
+
+	void deleteParts(int parts_no);
+
 
 }

@@ -20,4 +20,8 @@ public interface ClientService {
 
 	int 				deleteClient(ClientDto clientDto1);
 
+	List<ClientDto> 	searchByName(String client_Name);
+
+	List<ClientDto> 	clientAll();
+
 }

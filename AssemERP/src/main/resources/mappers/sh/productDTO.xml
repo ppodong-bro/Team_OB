@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.WiseForce.AssemERP.sh.ProductDTOMapper">
-
+	
+	<select id="shProductTotalCount" resultType="int">
+		SELECT count(*)
+		FROM product
+		WHERE del_status = 0
+	</select>
+	
+	
 	<select id="shProductPageList" parameterType="ProductDTO" resultType="ProductDTO">
 		select *
 		From (
@@ -9,10 +16,10 @@
 				From
 					(SELECT *
 					 FROM product
+					 WHERE del_status = 0
 					 ORDER BY product_no) a
 			 )
 		WHERE rn BETWEEN #{start} and #{end}
-		AND del_status = 0
 	</select>
 
 	<select id="shsearchProductCount" parameterType="ProductDTO" resultType="int">
@@ -72,4 +79,10 @@
 		)
 		WHERE rn &gt;= #{start}   
 	</select>
+	
+	<update id="shProductDelete" parameterType="int">
+		UPDATE product
+		SET del_status = 1
+		WHERE product_no = #{product_no}
+	</update>
 </mapper>

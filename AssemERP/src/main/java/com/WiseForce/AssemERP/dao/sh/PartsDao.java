@@ -14,4 +14,10 @@ public interface PartsDao {
 
 	List<PartsDTO> findSearchList(PartsDTO partsDTO);
 
+	List<PartsDTO> findPartsByStatus(int status);
+
+	void deleteParts(int parts_no);
+
+	int getTotalParts();
+
 }

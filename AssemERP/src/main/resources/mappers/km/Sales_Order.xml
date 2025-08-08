@@ -10,54 +10,56 @@
 	</select>
 
 	<resultMap type="Sales_OrderDto" id="sales_OrderMap">
-		<id column="SALES_NO" property="sales_No" />
+		<id column="SALES_NO" 		property="sales_No" />
 		<result column="SALES_DATE" property="sales_Date" />
 		<result column="OUT_STATUS" property="out_Status" />
 		<result column="DEL_STATUS" property="del_Status" />
-		<result column="IN_DATE" property="in_Date" />
+		<result column="IN_DATE" 	property="in_Date" />
 
 		<association property="clientDto" javaType="ClientDto">
 			<id column="CLIENT_NO" property="client_No" />
-			<result column="CLIENT_NAME" property="client_Name" />
-			<result column="CLIENT_GUBUN" property="client_Gubun" />
-			<result column="CLIENT_EMAIL" property="client_Email" />
-			<result column="CLIENT_MAN" property="client_Man" />
+			<result column="CLIENT_NAME" 	property="client_Name" />
+			<result column="CLIENT_GUBUN" 	property="client_Gubun" />
+			<result column="CLIENT_EMAIL" 	property="client_Email" />
+			<result column="CLIENT_MAN" 	property="client_Man" />
+			<result column="CLIENT_TEL" 	property="client_Tel"/>
 			<result column="CLIENT_ADDRESS" property="client_Address" />
-			<result column="DEL_STATUS" property="del_Status" />
-			<result column="MODIFY_DATE" property="modify_Date" />
-			<result column="IN_DATE" property="in_Date" />
+			<result column="DEL_STATUS" 	property="del_Status" />
+			<result column="MODIFY_DATE" 	property="modify_Date" />
+			<result column="IN_DATE" 		property="in_Date" />
 		</association>
 
 		<association property="empDTO" javaType="EmpDTO">
-			<id column="EMP_NO" property="empNo" />
-			<result column="EMP_NAME" property="empName" />
-			<result column="EMP_TEL" property="empTel" />
-			<result column="EMAIL" property="email" />
-			<result column="SAL" property="sal" />
-			<result column="DEPT_CODE" property="deptCode" />
-			<result column="USERNAME" property="username" />
-			<result column="PASSWORD" property="password" />
-			<result column="ROLES_STATUS" property="rolesStatus" />
-			<result column="DEL_STATUS" property="delStatus" />
-			<result column="REGISTRAR" property="registrar" />
-			<result column="IN_DATE" property="inDate" />
+			<id column="EMP_NO" 			property="empNo" />
+			<result column="EMP_NAME" 		property="empName" />
+			<result column="EMP_TEL" 		property="empTel" />
+			<result column="EMAIL" 			property="email" />
+			<result column="SAL" 			property="sal" />
+			<result column="DEPT_CODE" 		property="deptCode" />
+			<result column="USERNAME" 		property="username" />
+			<result column="PASSWORD" 		property="password" />
+			<result column="ROLES_STATUS" 	property="rolesStatus" />
+			<result column="DEL_STATUS" 	property="delStatus" />
+			<result column="REGISTRAR" 		property="registrar" />
+			<result column="IN_DATE" 		property="inDate" />
 		</association>
 
 		<collection property="sales_Item" ofType="Sales_ItemDto">
-			<id column="SALES_NO" property="sales_No" />
-			<id column="PRODUCT_NO" property="product_No" />
-			<result column="SALES_ITEM_CNT" property="sales_Item_Cnt" />
-			<result column="SALES_ITEM_OUTCNT"
-				property="sales_Item_OutCnt" />
-			<result column="SALES_ITEM_COST" property="sales_Item_Cost" />
+			<id column="SALES_NO" 				property="sales_No" />
+			<id column="PRODUCT_NO" 			property="product_No" />
+			<result column="SALES_ITEM_CNT" 	property="sales_Item_Cnt" />
+			<result column="SALES_ITEM_OUTCNT"	property="sales_Item_OutCnt" />
+			<result column="SALES_ITEM_COST" 	property="sales_Item_Cost" />
 
 			<association property="productDto" javaType="ProductDTO">
-				<id column="PRODUCT_NO" property="product_no" />
-				<result column="PRODUCT_NAME" property="product_name" />
+				<id column="PRODUCT_NO" 		property="product_no" />
+				<result column="PRODUCT_NAME" 	property="product_name" />
 			</association>
 		</collection>
 
 	</resultMap>
+	
+	<resultMap type="Sales_OrderDto" id="createListMap"></resultMap>
 
 	<select id="totSales" parameterType="Sales_OrderSearchDto"
 		resultType="int">
@@ -94,7 +96,7 @@
 		resultMap="sales_OrderMap">
   	<![CDATA[
     	SELECT S.SALES_NO, S.SALES_DATE, S.OUT_STATUS, S.DEL_STATUS
-         	 , S.IN_DATE, H.CLIENT_NO, H.CLIENT_NAME
+         	 , S.IN_DATE, H.CLIENT_NO, H.CLIENT_NAME, H.CLIENT_TEL
          	 , E.EMP_NO, E.EMP_NAME
          	 , I.PRODUCT_NO, I.SALES_ITEM_CNT, I.SALES_ITEM_OUTCNT
          	 , I.SALES_ITEM_COST, P.PRODUCT_NO, P.PRODUCT_NAME
@@ -141,7 +143,7 @@
 	<select id="detailSales" parameterType="int" resultMap="sales_OrderMap">
 		SELECT S.SALES_NO, S.SALES_DATE, S.OUT_STATUS, S.DEL_STATUS
          	 , S.IN_DATE, H.CLIENT_NO, H.CLIENT_NAME, H.CLIENT_EMAIL
-         	 , H.CLIENT_MAN, H.CLIENT_ADDRESS
+         	 , H.CLIENT_MAN, H.CLIENT_ADDRESS, H.CLIENT_TEL
          	 , E.EMP_NO, E.EMP_NAME
          	 , I.PRODUCT_NO, I.SALES_ITEM_CNT, I.SALES_ITEM_OUTCNT
          	 , I.SALES_ITEM_COST, P.PRODUCT_NO, P.PRODUCT_NAME
@@ -153,10 +155,65 @@
         WHERE S.SALES_NO = #{sales_No}
 	</select>
 	
-	<select id="createList" resultMap="sales_OrderMap">
-		SELECT E.EMP_NO, E.EMP_NAME, C.CLIENT_NO, C.CLIENT_NAME, C.CLIENT_ADDRESS, C.CLIENT_MAN, C.CLIENT_TEL, C.CLIENT_EMAIL,
+	<select id="salesProductList" resultType="ProductDTO">
+		SELECT PRODUCT_NO, PRODUCT_NAME
+		FROM PRODUCT
 	</select>
 	
-
+	<select id="salesClientList" resultType="clientDto">
+		SELECT *
+		FROM CLIENT
+	</select>
+	
+		
+	<insert id="createSales" parameterType="Sales_OrderDto">
+		<selectKey keyProperty="sales_No" resultType="int" order="BEFORE">
+			SELECT SALES_SEQ_GEN.NEXTVAL
+			FROM   DUAL
+		</selectKey>
+			
+		INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, DEL_STATUS, IN_DATE) VALUES
+		(#{sales_No}, #{clientDto.client_No}, #{empDTO.empNo}, #{sales_Date, jdbcType=DATE}, 0, 0, SYSDATE )
+	</insert>
+		
+	<insert id="createSales_Item" parameterType="sales_OrderDto">
+	
+		INSERT INTO SALES_ITEM (SALES_NO, PRODUCT_NO, SALES_ITEM_CNT, SALES_ITEM_OUTCNT, SALES_ITEM_COST)
+		<foreach collection="sales_Item" item="item" separator="UNION ALL">
+			SELECT #{sales_No}, #{item.product_No}, #{item.sales_Item_Cnt}, #{item.sales_Item_OutCnt}, #{item.sales_Item_Cost}
+			FROM DUAL
+		</foreach>
+		
+	</insert>
+	
+	<update id="modifySales" parameterType="Sales_OrderDto">
+	
+		UPDATE SALES_ORDER
+		
+		<set>
+		<if test="clientDto != null and clientDto.client_No != null">
+			CLIENT_NO = #{clientDto.client_No},
+		</if>
+		<if test="empDTO != null and empDTO.empNo != null">
+			EMP_NO = #{empDTO.empNo},
+		</if>
+		<if test="sales_Date != null">
+			SALES_DATE = #{sales_Date, jdbcType=DATE},
+		</if>
+		<if test="out_Status != null">
+			OUT_STATUS = #{out_Status},
+		</if>
+		<if test="del_Status != null">
+			DEL_STATUS = #{del_Status}
+		</if>
+		</set>
+		WHERE SALES_NO = #{sales_No}
+	</update>
+	
+	<update id="deleteSales" parameterType="Sales_OrderDto">
+		UPDATE SALES_ORDER
+		SET DEL_STATUS = 1
+		WHERE SALES_NO = #{sales_No}
+	</update>
 
 </mapper>

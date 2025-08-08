@@ -34,10 +34,11 @@
 						<div class="card-body">
 							<form method="get" action="searchProductList"
 								class="row gx-2 gy-1 align-items-end mb-4 justify-content-end">
+								
 								<!-- 제품구분 -->
 								<div class="col-auto">
 									<div class="input-group input-group-sm">
-										<span class="input-group-text">종류</span> <select
+										<span class="input-group-text">구분</span> <select
 											name="product_status" class="form-select form-select-sm">
 											<option value="">전체</option>
 											<option value="0"
@@ -49,6 +50,7 @@
 										</select>
 									</div>
 								</div>
+								
 								<!-- 제품명 -->
 								<div class="col-auto">
 									<div class="input-group input-group-sm">
@@ -57,6 +59,7 @@
 											value="${productDTO.product_name }">
 									</div>
 								</div>
+								
 								<!-- 날짜검색 -->
 								<div class="col-auto">
 									<div class="input-group input-group-sm">
@@ -77,8 +80,9 @@
 								<!-- 날짜검색종료 -->
 
 								<div class="col-auto">
-									<button type="submit" class="btn btn-primary btn-sm w-100">
-										검색</button>
+									<button type="submit" class="btn btn-secondary text-nowrap">
+							            <i class="bi bi-search"></i> 검색
+							        </button>
 								</div>
 
 							</form>
@@ -94,7 +98,7 @@
 											<th>종류</th>
 											<th>등록자</th>
 											<th>등록일</th>
-											<th class="text-center">수정/삭제</th>
+											<th class="text-center">수정</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -103,12 +107,14 @@
 												<td style="text-align: center;">${productDTO.product_no}</td>
 												<td>${productDTO.product_name}</td>
 												<td style="text-align: center;">${productDTO.product_statusName}</td>
-												<td style="text-align: center;">${productDTO.emp_no}</td>
+												<td style="text-align: center;">${productDTO.emp_name}</td>
 												<td style="text-align: center;">${productDTO.in_date}</td>
 												<td class="text-center">
 													<button type="button"
-														class="btn btn-sm btn-outline-primary me-1">수정</button>
-													<button type="button" class="btn btn-sm btn-outline-danger">삭제</button>
+														onclick="location.href='/product/productModify/${productDTO.product_no}'"
+														class="btn btn-sm btn-outline-success">
+														<i class="bi bi-pencil-square"></i> 수정
+													</button>
 												</td>
 											</tr>
 										</c:forEach>
@@ -124,7 +130,7 @@
 									<c:choose>
 										<c:when test="${productDTO.currentPage > 1}">
 
-											<!-- 첫페이지 블록 -->
+											<!-- 첫페이지 버튼-->
 											<c:url var="firstUrl" value="searchProductList">
 												<c:param name="currentPage" value="1" />
 												<c:param name="product_status"
@@ -162,7 +168,7 @@
 										</c:otherwise>
 									</c:choose>
 
-									<!-- 페이지 번호들 -->
+									<!-- 블럭페이지 -->
 									<c:forEach begin="${page.startPage}" end="${page.endPage}"
 										var="p">
 										<c:url var="pageUrl" value="searchProductList">
@@ -178,7 +184,8 @@
 											<a class="page-link" href="${pageUrl}">${p}</a>
 										</li>
 									</c:forEach>
-
+									
+									<!-- 다음페이지 -->
 									<c:choose>
 										<c:when test="${page.currentPage < page.totalPage}">
 											<!-- 다음 블록 -->
@@ -194,7 +201,8 @@
 											<li class="page-item"><a class="page-link"
 												href="${nextUrl}" aria-label="Next"> <i
 													class="bi bi-chevron-right"></i></a></li>
-
+													
+											<!-- 마지막페이지 -->
 											<c:url var="finishUrl" value="searchProductList">
 												<c:param name="currentPage" value="${page.totalPage}" />
 												<c:param name="product_status"

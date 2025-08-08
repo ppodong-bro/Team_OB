@@ -22,23 +22,24 @@
 			<!-- 이곳에 자신의 코드를 작성하세요 -->
 			<div id="contents">
 				<div class="container-fluid px-4">
-				
-				
+
+
 					<!-- 검색 폼 시작 -->
 					<div class="card shadow-sm">
 						<div
 							class="card-header d-flex justify-content-between align-items-center">
 							<h4 class="card-title mb-0">부품목록</h4>
-							<a href="/parts/create" class="btn btn-primary"><i class="bi bi-plus-lg"></i> 등록</a>
+							<a href="/parts/create" class="btn btn-primary"><i
+								class="bi bi-plus-lg"></i> 등록</a>
 						</div>
 
 						<div class="card-body">
 							<form method="get" action="searchPartsList"
 								class="row gx-2 gy-1 align-items-end mb-4 justify-content-end">
-								<!-- 부품종류 -->
+								<!-- 부품구분 -->
 								<div class="col-auto">
 									<div class="input-group input-group-sm">
-										<span class="input-group-text">종류</span> <select
+										<span class="input-group-text">구분</span> <select
 											name="parts_status" class="form-select form-select-sm">
 											<option value="" selected="selected">전체</option>
 											<option value="0"
@@ -62,6 +63,7 @@
 										</select>
 									</div>
 								</div>
+								
 								<!-- 부품명 -->
 								<div class="col-auto">
 									<div class="input-group input-group-sm">
@@ -70,6 +72,7 @@
 											value="${partsDTO.parts_name }">
 									</div>
 								</div>
+								
 								<!-- 날짜검색 -->
 								<div class="col-auto">
 									<div class="input-group input-group-sm">
@@ -88,9 +91,11 @@
 									</div>
 								</div>
 								<!-- 날짜검색종료 -->
+								<!-- 검색버튼 -->
 								<div class="col-auto">
-									<button type="submit" class="btn btn-primary btn-sm w-100">
-										검색</button>
+									<button type="submit" class="btn btn-secondary text-nowrap">
+							            <i class="bi bi-search"></i> 검색
+							        </button>
 								</div>
 							</form>
 							<!-- 검색 폼 마지막 -->
@@ -107,7 +112,7 @@
 											<th>제조사</th>
 											<th>등록자</th>
 											<th>등록일</th>
-											<th class="text-center">수정/삭제</th>
+											<th class="text-center" >수정</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -117,13 +122,14 @@
 												<td>${partsDTO.parts_name}</td>
 												<td style="text-align: center;">${partsDTO.parts_statusName}</td>
 												<td style="text-align: center;">${partsDTO.manufacture}</td>
-												<td style="text-align: center;">${partsDTO.emp_no}</td>
+												<td style="text-align: center;">${partsDTO.emp_name}</td>
 												<td style="text-align: center;">${partsDTO.in_date}</td>
 												<td class="text-center">
 													<button type="button"
 														onclick="location.href='/parts/partsModify/${partsDTO.parts_no}'"
-														class="btn btn-sm btn-outline-primary me-1">수정</button>
-													<button type="button" class="btn btn-sm btn-outline-danger">삭제</button>
+														class="btn btn-sm btn-outline-success">
+														<i class="bi bi-pencil-square"></i> 수정
+													</button>
 												</td>
 											</tr>
 										</c:forEach>
@@ -131,11 +137,11 @@
 								</table>
 							</div>
 						</div>
-						<div class="card-footer d-flex justify-content-center">
 							<!-- List 테이블 마지막 -->
+							
+						<div class="card-footer d-flex justify-content-center">
 							<nav aria-label="Page navigation">
 								<ul class="pagination justify-content-center mb-0">
-
 									<c:choose>
 										<c:when test="${partsDTO.currentPage > 1}">
 
@@ -204,7 +210,7 @@
 											<li class="page-item"><a class="page-link"
 												href="${nextUrl}" aria-label="Next"> <i
 													class="bi bi-chevron-right"></i></a></li>
-
+											<!-- 마지막페이지 -->
 											<c:url var="finishUrl" value="searchPartsList">
 												<c:param name="currentPage" value="${page.totalPage}" />
 												<c:param name="parts_status"
@@ -230,11 +236,11 @@
 							</nav>
 						</div>
 					</div>
+				</div>
 			</div>
+			<!-- 이곳에 자신의 코드를 작성하세요 -->
+			<jsp:include page="/foot.jsp" />
 		</div>
-		<!-- 이곳에 자신의 코드를 작성하세요 -->
-		<jsp:include page="/foot.jsp" />
-	</div>
 	</div>
 	<!-- 부트스트랩 CDN -->
 	<jsp:include page="/common_cdn.jsp" />

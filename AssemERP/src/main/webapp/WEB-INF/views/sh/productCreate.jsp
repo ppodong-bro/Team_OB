@@ -24,65 +24,7 @@ body {
 	color: red;
 }
 </style>
-<script type="text/javascript">
-	function validatePartsSelection() {
-	    const partLabels = {
-	        mainboard: "메인보드",
-	        CPU: "CPU",
-	        GPU: "GPU",
-	        memory: "메모리",
-	        power: "파워",
-	        HDD: "HDD",
-	        SSD: "SSD",
-	        case: "케이스",
-	        cooler: "쿨러"
-	    };
-	
-	    const partIds = Object.keys(partLabels);
-	    let emptyParts = [];
-	
-	    for (let id of partIds) {
-	        const select = document.getElementById(id);
-	        if (!select || !select.value || select.value.trim() === "") {
-	            emptyParts.push(partLabels[id]);
-	        }
-	    }
-	
-	    console.log("비어있는 부품 리스트:", emptyParts);
-	
-	    if (emptyParts.length > 0) {
-	        const partNames = emptyParts.join(', ');
-	        console.log("부품명 문자열:", partNames);
-	        const proceed = confirm(partNames+"부품이 선택되지 않았습니다.\n계속 진행하시겠습니까?");
-	        return proceed;
-	    }
-	
-	    return true;
-	}
-	
-	
-	document.addEventListener("DOMContentLoaded", function() {
-	    const selects = document.querySelectorAll(".parts-select");
 
-	    selects.forEach(select => {
-	        select.addEventListener("change", function() {
-	        	const wrapper = this.closest(".d-flex");
-	            const input = wrapper.querySelector(".parts-count");
-	            if (this.value !== "") {
-	                // 부품을 선택했을 경우
-	                if (input && (!input.value || parseInt(input.value) <= 0)) {
-	                    input.value = 1;
-	                }
-	            } else {
-	                // 선택 해제된 경우 수량도 0으로
-	                if (input) {
-	                    input.value = "";
-	                }
-	            }
-	        });
-	    });
-	});
-</script>
 <!-- 공통 CSS -->
 </head>
 <body>
@@ -119,288 +61,109 @@ body {
 									<div style="width: 90px;"></div>
 								</div>
 								<div class="card-body p-4">
-									<form method="post"
-										action="${pageContext.request.contextPath}/product/productCreate"
+									<!-- 제품박스 -->
+									<form action="/product/productCreate" method="post"
+										class="needs-validation" 
 										enctype="multipart/form-data"
-										onsubmit="return validatePartsSelection()">
+										novalidate>
+										<input type="hidden" name="${_csrf.parameterName}"
+											value="${_csrf.token}" />
+
+										<h5 class="mb-3">기본 정보</h5>
 										<div class="row">
-											<!-- 제품박스 -->
-											<div class="col-md-4 border-end pe-4">
+
+											<div class="col-md-6 mb-3">
 
 												<!-- 제품명 -->
-												<div class="mb-3">
-													<label for="productName" class="fo rm-label">제품명</label>
-													<div class="input-group">
-														<span class="input-group-text"> <i
-															class="bi bi-tag"></i>
-														</span> <input type="text" class="form-control form-control-sm"
-															id="productName" name="product_name" required>
-													</div>
-												</div>
 
-												<!-- 제품종류 -->
-												<div class="mb-3">
-													<label for="productStatus" class="form-label">종류</label>
-													<div class="input-group">
-														<span class="input-group-text"> <i
-															class="bi bi-grid"></i></span> <select
-															class="form-select form-select-sm w-auto"
-															id="productStatus" name="product_status" required>
+												<label for="productName" class="form-label">제품명</label>
+												<div class="input-group">
+													<span class="input-group-text"> <i class="bi bi-tag"></i>
+													</span> <input type="text" class="form-control form-control-sm"
+														id="productName" name="product_name" required>
+													<div class="invalid-feedback">제품명을 입력해주세요.</div>
+												</div>
+											</div>
+
+											<!-- 제품구분 -->
+											<div class="col-md-6 mb-3">
+												<label for="productStatus" class="form-label">구분</label>
+												<div class="input-group">
+													<span class="input-group-text"> 
+														<i class="bi bi-grid"></i></span> 
+														<select	class="form-select form-select-sm w-auto" id="productStatus" name="product_status" required>
 															<option value="">선택</option>
 															<option value="0">데스크탑</option>
 															<option value="1">노트북</option>
 															<option value="2">워크스테이션</option>
 														</select>
-													</div>
-												</div>
-
-												<!-- 등록자 -->
-												<div class="mb-3">
-													<label for="empNo" class="form-label">등록자</label>
-													<div class="input-group">
-														<span class="input-group-text"><i
-															class="bi bi-person"></i></span> <select
-															class="form-control form-control-sm" name="emp_no"
-															id="empNo">
-															<%-- <c:forEach var="emp">
-											<option value="${emp.emp_no }">${emp.emp_name }</option>
-										</c:forEach> --%>
-														</select>
-
-													</div>
-												</div>
-
-												<!-- 부품설명 -->
-												<div class="mb-3">
-													<label for="productContext" class="form-label">제품설명</label>
-													<textarea class="form-control form-control-sm" rows="5"
-														id="productContext" name="product_context"
-														placeholder="설명란에 정보를 입력해주세요"></textarea>
-
-												</div>
-
-												<!-- 이미지 -->
-												<div class="mb-3">
-													<label for="productfile" class="form-label">부품이미지</label> <input
-														type="file" class="form-control form-control-sm"
-														id="productfile" name="file">
+													<div class="invalid-feedback">제품종류를 선택해주세요.</div>
 												</div>
 											</div>
+										</div>
 
-											<!-- Bom박스 -->
-											<div class="col-md-8 ps-4">
-												<div class="mb-3">
-													<label for="mainboard" class="form-label">메인보드</label>
-													<div class="d-flex align-items-center gap-2">
-														<div class="input-group">
-															<span class="input-group-text"><i
-																class="bi bi-motherboard"></i></span> <select
-																class="parts-select form-select form-select-sm flex-grow-1"
-																id="mainboard" name="productBOM[0].parts_no">
-																<option value="">--부품을 선택해주세요--</option>
-																<c:forEach items="${partsDTOs}" var="parts">
-																	<c:if test="${parts.parts_status == 0}">
-																		<option value="${parts.parts_no}">${parts.parts_name}</option>
-																	</c:if>
-																</c:forEach>
-															</select>
-														</div>
-														<input type="number"
-															class="parts-count form-control form-control-sm"
-															style="width: 50px;" name="productBOM[0].cnt" min="0">
-													</div>
-												</div>
-												<div class="mb-3">
-													<label for="CPU" class="form-label">CPU</label>
-													<div class="d-flex align-items-center gap-2">
-														<div class="input-group">
-															<span class="input-group-text"><i
-																class="bi bi-cpu"></i></span> <select
-																class="parts-select form-select form-select-sm flex-grow-1"
-																id="CPU" name="productBOM[1].parts_no">
-																<option value="">--부품을 선택해주세요--</option>
-																<c:forEach items="${partsDTOs}" var="parts">
-																	<c:if test="${parts.parts_status == 1}">
-																		<option value="${parts.parts_no}">${parts.parts_name}</option>
-																	</c:if>
-																</c:forEach>
-															</select>
-														</div>
-														<input type="number"
-															class="parts-count form-control form-control-sm"
-															style="width: 50px;" name="productBOM[1].cnt" min="0">
-													</div>
-												</div>
-												<div class="mb-3">
-													<label for="GPU" class="form-label">GPU</label>
-													<div class="d-flex align-items-center gap-2">
-														<div class="input-group">
-															<span class="input-group-text"><i
-																class="bi bi-gpu-card"></i></span> <select
-																class="parts-select form-select form-select-sm flex-grow-1"
-																id="GPU" name="productBOM[2].parts_no">
-																<option value="">--부품을 선택해주세요--</option>
-																<c:forEach items="${partsDTOs}" var="parts">
-																	<c:if test="${parts.parts_status == 2}">
-																		<option value="${parts.parts_no}">${parts.parts_name}</option>
-																	</c:if>
-																</c:forEach>
-															</select>
-														</div>
-														<input type="number"
-															class="parts-count form-control form-control-sm"
-															style="width: 50px;" name="productBOM[2].cnt" min="0">
-													</div>
-												</div>
-												<div class="mb-3">
-													<label for="memory" class="form-label">메모리</label>
-													<div class="d-flex align-items-center gap-2">
-														<div class="input-group">
-															<span class="input-group-text"><i
-																class="bi bi-memory"></i></span> <select
-																class="parts-select form-select form-select-sm flex-grow-1"
-																id="memory" name="productBOM[3].parts_no">
-																<option value="">--부품을 선택해주세요--</option>
-																<c:forEach items="${partsDTOs}" var="parts">
-																	<c:if test="${parts.parts_status == 3}">
-																		<option value="${parts.parts_no}">${parts.parts_name}</option>
-																	</c:if>
-																</c:forEach>
-															</select>
-														</div>
-														<input type="number"
-															class="parts-count form-control form-control-sm"
-															style="width: 50px;" name="productBOM[3].cnt" min="0">
-													</div>
-												</div>
-												<div class="mb-3">
-													<label for="power" class="form-label">파워</label>
-													<div class="d-flex align-items-center gap-2">
-														<div class="input-group">
-															<span class="input-group-text"><i
-																class="bi bi-plug"></i></span> <select
-																class="parts-select form-select form-select-sm flex-grow-1"
-																id="power" name="productBOM[4].parts_no">
-																<option value="">--부품을 선택해주세요--</option>
-																<c:forEach items="${partsDTOs}" var="parts">
-																	<c:if test="${parts.parts_status == 4}">
-																		<option value="${parts.parts_no}">${parts.parts_name}</option>
-																	</c:if>
-																</c:forEach>
-															</select>
-														</div>
-														<input type="number"
-															class="parts-count form-control form-control-sm"
-															style="width: 50px;" name="productBOM[4].cnt" min="0">
-													</div>
-												</div>
-												<div class="mb-3">
-													<label for="HDD" class="form-label">HDD</label>
-													<div class="d-flex align-items-center gap-2">
-														<div class="input-group">
-															<span class="input-group-text"><i
-																class="bi bi-device-hdd"></i></span> <select
-																class="parts-select form-select form-select-sm flex-grow-1"
-																id="HDD" name="productBOM[5].parts_no">
-																<option value="">--부품을 선택해주세요--</option>
-																<c:forEach items="${partsDTOs}" var="parts">
-																	<c:if test="${parts.parts_status == 5}">
-																		<option value="${parts.parts_no}">${parts.parts_name}</option>
-																	</c:if>
-																</c:forEach>
-															</select>
-														</div>
-														<input type="number"
-															class="parts-count form-control form-control-sm"
-															style="width: 50px;" name="productBOM[5].cnt" min="0">
-													</div>
-												</div>
-												<div class="mb-3">
-													<label for="SSD" class="form-label">SSD</label>
-													<div class="d-flex align-items-center gap-2">
-														<div class="input-group">
-															<span class="input-group-text"><i
-																class="bi bi-device-ssd"></i></span> <select
-																class="parts-select form-select form-select-sm flex-grow-1"
-																id="SSD" name="productBOM[6].parts_no">
-																<option value="">--부품을 선택해주세요--</option>
-																<c:forEach items="${partsDTOs}" var="parts">
-																	<c:if test="${parts.parts_status == 6}">
-																		<option value="${parts.parts_no}">${parts.parts_name}</option>
-																	</c:if>
-																</c:forEach>
-															</select>
-														</div>
-														<input type="number"
-															class="parts-count form-control form-control-sm"
-															style="width: 50px;" name="productBOM[6].cnt" min="0">
-													</div>
-												</div>
-												<div class="mb-3">
-													<label for="case" class="form-label">케이스</label>
-													<div class="d-flex align-items-center gap-2">
-														<div class="input-group">
-															<span class="input-group-text"><svg
-																	xmlns="http://www.w3.org/2000/svg" width="16"
-																	height="16" viewBox="0 0 24 40" fill="none"
-																	stroke="currentColor" stroke-width="1.5"
-																	stroke-linejoin="round">
-																	  <!-- 본체 외곽 -->
-																	  <rect x="4" y="2" width="16" height="36" rx="2"
-																		ry="2" fill="none" />
-																	  <!-- 전원 버튼 -->
-																	  <circle cx="12" cy="10" r="2" fill="currentColor" />
-																	  <!-- 디스크 드라이브 슬롯 -->
-																	  <rect x="6" y="18" width="12" height="4" rx="1"
-																		ry="1" fill="currentColor" />
-																	  <!-- 통풍구 -->
-																	  <line x1="6" y1="26" x2="18" y2="26"
-																		stroke="currentColor" stroke-width="1" />
-																	  <line x1="6" y1="29" x2="18" y2="29"
-																		stroke="currentColor" stroke-width="1" />
-																	  <line x1="6" y1="32" x2="18" y2="32"
-																		stroke="currentColor" stroke-width="1" />
-																	</svg> </span> <select
-																class="parts-select form-select form-select-sm flex-grow-1"
-																id="case" name="productBOM[7].parts_no">
-																<option value="">--부품을 선택해주세요--</option>
-																<c:forEach items="${partsDTOs}" var="parts">
-																	<c:if test="${parts.parts_status == 7}">
-																		<option value="${parts.parts_no}">${parts.parts_name}</option>
-																	</c:if>
-																</c:forEach>
-															</select>
-														</div>
-														<input type="number"
-															class="parts-count form-control form-control-sm"
-															style="width: 50px;" name="productBOM[7].cnt" min="0">
-													</div>
-												</div>
-												<div class="mb-3">
-													<label for="cooler" class="form-label">쿨러</label>
-													<div class="d-flex align-items-center gap-2">
-														<div class="input-group">
-															<span class="input-group-text"><i
-																class="bi bi-fan"></i></span> <select
-																class="parts-select form-select form-select-sm flex-grow-1"
-																id="cooler" name="productBOM[8].parts_no">
-																<option value="">--부품을 선택해주세요--</option>
-																<c:forEach items="${partsDTOs}" var="parts">
-																	<c:if test="${parts.parts_status == 8}">
-																		<option value="${parts.parts_no}">${parts.parts_name}</option>
-																	</c:if>
-																</c:forEach>
-															</select>
-														</div>
-														<input type="number"
-															class="parts-count form-control form-control-sm"
-															style="width: 50px;" name="productBOM[8].cnt" min="0">
-													</div>
+										<div class="row">
+										<!-- 등록자 -->
+											<div class="col-md-6 mb-3">
+												<label for="empNo" class="form-label">등록자</label>
+												<div class="input-group">
+													<span class="input-group-text">
+													<i class="bi bi-person"></i></span> 
+													<select class="form-control form-control-sm" name="emp_no" id="empNo">
+														<c:forEach var="emp" items="${EmpList}">
+															<option value="${emp.empNo }">${emp.empName }</option>
+														</c:forEach>
+													</select>
+
 												</div>
 											</div>
+											<!-- 이미지 -->
+											<div class="col-md-6 mb-3">
+												<label for="productfile" class="form-label">제품이미지</label> 
+												<input type="file" class="form-control form-control-sm" id="productfile" name="file">
+											</div>
+										</div>
 
+										<!-- 부품설명 -->
+										<div class="col-md-6 mb-3">
+											<label for="productContext" class="form-label">제품설명</label>
+											<textarea class="form-control form-control-sm" rows="5"
+												id="productContext" name="product_context"
+												placeholder="설명란에 정보를 입력해주세요"></textarea>
+										</div>
+										<!-- 제품 기본정보 종료 -->
 
+										<hr class="my-4">
 
+										<!-- BOM 영역 -->
+										<div class="container mt-4">
+											<!-- 👇 제목과 버튼을 같은 줄, 양쪽 정렬 -->
+											<div class="d-flex justify-content-between align-items-center mb-3">
+												<h5 class="mb-0">제품 구성</h5>
+												<button type="button" class="btn btn-primary" id="addRowBtn">
+													<i class="bi bi-plus-lg"></i>부품 추가</button>
+											</div>
+
+											<table class="table table-bordered" id="bomTable">
+												<!-- 테이블 헤더 비율 설정 -->
+												<colgroup>
+													<col style="width: 20%;">
+													<col style="width: 5%%;">
+													<col style="width: 15%;">
+													<col style="width: 10%;">
+												</colgroup>
+												<thead>
+													<tr style="text-align: center;">
+														<th>부품구분</th>
+														<th>부품명</th>
+														<th>수량</th>
+														<th>삭제</th>
+													</tr>
+												</thead>
+												<tbody id="bomTableBody">
+													<!-- JavaScript로 행이 추가됨 -->
+												</tbody>
+											</table>
 										</div>
 
 										<div class="row mt-4 g-2">
@@ -416,19 +179,22 @@ body {
 											</div>
 											<div class="col-6 d-grid">
 												<button type="submit" class="btn btn-primary">
-													<i class="bi bi-check-lg me-2"></i>사원 등록
+													<i class="bi bi-check-lg me-2"></i>등록
 												</button>
 											</div>
 										</div>
 									</form>
+
+
 								</div>
 							</div>
+
+
 						</div>
 					</div>
 				</div>
+				<!-- 이곳에 자신의 코드를 작성하세요 -->
 			</div>
-			<!-- 이곳에 자신의 코드를 작성하세요 -->
-
 			<jsp:include page="/foot.jsp" />
 		</div>
 	</div>
@@ -436,5 +202,180 @@ body {
 
 	<!-- 부트스트랩 CDN -->
 	<jsp:include page="/common_cdn.jsp" />
+	
+<script>
+let rowIndex = document.querySelectorAll("#bomTableBody tr").length;
+
+// 페이지초기 select name값 설정
+document.addEventListener("DOMContentLoaded", function () {
+    reindexBOMRows(); // 기존 행들도 name 설정
+});
+
+// 행 삭제버튼 동작시 로우 인덱스 최신화
+function handleRowDelete(button) {
+    const row = button.closest("tr");
+    row.remove();
+    reindexBOMRows();
+}
+
+// 행 추가
+document.getElementById("addRowBtn").addEventListener("click", function () {
+    const tableBody = document.getElementById("bomTableBody");
+    const newRow = document.createElement("tr");
+	
+    // 부품구분
+    const typeCell = document.createElement("td");
+    const typeSelect = document.createElement("select");
+    typeSelect.className = "form-select";
+    typeSelect.required = true;
+    typeSelect.appendChild(new Option("선택", ""));
+    typeCell.appendChild(typeSelect);
+
+    // MainController API로 분류값 받아오기
+    fetch("/common/900")
+        .then(res => res.json())
+        .then(types => {
+            types.forEach(type => {
+                const option = new Option(type.context, type.middle_status);
+                typeSelect.appendChild(option);
+            });
+        })
+        .catch(err => console.error("부품 구분 로드 실패:", err));
+
+    // 부품명
+    const partCell = document.createElement("td");
+    const partSelect = document.createElement("select");
+    partSelect.className = "form-select";
+    partSelect.required = true;
+    partSelect.appendChild(new Option("선택", ""));
+    partCell.appendChild(partSelect);
+	
+    // 부품구분 변경시 변경값에 맞는 부품리스트 받아오기
+    typeSelect.addEventListener("change", function () {
+        const selectedValue = this.value;
+        partSelect.innerHTML = "";
+        partSelect.appendChild(new Option("선택", ""));
+        if (selectedValue && !isNaN(parseInt(selectedValue, 10))) {
+            fetch("/product/getPartsByStatus/" + selectedValue)
+                .then(res => res.json())
+                .then(parts => {
+                    parts.forEach(part => {
+                        partSelect.appendChild(new Option(part.parts_name, part.parts_no));
+                    });
+                })
+                .catch(err => console.error("부품명 로드 실패:", err));
+        }
+    });
+
+    // 수량
+    const cntCell = document.createElement("td");
+    const cntInput = document.createElement("input");
+    cntInput.type = "number";
+    cntInput.className = "form-control";
+    cntInput.min = "1";
+    cntInput.value = "1";
+    cntInput.required = true;
+    cntCell.appendChild(cntInput);
+
+    // 삭제 버튼
+    const delCell = document.createElement("td");
+    const delBtn = document.createElement("button");
+    delBtn.type = "button";
+    delBtn.className = "btn btn-danger";
+    delBtn.innerText = "삭제";
+    delBtn.onclick = () => handleRowDelete(delBtn);
+    delCell.appendChild(delBtn);
+
+    // 행에 각 셀 append
+    newRow.appendChild(typeCell);
+    newRow.appendChild(partCell);
+    newRow.appendChild(cntCell);
+    newRow.appendChild(delCell);
+
+    tableBody.appendChild(newRow);
+    reindexBOMRows();
+});
+// name 인덱스 재정렬
+function reindexBOMRows() {
+    const rows = document.querySelectorAll("#bomTableBody tr");
+	console.log("rows length:", rows.length);
+	
+	rows.forEach((row, idx) => {
+	    const selects = row.querySelectorAll("select");
+	    const input = row.querySelector("input");
+
+	    const type = selects[0];
+	    const part = selects[1];
+	    const cnt = input;
+
+	    if (!type || !part || !cnt) {
+	        console.warn(`⚠️ Row ${idx} is missing elements`);
+	        return;
+	    }
+
+	    type.name = 'productBOMList['+idx+'].parts_status';
+	    part.name = 'productBOMList['+idx+'].parts_no';
+	    cnt.name = 'productBOMList['+idx+'].cnt';
+
+	    console.log(`✅ Row ${idx} - type.name: ${type.name}, part.name: ${part.name}, cnt.name: ${cnt.name}`);
+	});
+}
+
+// 유효성 검사
+document.querySelector("form").addEventListener("submit", function (e) {
+    const rows = document.querySelectorAll("#bomTableBody tr");
+    const partsNoSet = new Set();
+
+ 	// 제품구성이 비었을 경우 확인창띄우기
+    if (rows.length === 0) {
+        const confirmResult = confirm("제품 구성이 설정되지 않았습니다. 이대로 등록하시겠습니까?");
+        if (!confirmResult) {
+            e.preventDefault();
+            return;
+        }
+    }
+    
+    let hasError = false;
+    let errorMessage = "";
+    let firstError = null;
+	
+    
+    rows.forEach(row => {
+        const type = row.cells[0].querySelector("select");
+        const part = row.cells[1].querySelector("select");
+        const cnt = row.cells[2].querySelector("input");
+		
+        if (!type.value || !part.value) {
+            errorMessage = "모든 항목을 입력해주세요.";
+            firstError = type;
+            hasError = true;
+            return;
+        }
+
+        if (!cnt.value || parseInt(cnt.value) <= 0) {
+            errorMessage = "수량을 입력해주세요.";
+            firstError = cnt;
+            hasError = true;
+            return;
+        }
+
+        if (partsNoSet.has(part.value)) {
+            errorMessage = "같은 부품을 중복으로 추가할 수 없습니다.";
+            firstError = part;
+            hasError = true;
+            return;
+        }
+
+        partsNoSet.add(part.value);
+    });
+
+    if (hasError) {
+        alert(errorMessage);
+        firstError?.focus();
+        e.preventDefault();
+    }
+});
+
+</script> 
 </body>
 </html>

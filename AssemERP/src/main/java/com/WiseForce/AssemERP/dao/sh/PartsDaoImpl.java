@@ -38,12 +38,12 @@ public class PartsDaoImpl implements PartsDao {
 	public List<PartsDTO> findAllPartsList() {
 		List<PartsDTO> partsDTOs = null;
 
-				try {
-					partsDTOs = session.selectList("shFindPartsAllList");
-					System.out.println("PartsDaoImpl findAllPartsList partsDTOs => "+partsDTOs);
-				} catch (Exception e) {
-					System.out.println("PartsDaoImpl findAllPartsList Exception => "+e.getMessage());
-				}
+		try {
+			partsDTOs = session.selectList("shFindPartsAllList");
+			System.out.println("PartsDaoImpl findAllPartsList partsDTOs => "+partsDTOs);
+		} catch (Exception e) {
+			System.out.println("PartsDaoImpl findAllPartsList Exception => "+e.getMessage());
+		}
 
 		return partsDTOs;
 	}
@@ -76,6 +76,44 @@ public class PartsDaoImpl implements PartsDao {
 
 
 		return partsDTOs;
+	}
+
+
+	@Override
+	public List<PartsDTO> findPartsByStatus(int status) {
+		List<PartsDTO> partsDTOs = null;
+		
+		try {
+			partsDTOs = session.selectList("shfindPartsByStatus", status);
+			System.out.println("PartsDaoImpl findPartsByStatus partsDTOs => "+partsDTOs);
+		} catch (Exception e) {
+			System.out.println("PartsDaoImpl findPartsByStatus Exception => "+e.getMessage());
+		}
+		
+		return partsDTOs;
+	}
+
+
+	@Override
+	public void deleteParts(int parts_no) {
+		session.update("shPartsDelete", parts_no);
+		
+	}
+
+
+	@Override
+	public int getTotalParts() {
+		int result = 0;
+		
+		
+		try {
+			result = session.selectOne("shPartTotalCount");
+			System.out.println("PartsDaoImpl getTotalParts result => "+result);
+		} catch (Exception e) {
+			System.out.println("PartsDaoImpl getTotalParts Exception => "+e.getMessage());
+		}
+		
+		return result;
 	}
 
 
