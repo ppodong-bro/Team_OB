@@ -2,6 +2,7 @@ package com.WiseForce.AssemERP.service.km;
 
 import java.util.List;
 
+import com.WiseForce.AssemERP.dto.CommonDTO;
 import com.WiseForce.AssemERP.dto.km.ClientDto;
 import com.WiseForce.AssemERP.dto.km.ClientSearchDto;
 

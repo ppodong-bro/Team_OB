@@ -1,5 +1,7 @@
 package com.WiseForce.AssemERP.dto.km;
 
+import com.WiseForce.AssemERP.dto.CommonDTO;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

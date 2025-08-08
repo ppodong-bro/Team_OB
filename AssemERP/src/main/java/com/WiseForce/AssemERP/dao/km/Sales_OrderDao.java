@@ -2,7 +2,8 @@ package com.WiseForce.AssemERP.dao.km;
 
 import java.util.List;
 
-import com.WiseForce.AssemERP.dto.km.ClientDto;
+import com.WiseForce.AssemERP.dto.km.ProductListDto;
+import com.WiseForce.AssemERP.dto.km.Sales_ItemDto;
 import com.WiseForce.AssemERP.dto.km.Sales_OrderDto;
 import com.WiseForce.AssemERP.dto.km.Sales_OrderSearchDto;
 import com.WiseForce.AssemERP.dto.sh.ProductDTO;
@@ -19,15 +20,15 @@ public interface Sales_OrderDao {
 
 	Sales_OrderDto 			detailSales(Sales_OrderDto sales_OrderDto1);
 
-	List<ProductDTO> 		productList();
-
-	List<ClientDto> 		clientList();
+	List<ProductDTO> 	productList();
 
 	void 					createSales(Sales_OrderDto sales_OrderDto);
 
-	void 					modifySales(Sales_OrderDto sales_OrderDto);
+	void 					modifySales(Sales_OrderDto sales_OrderDto, List<Sales_ItemDto> salesItemList);
 
 	void 					deleteSales(Sales_OrderDto sales_OrderDto);
+
+	List<Sales_ItemDto> 	salesItemList(Sales_OrderDto sales_OrderDto);
 
 
 }

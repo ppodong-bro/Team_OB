@@ -51,9 +51,9 @@
 											name="client_Gubun" class="form-select">
 											<option value="">전체</option>
 											<option value="0"
-												${ClientSearchDto.client_Gubun == 0 ? 'selected' : ''}>구매</option>
+												${ClientSearchDto.client_Gubun == 0 ? 'selected' : ''}>구매처</option>
 											<option value="1"
-												${ClientSearchDto.client_Gubun == 1 ? 'selected' : ''}>판매</option>
+												${ClientSearchDto.client_Gubun == 1 ? 'selected' : ''}>판매처</option>
 										</select>
 									</div>
 								</div>
@@ -105,11 +105,8 @@
 												<td class="text-center">${st.index + 1}</td>
 												<td class="text-center">${client.client_No}</td>
 												<td>${client.client_Name}</td>
-												<td class="text-center"><c:choose>
-														<c:when test="${client.client_Gubun == 0}">구매</c:when>
-														<c:when test="${client.client_Gubun == 1}">판매</c:when>
-														<c:otherwise>기타</c:otherwise>
-													</c:choose></td>
+												<td class="text-center">
+												${client.context}</td>
 												<td>${client.client_Address}</td>
 												<td>${client.client_Email}</td>
 												<td class="text-center">${client.client_Man}</td>

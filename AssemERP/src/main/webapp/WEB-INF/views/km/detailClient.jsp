@@ -69,8 +69,7 @@
 
 									<label class="form-label">거래처 유형</label> <input type="text"
 										readonly class="form-control form-control-sm w-auto"
-										value="${clientDto.client_Gubun == 0 ? '구매' : '판매'}" />
-
+										value="${clientDto.context}"/>
 								</div>
 
 								<!-- 거래처명 -->

@@ -10,10 +10,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.WiseForce.AssemERP.dto.km.ClientDto;
+import com.WiseForce.AssemERP.dto.km.ProductListDto;
+import com.WiseForce.AssemERP.dto.km.Sales_ItemDto;
 import com.WiseForce.AssemERP.dto.km.Sales_OrderDto;
 import com.WiseForce.AssemERP.dto.km.Sales_OrderSearchDto;
 import com.WiseForce.AssemERP.dto.sh.ProductDTO;
 import com.WiseForce.AssemERP.dto.sm.EmpDTO;
+import com.WiseForce.AssemERP.service.km.ClientService;
 import com.WiseForce.AssemERP.service.km.Sales_OrderService;
 import com.WiseForce.AssemERP.util.Paging;
 
@@ -24,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 @Controller
 public class Sales_OrderController {
 	private final Sales_OrderService sales_OrderService;
+	private final ClientService clientService;
 
 	@GetMapping("/list")
 	public String listSales(Sales_OrderSearchDto sales_OrderSearchDto, Model model) {
@@ -52,7 +56,7 @@ public class Sales_OrderController {
 	public String createStartSales(Model model) {
 		System.out.println("Sales_OrderController createStart Start...");
 		List<ProductDTO> productList = sales_OrderService.productList();
-		List<ClientDto> clientList = sales_OrderService.clientList();
+		List<ClientDto> clientList = clientService.clientAll();
 		model.addAttribute("productList", productList);
 		model.addAttribute("clientList", clientList);
 		return "km/salesCreate";
@@ -76,7 +80,9 @@ public class Sales_OrderController {
 	
 	@PostMapping("/modify")
 	public String modify(Sales_OrderDto sales_OrderDto) {
-		sales_OrderService.modifySales(sales_OrderDto);
+		List<Sales_ItemDto> salesItemList = sales_OrderService.salesItemList(sales_OrderDto);
+		sales_OrderService.modifySales(sales_OrderDto, salesItemList);
+		
 		
 		return "redirect:/sales/detail?sales_No="+sales_OrderDto.getSales_No();
 	}
@@ -93,6 +99,12 @@ public class Sales_OrderController {
 		System.out.println("Sales_OrderController sales_OrderDto-->"+sales_OrderDto);
 		sales_OrderService.deleteSales(sales_OrderDto);
 		return"redirect:/sales/list";
+	}
+	
+	@GetMapping("/modifyStart")
+	public String modifyStart(Sales_OrderDto sales_OrderDto, Model model) {
+		
+		return "km/salesModify";
 	}
 	
 

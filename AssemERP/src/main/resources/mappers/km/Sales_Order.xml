@@ -158,13 +158,9 @@
 	<select id="salesProductList" resultType="ProductDTO">
 		SELECT PRODUCT_NO, PRODUCT_NAME
 		FROM PRODUCT
+		<!-- LEFT JOIN PRODUCT_COSTHIS C ON P.PRODUCT_NO = C.PRODUCT_NO  AND SYSDATE BETWEEN #{start_date} AND #{end_date}
+		 -->
 	</select>
-	
-	<select id="salesClientList" resultType="clientDto">
-		SELECT *
-		FROM CLIENT
-	</select>
-	
 		
 	<insert id="createSales" parameterType="Sales_OrderDto">
 		<selectKey keyProperty="sales_No" resultType="int" order="BEFORE">
@@ -215,5 +211,21 @@
 		SET DEL_STATUS = 1
 		WHERE SALES_NO = #{sales_No}
 	</update>
+	
+	<update id="modifyComplete" parameterType="java.util.List">
+		BEGIN
+		<foreach collection="list" item="item">
+			UPDATE SALES_ITEM
+			SET SALES_ITEM_OUTCNT = #{item.sales_Item_Cnt}
+			WHERE SALES_NO = #{item.sales_No} AND PRODUCT_NO = #{item.product_No};
+		</foreach>
+		END;
+	</update>
+	
+	<select id="salesItemAll" parameterType="Sales_OrderDto" resultType="Sales_ItemDto">
+		SELECT *
+		FROM   SALES_ITEM
+		WHERE  SALES_NO = #{sales_No}
+	</select>
 
 </mapper>

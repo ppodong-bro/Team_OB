@@ -16,7 +16,23 @@
 		<result column="CLIENT_TEL"     property="client_Tel"/>
 		<result	column="CLIENT_ADDRESS"	property="client_Address"/>
 		<result	column="DEL_STATUS"		property="del_Status"/>
+		<result	column="CONTEXT" 		property="context"/>
 		<result column="MODIFY_DATE"	property="modify_Date"/>
+		<result column="IN_DATE"		property="in_Date"/>
+		
+	</resultMap>
+	
+	<resultMap type="ClientDto" id="detailClientMap">
+		<id 	column="CLIENT_NO"   	property="client_No"/>
+		<result	column="CLIENT_NAME" 	property="client_Name"/>
+		<result	column="CLIENT_GUBUN" 	property="client_Gubun"/>
+		<result column="CLIENT_EMAIL"	property="client_Email"/>
+		<result column="CLIENT_MAN"		property="client_Man"/>
+		<result column="CLIENT_TEL"     property="client_Tel"/>
+		<result	column="CLIENT_ADDRESS"	property="client_Address"/>
+		<result	column="DEL_STATUS"		property="del_Status"/>
+		<result column="MODIFY_DATE"	property="modify_Date"/>
+		<result column="CONTEXT"		property="context"/>
 		<result column="IN_DATE"		property="in_Date"/>
 		
 		<association property="empDTO" javaType="EmpDTO" >
@@ -33,6 +49,7 @@
 			<result	column="REGISTRAR"		property="registrar"/>
 			<result	column="IN_DATE"		property="inDate"/>
 		</association>
+
 	</resultMap>
 	
 	<resultMap type="ClientDto" id="popupMap">
@@ -47,9 +64,7 @@
 			<id	column="EMP_NO"			property="empNo"/>
 			<result column="EMP_NAME" 	property="empName"/>
 		</association>
-	
 	</resultMap>
-	
 	
 	 <select id="totClient" parameterType="ClientSearchDto" resultType="int">
 	 
@@ -70,9 +85,9 @@
 	    </where>
   	</select>
   
-	<select id="clientList" parameterType="ClientSearchDto" resultType="ClientDto">
+	<select id="clientList" parameterType="ClientSearchDto" resultMap="clientMap">
     <![CDATA[
-    SELECT A.*
+    SELECT A.*, C.CONTEXT
       FROM (
         SELECT ROWNUM RN, B.*
           FROM (
@@ -93,17 +108,21 @@
 			    </where>
 			      ORDER BY client_No DESC
     	)B
-    ) A
+    ) A LEFT JOIN COMMON C ON C.BIG_STATUS = '300' AND C.MIDDLE_STATUS = A.CLIENT_GUBUN
     WHERE A.RN <![CDATA[>=]]>#{start} AND A.RN <![CDATA[<=]]> #{end}
     ORDER BY RN
 	</select>
 	
-	<select id="detailClient" parameterType="int" resultMap="clientMap">
-		SELECT C.CLIENT_NO, E.EMP_NO, E.EMP_NAME, C.CLIENT_NAME, C.CLIENT_GUBUN
-			 , C.CLIENT_EMAIL, C.CLIENT_MAN, C.CLIENT_ADDRESS
-			 , C.DEL_STATUS, C.MODIFY_DATE, C.IN_DATE, C.CLIENT_TEL
-		FROM   CLIENT C LEFT JOIN EMP E ON C.EMP_NO = E.EMP_NO
-		WHERE  C.CLIENT_NO = #{client_No}
+	<select id="detailClient" parameterType="int" resultMap="detailClientMap">
+				
+		SELECT A.*, C.CONTEXT
+		FROM  (SELECT C.CLIENT_NO, E.EMP_NO, E.EMP_NAME, C.CLIENT_NAME, C.CLIENT_GUBUN
+					, C.CLIENT_EMAIL, C.CLIENT_MAN, C.CLIENT_ADDRESS
+					, C.DEL_STATUS, C.MODIFY_DATE, C.IN_DATE, C.CLIENT_TEL
+			  FROM   CLIENT C LEFT JOIN EMP E ON C.EMP_NO = E.EMP_NO
+			  WHERE  C.CLIENT_NO = #{client_No}
+			  )A LEFT JOIN COMMON C ON C.BIG_STATUS = '300' AND C.MIDDLE_STATUS = A.CLIENT_GUBUN
+			  
 	</select>
 	
 	<insert id="createClient" parameterType="ClientDto">
