@@ -189,4 +189,9 @@ public class PartsController {
 		return "redirect:partsList";
 	}
 
+	@GetMapping("partsDetail/{parts_no}")
+	public String partsDetail(@PathVariable(name = "parts_no")int parts_no, Model model) {
+		
+		return "sh/partsDetail";
+	}
 }

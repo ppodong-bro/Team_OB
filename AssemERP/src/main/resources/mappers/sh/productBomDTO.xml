@@ -4,7 +4,7 @@
 
 	<select id="shProductBomCreate" parameterType="ProductBomDTO" resultType="int">
 		INSERT INTO product_bom
-		VALUES (product_seq.CURRVAL,#{parts_no},#{cnt})
+		VALUES (product_seq.CURRVAL,#{parts_no},#{cnt},1)
 		
 	</select>
 
@@ -22,8 +22,13 @@
 	</delete>
 	
 	<insert id="shPrdouctBOMUpdate" parameterType="productBomDTO">
-		INSERT INTO product_bom (product_no, parts_no, cnt)
-		VALUES (#{product_no}, #{parts_no}, #{cnt})
+		INSERT INTO product_bom (product_no, parts_no, cnt, product_version)
+		VALUES (#{product_no}, #{parts_no}, #{cnt}, (
+													 SELECT MAX(product_version)+1
+													 FROM product_bom
+													 WHERE product_no = #{product_no}
+													 )
+			 	)
 	</insert>
 	
 </mapper>

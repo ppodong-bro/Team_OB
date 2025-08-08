@@ -196,5 +196,10 @@ public class ProductController {
 
 		return "redirect:/product/productList";
 	}
-
+	
+	@GetMapping("productDetail/{product_no}")
+	public String productDetail(@PathVariable(name = "product_no") int product_no, Model model ) {
+		
+		return "sh/prodcutDetail";
+	}
 }

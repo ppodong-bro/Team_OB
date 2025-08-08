@@ -8,6 +8,9 @@
 <title>부품관리</title>
 <!-- 공통 CSS -->
 <jsp:include page="/common.jsp" />
+<link href="/css/list.css" rel="stylesheet">
+
+
 </head>
 <body>
 
@@ -103,21 +106,22 @@
 
 							<!-- List 테이블 시작 -->
 							<div class="table-responsive">
-								<table class="table table-bordered align-middle">
+								<table class="table table-bordered align-middle list-table">
 									<thead class="table-light">
 										<tr style="text-align: center;">
-											<th>부품번호</th>
-											<th>부품명</th>
-											<th>종류</th>
-											<th>제조사</th>
-											<th>등록자</th>
-											<th>등록일</th>
-											<th class="text-center" >수정</th>
+											<th style="width: 10%;">부품번호</th>
+											<th style="width: 40%;">부품명</th>
+											<th style="width: 10%;">종류</th>
+											<th style="width: 10%;">제조사</th>
+											<th style="width: 10%;">등록자</th>
+											<th style="width: 15%;">등록일</th>
+											<th style="width: 10%;" class="text-center" >수정</th>
 										</tr>
 									</thead>
 									<tbody>
 										<c:forEach var="partsDTO" items="${partsDTOs}">
-											<tr>
+											<tr style="cursor: pointer;"
+												onclick="location.href='<c:url value='/parts/partsDetail/${partsDTO.parts_no}'/>'">
 												<td style="text-align: center;">${partsDTO.parts_no}</td>
 												<td>${partsDTO.parts_name}</td>
 												<td style="text-align: center;">${partsDTO.parts_statusName}</td>
@@ -126,7 +130,7 @@
 												<td style="text-align: center;">${partsDTO.in_date}</td>
 												<td class="text-center">
 													<button type="button"
-														onclick="location.href='/parts/partsModify/${partsDTO.parts_no}'"
+														onclick="event.stopPropagation(); location.href='/parts/partsModify/${partsDTO.parts_no}'"
 														class="btn btn-sm btn-outline-success">
 														<i class="bi bi-pencil-square"></i> 수정
 													</button>
