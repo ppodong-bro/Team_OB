@@ -7,7 +7,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 
+import com.WiseForce.AssemERP.domain.dg.Inventory;
 import com.WiseForce.AssemERP.dto.dg.InventoryDTO;
+import com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;

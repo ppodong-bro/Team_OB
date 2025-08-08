@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -47,6 +48,26 @@ public class InventoryController {
 
 		// 재고 관리 화면 이동
 		return "dg/inventoryList";
+	}
+	
+	@GetMapping("/inventory/adjust")
+	public String inventoryAdjust_Get(Real_InventoryDTO real_InventoryDTO, Model model) {
+		// 재고 정보 조회하기(item_type, item_no만 사용)
+		Real_InventoryDTO target_Real_InventoryDTO = inventoryService.getRealInventoryById(real_InventoryDTO);
+		
+		model.addAttribute("inventory", target_Real_InventoryDTO);
+		
+		// 재고 조정 화면 이동
+		return "dg/inventoryAdjust";
+	}
+
+	@PostMapping("/inventory/adjust")
+	public String inventoryAdjust_Post(Real_InventoryDTO real_InventoryDTO, Model model) {
+		// DB에 재고 조정 이력 남기기
+		System.out.println("123");
+		
+		// PostMapping은 재고 조정 화면 이동
+		return "redirect:/dg/inventoryList";
 	}
 	
 	@GetMapping("/inventory/history")

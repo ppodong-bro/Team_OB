@@ -1570,7 +1570,7 @@ BEGIN
         -- 없으면 LOOP 종료
         EXIT WHEN cur_real_inventory%NOTFOUND;
         
-        PIPE ROW(type_calc_real_inventory_all(v_item_no, v_item_status, v_inventory_cnt + v_purchase_cnt - v_sales_cnt + v_in_cnt - v_out_cnt));
+        PIPE ROW(type_calc_real_inventory_all(v_item_status, v_item_no, v_inventory_cnt + v_purchase_cnt - v_sales_cnt + v_in_cnt - v_out_cnt));
     END LOOP;
 
     RETURN;
