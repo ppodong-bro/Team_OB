@@ -58,7 +58,7 @@ public class CustomFileUtil {
 			if (contentType != null && contentType.startsWith("image")) {
 				Path thumnailPath = Paths.get(uploadPath, "s_" + saveName);
 
-				Thumbnails.of(savePath.toFile()).size(60, 80).toFile(thumnailPath.toFile());
+				Thumbnails.of(savePath.toFile()).size(400, 600).toFile(thumnailPath.toFile());
 			}
 
 		} catch (IOException e) {

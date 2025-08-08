@@ -19,4 +19,5 @@ public class Product_Bom implements Serializable {
 	private int product_no;
 	private int parts_no;
 	private int cnt;
+	private int product_version;
 }
