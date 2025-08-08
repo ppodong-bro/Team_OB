@@ -11,8 +11,12 @@ public interface InventoryDao {
 	// 현재 재고 전체 조회 함수 실행
 	List<Real_InventoryDTO> getRealInventory(Real_InventoryDTO real_InventoryDTO);
 
+	// 현재 재고 조회 함수 실행
+	Real_InventoryDTO getRealInventoryById(Real_InventoryDTO real_InventoryDTO);
+	
 	// 월마감 패키지 실행
 	boolean doMonthClose(String yearMonth, int empno, int realStatus);
+
 
 
 }

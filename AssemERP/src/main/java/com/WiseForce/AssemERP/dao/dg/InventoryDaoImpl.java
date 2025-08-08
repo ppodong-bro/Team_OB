@@ -16,12 +16,12 @@ import lombok.RequiredArgsConstructor;
 public class InventoryDaoImpl implements InventoryDao {
 	private final SqlSession session;
 
-	// 이번 월 기말재고의 종류 수 조회
+	// 현재 재고 전체 종류수 조회 함수 실행
 	@Override
 	public int getLastestMonthInventoryCnt(Real_InventoryDTO real_InventoryDTO) {
 		// 현재 재고 전체 조회 함수 실행
 		int totalTypeCount = session
-				.selectOne("com.WiseForce.AssemERP.dg.InventoryMapper.callCalcRealInventoryCnt", real_InventoryDTO);
+				.selectOne("com.WiseForce.AssemERP.dg.InventoryMapper.callCalcRealInventoryAllCnt", real_InventoryDTO);
 		
 		return totalTypeCount;
 	}
@@ -31,11 +31,19 @@ public class InventoryDaoImpl implements InventoryDao {
 	public List<Real_InventoryDTO> getRealInventory(Real_InventoryDTO real_InventoryDTO) {
 		// 현재 재고 전체 조회 함수 실행
 		List<Real_InventoryDTO> real_InventoryDTOs = session
-				.selectList("com.WiseForce.AssemERP.dg.InventoryMapper.callCalcRealInventory", real_InventoryDTO);
-
+				.selectList("com.WiseForce.AssemERP.dg.InventoryMapper.callCalcRealInventoryAll", real_InventoryDTO);
+		
 		return real_InventoryDTOs;
 	}
 
+	// 현재 재고 조회 함수 실행
+	@Override
+	public Real_InventoryDTO getRealInventoryById(Real_InventoryDTO real_InventoryDTO) {
+		Real_InventoryDTO target_Real_InventoryDTO = session.selectOne("com.WiseForce.AssemERP.dg.InventoryMapper.callCalcRealInventoryById", real_InventoryDTO);
+		
+		return target_Real_InventoryDTO;
+	}
+	
 	// 월마감 패키지 실행
 	@Override
 	public boolean doMonthClose(String yearMonth, int empno, int realStatus) {
@@ -56,6 +64,4 @@ public class InventoryDaoImpl implements InventoryDao {
 	        return false;
 	    }
 	}
-
-
 }

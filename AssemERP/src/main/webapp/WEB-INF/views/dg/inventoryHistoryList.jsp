@@ -6,7 +6,7 @@
 <!-- 공통 CSS -->
 <jsp:include page="/common.jsp" />
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Assem ERP</title>
 </head>
 <script type="text/javascript">
 //거래 구분 검색
@@ -120,7 +120,8 @@ const itemStatusSelect = ${search.item_status_select != null ? search.item_statu
 											<th class="text-center" style="white-space: nowrap;">거래 번호</th>
 											<th class="text-center" style="white-space: nowrap;">재고 구분</th>
 											<th class="text-center" style="white-space: nowrap;">재고 명</th>
-											<th class="text-center" style="white-space: nowrap;">수량</th>
+											<th class="text-center" style="white-space: nowrap;">총수량</th>
+											<th class="text-center" style="white-space: nowrap;">변동수량</th>
 											<th class="text-center" style="white-space: nowrap;">입출고 일시</th>
 										</tr>
 									</thead>
@@ -131,18 +132,29 @@ const itemStatusSelect = ${search.item_status_select != null ? search.item_statu
 												<td class="text-center">
 													<c:import url="${pageContext.request.contextPath}/commonText/1100/${inventoryHistory.order_status}" var="order_status_text" charEncoding="UTF-8"/>${order_status_text}
 												</td>
-												<td class="text-center">${inventoryHistory.order_no}</td>
+												<td class="text-center">
+													<c:choose>
+														<c:when test="${inventoryHistory.order_no != -1}">
+														${inventoryHistory.order_no}
+														</c:when>
+														<c:otherwise>
+														-
+														</c:otherwise>
+													</c:choose>
+													
+												</td>
 												<td class="text-center">
 													<c:import url="${pageContext.request.contextPath}/commonText/600/${inventoryHistory.item_status}" var="order_status_text" charEncoding="UTF-8"/>${order_status_text}
 												</td>
 												<td>${inventoryHistory.item_no_text}</td>
-												<td class="text-center">
+												<td class="text-end">${inventoryHistory.item_totalcnt}</td>
+												<td class="text-end">
 													<c:choose>
 														<c:when test="${inventoryHistory.inout_status == 0}">
-															${inventoryHistory.item_totalcnt}<span style="color: red;">(+${inventoryHistory.item_cnt})</span>
+															<span style="color: red;">+${inventoryHistory.item_cnt}</span>
 														</c:when>
 														<c:otherwise>
-															${inventoryHistory.item_totalcnt}<span style="color: blue;">(-${inventoryHistory.item_cnt})</span>
+															<span style="color: blue;">-${inventoryHistory.item_cnt}</span>
 														</c:otherwise>
 													</c:choose>
 												</td>
