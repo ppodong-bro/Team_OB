@@ -171,16 +171,16 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public void productBOMUpdate(ProductDTO productDTO) {
 
-		// 기존 BOM정보 삭제 
-		TransactionStatus transactionStatusDelete = platformTransactionManager
-				.getTransaction(new DefaultTransactionDefinition());
-		try {
-			productDao.productBOMDelete(productDTO.getProduct_no());
-			platformTransactionManager.commit(transactionStatusDelete);
-		} catch (Exception e) {
-			platformTransactionManager.rollback(transactionStatusDelete);
-			System.out.println("ProductServiceImpl productBOMUpdate transactionStatus1 Exception => " + e.getMessage());
-		}
+//		// 기존 BOM정보 삭제 
+//		TransactionStatus transactionStatusDelete = platformTransactionManager
+//				.getTransaction(new DefaultTransactionDefinition());
+//		try {
+//			productDao.productBOMDelete(productDTO.getProduct_no());
+//			platformTransactionManager.commit(transactionStatusDelete);
+//		} catch (Exception e) {
+//			platformTransactionManager.rollback(transactionStatusDelete);
+//			System.out.println("ProductServiceImpl productBOMUpdate transactionStatus1 Exception => " + e.getMessage());
+//		}
 		
 		// BOM리스트가 null일경우 저장하지 않음
 		if (productDTO.getProductBOMList() != null) {
