@@ -1,11 +1,13 @@
 package com.WiseForce.AssemERP.dao.km;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
 import com.WiseForce.AssemERP.dto.km.ClientDto;
+import com.WiseForce.AssemERP.dto.km.ProductListDto;
 import com.WiseForce.AssemERP.dto.km.Sales_ItemDto;
 import com.WiseForce.AssemERP.dto.km.Sales_OrderDto;
 import com.WiseForce.AssemERP.dto.km.Sales_OrderSearchDto;
@@ -61,14 +63,9 @@ public class Sales_OrderDaoImpl implements Sales_OrderDao {
 
 	@Override
 	public List<ProductDTO> productList() {
+		LocalDateTime time = LocalDateTime.now();
 		List<ProductDTO> productList = session.selectList("salesProductList");
 		return productList;
-	}
-
-	@Override
-	public List<ClientDto> clientList() {
-		List<ClientDto> clientList = session.selectList("salesClientList");
-		return clientList;
 	}
 	
 	@Override 
@@ -81,8 +78,16 @@ public class Sales_OrderDaoImpl implements Sales_OrderDao {
 	}
 
 	@Override
-	public void modifySales(Sales_OrderDto sales_OrderDto) {
-		session.update("modifySales", sales_OrderDto);
+	public void modifySales(Sales_OrderDto sales_OrderDto, List<Sales_ItemDto> salesItemList) {
+		int out_Status = sales_OrderDto.getOut_Status();
+		System.out.println("salesItemList->"+salesItemList);
+		
+		if(out_Status == 0 || out_Status == 1) {
+			session.update("modifySales", sales_OrderDto);
+		} else if(out_Status == 2) {
+			session.update("modifySales", sales_OrderDto);
+			session.update("modifyComplete", salesItemList);
+		}
 		
 	}
 
@@ -91,6 +96,12 @@ public class Sales_OrderDaoImpl implements Sales_OrderDao {
 		System.out.println("Sales_OrderDaoImpl deleteSales sales_OrderDto-->"+sales_OrderDto);
 		session.update("deleteSales", sales_OrderDto);
 		
+	}
+
+	@Override
+	public List<Sales_ItemDto> salesItemList(Sales_OrderDto sales_OrderDto) {
+		List<Sales_ItemDto> salesItemList = session.selectList("salesItemAll", sales_OrderDto);
+		return salesItemList;
 	}
 	
 

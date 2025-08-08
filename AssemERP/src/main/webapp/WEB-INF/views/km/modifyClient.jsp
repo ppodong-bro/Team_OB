@@ -72,10 +72,10 @@
 									<option value="">선택</option>
 									<option value="0"
 										<c:if test="${clientDto.client_Gubun == 0}">selected</c:if>>
-										구매</option>
+										구매처</option>
 									<option value="1"
 										<c:if test="${clientDto.client_Gubun == 1}">selected</c:if>>
-										판매</option>
+										판매처</option>
 								</select>
 							</div>
 
@@ -97,7 +97,7 @@
 							
 							<!-- 거래처전화번호 -->
 							<div class="mb-3">
-								<label for="clientTel" class="form-label">거래처전화번호</label> <input
+								<label for="clientTel" class="form-label">거래처 전화번호</label> <input
 									type="text" class="form-control form-control-sm" id="clientTel"
 									name="client_Tel" value="${clientDto.client_Tel}">
 							</div>

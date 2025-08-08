@@ -47,8 +47,8 @@
 									class="form-select form-select-sm w-auto" id="clientGubun"
 									name="client_Gubun" required>
 									<option value="">선택</option>
-									<option value="0">구매</option>
-									<option value="1">판매</option>
+									<option value="0">구매처</option>
+									<option value="1">판매처</option>
 								</select>
 							</div>
 
@@ -64,6 +64,12 @@
 								<label for="clientEmail" class="form-label">이메일</label> <input
 									type="email" class="form-control form-control-sm"
 									id="clientEmail" name="client_Email">
+							</div>
+								<!-- 거래처 전화번호 -->
+							<div class="mb-3">
+								<label for="clientTel" class="form-label">거래처 전화번호</label> <input
+									type="text" class="form-control form-control-sm"
+									id="clientTel" name="client_Tel">
 							</div>
 
 							<!-- 거래처 담당자 -->

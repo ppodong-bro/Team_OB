@@ -14,13 +14,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class Sales_ItemDto {
-	private int 		sales_No;
-	private int 		product_No;
-	private int			sales_Item_Cnt;
-	private int	 		sales_Item_OutCnt;
-	private int			sales_Item_WaitingCnt;
-	private Long		sales_Item_Cost;
-	private Long        sales_Item_TotCost;
-	private Long		sales_Item_TotOutCost;
+	private int 			sales_No;
+	private int 			product_No;
+	private int				sales_Item_Cnt;
+	private int	 			sales_Item_OutCnt;
+	private int				sales_Item_WaitingCnt;
+	private Long			sales_Item_Cost;
+	private Long        	sales_Item_TotCost;
+	private Long			sales_Item_TotOutCost;
 	private ProductDTO 	productDto;
+	
 }

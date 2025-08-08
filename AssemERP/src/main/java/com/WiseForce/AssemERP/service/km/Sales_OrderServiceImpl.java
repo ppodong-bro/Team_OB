@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.WiseForce.AssemERP.dao.km.Sales_OrderDao;
 import com.WiseForce.AssemERP.dto.km.ClientDto;
+import com.WiseForce.AssemERP.dto.km.ProductListDto;
 import com.WiseForce.AssemERP.dto.km.Sales_ItemDto;
 import com.WiseForce.AssemERP.dto.km.Sales_OrderDto;
 import com.WiseForce.AssemERP.dto.km.Sales_OrderSearchDto;
@@ -116,13 +117,8 @@ public class Sales_OrderServiceImpl implements Sales_OrderService {
 	@Override
 	public List<ProductDTO> productList() {
 		List<ProductDTO> productList = sales_OrderDao.productList();
+		
 		return productList;
-	}
-
-	@Override
-	public List<ClientDto> clientList() {
-		List<ClientDto> clientList = sales_OrderDao.clientList();
-		return clientList;
 	}
 
 	@Override
@@ -131,14 +127,20 @@ public class Sales_OrderServiceImpl implements Sales_OrderService {
 	}
 
 	@Override
-	public void modifySales(Sales_OrderDto sales_OrderDto) {
-		sales_OrderDao.modifySales(sales_OrderDto);
+	public void modifySales(Sales_OrderDto sales_OrderDto, List<Sales_ItemDto> salesItemList) {
+		sales_OrderDao.modifySales(sales_OrderDto, salesItemList);
 	}
 
 	@Override
 	public void deleteSales(Sales_OrderDto sales_OrderDto) {
 		sales_OrderDao.deleteSales(sales_OrderDto);
 		
+	}
+
+	@Override
+	public List<Sales_ItemDto> salesItemList(Sales_OrderDto sales_OrderDto) {
+		List<Sales_ItemDto> salesItemList = sales_OrderDao.salesItemList(sales_OrderDto);
+		return salesItemList;
 	}
 	
 	

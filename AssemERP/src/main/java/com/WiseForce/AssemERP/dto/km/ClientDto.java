@@ -3,6 +3,7 @@ package com.WiseForce.AssemERP.dto.km;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.WiseForce.AssemERP.dto.CommonDTO;
 import com.WiseForce.AssemERP.dto.sm.EmpDTO;
 
 import lombok.AllArgsConstructor;
@@ -31,5 +32,6 @@ public class ClientDto {
 	private int				start;
 	private int				end;
 	private String			currentPage;
+	private String			context;
 	
 }

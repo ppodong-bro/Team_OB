@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.WiseForce.AssemERP.dto.CommonDTO;
 import com.WiseForce.AssemERP.dto.km.ClientDto;
 import com.WiseForce.AssemERP.dto.km.ClientSearchDto;
 import com.WiseForce.AssemERP.service.km.ClientService;
@@ -89,14 +90,12 @@ public class ClientController {
 	}
 	
 	@GetMapping("popup")
-
 	public String searchByName(Model model){
 		List<ClientDto>listClientDto = clientService.clientAll();
 		model.addAttribute("clientList", listClientDto);
 		System.out.println("listClientDto"+listClientDto);
 		return "km/salesPop";
 	}
-	
 
 }
 
