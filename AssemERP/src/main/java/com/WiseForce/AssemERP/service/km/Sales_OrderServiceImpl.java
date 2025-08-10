@@ -142,6 +142,12 @@ public class Sales_OrderServiceImpl implements Sales_OrderService {
 		List<Sales_ItemDto> salesItemList = sales_OrderDao.salesItemList(sales_OrderDto);
 		return salesItemList;
 	}
+
+	@Override
+	public void modifyStatus(Sales_OrderDto sales_OrderDto, List<Sales_ItemDto> salesItemList) {
+		sales_OrderDao.modifyStatus(sales_OrderDto, salesItemList);
+		
+	}
 	
 	
 }

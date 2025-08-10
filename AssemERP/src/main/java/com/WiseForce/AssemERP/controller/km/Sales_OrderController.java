@@ -103,9 +103,15 @@ public class Sales_OrderController {
 	
 	@GetMapping("/modifyStart")
 	public String modifyStart(Sales_OrderDto sales_OrderDto, Model model) {
-		
-		return "km/salesModify";
+		Sales_OrderDto sales_OrderDto1 = sales_OrderService.detailSales(sales_OrderDto);
+		model.addAttribute("sales_OrderDto", sales_OrderDto1);
+		return "km/modifySales";
+	}
+	@PostMapping("modifyStatus")
+	public String modifyStatus (Sales_OrderDto sales_OrderDto) {
+		List<Sales_ItemDto> salesItemList = sales_OrderService.salesItemList(sales_OrderDto);
+		sales_OrderService.modifyStatus(sales_OrderDto, salesItemList);
+		return "redirect:/sales/detail?sales_No="+sales_OrderDto.getSales_No();
 	}
 	
-
 }

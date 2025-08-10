@@ -226,7 +226,7 @@
 								<!-- out_Status 가 1 이면 완료 -->
 								<c:choose>
 									<c:when test="${sales_OrderDto.out_Status == 0}">
-										<form action="${pageContext.request.contextPath}/sales/modify"
+										<form action="${pageContext.request.contextPath}/sales/modifyStatus"
 											method="post" style="display: inline;">
 											<input type="hidden" name="sales_No"
 												value="${sales_OrderDto.sales_No}" /> <input type="hidden"
@@ -237,7 +237,7 @@
 										</form>
 									</c:when>
 									<c:when test="${sales_OrderDto.out_Status == 1}">
-										<form action="${pageContext.request.contextPath}/sales/modify"
+										<form action="${pageContext.request.contextPath}/sales/modifyStatus"
 											method="post" style="display: inline;">
 											<input type="hidden" name="sales_No"
 												value="${sales_OrderDto.sales_No}" /> <input type="hidden"
