@@ -22,7 +22,7 @@ public interface Sales_OrderService {
 
 	Sales_OrderDto 			detailSales(Sales_OrderDto sales_OrderDto1);
 
-	List<ProductDTO> 	productList();
+	List<ProductDTO> 		productList();
 
 	void 					createSales(Sales_OrderDto sales_OrderDto);
 
@@ -31,5 +31,7 @@ public interface Sales_OrderService {
 	void 					deleteSales(Sales_OrderDto sales_OrderDto);
 
 	List<Sales_ItemDto> 	salesItemList(Sales_OrderDto sales_OrderDto);
+
+	void 					modifyStatus(Sales_OrderDto sales_OrderDto, List<Sales_ItemDto> salesItemList);
 	
 }

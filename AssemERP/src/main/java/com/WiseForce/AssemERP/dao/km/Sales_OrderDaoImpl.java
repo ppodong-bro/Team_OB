@@ -83,7 +83,9 @@ public class Sales_OrderDaoImpl implements Sales_OrderDao {
 		System.out.println("salesItemList->"+salesItemList);
 		
 		if(out_Status == 0 || out_Status == 1) {
+			session.delete("deleteToUpdate", salesItemList);
 			session.update("modifySales", sales_OrderDto);
+			session.insert("createSales_Item", sales_OrderDto);
 		} else if(out_Status == 2) {
 			session.update("modifySales", sales_OrderDto);
 			session.update("modifyComplete", salesItemList);
@@ -102,6 +104,18 @@ public class Sales_OrderDaoImpl implements Sales_OrderDao {
 	public List<Sales_ItemDto> salesItemList(Sales_OrderDto sales_OrderDto) {
 		List<Sales_ItemDto> salesItemList = session.selectList("salesItemAll", sales_OrderDto);
 		return salesItemList;
+	}
+
+	@Override
+	public void modifyStatus(Sales_OrderDto sales_OrderDto, List<Sales_ItemDto> salesItemList) {
+		int out_Status = sales_OrderDto.getOut_Status();
+		if(out_Status == 0 || out_Status == 1) {
+			session.update("modifySales", sales_OrderDto);
+		} else if(out_Status == 2) {
+			session.update("modifySales", sales_OrderDto);
+			session.update("modifyComplete", salesItemList);
+		}
+		
 	}
 	
 

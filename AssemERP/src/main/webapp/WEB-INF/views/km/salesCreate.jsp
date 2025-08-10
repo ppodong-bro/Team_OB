@@ -6,327 +6,306 @@
 <!DOCTYPE html>
 <html>
 <head>
-<!-- 공통 CSS -->
+<!-- 공통 CSS 및 헤더 포함 (공통 레이아웃/스타일) -->
 <jsp:include page="/common.jsp" />
-<link rel="stylesheet" href="<c:url value='/css/list.css'/>" />
+<link rel="stylesheet" href="<c:url value='/css/list.css' />" />
 <meta charset="UTF-8">
-<title>Insert title here</title>
-<!-- 거래처 팝업 연동 스크립트 -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>수주 등록</title>
+
 <script>
-	function openClientPopup() {
-		window.open(
-			'${pageContext.request.contextPath}/client/popup',
-			'clientPopup',
-			'width=600,height=500,scrollbars=yes'
-		);
-	}
+    /* ===== 거래처 팝업 연동 ===== */
+    function openClientPopup() {
+      window.open(
+        '${pageContext.request.contextPath}/client/popup',
+        'clientPopup',
+        'width=600,height=500,scrollbars=yes'
+      );
+    }
+    function setClientInfo(client_No, client_Name, client_Address, client_Email, client_Tel, client_Man, empNo, empName) {
+      document.getElementById('clientNoInput').value = client_No;
+      document.getElementById('clientNameInput').value = client_Name;
+      document.getElementById('clientAddressInput').value = client_Address;
+      document.getElementById('clientEmailInput').value = client_Email;
+      document.getElementById('clientTelInput').value = client_Tel;
+      document.getElementById('clientManInput').value = client_Man;
+      if (empNo)  document.getElementById('empNoInput').value = empNo;
+      if (empName)document.getElementById('empNameInput').value = empName;
+      window.close();
+    }
 
-	function setClientInfo(client_No, client_Name, client_Address, client_Email, client_Tel, client_Man, empNo, empName) {
-		  document.getElementById('clientNoInput').value = client_No;
-		  document.getElementById('clientNameInput').value = client_Name;
-		  document.getElementById('clientAddressInput').value = client_Address;
-		  document.getElementById('clientEmailInput').value = client_Email;
-		  document.getElementById('clientTelInput').value = client_Tel;
-		  document.getElementById('clientManInput').value = client_Man;
-		  document.getElementById('empNoInput').value = empNo;
-		  document.getElementById('empNameInput').value = empName;
-		  // document.getElementById('clientDateInput').value = in_Date?.substring(0, 10); ← 일단 주석처리
-		  window.close();
-	}
-	
-	let targetProductInput = null; // 값을 넣을 타겟 input(한 줄만 기억)
-	let targetProductNameInput = null;
-	
-	function openProductPopup(btn) {
-	    // btn: 사용자가 클릭한 "조회" 버튼(this)
-	    // 해당 버튼이 속한 tr에서 class가 'productNoInput'인 input을 찾음
-	    targetProductInput = btn.closest('tr').querySelector('.productNoInput');
-	  	targetProductNameInput = btn.closest('tr').querySelector('.productNameInput');
+    /* ===== 제품 팝업 연동 ===== */
+    let targetProductInput = null;
+    let targetProductNameInput = null;
 
-	    window.open(
-	        '${pageContext.request.contextPath}/sales/productPopup',
-	        'productPopup',
-	        'width=600,height=500,scrollbars=yes'
-	    );
-	}
-	
-	// 팝업창에서 선택 버튼 클릭 시 실행되는 함수
-	function setProductInfo(product_no, product_name) {
-		console.log('setProductInfo called with', product_no, product_name);
-	    if (targetProductInput) {
-	        targetProductInput.value = product_no;
-	 	if (targetProductNameInput) 
-	 		targetProductNameInput.value = product_name;
-	    }
-	    window.close();
-	}
+    function openProductPopup(btn) {
+      const tr = btn.closest('tr');
+      targetProductInput     = tr.querySelector('.productNoInput');
+      targetProductNameInput = tr.querySelector('.productNameInput');
+      window.open(
+        '${pageContext.request.contextPath}/sales/productPopup',
+        'productPopup',
+        'width=700,height=560,scrollbars=yes'
+      );
+    }
+    function setProductInfo(product_no, product_name) {
+      if (targetProductInput)     targetProductInput.value = product_no;
+      if (targetProductNameInput) targetProductNameInput.value = product_name;
+      window.close();
+    }
 
-	document.addEventListener('DOMContentLoaded', function () {
-		  const addItemBtn = document.getElementById('add-item-btn');
-		  const itemsTbody = document.getElementById('items-tbody');
+    /* ===== 합계 자동 계산 ===== */
+    function recalcTotal() {
+      let sumReq = 0;
+      let sumCost = 0;
 
-		  addItemBtn.addEventListener('click', function () {
-			  const idx = itemsTbody.querySelectorAll('tr').length;
+      document.querySelectorAll('#items-tbody tr').forEach(function(row) {
+        const qty  = Number(row.querySelector('.qty-input')?.value)  || 0;
+        const cost = Number(row.querySelector('.cost-input')?.value) || 0;
+        const tot  = qty * cost;
 
-			  const newRow = document.createElement('tr');
-			  newRow.className = 'item-row';
-			  newRow.innerHTML =
-				  '<td>' +
-				    '<div class="input-group input-group-sm">' +
-				      '<input type="hidden" class="productNoInput" ' +
-				             'name="sales_Item[' + idx + '].product_No" />' +
-				      '<input type="text" class="form-control form-control-sm productNameInput" ' +
-				             'readonly tabindex="-1" style="background:#f6f6f6;" />' +
-				      '<button type="button" class="btn btn-outline-secondary" ' +
-				              'onclick="openProductPopup(this)">조회</button>' +
-				    '</div>' +
-				  '</td>' +
+        const totCell = row.querySelector('.tot-cost');
+        if (totCell) totCell.value = tot ? tot.toLocaleString() : '';
 
-				  // ────────────────────────────────────────────────────────────────────────
-				  // 두 번째 셀: 요청수량
-				  '<td>' +
-				    '<input type="number" min="0" ' +
-				           'name="sales_Item[' + idx + '].sales_Item_Cnt" ' +
-				           'class="form-control form-control-sm qty-input" required />' +
-				  '</td>' +
+        sumReq  += qty;
+        sumCost += tot;
+      });
 
-				  // 세 번째 셀: 제품 단가
-				  '<td>' +
-				    '<input type="number" step="0.01" min="0" ' +
-				           'name="sales_Item[' + idx + '].sales_Item_Cost" ' +
-				           'class="form-control form-control-sm cost-input" required />' +
-				  '</td>' +
+      document.getElementById('sum-req').innerText  = sumReq.toLocaleString();
+      document.getElementById('sum-cost').innerText = sumCost.toLocaleString();
+    }
 
-				  // 네 번째 셀: 요청 총액 (readonly)
-				  '<td>' +
-				    '<input type="text" readonly ' +
-				           'class="form-control form-control-plaintext form-control-sm tot-cost" />' +
-				  '</td>' +
+    document.addEventListener('input', function(e) {
+      if (e.target.classList.contains('qty-input') || e.target.classList.contains('cost-input')) {
+        recalcTotal();
+      }
+    });
 
-				  // 다섯 번째 셀: 삭제 버튼
-				  '<td class="text-center">' +
-				    '<button type="button" ' +
-				            'class="btn btn-sm btn-outline-danger remove-item-btn" ' +
-				            'onclick="this.closest(\'tr\').remove(); recalcTotal();">' +
-				      '&times;' +
-				    '</button>' +
-				  '</td>';
-			    // … 나머지 칸도 동일하게 문자열 연결로 name 속성에 idx 삽입
-			  itemsTbody.appendChild(newRow);
-			});
-		});
+    /* ===== 동적 행 추가/삭제 ===== */
+    document.addEventListener('DOMContentLoaded', function() {
+      const addBtn = document.getElementById('add-item-btn');
+      const tbody  = document.getElementById('items-tbody');
 
-	function recalcTotal() {
-		  let sumReq = 0;
-		  let sumCost = 0;
+      addBtn.addEventListener('click', function() {
+        const idx = tbody.querySelectorAll('tr').length;
 
-		  document.querySelectorAll('#items-tbody tr').forEach(function(row) {
-		    // 요청수량
-		    const qty = Number(row.querySelector('.qty-input')?.value) || 0;
-		    // 단가
-		    const cost = Number(row.querySelector('.cost-input')?.value) || 0;
-		    // 요청 총액 계산
-		    const totCost = qty * cost;
+        const tr = document.createElement('tr');
+        tr.innerHTML =
+          '<td>' +
+            '<div class="input-group input-group-sm">' +
+              '<input type="hidden" class="productNoInput" name="sales_Item['+idx+'].product_No" />' +
+              '<input type="text" class="form-control form-control-sm productNameInput" readonly tabindex="-1" style="background:#f6f6f6;" />' +
+              '<button type="button" class="btn btn-outline-secondary" onclick="openProductPopup(this)">조회</button>' +
+            '</div>' +
+          '</td>' +
+          '<td class="numeric">' +
+            '<input type="number" min="0" name="sales_Item['+idx+'].sales_Item_Cnt" class="form-control form-control-sm qty-input" required />' +
+          '</td>' +
+          '<td class="numeric">' +
+            '<input type="number" step="0.01" min="0" name="sales_Item['+idx+'].sales_Item_Cost" class="form-control form-control-sm cost-input" required />' +
+          '</td>' +
+          '<td class="numeric">' +
+            '<input type="text" class="form-control form-control-plaintext form-control-sm tot-cost" readonly />' +
+          '</td>' +
+          '<td class="text-center">' +
+            '<button type="button" class="btn btn-sm btn-outline-danger remove-item-btn" title="행 삭제">&times;</button>' +
+          '</td>';
 
-		    // 각 행의 요청 기준 총액 표시
-		    const totCostInput = row.querySelector('.tot-cost');
-		    if (totCostInput) totCostInput.value = totCost ? totCost.toLocaleString() : '';
+        tbody.appendChild(tr);
+      });
 
-		    sumReq += qty;
-		    sumCost += totCost;
-		  });
+      document.getElementById('items-table').addEventListener('click', function(e){
+        if (e.target.classList.contains('remove-item-btn')) {
+          e.target.closest('tr').remove();
+          recalcTotal();
+        }
+      });
 
-		  // 합계 영역 업데이트
-		  document.getElementById('sum-req').innerText = sumReq.toLocaleString();
-		  document.getElementById('sum-cost').innerText = sumCost.toLocaleString();
-		}
-
-		// 수량/단가 input 입력시마다 합계 다시 계산
-		document.addEventListener('input', function(e) {
-		  if (e.target.classList.contains('qty-input') || e.target.classList.contains('cost-input')) {
-		    recalcTotal();
-		  }
-		});
-
-		// 항목 추가/삭제 후에도 호출 필요
-		document.addEventListener('DOMContentLoaded', function() {
-		  recalcTotal();
-		});
-</script>
+      recalcTotal();
+    });
+  </script>
 </head>
 <body>
-	<!-- 전체 레이아웃 -->
 	<div id="layout">
+		<!-- 사이드 내비게이션 포함 -->
 		<div id="side">
 			<jsp:include page="/side.jsp" />
 		</div>
+
 		<div id="main-area">
+			<!-- 헤더 포함 (상단 공통 네비/로고 등) -->
 			<jsp:include page="/header.jsp" />
 
-			<!-- 이곳에 자신의 코드를 작성하세요 -->
+			<!-- 컨텐츠 영역 시작 -->
 			<div id="contents">
 				<div class="container-fluid px-4">
-					<form action="${pageContext.request.contextPath}/sales/create"
-						method="post" class="needs-validation" novalidate>
-
-						<!-- 수주 / 거래처 기본 정보 -->
-						<section class="info-card mb-4">
-							<div class="info-card-title mb-2">수주 / 거래처 정보</div>
-							<div class="row g-3">
-								<!-- 거래처 이름 (팝업 조회) -->
-								<div class="col-md-4">
-									<label class="form-label">거래처 이름<span
-										class="text-danger">*</span></label>
-									<div class="input-group input-group-sm">
-										<input type="hidden" id="clientNoInput"
-											name="clientDto.client_No"
-											value="${sales_OrderDto.clientDto.client_No}" /> <input
-											type="text" id="clientNameInput"
-											class="form-control form-control-sm"
-											name="clientDto.client_Name"
-											value="${sales_OrderDto.clientDto.client_Name}" readonly
-											required placeholder="조회 버튼으로 선택" />
-										<button type="button" class="btn btn-outline-secondary"
-											onclick="openClientPopup()">조회</button>
-									</div>
-								</div>
-
-								<!-- 거래처 주소 -->
-								<div class="col-md-4">
-									<label class="form-label">주소</label> <input type="text"
-										class="form-control form-control-sm" id="clientAddressInput"
-										name="clientDto.client_Address"
-										value="${sales_OrderDto.clientDto.client_Address}" />
-								</div>
-
-								<!-- 이메일 -->
-								<div class="col-md-4">
-									<label class="form-label">이메일</label>
-									<div class="input-group input-group-sm">
-										<span class="input-group-text">@</span> <input type="email"
-											class="form-control" id="clientEmailInput"
-											name="clientDto.client_Email"
-											value="${sales_OrderDto.clientDto.client_Email}" />
-									</div>
-								</div>
-
-								<!-- 거래처 주소 -->
-								<div class="col-md-4">
-									<label class="form-label">거래처 전화번호</label> <input type="text"
-										class="form-control form-control-sm" id="clientTelInput"
-										name="clientDto.client_Tel"
-										value="${sales_OrderDto.clientDto.client_Tel}" />
-								</div>
-
-								<!-- 거래처 담당자 -->
-								<div class="col-md-4">
-									<label class="form-label">거래처 담당자</label> <input type="text"
-										class="form-control form-control-sm" id="clientManInput"
-										name="clientDto.client_Man"
-										value="${sales_OrderDto.clientDto.client_Man}" />
-								</div>
-
-								<!-- 담당자 이름 -->
-								<div class="col-md-4">
-									<label class="form-label">담당자 이름</label> <input type="hidden"
-										name="empDTO.empNo" id="empNoInput" value="${empDTO.empNo}" />
-									<input type="text" readonly
-										class="form-control form-control-sm" id="empNameInput"
-										value="${sales_OrderDto.empDTO.empName}" />
-								</div>
-
-								<!-- 등록 일자 -->
-								<div class="col-md-4">
-									<label class="form-label">납기 완료일</label> <input type="date"
-										class="form-control form-control-sm" name="sales_Date"
-										value="$(sales_OrderDto.sales_Date}" />
-								</div>
-						</section>
-
-						<!-- 제품 항목 추가 -->
-						<section class="info-card mb-4">
-							<div
-								class="info-card-title mb-2 d-flex justify-content-between align-items-center">
-								<div>제품 목록</div>
-								<button type="button" id="add-item-btn"
-									class="btn btn-sm btn-outline-secondary">항목 추가</button>
-							</div>
-
-							<div class="table-responsive"
-								style="max-height: 360px; overflow: auto;">
-								<table
-									class="table table-sm table-bordered align-middle mb-0 product-table"
-									id="items-table">
-									<caption class="visually-hidden">등록할 제품 목록</caption>
-									<thead class="table-light">
-										<tr>
-											<th scope="col">제품</th>
-											<th scope="col" class="numeric">요청수량</th>
-											<th scope="col" class="numeric">제품 단가</th>
-											<th scope="col" class="numeric">요청 총액</th>
-											<th scope="col">삭제</th>
-										</tr>
-									</thead>
-									<tbody id="items-tbody">
-										<!-- 초기에는 한 줄 비어있게 -->
-										<tr class="item-row">
-											<td><div class="input-group input-group-sm">
-													<!-- ① 숨김 필드에 번호 바인딩 -->
-													<input type="hidden" class="productNoInput"
-														name="sales_Item[0].product_No"
-														value="${item.productDTO.product_no}" />
-													<!-- ② 보이는 텍스트 필드에 이름 바인딩 -->
-													<input type="text"
-														class="form-control form-control-sm productNameInput"
-														name="sales_Item[0].product_Name" readonly
-														value="${item.productDTO.product_name}" />
-													<button type="button" class="btn btn-outline-secondary"
-														onclick=openProductPopup(this)>조회</button>
-												</div></td>
-											<td><input type="number" min="0"
-												name="sales_Item[0].sales_Item_Cnt"
-												class="form-control form-control-sm qty-input" required /></td>
-											<td><input type="number" step="0.01" min="0"
-												name="sales_Item[0].sales_Item_Cost"
-												class="form-control form-control-sm cost-input" required /></td>
-											<td><input type="text" readonly
-												class="form-control form-control-plaintext form-control-sm tot-cost" /></td>
-											<td class="text-center">
-												<button type="button"
-													class="btn btn-sm btn-outline-danger remove-item-btn">&times;</button>
-											</td>
-										</tr>
-									</tbody>
-									<tfoot>
-										<tr class="total-row">
-											<td>합계</td>
-											<td class="numeric"><span id="sum-req">0</span></td>
-											<td></td>
-											<td class="numeric"><span id="sum-cost">0</span></td>
-											<td></td>
-										</tr>
-									</tfoot>
-								</table>
-							</div>
-						</section>
-
-						<!-- 액션 -->
-						<div class="d-flex justify-content-end gap-2">
-							<a href="${pageContext.request.contextPath}/sales/list"
-								class="btn btn-outline-secondary btn-sm px-4">취소</a>
-							<button type="submit" class="btn btn-primary btn-sm px-4">등록</button>
+					<div class="card shadow-sm">
+						<!-- 카드 헤더 (상세 페이지 톤과 동일) -->
+						<div
+							class="card-header d-flex justify-content-between align-items-center">
+							<a href="/sales/list" class="btn btn-outline-light btn-sm"> <i
+								class="bi bi-list-ul me-1"></i> 목록
+							</a>
+							<h4 class="card-title mb-0">
+								<i class="bi bi-pencil-square me-2"></i>수주 등록
+							</h4>
+							<div style="width: 90px;"></div>
 						</div>
 
-					</form>
+						<div class="card-body p-4">
+							<form action="${pageContext.request.contextPath}/sales/create"
+								method="post" style="display: inline;">
+								<!-- 수주 / 거래처 입력 -->
+								<section aria-labelledby="order-create-title" class="info-card"
+									aria-label="수주 및 거래처 정보">
+									<div id="order-create-title" class="info-card-title">수주 /
+										거래처 정보</div>
+									<div class="row g-3">
+										<!-- 거래처 이름 (팝업 조회) -->
+										<div class="col-md-4">
+											<label class="form-label">거래처 이름 <span
+												class="text-danger">*</span></label>
+											<div class="input-group input-group-sm">
+												<input type="hidden" id="clientNoInput"
+													name="clientDto.client_No" /> <input type="text"
+													id="clientNameInput" class="form-control form-control-sm"
+													readonly required placeholder="조회 버튼으로 선택" />
+												<button type="button" class="btn btn-outline-secondary"
+													onclick="openClientPopup()">조회</button>
+											</div>
+										</div>
+
+										<!-- 주소 -->
+										<div class="col-md-4">
+											<label class="form-label">주소</label> <input type="text"
+												id="clientAddressInput" class="form-control form-control-sm" />
+										</div>
+
+										<!-- 이메일 -->
+										<div class="col-md-4">
+											<label class="form-label">이메일</label>
+											<div class="input-group input-group-sm">
+												<span class="input-group-text">@</span> <input type="email"
+													id="clientEmailInput" class="form-control" />
+											</div>
+										</div>
+
+										<!-- 전화 -->
+										<div class="col-md-4">
+											<label class="form-label">거래처 전화번호</label> <input type="text"
+												id="clientTelInput" class="form-control form-control-sm" />
+										</div>
+
+										<!-- 거래처 담당자 -->
+										<div class="col-md-4">
+											<label class="form-label">거래처 담당자</label> <input type="text"
+												id="clientManInput" class="form-control form-control-sm" />
+										</div>
+
+										<!-- 내부 담당자 -->
+										<div class="col-md-4">
+											<label class="form-label">담당자 이름</label> <input type="hidden"
+												id="empNoInput" name="empDTO.empNo" /> <input type="text"
+												id="empNameInput" class="form-control form-control-sm"
+												readonly />
+										</div>
+
+										<!-- 납기(수주) 일자 -->
+										<div class="col-md-4">
+											<label class="form-label">납기 완료일</label> <input type="date"
+												class="form-control form-control-sm" name="sales_Date" />
+										</div>
+									</div>
+								</section>
+
+								<!-- 제품 목록 -->
+								<section aria-labelledby="product-list-title"
+									class="info-card mt-4" aria-label="제품 목록">
+									<div id="product-list-title"
+										class="info-card-title d-flex justify-content-between align-items-center">
+										<span>제품 목록</span>
+										<button type="button" id="add-item-btn"
+											class="btn btn-sm btn-outline-secondary">항목 추가</button>
+									</div>
+
+									<div class="table-responsive"
+										style="max-height: 360px; overflow: auto;">
+										<table
+											class="table table-sm table-bordered align-middle mb-0 product-table"
+											id="items-table">
+											<caption class="visually-hidden">등록할 제품 목록</caption>
+											<thead class="table-light">
+												<tr>
+													<th scope="col">제품명</th>
+													<th scope="col" class="numeric">요청수량</th>
+													<th scope="col" class="numeric">제품 단가</th>
+													<th scope="col" class="numeric">요청 총액</th>
+													<th scope="col">삭제</th>
+												</tr>
+											</thead>
+											<tbody id="items-tbody">
+												<!-- 초기 1행 -->
+												<tr>
+													<td>
+														<div class="input-group input-group-sm">
+															<input type="hidden" class="productNoInput"
+																name="sales_Item[0].product_No" /> <input type="text"
+																class="form-control form-control-sm productNameInput"
+																readonly tabindex="-1" style="background: #f6f6f6;" />
+															<button type="button" class="btn btn-outline-secondary"
+																onclick="openProductPopup(this)">조회</button>
+														</div>
+													</td>
+													<td class="numeric"><input type="number" min="0"
+														name="sales_Item[0].sales_Item_Cnt"
+														class="form-control form-control-sm qty-input" required />
+													</td>
+													<td class="numeric"><input type="number" step="0.01"
+														min="0" name="sales_Item[0].sales_Item_Cost"
+														class="form-control form-control-sm cost-input" required />
+													</td>
+													<td class="numeric"><input type="text"
+														class="form-control form-control-plaintext form-control-sm tot-cost"
+														readonly /></td>
+													<td class="text-center">
+														<button type="button"
+															class="btn btn-sm btn-outline-danger remove-item-btn"
+															title="행 삭제">&times;</button>
+													</td>
+												</tr>
+											</tbody>
+											<tfoot>
+												<tr class="total-row">
+													<td>합계</td>
+													<td class="numeric"><span id="sum-req">0</span></td>
+													<td></td>
+													<td class="numeric"><span id="sum-cost">0</span></td>
+													<td></td>
+												</tr>
+											</tfoot>
+										</table>
+									</div>
+								</section>
+
+								<!-- 액션 버튼 -->
+								<div class="text-end mt-4 d-flex justify-content-end gap-2">
+									<a href="${pageContext.request.contextPath}/sales/list"
+										class="btn btn-outline-secondary btn-sm px-4">취소</a>
+									<button type="submit" class="btn btn-primary btn-sm px-4">등록</button>
+								</div>
+							</form>
+						</div>
+					</div>
 				</div>
 			</div>
-			<!-- 이곳에 자신의 코드를 작성하세요 -->
 
+			<!-- 부트스트랩 JS -->
+			<script
+				src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+			<!-- 공통 푸터 포함 -->
 			<jsp:include page="/foot.jsp" />
 		</div>
 	</div>
-
-	<!-- 부트스트랩 CDN -->
-	<jsp:include page="/common_cdn.jsp" />
 </body>
 </html>

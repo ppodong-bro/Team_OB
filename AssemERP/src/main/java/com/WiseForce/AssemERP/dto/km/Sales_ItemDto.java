@@ -22,6 +22,6 @@ public class Sales_ItemDto {
 	private Long			sales_Item_Cost;
 	private Long        	sales_Item_TotCost;
 	private Long			sales_Item_TotOutCost;
-	private ProductDTO 	productDto;
+	private ProductDTO 		productDto;
 	
 }

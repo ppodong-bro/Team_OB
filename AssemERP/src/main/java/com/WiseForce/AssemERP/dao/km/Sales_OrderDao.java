@@ -30,5 +30,7 @@ public interface Sales_OrderDao {
 
 	List<Sales_ItemDto> 	salesItemList(Sales_OrderDto sales_OrderDto);
 
+	void 					modifyStatus(Sales_OrderDto sales_OrderDto, List<Sales_ItemDto> salesItemList);
+
 
 }
