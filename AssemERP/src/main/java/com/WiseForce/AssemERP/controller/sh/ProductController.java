@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.WiseForce.AssemERP.domain.sh.Product;
+import com.WiseForce.AssemERP.dto.dg.InventoryInfoDTO;
 import com.WiseForce.AssemERP.dto.sh.PartsDTO;
 import com.WiseForce.AssemERP.dto.sh.ProductBomDTO;
 import com.WiseForce.AssemERP.dto.sh.ProductDTO;
 import com.WiseForce.AssemERP.dto.sm.EmpDTO;
+import com.WiseForce.AssemERP.service.dg.InventoryService;
 import com.WiseForce.AssemERP.service.sh.ProductService;
 import com.WiseForce.AssemERP.service.sm.EmpService;
 import com.WiseForce.AssemERP.util.CustomFileUtil;
@@ -34,7 +36,8 @@ public class ProductController {
 	private final ProductService productService;
 	private final CustomFileUtil fileUtil;
 	private final EmpService empService;
-
+	private final InventoryService inventoryService;
+	
 	@GetMapping("productList")
 	public String productListPage(ProductDTO productDTO, Model model) {
 		// Del_status가 0인 부품총량 가져오기
@@ -199,6 +202,25 @@ public class ProductController {
 	
 	@GetMapping("productDetail/{product_no}")
 	public String productDetail(@PathVariable(name = "product_no") int product_no, Model model ) {
+		
+		ProductDTO productDTO = productService.getfindById(product_no);
+		List<ProductBomDTO> productBomDTOs = productService.getBomInfo(product_no);
+		
+
+		// 부품의 Type, No로 실재고 가져오기 
+		InventoryInfoDTO inventoryInfoDTOFrom = InventoryInfoDTO.builder()
+				.item_type(1)
+				.item_no(productDTO.getProduct_no())
+				.build();
+		InventoryInfoDTO inventoryInfoDTOTo = inventoryService.getRealInventoryById(inventoryInfoDTOFrom);
+		
+		productDTO.setReal_stuck(inventoryInfoDTOTo.getCnt());
+		
+		System.out.println("PartsController partsDetail inventoryInfoDTOTo.getCnt() => "+inventoryInfoDTOTo.getCnt());
+		
+		model.addAttribute("productDTO", productDTO);
+		model.addAttribute("productBomDTOs", productBomDTOs);
+		
 		
 		return "sh/prodcutDetail";
 	}

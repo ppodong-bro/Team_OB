@@ -20,4 +20,6 @@ public interface PartsDao {
 
 	int getTotalParts();
 
+	String partsNameFromPartno(Integer parts_no);
+
 }
