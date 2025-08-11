@@ -33,7 +33,6 @@ body {
 .image-box img {
 	width: 100%;
 	height: 100%;
-	object-fit: cover; /* 비율 유지 + 잘라서 꽉 채움 */
 	display: block; /* 여백 제거 */
 }
 .parent-container {
@@ -164,7 +163,7 @@ body {
 											<span class="input-group-text autospace"
 												style="width: 100px; display: flex; justify-content: center;">제품설명</span>
 											<textarea class="form-control form-control-sm" rows="8"
-												id="productContext" name="product_context"
+												id="productContext" name="product_context" readonly="readonly"
 												placeholder="설명란에 정보를 입력해주세요">${productDTO.product_context }</textarea>
 										</div>
 									</div>
@@ -176,23 +175,23 @@ body {
 												<span class="input-group-text autospace"
 													style="width: 100px; display: flex; justify-content: center;">재고</span>
 												<input type="text" class="form-control form-control-sm"
-													id="" name="" value="" readonly="readonly">
+													id="real_stuck" name="real_stuck" value="${productDTO.real_stuck }" readonly="readonly">
 											</div>
 
 											<!-- 최근거래가 -->
 											<div class="input-group">
 												<span class="input-group-text autospace"
-													style="width: 100px; display: flex; justify-content: center;">최근거래가</span>
+													style="width: 150px; display: flex; justify-content: center;">최근 1개월 거래가</span>
 												<input type="text" class="form-control form-control-sm"
-													id="" name="" value="" readonly="readonly">
+													id="recent_cost" name="recent_cost" value="${productDTO.recent_cost}" readonly="readonly">
 											</div>
 
 											<!-- 최근판매량 -->
 											<div class="input-group">
 												<span class="input-group-text autospace"
-													style="width: 100px; display: flex; justify-content: center;">최근판매량</span>
+													style="width: 150px; display: flex; justify-content: center;">최근 1개월 판매량</span>
 												<input type="text" class="form-control form-control-sm"
-													id="" name="" value="" readonly="readonly">
+													id="recent_tradeCnt" name="recent_tradeCnt" value="${productDTO.recent_tradeCnt }" readonly="readonly">
 											</div>
 										</div>
 									</div>
@@ -207,24 +206,19 @@ body {
 									<div
 										class="d-flex justify-content-between align-items-center mb-3">
 										<h5 class="mb-0">제품 구성</h5>
-										<button type="button" class="btn btn-primary" id="addRowBtn">
-											<i class="bi bi-plus-lg"></i>부품 추가
-										</button>
 									</div>
 
 									<table class="table table-bordered" id="bomTable">
 										<colgroup>
+											<col style="width: 30%;">
+											<col style="width: 50%;">
 											<col style="width: 20%;">
-											<col style="width: 5%;">
-											<col style="width: 15%;">
-											<col style="width: 10%;">
 										</colgroup>
 										<thead>
 											<tr style="text-align: center;">
 												<th>부품구분</th>
 												<th>부품명</th>
 												<th>수량</th>
-												<th>삭제</th>
 											</tr>
 										</thead>
 										<tbody id="bomTableBody">
@@ -233,46 +227,20 @@ body {
 												<tr>
 													<!-- 부품구분 -->
 													<td><select class="form-select" required>
-															<option value="">선택</option>
-															<option value="0"
-																${bom.parts_status == 0 ? 'selected' : ''}>메인보드</option>
-															<option value="1"
-																${bom.parts_status == 1 ? 'selected' : ''}>CPU</option>
-															<option value="2"
-																${bom.parts_status == 2 ? 'selected' : ''}>GPU</option>
-															<option value="3"
-																${bom.parts_status == 3 ? 'selected' : ''}>메모리</option>
-															<option value="4"
-																${bom.parts_status == 4 ? 'selected' : ''}>POWER</option>
-															<option value="5"
-																${bom.parts_status == 5 ? 'selected' : ''}>HDD</option>
-															<option value="6"
-																${bom.parts_status == 6 ? 'selected' : ''}>SDD</option>
-															<option value="7"
-																${bom.parts_status == 7 ? 'selected' : ''}>CASE</option>
-															<option value="8"
-																${bom.parts_status == 8 ? 'selected' : ''}>COOLER</option>
+															<option value="${bom.parts_status }">${bom.parts_statusName}</option>
+															
 													</select></td>
 
 													<!-- 부품명 -->
 													<td><select class="form-select" required>
 															<option value="${bom.parts_no}">${bom.parts_name}</option>
-															<c:forEach var="partsDTO" items="${partsDTOs}">
-																<option value="${partsDTO.parts_no}"
-																	${partsDTO.parts_no == bom.parts_no ? 'selected' : ''}>
-																	${partsDTO.parts_name}</option>
-															</c:forEach>
 													</select></td>
 
 													<!-- 수량 -->
 													<td><input type="number" class="form-control"
-														value="${bom.cnt}" min="1" required /></td>
+														value="${bom.cnt}" min="1" required readonly="readonly" /></td>
 
-													<!-- 삭제 버튼 -->
-													<td>
-														<button type="button" class="btn btn-danger"
-															onclick="handleRowDelete(this)">삭제</button>
-													</td>
+													
 												</tr>
 											</c:forEach>
 										</tbody>
@@ -291,7 +259,7 @@ body {
 										</button>
 									</div>
 									<div class="col-md-8 d-grid">
-										<button type="submit" class="btn btn-success">
+										<button type="button" id="moditfyBtn" class="btn btn-success">
 											<i class="bi bi-check-lg me-2"></i>정보 수정
 										</button>
 									</div>
@@ -302,6 +270,12 @@ body {
 				                  	------------------------------------------------------------------------------%>
 							<form id="deleteForm" action="/product/productDeletePro"
 								method="post" class="d-none">
+								<input type="hidden" name="${_csrf.parameterName}"
+									value="${_csrf.token}" /> <input type="hidden"
+									name="product_no" value="${productDTO.product_no}">
+							</form>
+							<form id="modifyForm" action="/product/productModify/${productDTO.product_no }"
+								method="get" class="d-none">
 								<input type="hidden" name="${_csrf.parameterName}"
 									value="${_csrf.token}" /> <input type="hidden"
 									name="product_no" value="${productDTO.product_no}">
@@ -321,7 +295,22 @@ body {
 	<jsp:include page="/common_cdn.jsp" />
 
 	<script>
-
+	// 삭제버튼 링크
+	const deleteBtn = document.getElementById('deleteBtn');
+    if(deleteBtn) {
+        deleteBtn.addEventListener('click', function() {
+            if(confirm('정말로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+                document.getElementById('deleteForm').submit();
+            }
+        });
+    }
+ 	// 수정버튼 링크
+    const moditfyBtn = document.getElementById('moditfyBtn');
+    if(moditfyBtn) {
+    	moditfyBtn.addEventListener('click', function() {
+                document.getElementById('modifyForm').submit();
+        });
+    }
 </script>
 </body>
 </html>

@@ -49,9 +49,18 @@ public class ProductDTO {
     // 이미지 file업로드용
     private MultipartFile file;
 
+    // 재고
+    private int real_stuck;
+    
     // 사원명파싱 
     private String emp_name;
 
+    // 최근거래가
+    private int recent_cost;
+    
+    // 최근거래량
+    private int recent_tradeCnt;
+    
     public static ProductDTO chageProductDTO(Product product) {
     	return ProductDTO.builder()
     			.product_no(product.getProduct_no())

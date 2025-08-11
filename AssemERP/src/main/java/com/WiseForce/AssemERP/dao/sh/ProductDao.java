@@ -25,4 +25,8 @@ public interface ProductDao {
 
 	int getTotalProduct();
 
+	int getProductRecentCost(int product_no);
+
+	int getProductRecentTradeCnt(int product_no);
+
 }

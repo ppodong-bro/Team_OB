@@ -117,6 +117,21 @@ public class PartsDaoImpl implements PartsDao {
 	}
 
 
+	@Override
+	public String partsNameFromPartno(Integer parts_no) {
+		String part_name = null;
+		
+		try {
+			part_name = session.selectOne("shPartsNameFromPartsno", parts_no);
+			System.out.println("PartsDaoImpl partsNameFromPartno part_name => "+part_name);
+		} catch (Exception e) {
+			System.out.println("PartsDaoImpl partsNameFromPartno Exception => "+e.getMessage());
+		}
+		
+		return part_name;
+	}
+
+
 
 
 }
