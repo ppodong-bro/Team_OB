@@ -1,5 +1,6 @@
 package com.WiseForce.AssemERP.dto.dg;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
@@ -31,6 +32,8 @@ public class InventoryDTO {
 	private String order_no_text;
 	private int item_status_select = 999;
 	private String item_no_text;
+	private LocalDate startDate; // 마감 검색 시작일
+	private LocalDate endDate; // 마감 검색 종료일
 
 	// 페이지
 	private int start;// 재고 번호 시작

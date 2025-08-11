@@ -100,6 +100,14 @@ const itemStatusSelect = ${search.item_status_select != null ? search.item_statu
 											</select> <input type="text" name="item_no_text" class="form-control" placeholder="재고 명 입력" value="${search.item_no_text }">
 										</div>
 									</div>
+									<!-- 입출고일시 -->
+									<div class="col-auto d-flex gap-1">
+										<div class="input-group input-group-sm" style="width: auto;">
+											<span class="input-group-text">입출고일시</span> <input type="date" id="startDate" name="startDate" class="form-control form-control-sm"
+												value="${search.startDate }">
+											<span class="px-1">~</span> <input type="date" id="endDate" name="endDate" class="form-control form-control-sm" value="${search.endDate }">
+										</div>
+									</div>
 									<!-- 검색 버튼 -->
 									<div class="col-auto">
 										<button type="submit" class="btn btn-secondary btn-sm text-nowrap">
@@ -182,6 +190,12 @@ const itemStatusSelect = ${search.item_status_select != null ? search.item_statu
 							</c:if>
 							<c:if test="${not empty search.item_no_text}">
 								<c:set var="pagingPath" value="${pagingPath}&item_no_text=${search.item_no_text}" />
+							</c:if>
+							<c:if test="${not empty search.startDate}">
+								<c:set var="pagingPath" value="${pagingPath}&startDate=${search.startDate}" />
+							</c:if>
+							<c:if test="${not empty search.endDate}">
+								<c:set var="pagingPath" value="${pagingPath}&endDate=${search.endDate}" />
 							</c:if>
 
 							<nav aria-label="Page navigation">

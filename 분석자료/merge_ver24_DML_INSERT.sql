@@ -1198,39 +1198,61 @@ VALUES (3010, 10, 14, 0, 1190);
 
 COMMIT;
 /
-/* 2407부터 현재까지 월마감 시작 */
+/* 2406부터 현재까지 월마감 시작 */
+--DECLARE
+--    v_result VARCHAR2(100);
+--    v_yymm   VARCHAR2(4);
+--    v_start  VARCHAR2(4) := '2406';  -- 시작 월
+--    v_end    VARCHAR2(4) := TO_CHAR(SYSDATE, 'YYMM');  -- 오늘 기준 YYMM
+--BEGIN
+--    v_yymm := v_start;
+--
+--    WHILE v_yymm <= v_end LOOP
+--        month_close.month_close_main(
+--            p_sum_yymm     => v_yymm,
+--            p_regi_emp_no  => '1001',
+--            p_real         => '2',
+--            p_result       => v_result
+--        );
+--        DBMS_OUTPUT.PUT_LINE('[' || v_yymm || '] 실행 결과: ' || v_result);
+--        -- 다음 월 계산
+--        DECLARE
+--            v_year NUMBER;
+--            v_month NUMBER;
+--        BEGIN
+--            v_year  := TO_NUMBER(SUBSTR(v_yymm, 1, 2));
+--            v_month := TO_NUMBER(SUBSTR(v_yymm, 3, 2));
+--
+--            v_month := v_month + 1;
+--            IF v_month > 12 THEN
+--                v_month := 1;
+--                v_year := v_year + 1;
+--            END IF;
+--
+--            v_yymm := LPAD(v_year, 2, '0') || LPAD(v_month, 2, '0');
+--        END;
+--    END LOOP;
+--END;
+/* 240601부터 현재까지 일마감 시작 */
 DECLARE
     v_result VARCHAR2(100);
-    v_yymm   VARCHAR2(4);
-    v_start  VARCHAR2(4) := '2406';  -- 시작 월
-    v_end    VARCHAR2(4) := TO_CHAR(SYSDATE, 'YYMM');  -- 오늘 기준 YYMM
+    v_yymmdd   VARCHAR2(6);
+    v_start  VARCHAR2(6) := '240601';  -- 시작 일
+    v_end    VARCHAR2(6) := TO_CHAR(SYSDATE, 'YYMMDD');  -- 오늘 기준 YYMM
 BEGIN
-    v_yymm := v_start;
+    v_yymmdd := v_start;
 
-    WHILE v_yymm <= v_end LOOP
-        month_close.month_close_main(
-            p_sum_yymm     => v_yymm,
+    WHILE v_yymmdd <= v_end LOOP
+        day_close.day_close_main(
+            p_yymmdd   => v_yymmdd,  -- 파라미터명 변경: p_sum_yymm → p_sum_yymmdd
             p_regi_emp_no  => '1001',
             p_real         => '2',
             p_result       => v_result
         );
-        DBMS_OUTPUT.PUT_LINE('[' || v_yymm || '] 실행 결과: ' || v_result);
-        -- 다음 월 계산
-        DECLARE
-            v_year NUMBER;
-            v_month NUMBER;
-        BEGIN
-            v_year  := TO_NUMBER(SUBSTR(v_yymm, 1, 2));
-            v_month := TO_NUMBER(SUBSTR(v_yymm, 3, 2));
-
-            v_month := v_month + 1;
-            IF v_month > 12 THEN
-                v_month := 1;
-                v_year := v_year + 1;
-            END IF;
-
-            v_yymm := LPAD(v_year, 2, '0') || LPAD(v_month, 2, '0');
-        END;
+        DBMS_OUTPUT.PUT_LINE('[' || v_yymmdd || '] 실행 결과: ' || v_result);
+        
+        -- 다음 일자 계산 (이 부분이 핵심!)
+        v_yymmdd := TO_CHAR(TO_DATE(v_yymmdd, 'YYMMDD') + 1, 'YYMMDD');
     END LOOP;
 END;
 /
