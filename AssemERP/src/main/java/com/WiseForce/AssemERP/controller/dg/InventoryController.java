@@ -9,6 +9,7 @@ import java.util.Map;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.WiseForce.AssemERP.dto.dg.InventoryDTO;
+import com.WiseForce.AssemERP.dto.dg.InventoryInfoDTO;
 import com.WiseForce.AssemERP.dto.dg.Inventory_CloseDTO;
 import com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO;
 import com.WiseForce.AssemERP.service.dg.InventoryService;
@@ -51,23 +53,28 @@ public class InventoryController {
 	}
 	
 	@GetMapping("/inventory/adjust")
-	public String inventoryAdjust_Get(Real_InventoryDTO real_InventoryDTO, Model model) {
+	public String inventoryAdjust_Get(InventoryInfoDTO inventoryInfoDTO, Model model) {
 		// 재고 정보 조회하기(item_type, item_no만 사용)
-		Real_InventoryDTO target_Real_InventoryDTO = inventoryService.getRealInventoryById(real_InventoryDTO);
+		InventoryInfoDTO target_InventoryInfoDTO = inventoryService.getRealInventoryById(inventoryInfoDTO);
 		
-		model.addAttribute("inventory", target_Real_InventoryDTO);
+		model.addAttribute("inventory", target_InventoryInfoDTO);
 		
 		// 재고 조정 화면 이동
 		return "dg/inventoryAdjust";
 	}
 
 	@PostMapping("/inventory/adjust")
-	public String inventoryAdjust_Post(Real_InventoryDTO real_InventoryDTO, Model model) {
-		// DB에 재고 조정 이력 남기기
-		System.out.println("123");
+	public String inventoryAdjust_Post(InventoryInfoDTO inventoryInfoDTO, Model model) {
+		System.out.println(inventoryInfoDTO);
 		
-		// PostMapping은 재고 조정 화면 이동
-		return "redirect:/dg/inventoryList";
+		// 재고 실 수량 조정
+		boolean result = inventoryService.adjustRealInventoryById(inventoryInfoDTO);
+		
+
+		// 검색 및 페이징 정보 그대로
+		
+		// PostMapping은 redirect로 재고 조정 화면 이동
+		return "redirect:/inventory";
 	}
 	
 	@GetMapping("/inventory/history")

@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
+import com.WiseForce.AssemERP.dto.dg.InventoryInfoDTO;
 import com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO;
 
 import lombok.RequiredArgsConstructor;
@@ -39,7 +40,7 @@ public class InventoryDaoImpl implements InventoryDao {
 	// 현재 재고 조회 함수 실행
 	@Override
 	public Real_InventoryDTO getRealInventoryById(Real_InventoryDTO real_InventoryDTO) {
-		Real_InventoryDTO target_Real_InventoryDTO = session.selectOne("com.WiseForce.AssemERP.dg.InventoryMapper.callCalcRealInventoryById", real_InventoryDTO);
+		Real_InventoryDTO target_Real_InventoryDTO = session.selectOne("com.WiseForce.AssemERP.dg.InventoryMapper.callCalcRealInventoryAllById", real_InventoryDTO);
 		
 		return target_Real_InventoryDTO;
 	}
@@ -63,5 +64,13 @@ public class InventoryDaoImpl implements InventoryDao {
 	    } else {
 	        return false;
 	    }
+	}
+
+	// 재고 상세 정보 조회
+	@Override
+	public InventoryInfoDTO getInventoryInfoById(InventoryInfoDTO inventoryInfoDTO) {
+		InventoryInfoDTO target_InventoryInfoDTO = session.selectOne("com.WiseForce.AssemERP.dg.InventoryMapper.getInventoryInfoById", inventoryInfoDTO);
+		
+		return target_InventoryInfoDTO;
 	}
 }

@@ -138,17 +138,17 @@
 							<!-- 검색 폼 마지막 -->
 							<!-- List 테이블 시작 -->
 							<div class="table-responsive">
-								<table class="table table-bordered align-middle">
+								<table class="table table-bordered align-middle list-table">
 									<thead class="table-light">
 										<tr>
-											<th class="text-center" style="white-space: nowrap;">#</th>
-											<th class="text-center" style="white-space: nowrap;">${item_type }번호</th>
-											<th class="text-center" style="min-width: 115px; white-space: nowrap;">${item_type }구분</th>
-											<th class="text-center" style="white-space: nowrap;">${item_type }명</th>
-											<th class="text-center" style="white-space: nowrap;">수량</th>
-											<th class="text-center" style="white-space: nowrap;">수정</th>
-											<th class="text-center" style="display: none;">적정 수량</th>
-											<th class="text-center" style="display: none;">편차</th>
+											<th style="width: 50px;">#</th>
+											<th style="width: 85px;">${item_type }번호</th>
+											<th style="width: 85px;">${item_type }구분</th>
+											<th style="min-width: 250px;">${item_type }명</th>
+											<th style="width: 100px;">수량</th>
+											<th style="width: 85px;">수정</th>
+											<th style="display: none;">적정 수량</th>
+											<th style="display: none;">편차</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -159,11 +159,10 @@
 												<td class="text-center">${realInventory.item_status}</td>
 												<td>${realInventory.item_name}</td>
 												<td class="text-center">${realInventory.cnt}</td>
-												<td class="text-center">
-					                                <a href="${pageContext.request.contextPath}/inventory/adjust?item_type=${search.item_type}&item_no=${realInventory.item_no}" class="btn btn-sm btn-outline-success">
-					                                    <i class="bi bi-pencil-square"></i> 수정
-					                                </a>
-				                                </td>
+												<td class="text-center"><a
+													href="${pageContext.request.contextPath}/inventory/adjust?item_type=${search.item_type}&item_no=${realInventory.item_no}"
+													class="btn btn-sm btn-outline-success"> <i class="bi bi-pencil-square"></i> 수정
+												</a></td>
 												<td class="text-center" style="display: none;">${realInventory.proper_cnt}</td>
 												<td class="text-center" style="display: none;">${realInventory.diff_cnt}</td>
 											</tr>

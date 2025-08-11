@@ -253,14 +253,14 @@ $(document).ready(function() {
 
 							<!-- List 테이블 시작 -->
 							<div class="table-responsive">
-								<table class="table table-bordered align-middle">
+								<table class="table table-bordered align-middle list-table">
 									<thead class="table-light">
 										<tr>
-											<th class="text-center" style="white-space: nowrap;">년월</th>
-											<th class="text-center" style="white-space: nowrap;">시작일시</th>
-											<th class="text-center" style="white-space: nowrap;">종료일시</th>
-											<th class="text-center" style="white-space: nowrap;">마감 상태</th>
-											<th class="text-center" style="white-space: nowrap;">담당자</th>
+											<th style="min-width: 85px;">년월</th>
+											<th>시작일시</th>
+											<th>종료일시</th>
+											<th style="min-width: 120px;">마감 상태</th>
+											<th style="min-width: 85px;">담당자</th>
 										</tr>
 									</thead>
 									<tbody>

@@ -112,17 +112,17 @@ const itemStatusSelect = ${search.item_status_select != null ? search.item_statu
 
 							<!-- List 테이블 시작 -->
 							<div class="table-responsive">
-								<table class="table table-bordered align-middle">
+								<table class="table table-bordered align-middle list-table">
 									<thead class="table-light">
 										<tr>
-											<th class="text-center" style="white-space: nowrap;">#</th>
-											<th class="text-center" style="white-space: nowrap;">거래 구분</th>
-											<th class="text-center" style="white-space: nowrap;">거래 번호</th>
-											<th class="text-center" style="white-space: nowrap;">재고 구분</th>
-											<th class="text-center" style="white-space: nowrap;">재고 명</th>
-											<th class="text-center" style="white-space: nowrap;">총수량</th>
-											<th class="text-center" style="white-space: nowrap;">변동수량</th>
-											<th class="text-center" style="white-space: nowrap;">입출고 일시</th>
+											<th>#</th>
+											<th style="width: 85px;">거래 구분</th>
+											<th style="width: 85px;">거래 번호</th>
+											<th style="width: 85px;">재고 구분</th>
+											<th style="min-width: 250px;">재고 명</th>
+											<th style="width: 85px;">총수량</th>
+											<th style="width: 85px;">변동수량</th>
+											<th>입출고 일시</th>
 										</tr>
 									</thead>
 									<tbody>

@@ -1,6 +1,8 @@
 package com.WiseForce.AssemERP.service.dg;
 
+import java.io.Console;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -13,12 +15,16 @@ import com.WiseForce.AssemERP.dao.dg.InventoryDao;
 import com.WiseForce.AssemERP.domain.dg.Common;
 import com.WiseForce.AssemERP.domain.dg.Common_ID;
 import com.WiseForce.AssemERP.domain.dg.Inventory;
+import com.WiseForce.AssemERP.domain.dg.Inventory_Adjust;
 import com.WiseForce.AssemERP.domain.dg.Inventory_Close;
 import com.WiseForce.AssemERP.dto.dg.InventoryDTO;
+import com.WiseForce.AssemERP.dto.dg.InventoryInfoDTO;
+import com.WiseForce.AssemERP.dto.dg.Inventory_AdjustDTO;
 import com.WiseForce.AssemERP.dto.dg.Inventory_CloseDTO;
 import com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO;
 import com.WiseForce.AssemERP.repository.dg.CommonRepository;
 import com.WiseForce.AssemERP.repository.dg.EmpRepository;
+import com.WiseForce.AssemERP.repository.dg.InventoryAdjustRepository;
 import com.WiseForce.AssemERP.repository.dg.InventoryCloseRepository;
 import com.WiseForce.AssemERP.repository.dg.InventoryRepository;
 
@@ -35,11 +41,10 @@ public class InventoryServiceImpl implements InventoryService {
 	private final EmpRepository empRepository;
 
 	// 재고
-	private final InventoryRepository inventoryRepository;
 	private final InventoryDao inventoryDao;
-
-	// 월마감
-	private final InventoryCloseRepository inventoryCloseRepository;
+	private final InventoryRepository inventoryRepository;
+	private final InventoryAdjustRepository inventoryAdjustRepository; // 재고 조정
+	private final InventoryCloseRepository inventoryCloseRepository; // 월마감
 
 	// 전체 재고의 종류 수 조회
 	@Override
@@ -59,14 +64,46 @@ public class InventoryServiceImpl implements InventoryService {
 		return real_InventoryDTOs;
 	}
 
-	// 현재 재고 조회
+	// 재고 상세 조회
 	@Override
-	public Real_InventoryDTO getRealInventoryById(Real_InventoryDTO real_InventoryDTO) {
-		Real_InventoryDTO target_Real_InventoryDTO = inventoryDao.getRealInventoryById(real_InventoryDTO);
+	public InventoryInfoDTO getRealInventoryById(InventoryInfoDTO inventoryInfoDTO) {
+		// 상세 정보 가져오기
+		InventoryInfoDTO target_InventoryInfoDTO = inventoryDao.getInventoryInfoById(inventoryInfoDTO);
 		
-		return target_Real_InventoryDTO;
+		return target_InventoryInfoDTO;
 	}
 	
+	// 재고 실 수량 조정
+	@Override
+	public boolean adjustRealInventoryById(InventoryInfoDTO inventoryInfoDTO) {
+		int currCnt = inventoryInfoDTO.getCnt();
+		int nextCnt = inventoryInfoDTO.getItem_adjustcnt();
+		
+		// 상세 정보 가져오기
+		InventoryInfoDTO target_InventoryInfoDTO = inventoryDao.getInventoryInfoById(inventoryInfoDTO);
+		
+		System.out.println(inventoryInfoDTO);
+		System.out.println(target_InventoryInfoDTO);
+		System.out.println(currCnt < nextCnt ? 0/*IN*/ : 1/*OUT*/);
+		System.out.println(Math.abs(currCnt - nextCnt));
+		
+		// 재고 조정 Entity 생성
+		Inventory_Adjust inventory_Adjust = Inventory_Adjust.builder()
+				.adjust_status(6) // 조정 구분 : 조정
+				.item_status(target_InventoryInfoDTO.getItem_type())
+				.item_no(target_InventoryInfoDTO.getItem_no())
+				.inout_status(currCnt < nextCnt ? 0/*IN*/ : 1/*OUT*/)
+				.item_cnt(Math.abs(currCnt - nextCnt))
+				.inout_date(LocalDateTime.now())
+				.item_close_status(2/*완료*/)
+				.build();
+
+		// 재고 조정 Entity 저장
+		inventoryAdjustRepository.save(inventory_Adjust);
+		
+		return true;
+	}
+
 	// 재고 입출고 이력 목록 수 조회
 	@Override
 	public int getInventoryHistoryCnt(InventoryDTO inventoryDTO) {
@@ -123,4 +160,5 @@ public class InventoryServiceImpl implements InventoryService {
 		// 월마감 패키지 실행
 		return inventoryDao.doMonthClose(yearMonth, empno, realStatus);
 	}
+
 }

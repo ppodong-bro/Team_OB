@@ -12,13 +12,7 @@ html, body {
 }
 
 #side {
-	width: 100px;
-}
-/* lg 이상: 화면 너비가 992px 이상일 때 */
-@media (min-width: 992px) {
-  #side {
     width: 250px;
-  }
 }
 
 #main-area {
@@ -37,7 +31,7 @@ html, body {
 
 .sidebar {
 	position: sticky;
-	width: full;
+	width: calc(100% - 20px);
 	height: 100vh;
 	top: 0;
 	left: 0;
@@ -79,7 +73,7 @@ html, body {
 
 .minisidebar {
 	position: sticky;
-	width: full;
+	width: calc(100% - 20px);
 	height: 100vh;
 	top: 0;
 	left: 0;
@@ -105,6 +99,20 @@ html, body {
 
 .minisidebar .link-body-emphasis:hover {
   background-color: #e9ecef; /* 배경색 변경 */
+}
+
+.sidebartoggle {
+	position: sticky;
+	width: 20px;
+	height: 100vh;
+	top: 0;
+  	background-color: #e9ecef; /* 배경색 변경 */
+	border-right: 1px solid #dee2e6;
+	z-index: 1100;
+	cursor: default;
+	display: flex; /* Flexbox 사용 */
+	align-items: center; /* 수직 방향 중앙 정렬 */
+	justify-content: center; /* 수평 방향 중앙 정렬 */
 }
 
 .header {
