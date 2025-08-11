@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.WiseForce.AssemERP.dg.InventoryMapper">
-
 	<select id="callCalcRealInventoryAllCnt" statementType="CALLABLE"
 		parameterType="com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO"
 		resultType="int">
@@ -30,15 +29,17 @@
 	        END
 	    AND I.item_status_no = C.middle_status
 		WHERE item_type = #{item_type} 
-		<if test="item_no_text != null and item_no_text != ''">
-		    AND item_no = #{item_no_text}
-		</if>
-		<if test="item_status_select != 999">
-		    AND item_status_no = #{item_status_select}
-		</if>
-		<if test="item_name_text != null and item_name_text != ''">
-		    AND item_name LIKE '%' || #{item_name_text} || '%'
-		</if>
+		<where>
+			<if test="item_no_text != null and item_no_text != ''">
+			    AND item_no = #{item_no_text}
+			</if>
+			<if test="item_status_select != 999">
+			    AND item_status_no = #{item_status_select}
+			</if>
+			<if test="item_name_text != null and item_name_text != ''">
+			    AND item_name LIKE '%' || #{item_name_text} || '%'
+			</if>
+		</where>
 	</select>
 	
 	<select id="callCalcRealInventoryAll" statementType="CALLABLE"
@@ -87,11 +88,12 @@
 		WHERE rn BETWEEN #{start} and #{end}
 	</select>
 	
-	<select id="callCalcRealInventoryById" statementType="CALLABLE"
+	<select id="callCalcRealInventoryAllById" statementType="CALLABLE"
 		parameterType="com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO"
 		resultType="com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO">
-		SELECT * FROM TABLE(calc_real_inventory(#{item_type}))
-		WHERE item_no = #{item_no}
+		SELECT * FROM TABLE(calc_real_inventory_all())
+		WHERE item_status = #{item_type}
+		AND item_no = #{item_no}
 	</select>
 
 	<!-- {전체} : 로 CallableStatement용 SQL이라는것을 명확히 함 -->
@@ -103,4 +105,27 @@
 		#{result, mode=OUT, jdbcType=VARCHAR}
 		) }
 	</select>
+	
+	<select id="getInventoryInfoById" statementType="CALLABLE"
+		parameterType="com.WiseForce.AssemERP.dto.dg.InventoryInfoDTO"
+		resultType="com.WiseForce.AssemERP.dto.dg.InventoryInfoDTO">
+		SELECT * FROM (
+			SELECT RI.item_status AS item_type, RI.item_no,
+			       NVL(PA.parts_status, PR.product_status) AS item_status,
+			       NVL(PA.parts_name, PR.product_name) AS item_name,
+			       RI.cnt
+			FROM (SELECT * FROM TABLE(calc_real_inventory_all())) RI
+			LEFT JOIN  
+				(SELECT product_no, product_status, product_name FROM product) PR 
+				ON RI.item_status = 1 
+				AND RI.item_no = PR.product_no
+			LEFT JOIN 
+				(SELECT parts_no, parts_status, parts_name FROM parts) PA 
+				ON RI.item_status = 0 
+				AND RI.item_no = PA.parts_no
+		)
+		WHERE item_type = #{item_type} 
+		AND item_no = #{item_no}
+	</select>
+	
 </mapper>

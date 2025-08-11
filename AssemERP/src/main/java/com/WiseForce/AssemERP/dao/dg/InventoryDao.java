@@ -2,6 +2,7 @@ package com.WiseForce.AssemERP.dao.dg;
 
 import java.util.List;
 
+import com.WiseForce.AssemERP.dto.dg.InventoryInfoDTO;
 import com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO;
 
 public interface InventoryDao {
@@ -16,6 +17,9 @@ public interface InventoryDao {
 	
 	// 월마감 패키지 실행
 	boolean doMonthClose(String yearMonth, int empno, int realStatus);
+
+	// 재고 상세 정보 조회
+	InventoryInfoDTO getInventoryInfoById(InventoryInfoDTO inventoryInfoDTO);
 
 
 

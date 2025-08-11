@@ -158,6 +158,7 @@ COMMENT ON COLUMN product.in_date IS '등록일자';
 
 /* 제품_BOM *******************************************************************/
 CREATE TABLE product_BOM (
+	product_version NUMBER(7) NOT NULL, /* 제품버전 */
 	product_no NUMBER(7) NOT NULL, /* 제품번호 */
 	parts_no NUMBER(7) NOT NULL, /* 부품번호 */
 	cnt NUMBER(10) /* 부품수량 */
@@ -165,6 +166,7 @@ CREATE TABLE product_BOM (
 
 CREATE UNIQUE INDEX PK_product_BOM
 	ON product_BOM (
+        product_version ASC, 
 		product_no ASC,
 		parts_no ASC
 	);
@@ -173,11 +175,14 @@ ALTER TABLE product_BOM
 	ADD
 		CONSTRAINT PK_product_BOM
 		PRIMARY KEY (
+			product_version,
 			product_no,
 			parts_no
 		);
 
 COMMENT ON TABLE product_BOM IS '제품_BOM';
+
+COMMENT ON COLUMN product_BOM.product_version IS '제품버전';
 
 COMMENT ON COLUMN product_BOM.product_no IS '제품번호';
 
@@ -784,7 +789,7 @@ COMMENT ON COLUMN Client_perform.total_amt IS '총액';
 
 /* 수불마감 *******************************************************************/
 CREATE TABLE inventory_close (
-	yearmonth VARCHAR2(4) NOT NULL, /* 년월 */
+	yearmonth VARCHAR2(6) NOT NULL, /* 년월 */
 	close_status NUMBER(1), /* 마감완료여부 */
 	close_startdate DATE, /* 마감시작일시 */
 	close_enddate DATE, /* 마감종료일시 */
@@ -1514,11 +1519,11 @@ IS
         SELECT 
             M.item_status,
             M.item_no, 
-            SUM(M.cnt) AS inventory_cnt, 
+            AVG(M.cnt) AS inventory_cnt, 
             NVL(SUM(P.cnt),0) AS purchase_cnt, 
             NVL(SUM(S.cnt),0) AS sales_cnt, 
-            NVL(AVG(II.cnt),0) AS item_in, 
-            NVL(AVG(IO.cnt),0) AS item_out
+            NVL(SUM(II.cnt),0) AS item_in, 
+            NVL(SUM(IO.cnt),0) AS item_out
         FROM 
             (SELECT item_status, item_no, cnt
             FROM month_inventory
@@ -1527,35 +1532,39 @@ IS
             ) M 
             -- 수주
             LEFT JOIN
-            (SELECT 1 AS item_status, product_no AS item_no, sales_item_outcnt AS cnt FROM sales_item 
+            (SELECT 1 AS item_status, product_no AS item_no, SUM(sales_item_outcnt) AS cnt FROM sales_item 
             WHERE sales_no IN ( 
                 SELECT sales_no FROM sales_order WHERE out_status IN (2/*완료*/)
                 )
+            GROUP BY product_no
             ) S 
             ON M.item_status = S.item_status
             AND M.item_no = S.item_no
             -- 발주
             LEFT JOIN 
-            (SELECT 0 AS item_status, parts_no AS item_no, purchase_item_incnt AS cnt FROM purchase_item 
+            (SELECT 0 AS item_status, parts_no AS item_no, SUM(purchase_item_incnt) AS cnt FROM purchase_item 
             WHERE purchase_no IN (
                 SELECT purchase_no FROM purchase_order WHERE in_status IN (2/*완료*/)
                 )
+            GROUP BY parts_no
             ) P 
             ON M.item_status = P.item_status
             AND M.item_no = P.item_no
             -- 조정(+)
             LEFT JOIN 
-            (SELECT item_status, item_no, item_cnt AS cnt FROM inventory_adjust 
+            (SELECT item_status, item_no, SUM(item_cnt) AS cnt FROM inventory_adjust 
             WHERE item_close_status IN (2/*완료*/)
             AND inout_status = 0/*IN*/
+            GROUP BY item_status, item_no
             ) II 
             ON M.item_status = II.item_status
             AND M.item_no = II.item_no
             -- 조정(-)
             LEFT JOIN 
-            (SELECT item_status, item_no, item_cnt AS cnt FROM inventory_adjust 
+            (SELECT item_status, item_no, SUM(item_cnt) AS cnt FROM inventory_adjust 
             WHERE item_close_status IN (2/*완료*/)
             AND inout_status = 1/*OUT*/
+            GROUP BY item_status, item_no
             ) IO 
             ON M.item_status = IO.item_status
             AND M.item_no = IO.item_no
@@ -1665,13 +1674,22 @@ BEGIN
         END IF;
         -- 내부 맵에 item_no가 존재하는지 확인
         IF NOT v_totalcnt_map(rec_inven.item_status).EXISTS(rec_inven.item_no) THEN
-            -- DB에서 가장 최근 totalcnt 가져오기
-            SELECT NVL(MAX(ITEM_TOTALCNT), 0)
-            INTO v_totalcnt_map(rec_inven.item_status)(rec_inven.item_no)
-            FROM inventory
-            WHERE item_status = rec_inven.item_status
-              AND item_no = rec_inven.item_no
-              AND inventory_his_no < rec_inven.inventory_his_no;
+            BEGIN
+                SELECT item_totalcnt
+                INTO v_totalcnt_map(rec_inven.item_status)(rec_inven.item_no)
+                FROM (
+                    SELECT NVL(item_totalcnt, 0) AS item_totalcnt
+                    FROM inventory
+                    WHERE item_status = rec_inven.item_status
+                      AND item_no = rec_inven.item_no
+                      AND inventory_his_no < rec_inven.inventory_his_no
+                    ORDER BY inventory_his_no DESC
+                )
+                WHERE ROWNUM = 1;
+            EXCEPTION
+                WHEN NO_DATA_FOUND THEN
+                    v_totalcnt_map(rec_inven.item_status)(rec_inven.item_no) := 0;
+            END;
         END IF;
         
         -- 입고 : 누적합에 더하기
@@ -1681,7 +1699,7 @@ BEGIN
         ELSIF rec_inven.inout_status = 1 THEN
             v_totalcnt_map(rec_inven.item_status)(rec_inven.item_no) := v_totalcnt_map(rec_inven.item_status)(rec_inven.item_no) - rec_inven.item_cnt;
         END IF;
-                
+        
         -- 계산한 누적합으로 업데이트
         UPDATE inventory
         SET ITEM_TOTALCNT = v_totalcnt_map(rec_inven.item_status)(rec_inven.item_no)
@@ -1843,12 +1861,12 @@ CREATE OR REPLACE PACKAGE BODY month_close AS
             M.yearmonth,
             M.item_status,
             M.item_no, 
-            SUM(M.cnt) AS inventory_cnt, 
+            AVG(M.cnt) AS inventory_cnt, 
             -- 도건 연구 필요1 : JOIN 중 항목 개수가 많아지면 값이 이상해짐...
             NVL(SUM(P.purchase_item_cnt),0) AS purchase_cnt, -- 도건 연구 필요1
             NVL(SUM(S.sales_item_cnt),0) AS sales_cnt, -- 도건 연구 필요1
-            NVL(AVG(II.item_in),0) AS item_in, -- 도건 연구 필요1
-            NVL(AVG(IO.item_out),0) AS item_out -- 도건 연구 필요1
+            NVL(SUM(II.item_in),0) AS item_in, -- 도건 연구 필요1
+            NVL(SUM(IO.item_out),0) AS item_out -- 도건 연구 필요1
         FROM (SELECT yearmonth, item_status, item_no, cnt FROM month_inventory 
             WHERE    yearmonth = p_sum_yymm
             AND      startend_status = '0' -- 기초 재고에 한해

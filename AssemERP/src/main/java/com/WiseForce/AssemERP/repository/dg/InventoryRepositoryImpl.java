@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.WiseForce.AssemERP.domain.dg.Inventory;
 import com.WiseForce.AssemERP.dto.dg.InventoryDTO;
+import com.WiseForce.AssemERP.dto.dg.InventoryInfoDTO;
 import com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO;
 
 import jakarta.persistence.EntityManager;
@@ -55,8 +56,6 @@ public class InventoryRepositoryImpl implements InventoryRepository {
 	// 재고 입출고 이력 목록 조회
 	@Override
 	public List<InventoryDTO> getInventoryHistory(InventoryDTO inventoryDTO) {
-		System.out.println(inventoryDTO);
-
 		// 거래 구분에 따라 검색
 		String whereOrderStatus = (inventoryDTO.getOrder_status_select() != 999) ? 
 				"WHERE i1.order_status = " + inventoryDTO.getOrder_status_select() : "WHERE i1.order_status <> 999";

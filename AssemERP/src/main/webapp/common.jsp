@@ -159,4 +159,30 @@ body {
 .status-text-close[data-status="3"] .dot {
 	background: #dc3545;//마감 오류
 }
+
+/* 리스트에 대한 공통 정의 */
+.list-table {
+  table-layout: auto;
+  width: 100%;
+  border-collapse: collapse;
+}
+/* 셀 내 텍스트가 넘칠 경우 ... 처리 */
+.list-table th {
+	text-align: center;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.list-table td {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 250px;
+}
+
+/* 읽기전용 속성 disable처럼 만들기 */
+.readonly {
+	background-color: #e9ecef; /* disabled 배경색과 비슷하게 */
+}
+
 </style>
