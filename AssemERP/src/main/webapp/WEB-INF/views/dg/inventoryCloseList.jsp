@@ -234,13 +234,13 @@ $(document).ready(function() {
 											</select>
 										</div>
 									</div>
-									<!-- 담당자 -->
+									<%-- <!-- 담당자 -->
 									<div class="col-auto">
 										<div class="input-group input-group-sm">
 											<span class="input-group-text">담당자</span><input type="text" name="emp_no_text" class="form-control"
 												placeholder="담당자명" value="${search.emp_no_text }" style="width: 80px">
 										</div>
-									</div>
+									</div> --%>
 									<!-- 검색 버튼 -->
 									<div class="col-auto">
 										<button type="submit" class="btn btn-secondary btn-sm text-nowrap">
@@ -284,6 +284,26 @@ $(document).ready(function() {
 							<!-- 페이징에서 사용하는 경로 변수 -->
 							<c:set var="pagingPath" value="${pageContext.request.contextPath}/inventory/close?" />
 
+							<!-- 검색 조건 추가 -->
+							<c:if test="${not empty search.yearmonth_start_text}">
+								<c:set var="pagingPath" value="${pagingPath}&yearmonth_start_text=${search.yearmonth_start_text}" />
+							</c:if>
+							<c:if test="${not empty search.yearmonth_end_text}">
+								<c:set var="pagingPath" value="${pagingPath}&yearmonth_end_text=${search.yearmonth_end_text}" />
+							</c:if>
+							<c:if test="${not empty search.startDate}">
+								<c:set var="pagingPath" value="${pagingPath}&startDate=${search.startDate}" />
+							</c:if>
+							<c:if test="${not empty search.endDate}">
+								<c:set var="pagingPath" value="${pagingPath}&endDate=${search.endDate}" />
+							</c:if>
+							<c:if test="${search.close_status != 999}">
+								<c:set var="pagingPath" value="${pagingPath}&close_status=${search.close_status}" />
+							</c:if>
+							<c:if test="${not empty emp_no_text.endDate}">
+								<c:set var="pagingPath" value="${pagingPath}&emp_no_text=${search.emp_no_text}" />
+							</c:if>
+							
 							<nav aria-label="Page navigation">
 								<ul class="pagination justify-content-center mb-0">
 									<li class="page-item ${paging.currentPage > 1 ? '' : 'disabled'}"><a class="page-link" href="${pagingPath}&currentPage=1"

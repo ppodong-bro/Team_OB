@@ -42,13 +42,17 @@ public class InventoryRepositoryImpl implements InventoryRepository {
 				+ "WHERE (:order_status = 999 OR i.order_status = :order_status) "
 				+ "AND (:order_no IS NULL OR i.order_no = :order_no) "
 				+ "AND (:item_status = 999 OR i.item_status = :item_status) "
-				+ "AND ((pa.parts_name IS NOT NULL AND pa.parts_name LIKE :item_no_text) OR (pr.product_name IS NOT NULL AND pr.product_name LIKE :item_no_text)) ";
+				+ "AND ((pa.parts_name IS NOT NULL AND pa.parts_name LIKE :item_no_text) OR (pr.product_name IS NOT NULL AND pr.product_name LIKE :item_no_text)) "
+				+ "AND (inout_date >= :start_date) "
+				+ "AND (inout_date <= :end_date) ";
 		TypedQuery<Long> totalCountQuery = entityManager.createQuery(totalCountSql, Long.class)
 				.setParameter("order_status", inventoryDTO.getOrder_status_select())
 				//공백일 경우 전체 검색하도록 NULL을 입력
 				.setParameter("order_no", (inventoryDTO.getOrder_no_text() != "") ? inventoryDTO.getOrder_no_text() : null)
 				.setParameter("item_status", inventoryDTO.getItem_status_select())
-				.setParameter("item_no_text", (inventoryDTO.getItem_no_text() != null) ? "%" + inventoryDTO.getItem_no_text() + "%" : "%%");
+				.setParameter("item_no_text", (inventoryDTO.getItem_no_text() != null) ? "%" + inventoryDTO.getItem_no_text() + "%" : "%%")
+				.setParameter("start_date", inventoryDTO.getStartDate().atStartOfDay())
+				.setParameter("end_date", inventoryDTO.getEndDate().atTime(23,59,59));
 		
 		return totalCountQuery.getSingleResult().intValue();
 	}
@@ -64,6 +68,9 @@ public class InventoryRepositoryImpl implements InventoryRepository {
 		String whereItemStatus = (inventoryDTO.getItem_status_select() != 999) ? 
 				"AND i1.item_status = " + inventoryDTO.getItem_status_select() : "AND i1.item_status <> 999";
 		String whereItemName = "AND (NVL(pa.parts_name, '') LIKE :itemnotext OR NVL(pr.product_name, '') LIKE :itemnotext)";
+		// 입출고 일시에 따라 검색
+		String wherInoutDate = "AND inout_date >= '" + inventoryDTO.getStartDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "' "
+				+ "AND inout_date <= TO_DATE('" + inventoryDTO.getEndDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + " 23:59:59', 'YYYY-MM-DD HH24:MI:SS') ";
 		
 		System.out.println("whereOrderNo: " + whereItemName);
 		
@@ -80,6 +87,7 @@ public class InventoryRepositoryImpl implements InventoryRepository {
 				+ 			whereOrderNo + " "
 				+			whereItemStatus + " "
 				+			whereItemName + " "
+				+ 			wherInoutDate + " " 
 				+ "        	ORDER BY inventory_his_no DESC "
 				+ "    ) i0 "
 				+ ") "
