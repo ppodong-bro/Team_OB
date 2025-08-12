@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.WiseForce.AssemERP.sh.PerformenceMapper">
+
+	<select id="shYearsPurchasePerformence" parameterType="int" resultType="java.math.BigDecimal">
+		<![CDATA[
+		SELECT NVL(t.total_amount, 0) AS total_amount
+		FROM
+    		(SELECT LEVEL AS month_num FROM DUAL CONNECT BY LEVEL <= 12) months
+			 LEFT JOIN
+    				 (
+        			  SELECT
+		            		TO_CHAR(so.in_date, 'MM') AS month,
+							SUM(si.sales_item_cnt * si.sales_item_cost) AS total_amount
+        			  FROM sales_order so
+        			  LEFT JOIN sales_item si ON so.sales_no = si.sales_no
+        			  WHERE TO_CHAR(so.in_date, 'YYYY') = #{value}
+        			  GROUP BY TO_CHAR(so.in_date, 'MM')
+    				  ) t
+		ON TO_CHAR(months.month_num, 'FM00') = t.month
+		ORDER BY months.month_num
+		]]>
+	</select>
+	
+</mapper>
