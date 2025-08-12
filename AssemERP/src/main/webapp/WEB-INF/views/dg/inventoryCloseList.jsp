@@ -23,7 +23,15 @@ function updateCurrentTime() {
 	// console.log(year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second);
 	const formatted = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
 	
-	document.getElementById("currentTime").textContent = formatted;
+	// 현재시각 반영
+	const timeElements = document.getElementsByClassName("currentTime");
+	for (let i = 0; i < timeElements.length; i++) {
+		timeElements[i].textContent = formatted;
+	}
+}
+
+function checkAuthority() {
+	
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -75,30 +83,50 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 $(document).ready(function() {
-	const modalEl = document.getElementById("modalMonthClose");
+	/* 월마감 모달창 */
+	const modalMonthClose = document.getElementById("modalMonthClose");
 	let timeInterval = null;
 	// 모달 열릴 때 시작
-	modalEl.addEventListener("shown.bs.modal", function () {
+	modalMonthClose.addEventListener("shown.bs.modal", function () {
+	    updateCurrentTime();
+	    timeInterval = setInterval(updateCurrentTime, 1000);
+	});
+	/* 월마감 취소 모달창 */
+	const modalMonthCloseCancel = document.getElementById("modalMonthCloseCancel");
+	timeInterval = null;
+	// 모달 열릴 때 시작
+	modalMonthCloseCancel.addEventListener("shown.bs.modal", function () {
 	    updateCurrentTime();
 	    timeInterval = setInterval(updateCurrentTime, 1000);
 	});
 
 	// 모달 닫힐 때 중단
-	modalEl.addEventListener("hidden.bs.modal", function () {
+	modalMonthClose.addEventListener("hidden.bs.modal", function () {
 	    clearInterval(timeInterval);
 	    timeInterval = null;
-	    document.getElementById("currentTime").textContent = ""; // 초기화
+	    //document.getElementById("currentTime").textContent = ""; // 초기화
+	    
+	    location.reload(); // 페이지 새로고침
+	});
+	modalMonthCloseCancel.addEventListener("hidden.bs.modal", function () {
+	    clearInterval(timeInterval);
+	    timeInterval = null;
+	    //document.getElementById("currentTime").textContent = ""; // 초기화
 	    
 	    location.reload(); // 페이지 새로고침
 	});
 
     // 가마감 버튼 클릭
     $("#btnFakeMonthClose").click(function() {
-    	// 년월 구하기
+    	// 비밀번호
+    	const password = $("#modalMonthClosePassword").val();
+
+    	// 년월일 구하기
     	const now = new Date();
     	const year = now.getFullYear().toString().slice(2); // YY
     	const month = (now.getMonth() + 1).toString().padStart(2, "0"); // MM
-    	const yymm = year + month; //
+    	const day = now.getDate().toString().padStart(2, "0"); // DD
+    	const yymmdd = year + month + day;
     	
     	// 월마감 진행중 화면으로 변경
     	$("#modalMonthCloseText").text("가마감 진행중입니다...");
@@ -113,32 +141,41 @@ $(document).ready(function() {
             dataType: "json",
             contentType: "application/json", // JSON 데이터 전송시 필요
             data: JSON.stringify({
-            	yearmonth: yymm,
-            	emp_no: 1001//담당자
+            	yearmonth: yymmdd,
+            	emp_no: 1001, //담당자
+            	emp_password: password//비밀번호
             }),
             success: function(response) {
-            	if(response.result === true) {
+            	if(response.result === "true") {
                 	$("#modalMonthCloseText").text("가마감이 완료되었습니다.");
-                	$("#spinner").addClass("d-none");// 스피너 보이기
+                	$("#spinner").addClass("d-none");// 스피너 지우기
             	}
-            	else {
+            	else if(response.result === "false"){
                 	$("#modalMonthCloseText").text("가마감이 실패했습니다.");
-                	$("#spinner").addClass("d-none");// 스피너 보이기
+                	$("#spinner").addClass("d-none");// 스피너 지우기
+            	}
+            	else if(response.result === "password"){
+                	$("#modalMonthCloseText").text("비밀번호가 틀립니다.");
+                	$("#spinner").addClass("d-none");// 스피너 지우기
             	}
             },
             error: function(xhr, status, error) {
             	$("#modalMonthCloseText").text("가마감이 오류가 발생했습니다.");
-            	$("#spinner").addClass("d-none");// 스피너 보이기
+            	$("#spinner").addClass("d-none");// 스피너 지우기
             }
         });
     });
     // 월마감 버튼 클릭
     $("#btnMonthClose").click(function() {
-    	// 년월 구하기
+    	// 비밀번호
+    	const password = $("#modalMonthClosePassword").val();
+    	
+    	// 년월일 구하기
     	const now = new Date();
     	const year = now.getFullYear().toString().slice(2); // YY
     	const month = (now.getMonth() + 1).toString().padStart(2, "0"); // MM
-    	const yymm = year + month; //
+    	const day = now.getDate().toString().padStart(2, "0"); // DD
+    	const yymmdd = year + month + day;
     	
     	// 월마감 진행중 화면으로 변경
     	$("#modalMonthCloseText").text("월마감 진행중입니다...");
@@ -153,22 +190,27 @@ $(document).ready(function() {
             dataType: "json",
             contentType: "application/json", // JSON 데이터 전송시 필요
             data: JSON.stringify({
-            	yearmonth: yymm,
-            	emp_no: 1001//담당자
+            	yearmonth: yymmdd,
+            	emp_no: 1001, //담당자
+            	emp_password: password//비밀번호
             }),
             success: function(response) {
-            	if(response.result === true) {
+            	if(response.result === "true") {
                 	$("#modalMonthCloseText").text("월마감이 완료되었습니다.");
-                	$("#spinner").addClass("d-none");// 스피너 보이기
+                	$("#spinner").addClass("d-none");// 스피너 지우기
             	}
-            	else {
+            	else if(response.result === "false"){
                 	$("#modalMonthCloseText").text("월마감이 실패했습니다.");
-                	$("#spinner").addClass("d-none");// 스피너 보이기
+                	$("#spinner").addClass("d-none");// 스피너 지우기
+            	}
+            	else if(response.result === "password"){
+                	$("#modalMonthCloseText").text("비밀번호가 틀립니다.");
+                	$("#spinner").addClass("d-none");// 스피너 지우기
             	}
             },
             error: function(xhr, status, error) {
             	$("#modalMonthCloseText").text("월마감이 오류가 발생했습니다.");
-            	$("#spinner").addClass("d-none");// 스피너 보이기
+            	$("#spinner").addClass("d-none");// 스피너 지우기
             }
         });
     });
@@ -180,6 +222,13 @@ $(document).ready(function() {
 
         // 버튼 보이게 & 활성화
         $('#btnMonthClose').show();
+    });
+    $('#modalMonthCloseCancel').on('hidden.bs.modal', function () {
+        // 초기 모달 텍스트 복원
+        $('#modalMonthCloseCancelText').text('월마감을 취소하시겠습니까?');
+
+        // 버튼 보이게 & 활성화
+        $('#btnMonthCloseCancel').show();
     });
 });
 
@@ -201,7 +250,10 @@ $(document).ready(function() {
 							<h4 class="card-title mb-0">
 								<i class="bi bi-calendar-check me-2"></i>월마감 이력
 							</h4>
-							<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalMonthClose">월마감</button>
+							<div>
+								<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalMonthCloseCancel">월마감 취소</button>
+								<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalMonthClose">월마감</button>
+							</div>
 						</div>
 						<div class="card-body">
 							<!-- 검색 폼 시작 -->
@@ -329,7 +381,7 @@ $(document).ready(function() {
 			<jsp:include page="/foot.jsp" />
 		</div>
 
-		<!-- 모달창 -->
+		<!-- 월마감 모달창 -->
 		<!-- 
 		aria-hidden="true" : 페이지 로드시 해당 내용은 읽지 않도록 처리
 		tabindex="-1" : tab키로 focus받지 않도록 설정 -->
@@ -342,7 +394,15 @@ $(document).ready(function() {
 					</div>
 					<div class="modal-body">
 						<div id="modalMonthCloseText">월마감을 진행하시겠습니까?</div>
-						<div id="currentTime"></div>
+						<div class="currentTime"></div>
+						<p/>
+						<div>
+							<label for="password" class="form-label">비밀번호</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                <input type="password" class="form-control" id="modalMonthClosePassword" name="password">
+                            </div>
+						</div>
 						<div id="spinner" class="d-flex justify-content-center d-none">
 							<div class="spinner-border" role="status">
 								<span class="visually-hidden">Loading...</span>
@@ -354,6 +414,42 @@ $(document).ready(function() {
 						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
 						<button type="button" class="btn btn-success" id="btnFakeMonthClose">가마감 진행</button>
 						<button type="button" class="btn btn-success" id="btnMonthClose">월마감 진행</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- 월마감 취소 모달창 -->
+		<div class="modal fade" id="modalMonthCloseCancel" tabindex="-1" aria-labelledby="modalMonthCloseCancelTitle" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="modalMonthCloseCancelTitle">월마감 취소</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<div id="modalMonthCloseCancelText">
+							월마감을 취소하시겠습니까?<p/>
+							이번달 월마감 정보가 삭제됩니다.
+						</div>
+						<div class="currentTime"></div>
+						<p/>
+						<div>
+							<label for="password" class="form-label">비밀번호</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                <input type="password" class="form-control" id="modalMonthCloseCancelPassword" name="password">
+                            </div>
+						</div>
+						<div id="spinner" class="d-flex justify-content-center d-none">
+							<div class="spinner-border" role="status">
+								<span class="visually-hidden">Loading...</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+						<button type="button" class="btn btn-danger" id="btnMonthCloseCancel">월마감 취소</button>
 					</div>
 				</div>
 			</div>

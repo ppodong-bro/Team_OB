@@ -157,6 +157,10 @@ public class InventoryServiceImpl implements InventoryService {
 	// 월마감 실행
 	@Override
 	public boolean doMonthClose(String yearMonth, int empno, int realStatus) {
+		// 이번달 일마감 모두 삭제(상태는 그대로)
+		
+		// 이번달 1일부터 오늘까지 전부 일마감 진행
+		
 		// 월마감 패키지 실행
 		return inventoryDao.doMonthClose(yearMonth, empno, realStatus);
 	}

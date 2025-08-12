@@ -3,11 +3,14 @@ package com.WiseForce.AssemERP.controller.dg;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -147,15 +150,62 @@ public class InventoryController {
 	@PutMapping("/inventory/monthClose/{real_status}")
 	@ResponseBody
 	public Map<String, Object> monthClose(@RequestBody Inventory_CloseDTO inventory_CloseDTO, @PathVariable("real_status") int realStatus) {
+		System.out.println(inventory_CloseDTO.getEmp_password());
+		
 		// 월마감 실행
 		boolean result = inventoryService.doMonthClose(inventory_CloseDTO.getYearmonth(), inventory_CloseDTO.getEmp_no(), realStatus);
 		
 		Map<String, Object> response = new HashMap<>();
-	    response.put("result", result);
+	    response.put("result", String.valueOf(result));
 	    
 	    System.out.println(response);
 		
 		return response;
+	}
+
+	@DeleteMapping("/inventory/monthClose")
+	@ResponseBody
+	public Map<String, Object> monthCloseCancel(@RequestBody Inventory_CloseDTO inventory_CloseDTO) {
+		System.out.println(inventory_CloseDTO.getEmp_password());
+		
+		// 월마감 취소 진행
+//		boolean result = inventoryService.doMonthCloseCancel(inventory_CloseDTO.getYearmonth());
+		
+		Map<String, Object> response = new HashMap<>();
+	    response.put("result", String.valueOf(false));
+	    
+	    System.out.println(response);
+		
+		return response;
+	}
+
+	@GetMapping("/inventory/excel")
+	@ResponseBody
+	public Object inventoryExcelDownload(Real_InventoryDTO real_InventoryDTO) {
+		// 현재 재고의 종류 수 조회
+		int totalTypeCount = inventoryService.getTotalTypeCount(real_InventoryDTO);
+
+		// 전체 개수와 요청한 현재 페이지를 토대로 start와 end를 설정한다.
+		Paging page = new Paging(totalTypeCount, real_InventoryDTO.getCurrentPage());
+		real_InventoryDTO.setStart(1);
+		real_InventoryDTO.setEnd(totalTypeCount);
+
+		// 설정한 start, end로 현재 재고 전체 조회
+		List<Real_InventoryDTO> real_InventoryDTOs = inventoryService.getRealInventory(real_InventoryDTO);
+
+	    List<Map<String, Object>> excelData = real_InventoryDTOs.stream()
+	        .map(datas -> {
+	            Map<String, Object> row = new LinkedHashMap<>(); // 순서 유지를 위해 LinkedHashMap 사용
+	            row.put("재고번호", datas.getItem_no());
+	            row.put("재고구분", datas.getItem_status());
+	            row.put("재고명", datas.getItem_name());
+	            row.put("수량", datas.getCnt());
+	            // 필요한 다른 필드들도 여기에 추가
+	            return row;
+	        })
+	        .collect(Collectors.toList());
+		
+		return excelData;
 	}
 
 }
