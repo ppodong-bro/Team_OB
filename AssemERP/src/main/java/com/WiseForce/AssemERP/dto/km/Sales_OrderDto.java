@@ -24,6 +24,7 @@ public class Sales_OrderDto {
 	private LocalDate sales_Date;
 	private int out_Status;
 	private int del_Status;
+	private LocalDateTime complete_Date;
 	private LocalDateTime in_Date;
 	private List<Sales_ItemDto> sales_Item;
 	private ClientDto clientDto;

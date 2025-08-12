@@ -80,10 +80,19 @@ public class Sales_OrderController {
 	
 	@PostMapping("/modify")
 	public String modify(Sales_OrderDto sales_OrderDto) {
-		List<Sales_ItemDto> salesItemList = sales_OrderService.salesItemList(sales_OrderDto);
+		int sales_No = sales_OrderDto.getSales_No();
+		List<Sales_ItemDto> salesItemList = sales_OrderService.salesItemList(sales_No);
 		sales_OrderService.modifySales(sales_OrderDto, salesItemList);
 		
 		
+		return "redirect:/sales/detail?sales_No="+sales_OrderDto.getSales_No();
+	}
+	
+	@PostMapping("modifyStatus")
+	public String modifyStatus (Sales_OrderDto sales_OrderDto) {
+		int sales_No = sales_OrderDto.getSales_No();
+		List<Sales_ItemDto> salesItemList = sales_OrderService.salesItemList(sales_No);
+		sales_OrderService.modifyStatus(sales_No, salesItemList);
 		return "redirect:/sales/detail?sales_No="+sales_OrderDto.getSales_No();
 	}
 	
@@ -107,11 +116,12 @@ public class Sales_OrderController {
 		model.addAttribute("sales_OrderDto", sales_OrderDto1);
 		return "km/modifySales";
 	}
-	@PostMapping("modifyStatus")
-	public String modifyStatus (Sales_OrderDto sales_OrderDto) {
-		List<Sales_ItemDto> salesItemList = sales_OrderService.salesItemList(sales_OrderDto);
-		sales_OrderService.modifyStatus(sales_OrderDto, salesItemList);
-		return "redirect:/sales/detail?sales_No="+sales_OrderDto.getSales_No();
-	}
+	/*
+	 * @PostMapping("modifyStatus") public String modifyStatus (Sales_OrderDto
+	 * sales_OrderDto) { List<Sales_ItemDto> salesItemList =
+	 * sales_OrderService.salesItemList(sales_OrderDto);
+	 * sales_OrderService.modifyStatus(sales_OrderDto, salesItemList); return
+	 * "redirect:/sales/detail?sales_No="+sales_OrderDto.getSales_No(); }
+	 */
 	
 }

@@ -30,8 +30,8 @@ public interface Sales_OrderService {
 
 	void 					deleteSales(Sales_OrderDto sales_OrderDto);
 
-	List<Sales_ItemDto> 	salesItemList(Sales_OrderDto sales_OrderDto);
+	List<Sales_ItemDto> 	salesItemList(int sales_No);
 
-	void 					modifyStatus(Sales_OrderDto sales_OrderDto, List<Sales_ItemDto> salesItemList);
+	void 					modifyStatus(int sales_No, List<Sales_ItemDto> salesItemList);
 	
 }

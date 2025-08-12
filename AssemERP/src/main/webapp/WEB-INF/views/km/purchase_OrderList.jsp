@@ -23,19 +23,15 @@
 			<jsp:include page="/header.jsp" />
 
 			<!-- 이곳에 자신의 코드를 작성하세요 -->
-			<div id="contents">
+				<div id="contents">
 
 				<div class="container-fluid px-4">
-					<div class="card shadow-sm">
-						<div
-							class="card-header d-flex justify-content-between align-items-center">
-							<h4 class="card-title mb-0">
-								<i class="bi bi-list-ul"></i> 수주 목록
-							</h4>
-							<a href="/sales/createStart" class="btn btn-primary"><i
-								class="bi bi-plus-lg"></i>등록</a>
-						</div>
-						<div class="card-body">
+				    <div class="card shadow-sm">
+				        <div class="card-header d-flex justify-content-between align-items-center">
+				            <h4 class="card-title mb-0"><i class="bi bi-list-ul"></i> 수주 목록</h4>
+            					<a href="/sales/createStart" class="btn btn-primary"><i class="bi bi-plus-lg"></i>등록</a>
+				        </div>
+				        <div class="card-body">
 
 							<!-- 검색 폼 -->
 							<form method="get" action="list"
@@ -110,7 +106,7 @@
 											<th class="text-center">납기완료일</th>
 											<th class="text-center">출고상태</th>
 											<th class="text-center">담당자</th>
-											<th class="text-center">수정</th>
+											<th class="text-center">수정/삭제</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -190,11 +186,10 @@
 												<!-- 수정/삭제 버튼 -->
 												<td class="text-center">
 													<!-- 수정 버튼 --> <a
-													href="/sales/modifyStart?sales_No=${order.sales_No}"
-													class="btn btn-sm btn-outline-success"> <i
-														class="bi bi-pencil-square"></i> 수정
-												</a> 
-												<%-- <form
+													href="<c:url value='/sales/modifyStart?sales_No=${order.sales_No}'/>"
+													class="btn btn-sm btn-outline-primary me-1"
+													onclick="event.stopPropagation();">수정</a> <!-- 삭제 버튼 -->
+													<form
 														action="${pageContext.request.contextPath}/sales/delete"
 														method="post" style="display: inline;"
 														onclick="event.stopPropagation();">
@@ -202,7 +197,7 @@
 															value="${order.sales_No}" />
 														<button type="submit"
 															class="btn btn-sm btn-outline-danger">삭제</button>
-													</form> --%>
+													</form>
 												</td>
 											</tr>
 										</c:forEach>

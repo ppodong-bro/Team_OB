@@ -42,13 +42,14 @@ public class ClientServiceImpl implements ClientService {
 	@Override
 	public int createClient(ClientDto clientDto) {
 		int result = clientDao.createClient(clientDto);
+		int result1 = clientDao.createClient_His(clientDto);
+		
+		
 		return result;
 	}
 
 	@Override
 	public int modifyClient(ClientDto clientDto1) {
-		
-		int result = clientDao.modifyClient(clientDto1);
 		
 		LocalDateTime minusModifyDay 		= LocalDateTime.now().minusDays(1);
 		LocalDateTime modifyDay 			= LocalDateTime.now();
@@ -72,9 +73,11 @@ public class ClientServiceImpl implements ClientService {
 												    .build()
 												    ;
 		
+		clientDto1.setModify_Date(modifyDay);
+		
 		clientDao.modifyClient_His(client_HisDto);
 		
-		
+		int result = clientDao.modifyClient(clientDto1);
 													   
 		return result;
 	}

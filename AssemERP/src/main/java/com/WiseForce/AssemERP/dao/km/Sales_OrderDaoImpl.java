@@ -2,6 +2,7 @@ package com.WiseForce.AssemERP.dao.km;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
@@ -19,27 +20,13 @@ import lombok.RequiredArgsConstructor;
 @Repository
 public class Sales_OrderDaoImpl implements Sales_OrderDao {
 	private final SqlSession session;
-//
-//	@Override
-//	public int salesTotCnt() {
-//		int totCnt = session.selectOne("salesTotCnt");
-//		return totCnt;
-//	}
-//
-//	@Override
-//	public List<Sales_OrderDto> salesList(Sales_OrderDto sales_OrderDto) {
-//		System.out.println("Sales_OrderDaoImpl salesList Start...");
-//		List<Sales_OrderDto> listSales = session.selectList("salesList", sales_OrderDto);
-//		System.out.println("Sales_OrderDaoImpl salesList listSales-->"+listSales);
-//		return listSales;
-//	}
 
 	@Override
-	public int totSales(Sales_OrderSearchDto sales_OrderSearchDto){
+	public int totSales(Sales_OrderSearchDto sales_OrderSearchDto) {
 		System.out.println("Sales_OrderDaoImpl totSales Start...");
-		System.out.println("Sales_OrderDaoImpl totSales sales_OrderSearchDto->"+sales_OrderSearchDto);
+		System.out.println("Sales_OrderDaoImpl totSales sales_OrderSearchDto->" + sales_OrderSearchDto);
 		int searchTotCnt = session.selectOne("totSales", sales_OrderSearchDto);
-		System.out.println("Sales_OrderDaoImpl totSales searchTotCnt-->"+ searchTotCnt);
+		System.out.println("Sales_OrderDaoImpl totSales searchTotCnt-->" + searchTotCnt);
 		return searchTotCnt;
 	}
 
@@ -47,17 +34,17 @@ public class Sales_OrderDaoImpl implements Sales_OrderDao {
 	public List<Sales_OrderDto> listSales(Sales_OrderSearchDto sales_OrderSearchDto) {
 		System.out.println("Sales_OrderDaoImpl listSales Start...");
 		List<Sales_OrderDto> salesList = session.selectList("listSales", sales_OrderSearchDto);
-		System.out.println("Sales_OrderDaoImpl listSales searchList-->"+salesList);
+		System.out.println("Sales_OrderDaoImpl listSales searchList-->" + salesList);
 		return salesList;
 	}
 
 	@Override
 	public Sales_OrderDto detailSales(Sales_OrderDto sales_OrderDto1) {
 		System.out.println("Sales_OrderDao detailSales Start...");
-		System.out.println("Sales_OrderDao detailSales sales_OrderDto1-->"+sales_OrderDto1);
+		System.out.println("Sales_OrderDao detailSales sales_OrderDto1-->" + sales_OrderDto1);
 		Sales_OrderDto sales_OrderDto = session.selectOne("detailSales", sales_OrderDto1.getSales_No());
-		System.out.println("Sales_OrderDao detailSales sales_OrderDto-->"+sales_OrderDto);
-		
+		System.out.println("Sales_OrderDao detailSales sales_OrderDto-->" + sales_OrderDto);
+
 		return sales_OrderDto;
 	}
 
@@ -67,58 +54,80 @@ public class Sales_OrderDaoImpl implements Sales_OrderDao {
 		List<ProductDTO> productList = session.selectList("salesProductList");
 		return productList;
 	}
-	
-	@Override 
+
+	@Override
 	public void createSales(Sales_OrderDto sales_OrderDto) {
-	  
-	  session.insert("createSales",sales_OrderDto);
-	  session.insert("createSales_Item", sales_OrderDto);
-	  
-	 
+
+		session.insert("createSales", sales_OrderDto);
+		session.insert("createSales_Item", sales_OrderDto);
+
 	}
 
 	@Override
 	public void modifySales(Sales_OrderDto sales_OrderDto, List<Sales_ItemDto> salesItemList) {
-		int out_Status = sales_OrderDto.getOut_Status();
-		System.out.println("salesItemList->"+salesItemList);
+		System.out.println("salesItemList->" + salesItemList);
 		
-		if(out_Status == 0 || out_Status == 1) {
-			session.delete("deleteToUpdate", salesItemList);
-			session.update("modifySales", sales_OrderDto);
-			session.insert("createSales_Item", sales_OrderDto);
-		} else if(out_Status == 2) {
-			session.update("modifySales", sales_OrderDto);
-			session.update("modifyComplete", salesItemList);
-		}
-		
+		session.delete("deleteToUpdate", salesItemList);
+		session.update("modifySales", sales_OrderDto);
+		session.insert("createSales_Item", sales_OrderDto);
+	
+
 	}
 
 	@Override
 	public void deleteSales(Sales_OrderDto sales_OrderDto) {
-		System.out.println("Sales_OrderDaoImpl deleteSales sales_OrderDto-->"+sales_OrderDto);
+		System.out.println("Sales_OrderDaoImpl deleteSales sales_OrderDto-->" + sales_OrderDto);
 		session.update("deleteSales", sales_OrderDto);
-		
+
 	}
 
 	@Override
-	public List<Sales_ItemDto> salesItemList(Sales_OrderDto sales_OrderDto) {
-		List<Sales_ItemDto> salesItemList = session.selectList("salesItemAll", sales_OrderDto);
+	public List<Sales_ItemDto> salesItemList(int sales_No) {
+		List<Sales_ItemDto> salesItemList = session.selectList("salesItemAll", sales_No);
 		return salesItemList;
 	}
 
 	@Override
-	public void modifyStatus(Sales_OrderDto sales_OrderDto, List<Sales_ItemDto> salesItemList) {
-		int out_Status = sales_OrderDto.getOut_Status();
-		if(out_Status == 0 || out_Status == 1) {
-			session.update("modifySales", sales_OrderDto);
-		} else if(out_Status == 2) {
-			session.update("modifySales", sales_OrderDto);
-			session.update("modifyComplete", salesItemList);
-		}
+	public void modifyStatus(int sales_No, int status) {
+		Map<String, Object> salesStatus = Map.of("sales_No",sales_No, "out_Status",status);
+		session.update("modifyOutStatus", salesStatus);
 		
 	}
-	
+
+	@Override
+	public void completeStatus(Sales_OrderDto sales_OrderDto, List<Sales_ItemDto> salesItemList) {
+		session.update("modifySales", sales_OrderDto);
+		session.update("modifyComplete", salesItemList);
+
+	}
+
+	@Override
+	public int selectOutStatus(int sales_No) {
+		int status = session.selectOne("selectOutStatus", sales_No);
+		return status;
+	}
+
+	@Override
+	public void completeStatus(int sales_No, int status, List<Sales_ItemDto> salesItemList) {
+		Map<String, Object> salesStatus = Map.of("sales_No", sales_No, "out_Status", status);
+		int result = session.update("completeStatus", salesStatus);
+		System.out.println("result----------------->"+result);
+		session.update("modifyComplete", salesItemList);
+		
+	}
+
+	@Override
+	public void closeStatus(int sales_No, int status) {
+		Map<String, Object> closeStatus = Map.of("sales_No", sales_No, "out_Status", status);
+		session.update("modifyOutStatus", closeStatus);
+		
+	}
 
 
+	@Override
+	public Sales_OrderDto getCompleteDateAndClientNo(int sales_No) {
+		Sales_OrderDto sales_OrderDto = session.selectOne("getCompleteDateAndClientNo", sales_No);
+		return sales_OrderDto;
+	}
 
 }
