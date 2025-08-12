@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.WiseForce.AssemERP.Purchase_OrderMapper">
+
+	<resultMap type="Purchase_OrderDto" id="purchase_OrderMap">
+		<id 	column="PURCHASE_NO" 	property="purchase_No"/>
+		<result	column="PURCHASE_DATE" 	property="purchase_Date"/>
+		<result column="IN_STATUS"		property="in_Status"/>
+		<result column="DEL_STATUS"		property="del_Status"/>
+		<result column="COMPLETE_DATE"  property="complete_Date"/>
+		<result	column="IN_DATE"		property="in_Date"/>
+		
+			<association javaType="ClientDto" 	property="clientDto" >
+				<id		column="CLIENT_NO" 	property="client_No"/>
+				<result	column="CLIENT_NAME"	property="client_Name"/>
+			</association>
+			
+			<association javaType="EmpDTO" property="empDTO">
+				<id		column="EMP_NO" 	property="empNo"/>
+				<result	column="EMP_NAME"	property="empName"/>
+			</association>
+			
+			<collection ofType="Purchase_ItemDto" property="purchase_Item">
+				<id		column="PURCHASE_NO" 			property="purchase_No"/>
+				<id		column="PARTS_NO"	 			property="parts_no"/>
+				<result	column="PURCHASE_ITEM_CNT" 		property="purchase_Item_Cnt"/>
+				<result	column="PURCHASE_ITEM_INCNT"	property="purchase_Item_InCnt"/>
+				<result	column="PURCHASE_ITEM_COST"		property="purchase_Item_Cost"/>
+				
+				<association javaType="PartsDTO" property="partsDTO">
+					<id		column="PARTS_NO" 	property="parts_no"/>
+					<result	column="PARTS_NAME" property="parts_name"/>
+				</association>
+			</collection>
+	</resultMap>
+
+
+	<select id="totPurchase" resultType="int">
+		 SELECT COUNT(*)
+		 FROM   PURCHASE_ORDER P LEFT JOIN CLIENT C ON P.CLIENT_NO = C.CLIENT_NO AND C.DEL_STATUS = 0 
+		 						 LEFT JOIN EMP E ON P.EMP_NO = E.EMP_NO AND E.DEL_STATUS = 0
+		 
+		 <where>
+		 P.DEL_STATUS = 0
+		 <if test="client_Name != null and client_Name.trim() != ''">
+		 AND C.CLIENT_NAME LIKE '%' || #{client_Name} || '%'
+		 </if>
+		 <if test="empName != null and empName.trim() != ''">
+		 AND E.EMP_NAME LIKE '%' || #{empName} || '%'
+		 </if>
+		 <if test="in_Status != null">
+		 AND P.IN_STATUS = #{in_Status}
+		 </if>
+		 <if test="purchase_Date_Start != null">
+		 AND P.PURCHASE_DATE <![CDATA[>=]]> #{purchase_Date_Start}
+		 </if>
+		 <if test="purchase_Date_End != null">
+		 AND P.PURCHASE_DATE <![CDATA[<=]]> #{purchase_Date_End}
+		 </if>	 
+		 </where>
+	</select>
+	
+	<select id="listPurchaseOrder" parameterType="Purchase_OrderSearchDto" resultMap="purchase_OrderMap">
+	SELECT P.PURCHASE_NO, P.PURCHASE_DATE, P.IN_STATUS, P.DEL_STATUS, P.COMPLETE_DATE, P.IN_DATE
+						  , C.CLIENT_NO, C.CLIENT_NAME, E.EMP_NO, E.EMP_NAME
+						  , I.PARTS_NO, I.PURCHASE_ITEM_CNT, I.PURCHASE_ITEM_INCNT, I.PURCHASE_ITEM_COST
+						  , PA.PARTS_NAME
+	FROM   (SELECT ROWNUM RN, A.*
+			FROM	(SELECT *
+					 FROM	PURCHASE_ORDER
+					 WHERE  DEL_STATUS = 0
+					 ORDER BY PURCHASE_NO DESC
+					 ) A
+		    )P 
+		    LEFT JOIN CLIENT C ON P.CLIENT_NO = C.CLIENT_NO
+			LEFT JOIN EMP E ON P.EMP_NO = E.EMP_NO 
+			LEFT JOIN PURCHASE_ITEM I ON P.PURCHASE_NO = I.PURCHASE_NO
+			LEFT JOIN PARTS PA ON I.PARTS_NO = PA.PARTS_NO
+	 <if test="client_Name != null and client_Name.trim() != ''">
+		AND C.CLIENT_NAME LIKE '%' || #{client_Name} || '%'
+	 </if>
+	 <where>
+		<if test="empName != null and empName.trim() != ''">
+			AND E.EMP_NAME LIKE '%' || #{empName} || '%'
+		</if>
+		<if test="in_Status != null">
+			AND P.IN_STATUS = #{in_Status}
+		</if>
+		<if test="purchase_Date_Start != null">
+			AND P.PURCHASE_DATE <![CDATA[>=]]> #{purchase_Date_Start}
+		</if>
+		<if test="purchase_Date_End != null">
+		AND P.PURCHASE_DATE <![CDATA[<=]]> #{purchase_Date_End}
+		</if>
+		RN <![CDATA[>=]]> 1 AND RN <![CDATA[<=]]> 10
+	</where>
+	ORDER BY P.PURCHASE_NO DESC
+	</select>
+</mapper>
