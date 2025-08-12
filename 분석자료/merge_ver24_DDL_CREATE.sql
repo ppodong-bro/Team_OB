@@ -357,7 +357,7 @@ COMMENT ON COLUMN inventory_adjust.item_close_status IS '마감 구분';
 
 /* 월 재고 ********************************************************************/
 CREATE TABLE month_inventory (
-	yearmonth VARCHAR2(4) NOT NULL, /* 년월 */
+	yearmonth VARCHAR2(6) NOT NULL, /* 년월 */
 	startend_status NUMBER(1) NOT NULL, /* 기초/기말 구분 */
 	item_status NUMBER(1) NOT NULL, /* 제품/부품 구분 */
 	item_no NUMBER(7) NOT NULL, /* 제품/부품번호 */
@@ -1873,12 +1873,13 @@ CREATE OR REPLACE PACKAGE BODY month_close AS
         ) M -- 월재고
         LEFT JOIN
         -- 부품 구매 내역
-        (SELECT 0 AS item_status, parts_no AS item_no, PURCHASE_ITEM_CNT FROM purchase_item 
+        (SELECT 0 AS item_status, parts_no AS item_no, SUM(purchase_item_cnt) AS purchase_item_cnt FROM purchase_item 
         WHERE purchase_no IN (
             SELECT purchase_no FROM purchase_order 
             WHERE TO_CHAR(purchase_date, 'YYMM') = p_sum_yymm
             AND in_status IN (2,3) -- 완료, 마감
             )
+        GROUP BY parts_no 
         ) P -- 구매 실적
         ON M.item_status = P.item_status
         AND M.item_no = P.item_no
@@ -1890,6 +1891,7 @@ CREATE OR REPLACE PACKAGE BODY month_close AS
             WHERE TO_CHAR(sales_date, 'YYMM') = p_sum_yymm
             AND out_status IN (2,3) -- 완료, 마감
             )
+        GROUP BY product_no 
         ) S
         ON M.item_status = S.item_status
         AND M.item_no = S.item_no
@@ -1961,7 +1963,7 @@ CREATE OR REPLACE PACKAGE BODY month_close AS
                     --에러 기록
                     INSERT INTO error_log(error_no, error_code, error_coment, error_date) VALUES(error_log_seq.nextval, 
                     'ERR-1001 : month_close.month_close_prc2', 
-                    '월마감 진행중 ' || rec_close_clac.yearmonth || '에 ' || rec_close_clac.item_status || '(부품/제품):' || rec_close_clac.item_no || '재고 ' ||  g_prod_cnt || '개수 부족', 
+                    '일마감 진행중 ' || rec_close_clac.yearmonth || '에 ' || rec_close_clac.item_status || '(부품/제품):' || rec_close_clac.item_no || '재고 ' ||  g_prod_cnt || '개수 부족', 
                     sysdate);
                 END IF;
             END;
@@ -2015,6 +2017,307 @@ CREATE OR REPLACE PACKAGE BODY month_close AS
         COMMIT;
         
         dbms_output.put_line('month_close_end END');
+    END;
+END;
+/
+-- DROP PACKAGE BODY day_close;
+-- DROP PACKAGE day_close;
+-- 일마감 패키지
+CREATE OR REPLACE PACKAGE day_close AS
+    g_in_empno emp.emp_no%TYPE := '1001';
+    g_prod_cnt NUMBER(9) := 0;
+    
+    -- 일마감0 : 메인
+    PROCEDURE day_close_main(
+    p_yymmdd in VARCHAR2, p_regi_emp_no in VARCHAR2, p_real in VARCHAR2, 
+    p_result OUT VARCHAR2);
+    
+    -- 일마감0 : 수불마감 시작 이력 등록
+    PROCEDURE day_close_start (p_yymmdd in VARCHAR2, p_regi_emp_no in VARCHAR2);
+    -- 일마감1 : 이번달 기초 재고 등록
+    PROCEDURE day_close_prc1 (p_yymmdd in VARCHAR2);
+    -- 일마감2 : 이번달 발주/생산/폐기/수주 반영
+    PROCEDURE day_close_prc2 (p_yymmdd in VARCHAR2);
+    -- 일마감7 : 거래처 실적 기록
+    -- 일마감8 : 제품 실적 기록
+    -- 일마감9 : 부품 실적 기록
+    -- 일마감998 : 다음달 기말 재고 등록
+    -- 일마감999 : 수불마감 끝 이력 등록
+    PROCEDURE day_close_end (p_yymmdd in VARCHAR2, p_regi_emp_no in VARCHAR2, p_real in VARCHAR2);
+END;
+-- PACKAGE와 PACKAGE BODY 구분
+/
+CREATE OR REPLACE PACKAGE BODY day_close AS
+    PROCEDURE day_close_main(
+    p_yymmdd in VARCHAR2, p_regi_emp_no in VARCHAR2, p_real in VARCHAR2, 
+    p_result OUT VARCHAR2) 
+    IS
+    BEGIN
+        dbms_output.put_line('일마감 시작 p_yymmdd =>' || p_yymmdd );
+        dbms_output.put_line('일마감 시작 p_regi_emp_no =>' || p_regi_emp_no );
+        
+        -- 일마감0 : 수불마감 시작 이력 등록
+        day_close_start(p_yymmdd, p_regi_emp_no);
+        -- 일마감1 : 이번달 기초 재고 등록
+        day_close_prc1(p_yymmdd);
+        -- 일마감2 : 이번달 발주/생산/폐기/수주 반영
+        day_close_prc2(p_yymmdd);
+        -- 일마감7 : 거래처 실적 기록
+        -- 일마감8 : 제품 실적 기록
+        -- 일마감9 : 부품 실적 기록
+        -- 일마감998 : 다음달 기말 재고 등록
+        -- 일마감999 : 수불마감 끝 이력 등록
+        day_close_end(p_yymmdd, p_regi_emp_no, p_real);
+        
+        p_result := 'true';
+        COMMIT;
+        
+        EXCEPTION
+            WHEN OTHERS THEN
+                ROLLBACK;
+                p_result := 'false';
+                
+                DECLARE
+                    v_code VARCHAR2(4000) := SQLCODE;
+                    v_msg  VARCHAR2(4000) := SQLERRM;
+                BEGIN
+                    INSERT INTO error_log(error_no,error_code,error_coment,error_date)
+                    VALUES (error_log_seq.NEXTVAL,
+                        v_code,
+                        v_msg,
+                        sysdate
+                    );
+                END;
+                
+                RAISE;
+    END;
+    
+    /***************************************************************************
+    Procedure Name : day_close_start
+    Description    : 수불마감 시작 이력 등록
+    ***************************************************************************/
+    PROCEDURE day_close_start(p_yymmdd in VARCHAR2, p_regi_emp_no in VARCHAR2)
+    IS
+    BEGIN
+        DBMS_OUTPUT.ENABLE;
+        dbms_output.put_line('day_close_start START p_yymmdd/p_regi_emp_no ' || p_yymmdd || '/' || p_regi_emp_no);
+        
+        dbms_output.put_line('덮어씌워지는 데이터 삭제');
+        -- 수불마감의 이번달 삭제
+        DELETE FROM inventory_close WHERE yearmonth = p_yymmdd;
+        -- 월재고의 기말재고 삭제
+        DELETE FROM month_inventory WHERE yearmonth = p_yymmdd;
+        
+        -- 수불마감 시작 이력 등록
+        INSERT INTO inventory_close(YEARMONTH, CLOSE_STATUS, CLOSE_STARTDATE, CLOSE_ENDDATE, EMP_NO) VALUES (p_yymmdd, 0, sysdate, null, p_regi_emp_no);
+        
+        COMMIT;
+        
+        dbms_output.put_line('day_close_start END');
+    END;
+    
+    /***************************************************************************
+    Procedure Name : day_close_prc1
+    Description    : 이번달 기초 재고 등록
+    ***************************************************************************/
+    PROCEDURE day_close_prc1(p_yymmdd in VARCHAR2)
+    IS
+        v_count NUMBER := 0;
+    BEGIN
+        DBMS_OUTPUT.ENABLE;
+        dbms_output.put_line('day_close_prc1 START p_yymmdd ' || p_yymmdd);
+        
+        dbms_output.put_line('지난달 기말재고 복사하여 이번달 기초재고 등록');
+        -- 지난달 기말재고 확인
+        SELECT COUNT(*)
+        INTO v_count
+        FROM month_inventory
+        WHERE YEARMONTH = TO_CHAR(TO_DATE(p_yymmdd,'YYMMDD') - 1, 'YYMMDD')
+        AND startend_status = '1';
+        -- 지난달 기말재고 복사하여 이번달 기초재고 등록
+        IF v_count > 0 THEN
+            DBMS_OUTPUT.PUT_LINE('복사시작');
+            INSERT INTO month_inventory(YEARMONTH,STARTEND_STATUS,ITEM_STATUS,ITEM_NO,CNT,IN_DATE)
+            SELECT p_yymmdd,'0'/*기초*/,ITEM_STATUS,ITEM_NO,CNT,SYSDATE 
+            FROM     month_inventory
+            WHERE    YEARMONTH  = TO_CHAR(TO_DATE(p_yymmdd,'YYMMDD') - 1, 'YYMMDD')
+            AND      startend_status = '1' -- 기말
+            ;
+            DBMS_OUTPUT.PUT_LINE('복사끝');
+        -- 지난달 기말재고 없음
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('지난달 기말 재고가 존재하지 않습니다.');
+        END IF;
+        
+        dbms_output.put_line('신규 재고 등록');
+        create_item_to_inventory(p_yymmdd);
+        
+        COMMIT;
+        
+        dbms_output.put_line('day_close_prc1 END');
+    END;
+    
+    /***************************************************************************
+    Procedure Name : day_close_prc2
+    Description    : 이번달 발주/생산/폐기/수주 반영
+    ***************************************************************************/
+    PROCEDURE day_close_prc2(p_yymmdd in VARCHAR2)
+    IS
+        -- 년월, 부품/제품 구분, 번호, 월재고, 입고, 출고, 생산, 폐기 조회
+        CURSOR cur_close_clac IS
+        SELECT 
+            M.yearmonth,
+            M.item_status,
+            M.item_no, 
+            AVG(M.cnt) AS inventory_cnt, 
+            -- 도건 연구 필요1 : JOIN 중 항목 개수가 많아지면 값이 이상해짐...
+            NVL(SUM(P.purchase_item_cnt),0) AS purchase_cnt, -- 도건 연구 필요1
+            NVL(SUM(S.sales_item_cnt),0) AS sales_cnt, -- 도건 연구 필요1
+            NVL(SUM(II.item_in),0) AS item_in, -- 도건 연구 필요1
+            NVL(SUM(IO.item_out),0) AS item_out -- 도건 연구 필요1
+        FROM (SELECT yearmonth, item_status, item_no, cnt FROM month_inventory 
+            WHERE    yearmonth = p_yymmdd
+            AND      startend_status = '0' -- 기초 재고에 한해
+        ) M -- 월재고
+        LEFT JOIN
+        -- 부품 구매 내역
+        (SELECT 0 AS item_status, parts_no AS item_no, SUM(purchase_item_cnt) AS purchase_item_cnt FROM purchase_item 
+        WHERE purchase_no IN (
+            SELECT purchase_no FROM purchase_order 
+            WHERE TO_CHAR(purchase_date, 'YYMMDD') = p_yymmdd
+            AND in_status IN (2,3) -- 완료, 마감
+            )
+        GROUP BY parts_no
+        ) P -- 구매 실적
+        ON M.item_status = P.item_status
+        AND M.item_no = P.item_no
+        LEFT JOIN
+        -- 제품 판매 내역
+        (SELECT 1 AS item_status, product_no AS item_no, SUM(sales_item_cnt) AS sales_item_cnt FROM sales_item
+        WHERE sales_no IN (
+            SELECT sales_no FROM sales_order
+            WHERE TO_CHAR(sales_date, 'YYMMDD') = p_yymmdd
+            AND out_status IN (2,3) -- 완료, 마감
+            )
+        GROUP BY product_no
+        ) S
+        ON M.item_status = S.item_status
+        AND M.item_no = S.item_no
+        LEFT JOIN
+        -- 재고 조정IN 내역(제조, 분해, 조정)
+        (SELECT item_status, item_no, SUM(item_cnt) AS item_in FROM inventory_adjust
+        WHERE TO_CHAR(inout_date, 'YYMMDD') = p_yymmdd
+        AND item_close_status IN (2,3) -- 완료, 마감
+        AND inout_status = 0 -- IN
+        GROUP BY item_status, item_no
+        ) II
+        ON M.item_status = II.item_status
+        AND M.item_no = II.item_no
+        LEFT JOIN
+        -- 재고 조정OUT 내역(제조, 분해, 조정)
+        (SELECT item_status, item_no, SUM(item_cnt) AS item_out FROM inventory_adjust
+        WHERE TO_CHAR(inout_date, 'YYMMDD') = p_yymmdd
+        AND item_close_status IN (2,3) -- 완료, 마감
+        AND inout_status = 1 -- OUT
+        GROUP BY item_status, item_no
+        ) IO
+        ON M.item_status = IO.item_status
+        AND M.item_no = IO.item_no
+        GROUP BY M.yearmonth,M.item_status,M.item_no;
+    BEGIN
+        DBMS_OUTPUT.ENABLE;
+        dbms_output.put_line('day_close_prc2 START p_yymmdd ' || p_yymmdd);
+        
+        -- 이번달 발주, 수주, (폐기), (생산) 반영 하기
+        FOR rec_close_clac IN cur_close_clac LOOP
+            -- 수량 계산
+            DECLARE
+                v_cnt VARCHAR2(4000) := rec_close_clac.inventory_cnt; -- 기초 재고
+            BEGIN
+                v_cnt := v_cnt + rec_close_clac.purchase_cnt; -- 구매
+                v_cnt := v_cnt - rec_close_clac.sales_cnt; -- 판매
+                v_cnt := v_cnt + rec_close_clac.item_in; -- 조정(+)
+                v_cnt := v_cnt - rec_close_clac.item_out; -- 조정(-)
+                
+                ------------------------------------------------------------------
+                --    만약 창고 기초재고가 판매량보다 크다면 기말재고 입력 
+                ------------------------------------------------------------------
+                IF v_cnt >= 0 THEN  
+                    INSERT INTO month_inventory       
+                        (yearmonth
+                        ,startend_status
+                        ,item_status
+                        ,item_no
+                        ,cnt
+                        ,in_date
+                    )
+                    VALUES(p_yymmdd
+                        , 1 -- 기말재고
+                        , rec_close_clac.item_status
+                        , rec_close_clac.item_no
+                        , v_cnt
+                        , SYSDATE
+                    );
+                ELSE
+                    --부족한 개수
+                    g_prod_cnt := -v_cnt;
+                    --에러 기록
+                    INSERT INTO error_log(error_no, error_code, error_coment, error_date) VALUES(error_log_seq.nextval, 
+                    'ERR-1001 : day_close.day_close_prc2', 
+                    '일마감 진행중 ' || rec_close_clac.yearmonth || '에 ' || rec_close_clac.item_status || '(부품/제품):' || rec_close_clac.item_no || '재고 ' ||  g_prod_cnt || '개수 부족', 
+                    sysdate);
+                END IF;
+            END;
+        END LOOP;
+        
+        COMMIT;
+        
+        dbms_output.put_line('day_close_prc2 END');
+        EXCEPTION
+            WHEN OTHERS THEN
+                DECLARE
+                    v_code VARCHAR2(4000) := SQLCODE;
+                    v_msg  VARCHAR2(4000) := SQLERRM;
+                BEGIN
+                    INSERT INTO error_log(error_no,error_code,error_coment,error_date)
+                    VALUES (error_log_seq.NEXTVAL,
+                        v_code,
+                        v_msg,
+                        sysdate
+                    );
+                END;
+    END;
+    
+    /***************************************************************************
+    Procedure Name : day_close_end
+    Description    : 수불마감 끝 이력 등록
+    ***************************************************************************/
+    PROCEDURE day_close_end(p_yymmdd in VARCHAR2, p_regi_emp_no in VARCHAR2, p_real in VARCHAR2)
+    IS
+    BEGIN
+        DBMS_OUTPUT.ENABLE;
+        dbms_output.put_line('day_close_end START p_yymmdd/p_regi_emp_no ' || p_yymmdd || '/' || p_regi_emp_no);
+        
+        -- 수주 테이블 완료 -> 마감 처리
+        UPDATE sales_order SET out_status = 3
+        WHERE out_status = 2
+        AND TO_CHAR(in_date, 'YYMMDD') = p_yymmdd;
+        -- 발주 테이블 완료 -> 마감 처리
+        UPDATE purchase_order SET in_status = 3
+        WHERE in_status = 2
+        AND TO_CHAR(in_date, 'YYMMDD') = p_yymmdd;
+        -- 조정 테이블 완료 -> 마감 처리
+        UPDATE inventory_adjust SET item_close_status = 3
+        WHERE item_close_status = 2
+        AND TO_CHAR(inout_date, 'YYMMDD') = p_yymmdd;
+        
+        -- 수불마감 끝 이력 등록
+        UPDATE inventory_close SET CLOSE_STATUS = p_real, CLOSE_ENDDATE = sysdate
+        WHERE yearmonth = p_yymmdd;
+        
+        COMMIT;
+        
+        dbms_output.put_line('day_close_end END');
     END;
 END;
 /

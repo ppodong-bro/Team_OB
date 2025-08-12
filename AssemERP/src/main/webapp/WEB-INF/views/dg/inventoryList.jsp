@@ -7,14 +7,13 @@
 <jsp:include page="/common.jsp" />
 <meta charset="UTF-8">
 <title>Assem ERP</title>
-</head>
-<style>
-/* 기본 상태 (선택되지 않은 부품/제품)의 폰트 색상을 회색으로 */
-.btn-outline-primary {
-	color: #6c757d; /* 짙은 회색 */
-	border-color: #0d6efd; /* 원래 부트스트랩 primary 색상 테두리 유지 */
+<style type="text/css">
+#btn-exceldownload:hover {
+	background: #70d967; //죽음의 인도자 형초
 }
+
 </style>
+</head>
 <script type="text/javascript">
 	// 부품,제품 구분
 	const itemType = ${search.item_type != null ? search.item_type : 0};
@@ -67,6 +66,40 @@
 		//console.log("link", link)
 		location.href = link;
 	}
+	
+//Excel 다운로드
+function excelDownload(){
+	/* 검색조건에 맞는 데이터 모두 가져온다(AJAX) */
+	fetch("/inventory/excel?item_type=" + itemType)
+		.then(response => response.json())
+		.then(data => {
+			// 워크북 생성
+			const workbook = XLSX.utils.book_new();
+
+			// JSON을 워크시트로 변환
+			const worksheet = XLSX.utils.json_to_sheet(data);
+
+			// 워크시트를 워크북에 추가
+			XLSX.utils.book_append_sheet(workbook, worksheet, "사원목록");
+
+			/* 파일명 지정 */
+			const fileName = itemType == 0 ? "부품" : "제품";
+			
+			// 현재 시간 포맷팅하기
+			const now = new Date();
+			const year = now.getFullYear();
+			const month = String(now.getMonth() + 1).padStart(2, '0');
+			const day = String(now.getDate()).padStart(2, '0');
+
+			// 시간 문자열 만들기
+			const timeString = year + month + day;
+
+			// 파일로 저장
+			// 브라우저에서는 다운로드 형태로 저장됨
+			XLSX.writeFile(workbook, fileName + "재고목록_" + timeString + ".xlsx");
+		})
+		.catch(error => console.error("다운로드 오류:", error));
+}
 </script>
 <body>
 	<!-- 화면에서 전체적으로 사용하는 부품/제품 구분 변수 -->
@@ -131,6 +164,12 @@
 									<div class="col-auto">
 										<button type="submit" class="btn btn-secondary btn-sm text-nowrap">
 											<i class="bi bi-search"></i> 검색
+										</button>
+									</div>
+									<!-- 엑셀 다운로드 버튼 -->
+									<div class="col-auto">
+										<button type="button" class="btn btn-outline-secondary btn-sm text-nowrap" id="btn-exceldownload" onclick="excelDownload()">
+											<img alt="excel" src="${pageContext.request.contextPath}/img/icon_excel.png" style="width: 24px;">
 										</button>
 									</div>
 								</div>

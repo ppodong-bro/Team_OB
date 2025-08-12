@@ -28,8 +28,8 @@
 	            ELSE -1
 	        END
 	    AND I.item_status_no = C.middle_status
-		WHERE item_type = #{item_type} 
 		<where>
+			AND item_type = #{item_type} 
 			<if test="item_no_text != null and item_no_text != ''">
 			    AND item_no = #{item_no_text}
 			</if>
@@ -72,16 +72,18 @@
 			            ELSE -1
 			        END
 			    AND I.item_status_no = C.middle_status
-				WHERE item_type = #{item_type} 
-				<if test="item_no_text != null and item_no_text != ''">
-				    AND item_no = #{item_no_text}
-				</if>
-				<if test="item_status_select != 999">
-				    AND item_status_no = #{item_status_select}
-				</if>
-				<if test="item_name_text != null and item_name_text != ''">
-				    AND item_name LIKE '%' || #{item_name_text} || '%'
-				</if>
+				<where>
+					AND item_type = #{item_type} 
+					<if test="item_no_text != null and item_no_text != ''">
+					    AND item_no = #{item_no_text}
+					</if>
+					<if test="item_status_select != 999">
+					    AND item_status_no = #{item_status_select}
+					</if>
+					<if test="item_name_text != null and item_name_text != ''">
+					    AND item_name LIKE '%' || #{item_name_text} || '%'
+					</if>
+				</where>
 				ORDER BY item_no
 				) RID 
 			) 
@@ -99,6 +101,14 @@
 	<!-- {전체} : 로 CallableStatement용 SQL이라는것을 명확히 함 -->
 	<select id="callMonthClose" parameterType="Inventory_CloseDTO" statementType="CALLABLE">
 		{ CALL month_close.month_close_main(
+		#{yearmonth, mode=IN, jdbcType=VARCHAR},
+		#{emp_no, mode=IN, jdbcType=VARCHAR},
+		#{realStatus, mode=IN, jdbcType=VARCHAR},
+		#{result, mode=OUT, jdbcType=VARCHAR}
+		) }
+	</select>
+	<select id="callDayClose" parameterType="Inventory_CloseDTO" statementType="CALLABLE">
+		{ CALL day_close.day_close_main(
 		#{yearmonth, mode=IN, jdbcType=VARCHAR},
 		#{emp_no, mode=IN, jdbcType=VARCHAR},
 		#{realStatus, mode=IN, jdbcType=VARCHAR},

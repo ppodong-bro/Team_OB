@@ -18,6 +18,9 @@ public class Inventory_CloseDTO {
 	private String close_startdate; // 마감시작일시
 	private String close_enddate;// 마감종료일시
 	private int emp_no;// 마감처리담당자
+	
+	// 마감용
+	private String emp_password;// 마감처리담당자의 비밀번호
 
 	// 출력
 	private String emp_no_text;// 마감처리담당자 이름

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.WiseForce.AssemERP.dto.km.ClientDto;
 import com.WiseForce.AssemERP.dto.km.ClientSearchDto;
 import com.WiseForce.AssemERP.dto.km.Client_HisDto;
+import com.WiseForce.AssemERP.dto.km.Client_PerformDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -44,6 +45,13 @@ public class ClientDaoImpl implements ClientDao {
 		System.out.println("ClientDao createClient clientDto-->" + clientDto);
 		int result = session.insert("createClient", clientDto);
 		System.out.println("ClientDao createClient result->" + result);
+		return result;
+	}
+	
+	@Override
+	public int createClient_His(ClientDto clientDto) {
+		System.out.println("clientDto-------------------------------->"+clientDto);
+		int result = session.insert("createClient_His", clientDto);
 		return result;
 	}
 
@@ -91,5 +99,13 @@ public class ClientDaoImpl implements ClientDao {
 		List<ClientDto> clientList = session.selectList("clientAll");
 		return clientList;
 	}
+
+	@Override
+	public void perform(Client_PerformDto client_PerformDto) {
+		session.insert("client_Perform", client_PerformDto);
+		
+	}
+
+
 
 }

@@ -44,11 +44,12 @@ public class InventoryCloseRepositoryImpl implements InventoryCloseRepository {
 	public List<Inventory_Close> findAllBySearch(Inventory_CloseDTO inventory_CloseDTO) {
 		// 기간에 따라 검색
 		String startDate = inventory_CloseDTO.getStartDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-		String endDate = inventory_CloseDTO.getEndDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		String endDate = inventory_CloseDTO.getEndDate().plusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		
 		// 마감상태에 따라 검색
 		String whereCloseStatus = (inventory_CloseDTO.getClose_status() != 999) ? 
 				"AND close_status = " + inventory_CloseDTO.getClose_status() : "";
-		// 담당자에 따라 검색
+		// 담당자에 따라 검색  
 		
 		// createNativeQuery : 실제 DB의 테이블명, 칼럼명을 사용하여 쿼리 진행
 		String findAllBySearchSql =	"SELECT yearmonth, close_status, close_startdate, close_enddate, emp_no " 

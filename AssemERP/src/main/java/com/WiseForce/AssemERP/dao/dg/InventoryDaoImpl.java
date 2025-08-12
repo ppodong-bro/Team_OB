@@ -20,6 +20,8 @@ public class InventoryDaoImpl implements InventoryDao {
 	// 현재 재고 전체 종류수 조회 함수 실행
 	@Override
 	public int getLastestMonthInventoryCnt(Real_InventoryDTO real_InventoryDTO) {
+		System.out.println("123");
+		
 		// 현재 재고 전체 조회 함수 실행
 		int totalTypeCount = session
 				.selectOne("com.WiseForce.AssemERP.dg.InventoryMapper.callCalcRealInventoryAllCnt", real_InventoryDTO);
@@ -55,7 +57,7 @@ public class InventoryDaoImpl implements InventoryDao {
 		paramMap.put("realStatus", realStatus);//IN
 		paramMap.put("result", "");//OUT
 		// 월마감 패키지 실행
-		session.selectOne("com.WiseForce.AssemERP.dg.InventoryMapper.callMonthClose", paramMap);
+		session.selectOne("com.WiseForce.AssemERP.dg.InventoryMapper.callDayClose", paramMap);
 
 	    // OUT 파라미터 값 읽기
 	    String resultMsg = (String) paramMap.get("result");

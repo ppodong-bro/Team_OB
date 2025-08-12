@@ -23,12 +23,16 @@
 			<div id="contents">
 
 				<div class="container-fluid px-4">
-				    <div class="card shadow-sm">
-				        <div class="card-header d-flex justify-content-between align-items-center">
-				            <h4 class="card-title mb-0"><i class="bi bi-list-ul"></i> 거래처 목록</h4>
-            					<a href="/client/createStart" class="btn btn-primary"><i class="bi bi-plus-lg"></i>등록</a>
-				        </div>
-				        <div class="card-body">
+					<div class="card shadow-sm">
+						<div
+							class="card-header d-flex justify-content-between align-items-center">
+							<h4 class="card-title mb-0">
+								<i class="bi bi-list-ul"></i> 거래처 목록
+							</h4>
+							<a href="/client/createStart" class="btn btn-primary"><i
+								class="bi bi-plus-lg"></i>등록</a>
+						</div>
+						<div class="card-body">
 
 							<!-- 검색 폼 -->
 							<!-- 검색 폼: 전체를 오른쪽으로 정렬 -->
@@ -95,7 +99,7 @@
 											<th class="text-center">주소</th>
 											<th class="text-center">이메일</th>
 											<th class="text-center">거래처 담당자</th>
-											<th class="text-center">수정/삭제</th>
+											<th class="text-center">수정</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -105,17 +109,17 @@
 												<td class="text-center">${st.index + 1}</td>
 												<td class="text-center">${client.client_No}</td>
 												<td>${client.client_Name}</td>
-												<td class="text-center">
-												${client.context}</td>
+												<td class="text-center">${client.context}</td>
 												<td>${client.client_Address}</td>
 												<td>${client.client_Email}</td>
 												<td class="text-center">${client.client_Man}</td>
+												<!-- 수정 버튼 -->
 												<td class="text-center">
-													<!-- 수정 버튼 --> <a
-													href="<c:url value='/client/modifyStart?client_No=${client.client_No}'/>"
-													class="btn btn-sm btn-outline-primary me-1"
-													onclick="event.stopPropagation();">수정</a> <!-- 삭제 버튼 -->
-													<form
+				                                <a href="/client/modifyStart?client_No=${client.client_No}" class="btn btn-sm btn-outline-success">
+				                                    <i class="bi bi-pencil-square"></i> 수정
+				                                </a>
+				                            	</td>
+<%-- 													<form
 														action="${pageContext.request.contextPath}/client/delete"
 														method="post" style="display: inline;"
 														onclick="event.stopPropagation();">
@@ -123,8 +127,7 @@
 															value="${client.client_No}" />
 														<button type="submit"
 															class="btn btn-sm btn-outline-danger">삭제</button>
-													</form>
-												</td>
+													</form> --%>
 											</tr>
 										</c:forEach>
 

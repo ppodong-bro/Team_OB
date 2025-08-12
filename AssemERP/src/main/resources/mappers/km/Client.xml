@@ -125,14 +125,22 @@
 			  
 	</select>
 	
+
+	
 	<insert id="createClient" parameterType="ClientDto">
-		INSERT INTO Client 
-		(CLIENT_NO, EMP_NO, CLIENT_NAME
-	   , CLIENT_GUBUN, CLIENT_EMAIL, CLIENT_MAN, CLIENT_TEL
-	   , CLIENT_ADDRESS,DEL_STATUS ,IN_DATE)
-		 VALUES
-	    (CLIENT_SEQ_GEN.NEXTVAL, #{empDTO.empNo}, #{client_Name}, #{client_Gubun}, #{client_Email}, #{client_Man}, #{client_Tel}, #{client_Address}, 0, SYSDATE)
+		<selectKey keyProperty="client_No" resultType="int" order="BEFORE">
+			SELECT CLIENT_SEQ_GEN.NEXTVAL
+			FROM   DUAL
+		</selectKey>
+			INSERT INTO Client 
+			(CLIENT_NO, EMP_NO, CLIENT_NAME
+		   , CLIENT_GUBUN, CLIENT_EMAIL, CLIENT_MAN, CLIENT_TEL
+		   , CLIENT_ADDRESS,DEL_STATUS ,IN_DATE)
+			 VALUES
+		    (#{client_No}, #{empDTO.empNo}, #{client_Name}, #{client_Gubun}, #{client_Email}, #{client_Man}, #{client_Tel}, #{client_Address}, 0, SYSDATE)
 	</insert>
+	
+	
 	
 	<update id="modifyClient" parameterType="ClientDto">
 		UPDATE client 
@@ -179,4 +187,10 @@
 		FROM CLIENT C LEFT JOIN EMP E ON C.EMP_NO = E.EMP_NO
 		WHERE C.CLIENT_GUBUN = 1 AND C.DEL_STATUS = 0
 	</select>
+	
+	<insert id="createClient_His" parameterType="ClientDto">
+		INSERT INTO CLIENT_HIS (CLIENT_NO, START_DATE, END_DATE, EMP_NO, CLIENT_NAME, CLIENT_GUBUN
+		           , CLIENT_MAN, CLIENT_EMAIL, CLIENT_TEL, CLIENT_ADDRESS, IN_DATE) 
+		      VALUES(#{client_No}, TO_CHAR(TRUNC(SYSDATE), 'YYYYMMDD'), '99991231', #{empDTO.empNo}, #{client_Name}, #{client_Gubun}, #{client_Man}, #{client_Email}, #{client_Tel}, #{client_Address}, SYSDATE)
+	</insert>
 </mapper>
