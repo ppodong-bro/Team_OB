@@ -28,7 +28,7 @@
 				<div class="container-fluid px-4">
 				    <div class="card shadow-sm">
 				        <div class="card-header d-flex justify-content-between align-items-center">
-				            <h4 class="card-title mb-0"><i class="bi bi-list-ul"></i> 수주 목록</h4>
+				            <h4 class="card-title mb-0"><i class="bi bi-list-ul"></i> 발주 목록</h4>
             					<a href="/sales/createStart" class="btn btn-primary"><i class="bi bi-plus-lg"></i>등록</a>
 				        </div>
 				        <div class="card-body">
@@ -41,7 +41,7 @@
 									<div class="input-group input-group-sm">
 										<span class="input-group-text">거래처명</span> <input type="text"
 											name="client_Name" class="form-control" placeholder="거래처명 검색"
-											value="${Sales_OrderSearchDto.client_Name}">
+											value="${Purchase_OrderSearchDto.client_Name}">
 									</div>
 								</div>
 
@@ -52,13 +52,13 @@
 											name="out_Status" class="form-select">
 											<option value="">전체</option>
 											<option value="0"
-												${Sales_OrderSearchDto.out_Status == 0 ? 'selected' : ''}>요청</option>
+												${Purchase_OrderSearchDto.in_Status == 0 ? 'selected' : ''}>요청</option>
 											<option value="1"
-												${Sales_OrderSearchDto.out_Status == 1 ? 'selected' : ''}>승인</option>
+												${Purchase_OrderSearchDto.in_Status == 1 ? 'selected' : ''}>승인</option>
 											<option value="2"
-												${Sales_OrderSearchDto.out_Status == 2 ? 'selected' : ''}>완료</option>
+												${Purchase_OrderSearchDto.in_Status == 2 ? 'selected' : ''}>완료</option>
 											<option value="3"
-												${Sales_OrderSearchDto.out_Status == 3 ? 'selected' : ''}>마감</option>
+												${Purchase_OrderSearchDto.in_Status == 3 ? 'selected' : ''}>마감</option>
 										</select>
 									</div>
 								</div>
@@ -68,7 +68,7 @@
 									<div class="input-group input-group-sm">
 										<span class="input-group-text">담당자명</span> <input type="text"
 											name="empName" class="form-control" placeholder="담당자 검색"
-											value="${Sales_OrderSearchDto.empName}">
+											value="${Purchase_OrderSearchDto.empName}">
 									</div>
 								</div>
 
@@ -78,10 +78,10 @@
 										<span class="input-group-text">납기완료일</span> <input type="date"
 											name="sales_Date_Start" class="form-control"
 											placeholder="시작일"
-											value="${Sales_OrderSearchDto.sales_Date_Start}" /> <span
+											value="${Purchase_OrderSearchDto.purchase_Date_Start}" /> <span
 											class="input-group-text">~</span> <input type="date"
 											name="sales_Date_End" class="form-control" placeholder="종료일"
-											value="${Sales_OrderSearchDto.sales_Date_End}" />
+											value="${Purchase_OrderSearchDto.purchase_Date_End}" />
 									</div>
 								</div>
 
@@ -97,27 +97,27 @@
 									<thead class="table-light">
 										<tr>
 											<th class="text-center">#</th>
-											<th class="text-center">수주번호</th>
+											<th class="text-center">발주번호</th>
 											<th class="text-center">거래처명</th>
-											<th class="text-center">제품명</th>
+											<th class="text-center">부품명</th>
 											<th class="text-center">요청수량</th>
-											<th class="text-center">출고수량</th>
+											<th class="text-center">입고수량</th>
 											<th class="text-center">총액</th>
 											<th class="text-center">납기완료일</th>
-											<th class="text-center">출고상태</th>
+											<th class="text-center">입고상태</th>
 											<th class="text-center">담당자</th>
 											<th class="text-center">수정/삭제</th>
 										</tr>
 									</thead>
 									<tbody>
-										<c:forEach var="order" items="${listSales}" varStatus="st">
+										<c:forEach var="order" items="${listPurchase}" varStatus="st">
 											<tr style="cursor: pointer;"
-												onclick="location.href='<c:url value='/sales/detail?sales_No=${order.sales_No}'/>'">
+												onclick="location.href='<c:url value='/sales/detail?sales_No=${order.purchase_No}'/>'">
 												<!-- 순번 -->
 												<td class="text-center">${st.index + 1}</td>
 
 												<!-- 수주번호 (detail 링크) -->
-												<td class="text-center">${order.sales_No}</td>
+												<td class="text-center">${order.purchase_No}</td>
 
 												<!-- client → clientName -->
 												<td>${order.clientDto.client_Name}</td>
@@ -134,13 +134,13 @@
 
 
 												<c:choose>
-													<c:when test="${not empty order.sales_Item}">
-														<c:set var="first" value="${order.sales_Item[0]}" />
+													<c:when test="${not empty order.purchase_Item}">
+														<c:set var="first" value="${order.purchase_Item[0]}" />
 														<c:set var="othersCount"
-															value="${fn:length(order.sales_Item) - 1}" />
+															value="${fn:length(order.purchase_Item) - 1}" />
 
 														<!-- 제품명 -->
-														<td><c:out value="${first.productDto.product_name}" />
+														<td><c:out value="${first.partsDTO.parts_name}" />
 															<c:if test="${othersCount > 0}">
 													 &nbsp;외 ${othersCount}종
 													</c:if></td>
@@ -151,7 +151,7 @@
 
 														<!-- 출고수량 (총합) -->
 														<td class="text-center"><c:out
-																value="${order.totOutCnt}" /></td>
+																value="${order.totInCnt}" /></td>
 													</c:when>
 													<c:otherwise>
 														<td>-</td>
@@ -166,16 +166,16 @@
 												</td>
 
 												<!-- 납기 완료일 -->
-												<td>${order.sales_Date}</td>
+												<td>${order.purchase_Date}</td>
 
 												<!-- 출고 상태 -->
 												<td class="text-center"><span class="status-text"
-													data-status="${order.out_Status}"> <span class="dot"></span>
+													data-status="${order.in_Status}"> <span class="dot"></span>
 														<c:choose>
-															<c:when test="${order.out_Status == 0}">요청</c:when>
-															<c:when test="${order.out_Status == 1}">승인</c:when>
-															<c:when test="${order.out_Status == 2}">완료</c:when>
-															<c:when test="${order.out_Status == 3}">마감</c:when>
+															<c:when test="${order.in_Status == 0}">요청</c:when>
+															<c:when test="${order.in_Status == 1}">승인</c:when>
+															<c:when test="${order.in_Status == 2}">완료</c:when>
+															<c:when test="${order.in_Status == 3}">마감</c:when>
 														</c:choose>
 												</span></td>
 
@@ -186,15 +186,15 @@
 												<!-- 수정/삭제 버튼 -->
 												<td class="text-center">
 													<!-- 수정 버튼 --> <a
-													href="<c:url value='/sales/modifyStart?sales_No=${order.sales_No}'/>"
+													href="<c:url value='/purchase/modifyStart?purchase_No=${order.purchase_No}'/>"
 													class="btn btn-sm btn-outline-primary me-1"
 													onclick="event.stopPropagation();">수정</a> <!-- 삭제 버튼 -->
 													<form
-														action="${pageContext.request.contextPath}/sales/delete"
+														action="${pageContext.request.contextPath}/purchase/delete"
 														method="post" style="display: inline;"
 														onclick="event.stopPropagation();">
 														<input type="hidden" name="sales_No"
-															value="${order.sales_No}" />
+															value="${order.purchase_No}" />
 														<button type="submit"
 															class="btn btn-sm btn-outline-danger">삭제</button>
 													</form>
@@ -203,7 +203,7 @@
 										</c:forEach>
 
 										<!-- 조회 결과 없을 때 -->
-										<c:if test="${empty listSales}">
+										<c:if test="${empty listPurchase}">
 											<tr>
 												<td colspan="10" class="text-center">조회된 데이터가 없습니다.</td>
 											</tr>
@@ -213,16 +213,16 @@
 
 
 								<!-- 검색 조건을 포함한 기본 URL 구성 -->
-								<c:url var="pageUrl" value="/sales/list">
+								<c:url var="pageUrl" value="/purchase/list">
 									<c:param name="client_Name"
-										value="${Sales_OrderSearchDto.client_Name}" />
-									<c:param name="out_Status"
-										value="${Sales_OrderSearchDto.out_Status}" />
+										value="${Purchase_OrderSearchDto.client_Name}" />
+									<c:param name="in_Status"
+										value="${Purchase_OrderSearchDto.in_Status}" />
 									<c:param name="empName" value="${Sales_OrderSearchDto.empName}" />
-									<c:param name="sales_Date_Start"
-										value="${Sales_OrderSearchDto.sales_Date_Start}" />
-									<c:param name="sales_Date_End"
-										value="${Sales_OrderSearchDto.sales_Date_End}" />
+									<c:param name="purchase_Date_Start"
+										value="${Purchase_OrderSearchDto.purchase_Date_Start}" />
+									<c:param name="purchase_Date_End"
+										value="${Purchase_OrderSearchDto.purchase_Date_End}" />
 								</c:url>
 								<!-- 페이징 -->
 								<!-- 페이징 -->
