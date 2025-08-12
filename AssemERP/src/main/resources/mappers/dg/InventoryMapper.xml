@@ -107,6 +107,14 @@
 		#{result, mode=OUT, jdbcType=VARCHAR}
 		) }
 	</select>
+	<select id="callDayClose" parameterType="Inventory_CloseDTO" statementType="CALLABLE">
+		{ CALL day_close.day_close_main(
+		#{yearmonth, mode=IN, jdbcType=VARCHAR},
+		#{emp_no, mode=IN, jdbcType=VARCHAR},
+		#{realStatus, mode=IN, jdbcType=VARCHAR},
+		#{result, mode=OUT, jdbcType=VARCHAR}
+		) }
+	</select>
 	
 	<select id="getInventoryInfoById" statementType="CALLABLE"
 		parameterType="com.WiseForce.AssemERP.dto.dg.InventoryInfoDTO"
