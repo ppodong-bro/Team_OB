@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.WiseForce.AssemERP.dto.km.ClientDto;
-import com.WiseForce.AssemERP.dto.km.ProductListDto;
 import com.WiseForce.AssemERP.dto.km.Sales_ItemDto;
 import com.WiseForce.AssemERP.dto.km.Sales_OrderDto;
 import com.WiseForce.AssemERP.dto.km.Sales_OrderSearchDto;
@@ -62,20 +61,19 @@ public class Sales_OrderController {
 		return "km/salesCreate";
 	}
 
-	@GetMapping("/productPopup")
-	public String productPopup(Model model) {
-
-		List<ProductDTO> productList = sales_OrderService.productList();
-		model.addAttribute("productList", productList);
-		return "km/productPop";
-	}
-
 	@PostMapping("/create")
 	public String createSales(Sales_OrderDto sales_OrderDto) {
 		System.out.println("createSales sales_OrderDto--->" + sales_OrderDto);
 		sales_OrderService.createSales(sales_OrderDto);
 
 		return "redirect:/sales/list";
+	}
+	
+	@GetMapping("/modifyStart")
+	public String modifyStart(Sales_OrderDto sales_OrderDto, Model model) {
+		Sales_OrderDto sales_OrderDto1 = sales_OrderService.detailSales(sales_OrderDto);
+		model.addAttribute("sales_OrderDto", sales_OrderDto1);
+		return "km/modifySales";
 	}
 	
 	@PostMapping("/modify")
@@ -110,18 +108,14 @@ public class Sales_OrderController {
 		return"redirect:/sales/list";
 	}
 	
-	@GetMapping("/modifyStart")
-	public String modifyStart(Sales_OrderDto sales_OrderDto, Model model) {
-		Sales_OrderDto sales_OrderDto1 = sales_OrderService.detailSales(sales_OrderDto);
-		model.addAttribute("sales_OrderDto", sales_OrderDto1);
-		return "km/modifySales";
+	
+	@GetMapping("/productPopup")
+	public String productPopup(Model model) {
+
+		List<ProductDTO> productList = sales_OrderService.productList();
+		model.addAttribute("productList", productList);
+		return "km/productPop";
 	}
-	/*
-	 * @PostMapping("modifyStatus") public String modifyStatus (Sales_OrderDto
-	 * sales_OrderDto) { List<Sales_ItemDto> salesItemList =
-	 * sales_OrderService.salesItemList(sales_OrderDto);
-	 * sales_OrderService.modifyStatus(sales_OrderDto, salesItemList); return
-	 * "redirect:/sales/detail?sales_No="+sales_OrderDto.getSales_No(); }
-	 */
+
 	
 }

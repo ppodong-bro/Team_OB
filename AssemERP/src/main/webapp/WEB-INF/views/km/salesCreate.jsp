@@ -14,78 +14,136 @@
 <title>수주 등록</title>
 
 <script>
-    /* ===== 거래처 팝업 연동 ===== */
-    function openClientPopup() {
-      window.open(
-        '${pageContext.request.contextPath}/client/popup',
-        'clientPopup',
-        'width=600,height=500,scrollbars=yes'
-      );
-    }
-    function setClientInfo(client_No, client_Name, client_Address, client_Email, client_Tel, client_Man, empNo, empName) {
-      document.getElementById('clientNoInput').value = client_No;
-      document.getElementById('clientNameInput').value = client_Name;
-      document.getElementById('clientAddressInput').value = client_Address;
-      document.getElementById('clientEmailInput').value = client_Email;
-      document.getElementById('clientTelInput').value = client_Tel;
-      document.getElementById('clientManInput').value = client_Man;
-      if (empNo)  document.getElementById('empNoInput').value = empNo;
-      if (empName)document.getElementById('empNameInput').value = empName;
+  /* ====================== 거래처 팝업 연동 ====================== */
+  function openClientPopup() {
+    window.open(
+      '${pageContext.request.contextPath}/client/popup',
+      'clientPopup',
+      'width=600,height=500,scrollbars=yes'
+    );
+  }
+  function setClientInfo(client_No, client_Name, client_Address, client_Email, client_Tel, client_Man, empNo, empName) {
+    document.getElementById('clientNoInput').value     = client_No;
+    document.getElementById('clientNameInput').value   = client_Name;
+    document.getElementById('clientAddressInput').value= client_Address;
+    document.getElementById('clientEmailInput').value  = client_Email;
+    document.getElementById('clientTelInput').value    = client_Tel;
+    document.getElementById('clientManInput').value    = client_Man;
+    if (empNo)   document.getElementById('empNoInput').value   = empNo;
+    if (empName) document.getElementById('empNameInput').value = empName;
+    window.close();
+  }
+
+  /* ====================== 제품 팝업 연동 + 중복 방지 ====================== */
+  // 이미 선택된 제품번호 보관
+  const selectedProducts = new Set();
+  // 팝업에서 선택 결과를 넣을 대상 행 및 입력 요소 참조
+  let currentRow = null;
+  let targetProductInput = null;
+  let targetProductNameInput = null;
+
+  function openProductPopup(btn) {
+    const tr = btn.closest('tr');
+    currentRow = tr;
+    targetProductInput     = tr.querySelector('.productNoInput');
+    targetProductNameInput = tr.querySelector('.productNameInput');
+
+    window.open(
+      '${pageContext.request.contextPath}/sales/productPopup',
+      'productPopup',
+      'width=700,height=560,scrollbars=yes'
+    );
+  }
+
+  // 팝업에서 호출되는 콜백
+  function setProductInfo(product_no, product_name) {
+    const pno = String(product_no);
+
+    // 현재 행의 이전 제품번호
+    const prevNo = targetProductInput?.value ? String(targetProductInput.value) : null;
+
+    // 동일 제품을 같은 행에 다시 고른 경우: 그냥 닫기
+    if (prevNo && prevNo === pno) {
       window.close();
+      return;
     }
 
-    /* ===== 제품 팝업 연동 ===== */
-    let targetProductInput = null;
-    let targetProductNameInput = null;
-
-    function openProductPopup(btn) {
-      const tr = btn.closest('tr');
-      targetProductInput     = tr.querySelector('.productNoInput');
-      targetProductNameInput = tr.querySelector('.productNameInput');
-      window.open(
-        '${pageContext.request.contextPath}/sales/productPopup',
-        'productPopup',
-        'width=700,height=560,scrollbars=yes'
-      );
-    }
-    function setProductInfo(product_no, product_name) {
-      if (targetProductInput)     targetProductInput.value = product_no;
-      if (targetProductNameInput) targetProductNameInput.value = product_name;
-      window.close();
+    // 다른 행에서 이미 선택된 제품이면 막기
+    if (selectedProducts.has(pno)) {
+      alert('이미 선택된 제품입니다.');
+      const dup = document.querySelector(`#items-tbody tr[data-product-no="${pno}"]`);
+      if (dup) {
+        dup.classList.add('table-warning');
+        dup.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => dup.classList.remove('table-warning'), 1200);
+      }
+      return;
     }
 
-    /* ===== 합계 자동 계산 ===== */
-    function recalcTotal() {
-      let sumReq = 0;
-      let sumCost = 0;
+    // 이전 선택 제거
+    if (prevNo) selectedProducts.delete(prevNo);
 
-      document.querySelectorAll('#items-tbody tr').forEach(function(row) {
-        const qty  = Number(row.querySelector('.qty-input')?.value)  || 0;
-        const cost = Number(row.querySelector('.cost-input')?.value) || 0;
-        const tot  = qty * cost;
+    // 현재 행에 값 반영
+    if (targetProductInput)     targetProductInput.value = pno;
+    if (targetProductNameInput) targetProductNameInput.value = product_name;
+    if (currentRow)             currentRow.dataset.productNo = pno;
 
-        const totCell = row.querySelector('.tot-cost');
-        if (totCell) totCell.value = tot ? tot.toLocaleString() : '';
+    // 선택 목록 갱신
+    selectedProducts.add(pno);
 
-        sumReq  += qty;
-        sumCost += tot;
-      });
+    // 합계 재계산 필요 시
+    if (typeof recalcTotal === 'function') recalcTotal();
 
-      document.getElementById('sum-req').innerText  = sumReq.toLocaleString();
-      document.getElementById('sum-cost').innerText = sumCost.toLocaleString();
+    window.close();
+  }
+
+  /* ====================== 합계 자동 계산 ====================== */
+  function recalcTotal() {
+    let sumReq = 0;
+    let sumCost = 0;
+
+    document.querySelectorAll('#items-tbody tr').forEach(function(row) {
+      const qty  = Number(row.querySelector('.qty-input')?.value)  || 0;
+      const cost = Number(row.querySelector('.cost-input')?.value) || 0;
+      const tot  = qty * cost;
+
+      const totCell = row.querySelector('.tot-cost');
+      if (totCell) totCell.value = tot ? tot.toLocaleString() : '';
+
+      sumReq  += qty;
+      sumCost += tot;
+    });
+
+    const sumReqEl  = document.getElementById('sum-req');
+    const sumCostEl = document.getElementById('sum-cost');
+    if (sumReqEl)  sumReqEl.innerText  = sumReq.toLocaleString();
+    if (sumCostEl) sumCostEl.innerText = sumCost.toLocaleString();
+  }
+
+  // 수량/단가 변경 시 합계 갱신
+  document.addEventListener('input', function(e) {
+    if (e.target.classList.contains('qty-input') || e.target.classList.contains('cost-input')) {
+      recalcTotal();
     }
+  });
 
-    document.addEventListener('input', function(e) {
-      if (e.target.classList.contains('qty-input') || e.target.classList.contains('cost-input')) {
-        recalcTotal();
+  /* ====================== 동적 행 추가/삭제 ====================== */
+  document.addEventListener('DOMContentLoaded', function() {
+    const addBtn = document.getElementById('add-item-btn');
+    const tbody  = document.getElementById('items-tbody');
+
+    // 수정폼: 기존 선택값을 Set에 미리 반영
+    document.querySelectorAll('#items-tbody .productNoInput').forEach(inp => {
+      if (inp.value) {
+        const p = String(inp.value);
+        selectedProducts.add(p);
+        const tr = inp.closest('tr');
+        if (tr) tr.dataset.productNo = p;
       }
     });
 
-    /* ===== 동적 행 추가/삭제 ===== */
-    document.addEventListener('DOMContentLoaded', function() {
-      const addBtn = document.getElementById('add-item-btn');
-      const tbody  = document.getElementById('items-tbody');
-
+    // 항목 추가
+    if (addBtn) {
       addBtn.addEventListener('click', function() {
         const idx = tbody.querySelectorAll('tr').length;
 
@@ -113,17 +171,26 @@
 
         tbody.appendChild(tr);
       });
+    }
 
-      document.getElementById('items-table').addEventListener('click', function(e){
+    // 항목 삭제 (Set에서 제품번호도 제거)
+    const table = document.getElementById('items-table');
+    if (table) {
+      table.addEventListener('click', function(e){
         if (e.target.classList.contains('remove-item-btn')) {
-          e.target.closest('tr').remove();
+          const tr = e.target.closest('tr');
+          const no = tr.querySelector('.productNoInput')?.value;
+          if (no) selectedProducts.delete(String(no));
+          tr.remove();
           recalcTotal();
         }
       });
+    }
 
-      recalcTotal();
-    });
-  </script>
+    recalcTotal();
+  });
+</script>
+
 </head>
 <body>
 	<div id="layout">
@@ -213,7 +280,7 @@
 										<!-- 납기(수주) 일자 -->
 										<div class="col-md-4">
 											<label class="form-label">납기 완료일</label> <input type="date"
-												class="form-control form-control-sm" name="sales_Date" />
+												class="form-control form-control-sm" name="sales_Date" required/>
 										</div>
 									</div>
 								</section>

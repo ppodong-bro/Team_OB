@@ -88,11 +88,12 @@ $(document).ready(function() {
 });
 </script>
 
-<div class="d-flex flex-row">
+<div class="side d-flex flex-row">
 	<!-- lg사이즈 이상일 경우 -->
 	<div class="sidebar flex-shrink-0 p-3 d-block">
-		<a href="/" class="d-flex justify-content-center align-items-center pb-3 mb-3 link-body-emphasis text-decoration-none border-bottom">
-		<img alt="AssemERP" src="${pageContext.request.contextPath}/img/Logo.png" style="width: 150px; height: 50px; object-fit: fill;">
+		<a href="${pageContext.request.contextPath}/"
+			class="d-flex justify-content-center align-items-center pb-3 mb-3 link-body-emphasis text-decoration-none border-bottom"> <img alt="AssemERP"
+			src="${pageContext.request.contextPath}/img/logo.png" style="width: 150px; height: 50px; object-fit: fill;">
 		</a>
 		<ul class="list-unstyled ps-0">
 			<li class="mb-1">
@@ -100,8 +101,10 @@ $(document).ready(function() {
 					aria-expanded="false">인사</button>
 				<div class="collapse" id="deptemp-collapse" style="">
 					<ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small list-group">
-						<li><a href="${pageContext.request.contextPath}/dept/deptListForm" class="link-body-emphasis d-inline-flex text-decoration-none rounded">부서 관리</a></li>
-						<li><a href="${pageContext.request.contextPath}/emp/empListForm"   class="link-body-emphasis d-inline-flex text-decoration-none rounded">사원 관리</a></li>
+						<li><a href="${pageContext.request.contextPath}/dept/deptListForm" class="link-body-emphasis d-inline-flex text-decoration-none rounded">부서
+								관리</a></li>
+						<li><a href="${pageContext.request.contextPath}/emp/empListForm" class="link-body-emphasis d-inline-flex text-decoration-none rounded">사원
+								관리</a></li>
 					</ul>
 				</div>
 			</li>
@@ -132,11 +135,11 @@ $(document).ready(function() {
 					data-bs-target="#client-collapse" aria-expanded="false">거래처</button>
 				<div class="collapse" id="client-collapse">
 					<ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-						<li><a href="${pageContext.request.contextPath}/client/list" 
-						class="link-body-emphasis d-inline-flex text-decoration-none rounded">거래처 관리</a></li>
-						<li><a href="${pageContext.request.contextPath}/client/createStart"
-							class="link-body-emphasis d-inline-flex text-decoration-none rounded">거래처 등록</a></li>
-						
+						<li><a href="${pageContext.request.contextPath}/client/list" class="link-body-emphasis d-inline-flex text-decoration-none rounded">거래처
+								관리</a></li>
+						<li><a href="${pageContext.request.contextPath}/client/createStart" class="link-body-emphasis d-inline-flex text-decoration-none rounded">거래처
+								등록</a></li>
+
 					</ul>
 				</div>
 			</li>
@@ -146,9 +149,10 @@ $(document).ready(function() {
 				<div class="collapse" id="inventory-collapse">
 					<ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
 						<li><a href="${pageContext.request.contextPath}/inventory" class="link-body-emphasis d-inline-flex text-decoration-none rounded">재고 관리</a></li>
-						<li><a href="${pageContext.request.contextPath}/inventory/history" class="link-body-emphasis d-inline-flex text-decoration-none rounded">재고 입출고
+						<li><a href="${pageContext.request.contextPath}/inventory/history" class="link-body-emphasis d-inline-flex text-decoration-none rounded">재고
+								입출고 이력</a></li>
+						<li><a href="${pageContext.request.contextPath}/inventory/close" class="link-body-emphasis d-inline-flex text-decoration-none rounded">월마감
 								이력</a></li>
-						<li><a href="${pageContext.request.contextPath}/inventory/close" class="link-body-emphasis d-inline-flex text-decoration-none rounded">월마감 이력</a></li>
 					</ul>
 				</div>
 			</li>
@@ -166,33 +170,32 @@ $(document).ready(function() {
 	</div>
 	<!-- lg사이즈 이하일 경우 -->
 	<div class="minisidebar flex-shrink-0 p-3 d-none">
-		<a href="/" class="d-flex justify-content-center align-items-center pb-3 mb-3 text-decoration-none border-bottom"> <img
-			alt="AssemERP" src="${pageContext.request.contextPath}/img/Logo_mini.png" style="width: 50px; height: 50px; object-fit: fill;">
+		<a href="/" class="d-flex justify-content-center align-items-center pb-3 mb-3 text-decoration-none border-bottom"> <img alt="AssemERP"
+			src="${pageContext.request.contextPath}/img/Logo_mini.png" style="width: 50px; height: 50px; object-fit: fill;">
 		</a>
 		<ul class="list-unstyled ps-0">
-			<li class="mb-1"><a href="#" class="link-body-emphasis d-flex justify-content-center align-items-center text-decoration-none rounded" style="height: 32px"> <i
-					class="bi bi-person" style="font-size: 24px"></i>
+			<li class="mb-1"><a href="#" class="link-body-emphasis d-flex justify-content-center align-items-center text-decoration-none rounded"
+				style="height: 32px"> <i class="bi bi-person" style="font-size: 24px"></i>
 			</a></li>
-			<li class="mb-1"><a href="#" class="link-body-emphasis d-flex justify-content-center align-items-center text-decoration-none rounded" style="height: 32px"> <i
-					class="bi bi-cpu" style="font-size: 24px"></i>
+			<li class="mb-1"><a href="#" class="link-body-emphasis d-flex justify-content-center align-items-center text-decoration-none rounded"
+				style="height: 32px"> <i class="bi bi-cpu" style="font-size: 24px"></i>
 			</a></li>
-			<li class="mb-1"><a href="#" class="link-body-emphasis d-flex justify-content-center align-items-center text-decoration-none rounded" style="height: 32px"> <i
-					class="bi bi-file-earmark-text" style="font-size: 24px"></i>
+			<li class="mb-1"><a href="#" class="link-body-emphasis d-flex justify-content-center align-items-center text-decoration-none rounded"
+				style="height: 32px"> <i class="bi bi-file-earmark-text" style="font-size: 24px"></i>
 			</a></li>
-			<li class="mb-1"><a href="#" class="link-body-emphasis d-flex justify-content-center align-items-center text-decoration-none rounded" style="height: 32px"> <i
-					class="bi bi-building" style="font-size: 24px"></i>
+			<li class="mb-1"><a href="#" class="link-body-emphasis d-flex justify-content-center align-items-center text-decoration-none rounded"
+				style="height: 32px"> <i class="bi bi-building" style="font-size: 24px"></i>
 			</a></li>
-			<li class="mb-1"><a href="${pageContext.request.contextPath}/inventory" class="link-body-emphasis d-flex justify-content-center align-items-center text-decoration-none rounded" style="height: 32px"> <i
+			<li class="mb-1"><a href="${pageContext.request.contextPath}/inventory"
+				class="link-body-emphasis d-flex justify-content-center align-items-center text-decoration-none rounded" style="height: 32px"> <i
 					class="bi bi-box-seam" style="font-size: 24px"></i>
 			</a></li>
 			<li class="border-top my-3"></li>
-			<li class="mb-1"><a href="#" class="link-body-emphasis d-flex justify-content-center align-items-center text-decoration-none rounded" style="height: 32px"> <i
-					class="bi bi-chat-left-text" style="font-size: 24px"></i>
+			<li class="mb-1"><a href="#" class="link-body-emphasis d-flex justify-content-center align-items-center text-decoration-none rounded"
+				style="height: 32px"> <i class="bi bi-chat-left-text" style="font-size: 24px"></i>
 			</a></li>
 		</ul>
 	</div>
 	<!-- 사이드바 전환 버튼 -->
-	<div class="sidebartoggle flex-shrink-0 p-0" onclick="toggleSidebar()">
-	◀
-	</div>
+	<div class="sidebartoggle flex-shrink-0 p-0" onclick="toggleSidebar()">◀</div>
 </div>
