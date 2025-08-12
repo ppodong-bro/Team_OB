@@ -219,32 +219,4 @@ body {
 	padding: 0;
 	margin: 0 5px;
 }
-
-.dashboard {
-	height: 400px;
-	
-}
-
-.dashboard .row {
-	height: 100%;
-}
-
-.dashboard .row>[class^="col-"] {
-	height: 100%;
-}
-
-.graphBox {
-	display: flex;
-	align-items: center; /* 세로 중앙정렬 */
-	justify-content: center; /* 가로 중앙정렬 */
-	border: solid 2px;
-	border-radius: 7px;
-	border-color: #23292E;
-	width: 100%; /* 가로 폭 꽉 채우기 */
-	height: 100%; /* 필요 시 부모 높이 꽉 채우기 */
-	box-sizing: border-box; /* border 포함 */
-	background-color: white;
-}
-/* 대시보드관련 css */
-
 </style>
