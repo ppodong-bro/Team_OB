@@ -35,10 +35,13 @@ function checkAuthority() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+	// JSP 변수를 JavaScript 변수로 저장
+	const contextPath = "${pageContext.request.contextPath}";
+
 	/* 마감 상태 검색 콤보박스 AJAX */
 	const closeStatusSelect = ${search.close_status != null ? search.close_status : 999};
 	// 마감 상태 : 700
-	fetch("/common/700")
+	fetch(contextPath + "/common/700")
 		.then(response => response.json())
 		.then(data => {
 			// console.log("불러온 데이터:", data);
@@ -70,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const statusTextElement = element.querySelector('.text');
         
         // Ajax 요청 보내기(700 : 마감상태)
-        fetch('/common/700/' + statusValue)
+        fetch(contextPath + "/common/700/" + statusValue)
             .then(response => response.json())
             .then(data => {
                 // 서버에서 받은 데이터로 텍스트 변경

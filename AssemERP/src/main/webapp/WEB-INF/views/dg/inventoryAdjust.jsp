@@ -50,7 +50,7 @@ body {
 							<!-- 화면에서 전체적으로 사용하는 부품/제품 구분 변수 -->
 							<c:set var="item_type" value="${inventory.item_type == 0 ? '부품' : '제품'}" />
 
-							<form id="updateForm" action="/inventory/adjust" method="post" class="needs-validation" novalidate>
+							<form id="updateForm" action="${pageContext.request.contextPath}/inventory/adjust" method="post" class="needs-validation" novalidate>
 								<div class="row">
 									<div class="col-md-6 mb-3">
 										<label for="item_type" class="form-label">재고 구분</label>

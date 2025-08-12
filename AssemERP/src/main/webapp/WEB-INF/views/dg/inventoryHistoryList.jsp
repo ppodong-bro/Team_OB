@@ -9,13 +9,16 @@
 <title>Assem ERP</title>
 </head>
 <script type="text/javascript">
+// JSP 변수를 JavaScript 변수로 저장
+const contextPath = "${pageContext.request.contextPath}";
+
 //거래 구분 검색
 const orderStatusSelect = ${search.order_status_select != null ? search.order_status_select : 999};
 const itemStatusSelect = ${search.item_status_select != null ? search.item_status_select : 999};
 
 	document.addEventListener("DOMContentLoaded", function () {
 		//거래 구분 가져오기
-		fetch("/common/1100")
+		fetch(contextPath + "/common/1100")
 			.then(response => response.json())
 			.then(data => {
 				console.log(data);
@@ -37,7 +40,7 @@ const itemStatusSelect = ${search.item_status_select != null ? search.item_statu
 			.catch(error => console.error("/common 호출 오류:", error));
 		
 		//재고 구분 가져오기
-		fetch("/common/600")
+		fetch(contextPath + "/common/600")
 			.then(response => response.json())
 			.then(data => {
 				console.log(data);
