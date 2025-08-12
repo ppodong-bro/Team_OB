@@ -91,8 +91,8 @@ $(document).ready(function() {
 <div class="d-flex flex-row">
 	<!-- lg사이즈 이상일 경우 -->
 	<div class="sidebar flex-shrink-0 p-3 d-block">
-		<a href="/" class="d-flex justify-content-center align-items-center pb-3 mb-3 link-body-emphasis text-decoration-none border-bottom">
-		<img alt="AssemERP" src="${pageContext.request.contextPath}/img/Logo.png" style="width: 150px; height: 50px; object-fit: fill;">
+		<a href="${pageContext.request.contextPath}/" class="d-flex justify-content-center align-items-center pb-3 mb-3 link-body-emphasis text-decoration-none border-bottom">
+		<img alt="AssemERP" src="${pageContext.request.contextPath}/img/logo.png" style="width: 150px; height: 50px; object-fit: fill;">
 		</a>
 		<ul class="list-unstyled ps-0">
 			<li class="mb-1">

@@ -15,6 +15,9 @@
 </style>
 </head>
 <script type="text/javascript">
+	// JSP 변수를 JavaScript 변수로 저장
+	const contextPath = "${pageContext.request.contextPath}";
+
 	// 부품,제품 구분
 	const itemType = ${search.item_type != null ? search.item_type : 0};
 	const itemStatusSelect = ${search.item_status_select != null ? search.item_status_select : 999};
@@ -26,7 +29,7 @@
 		// console.log(itemType_common);
 		
 		// common의 내용 가져오기 
-		fetch("/common/" + itemType_common)
+		fetch(contextPath + "/common/" + itemType_common)
 			.then(response => response.json())
 			.then(data => {
 				// console.log("불러온 데이터:", data);
@@ -62,15 +65,18 @@
 			break;
 		}
 
-		var link = "/inventory?item_type=" + item_type;
+		var link = contextPath + "/inventory?item_type=" + item_type;
 		//console.log("link", link)
 		location.href = link;
 	}
 	
 //Excel 다운로드
 function excelDownload(){
+	// JSP 변수를 JavaScript 변수로 저장
+	const contextPath = "${pageContext.request.contextPath}";
+	
 	/* 검색조건에 맞는 데이터 모두 가져온다(AJAX) */
-	fetch("/inventory/excel?item_type=" + itemType)
+	fetch(contextPath + "/inventory/excel?item_type=" + itemType)
 		.then(response => response.json())
 		.then(data => {
 			// 워크북 생성
@@ -126,7 +132,7 @@ function excelDownload(){
 						</div>
 						<div class="card-body">
 							<!-- 검색 폼 시작 -->
-							<form method="get" action="inventory" class="row gx-2 gy-1 align-items-center mb-4">
+							<form method="get" action="${pageContext.request.contextPath}/inventory" class="row gx-2 gy-1 align-items-center mb-4">
 								<!-- 부품/제품 -->
 								<div class="col-auto">
 									<div class="btn-group" role="group" aria-label="Basic radio toggle button group">
