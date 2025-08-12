@@ -185,4 +185,66 @@ body {
 	background-color: #e9ecef; /* disabled 배경색과 비슷하게 */
 }
 
+/* 대시보드관련 css */
+/* 헤더(월 이름 등) 글자 크기 조절 */
+.fc-header-toolbar {
+	font-size: 16px;
+}
+
+/* 요일 헤더 글자 크기 조절 */
+.fc-col-header-cell-cushion {
+	font-size: 14px;
+}
+
+/* 날짜 숫자 크기 조절 */
+.fc-daygrid-day-number {
+	font-size: 14px;
+}
+/* 헤더 툴바 영역 전체 크기 축소 */
+.fc-toolbar {
+	font-size: 12px; /* 폰트 크기 줄이기 */
+	padding: 4px 8px; /* 위아래, 좌우 패딩 조정 */
+}
+
+/* 툴바 버튼 크기 축소 */
+.fc-toolbar button {
+	padding: 4px 8px; /* 버튼 내부 패딩 줄이기 */
+	font-size: 12px; /* 버튼 텍스트 폰트 크기 */
+	min-width: auto; /* 기본 최소 너비 없애기 */
+}
+
+/* 헤더 중앙 제목 크기 조정 */
+.fc-toolbar-title {
+	font-size: 14px; /* 제목 폰트 크기 */
+	padding: 0;
+	margin: 0 5px;
+}
+
+.dashboard {
+	height: 400px;
+	
+}
+
+.dashboard .row {
+	height: 100%;
+}
+
+.dashboard .row>[class^="col-"] {
+	height: 100%;
+}
+
+.graphBox {
+	display: flex;
+	align-items: center; /* 세로 중앙정렬 */
+	justify-content: center; /* 가로 중앙정렬 */
+	border: solid 2px;
+	border-radius: 7px;
+	border-color: #23292E;
+	width: 100%; /* 가로 폭 꽉 채우기 */
+	height: 100%; /* 필요 시 부모 높이 꽉 채우기 */
+	box-sizing: border-box; /* border 포함 */
+	background-color: white;
+}
+/* 대시보드관련 css */
+
 </style>
