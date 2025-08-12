@@ -1,5 +1,6 @@
 package com.WiseForce.AssemERP.dao.km;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.WiseForce.AssemERP.dto.km.ProductListDto;
@@ -28,9 +29,19 @@ public interface Sales_OrderDao {
 
 	void 					deleteSales(Sales_OrderDto sales_OrderDto);
 
-	List<Sales_ItemDto> 	salesItemList(Sales_OrderDto sales_OrderDto);
+	List<Sales_ItemDto> 	salesItemList(int sales_No);
 
-	void 					modifyStatus(Sales_OrderDto sales_OrderDto, List<Sales_ItemDto> salesItemList);
+	void 					modifyStatus(int sales_No, int status);
+
+	void 					completeStatus(Sales_OrderDto sales_OrderDto, List<Sales_ItemDto> salesItemList);
+
+	int 					selectOutStatus(int sales_No);
+
+	void 					completeStatus (int sales_No, int status, List<Sales_ItemDto> salesItemList);
+
+	void 					closeStatus(int sales_No, int status);
+
+	Sales_OrderDto 			getCompleteDateAndClientNo(int sales_No);
 
 
 }

@@ -59,7 +59,15 @@
 
 	</resultMap>
 	
-	<resultMap type="Sales_OrderDto" id="createListMap"></resultMap>
+	<resultMap type="Sales_OrderDto" id="clientNoAndCloseDate">
+		<id column="SALES_NO" property="sales_No"/>
+		<result column="COMPLETE_DATE" property="complete_Date"/>
+		
+		<association property="clientDto" javaType="ClientDto">
+			<id	column="CLIENT_NO" property="client_No"/>
+		</association>
+	</resultMap>
+	
 
 	<select id="totSales" parameterType="Sales_OrderSearchDto"
 		resultType="int">
@@ -196,12 +204,6 @@
 		<if test="sales_Date != null">
 			SALES_DATE = #{sales_Date, jdbcType=DATE},
 		</if>
-		<if test="out_Status != null">
-			OUT_STATUS = #{out_Status},
-		</if>
-		<if test="out_Status == null">
-			OUT_STATUS = 0,
-		</if>
 		<if test="del_Status != null">
 			DEL_STATUS = #{del_Status}
 		</if>
@@ -233,11 +235,55 @@
 	END;
 	</delete>
 
-	<select id="salesItemAll" parameterType="Sales_OrderDto" resultType="Sales_ItemDto">
+	<select id="salesItemAll" parameterType= "int" resultType="Sales_ItemDto">
 		SELECT *
 		FROM   SALES_ITEM
-		WHERE  SALES_NO = #{sales_No}
+		WHERE  SALES_NO = #{value}
 	</select>
 	
+	<select id="selectOutStatus" parameterType="int" resultType="int">
+		SELECT OUT_STATUS
+		FROM   SALES_ORDER
+		WHERE  SALES_NO = #{value}
+	</select>
+	
+	<update id="modifyOutStatus" parameterType="Map">
+		UPDATE SALES_ORDER
+		SET	   OUT_STATUS = #{out_Status}
+		WHERE  SALES_NO = #{sales_No}
+	</update>
+	
+	<update id="completeStatus" parameterType="Map">
+		UPDATE SALES_ORDER
+		SET	   OUT_STATUS = #{out_Status},
+			   COMPLETE_DATE = SYSDATE
+		WHERE  SALES_NO 	  = #{sales_No}
+	</update>
+	
+	<select id="getCompleteDateAndClientNo" parameterType="int" resultMap="clientNoAndCloseDate">
+		SELECT S.COMPLETE_DATE, C.CLIENT_NO
+		FROM   SALES_ORDER S LEFT JOIN CLIENT C ON S.CLIENT_NO = C.CLIENT_NO
+		WHERE  S.SALES_NO = #{sales_No}
+	</select>
+	
+	<insert id="client_Perform" parameterType="Client_PerformDto">
+  MERGE INTO CLIENT_PERFORM M
+  USING (
+    SELECT
+      TO_CHAR(#{dYearMonth, jdbcType=TIMESTAMP}, 'YYMM') AS YEARMONTH,
+      #{client_No}   AS CLIENT_NO,
+      #{total_Amt}   AS AMT
+    FROM DUAL
+  ) SRC
+  ON (M.YEARMONTH = SRC.YEARMONTH AND M.CLIENT_NO = SRC.CLIENT_NO)
+  WHEN NOT MATCHED THEN
+    INSERT (YEARMONTH, CLIENT_NO, CNT, TOTAL_AMT)
+    VALUES (SRC.YEARMONTH, SRC.CLIENT_NO, 1, SRC.AMT)
+  WHEN MATCHED THEN
+    UPDATE SET M.CNT       = NVL(M.CNT,0) + 1,
+               M.TOTAL_AMT = NVL(M.TOTAL_AMT,0) + SRC.AMT
+	</insert>
+
+
 
 </mapper>

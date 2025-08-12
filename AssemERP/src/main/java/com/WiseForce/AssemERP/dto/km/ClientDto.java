@@ -32,6 +32,6 @@ public class ClientDto {
 	private int				start;
 	private int				end;
 	private String			currentPage;
-	private String			context;
+	private String			context;			
 	
 }

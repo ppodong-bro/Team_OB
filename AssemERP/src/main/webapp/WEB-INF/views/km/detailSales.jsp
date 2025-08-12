@@ -229,9 +229,7 @@
 										<form action="${pageContext.request.contextPath}/sales/modifyStatus"
 											method="post" style="display: inline;">
 											<input type="hidden" name="sales_No"
-												value="${sales_OrderDto.sales_No}" /> <input type="hidden"
-												name="out_Status" value="1" />
-											<!-- 여기에 1을 고정해 넘김 -->
+												value="${sales_OrderDto.sales_No}" />
 											<button type="submit" class="btn btn-success btn-sm px-4">
 												승인</button>
 										</form>
@@ -240,14 +238,17 @@
 										<form action="${pageContext.request.contextPath}/sales/modifyStatus"
 											method="post" style="display: inline;">
 											<input type="hidden" name="sales_No"
-												value="${sales_OrderDto.sales_No}" /> <input type="hidden"
-												name="out_Status" value="2" />
+												value="${sales_OrderDto.sales_No}" />
 											<button type="submit" class="btn btn-primary btn-sm px-4">완료</button>
 										</form>
 									</c:when>
 									<c:when test="${sales_OrderDto.out_Status == 2}">
-										<button type="button" class="btn btn-secondary btn-sm px-4"
-											disabled>완료</button>
+										<form action="${pageContext.request.contextPath}/sales/modifyStatus"
+											method="post" style="display: inline;">
+											<input type="hidden" name="sales_No"
+												value="${sales_OrderDto.sales_No}"/>
+										<button type="submit" class="btn btn-danger btn-sm px-4">마감</button>
+										</form>
 									</c:when>
 
 									<c:when test="${sales_OrderDto.out_Status == 3}">
@@ -278,16 +279,7 @@
 
 								<c:choose>
 									<c:when
-										test="${sales_OrderDto.out_Status == 1 or sales_OrderDto.out_Status == 0}">
-										<form action="${pageContext.request.contextPath}/sales/delete"
-											method="post" style="display: inline;">
-											<input type="hidden" name="sales_No"
-												value="${sales_OrderDto.sales_No}" />
-											<button type="submit" class="btn btn-danger btn-sm px-4"
-												onclick="return confirm('수주 취소 하시겠습니까?');">수주 취소</button>
-										</form>
-									</c:when>
-									<c:when test="${sales_OrderDto.out_Status == 0}">
+										test="${sales_OrderDto.out_Status == 0 or sales_OrderDto.out_Status == 1}">
 										<form action="${pageContext.request.contextPath}/sales/delete"
 											method="post" style="display: inline;">
 											<input type="hidden" name="sales_No"

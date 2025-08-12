@@ -47,5 +47,6 @@ public class Purchase_Order {
 	private LocalDate 		purchase_date;
 	private int		  		in_status;
 	private int		  		del_status;
+	private LocalDateTime   complete_date;
 	private LocalDateTime	in_date;
 }
