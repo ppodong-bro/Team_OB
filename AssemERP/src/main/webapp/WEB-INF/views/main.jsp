@@ -28,14 +28,14 @@
 <style>
 .dashboard {
 	display: grid;
-	gap: 10px;
+	gap: 20px;
 	padding: 0px;
 	height: 100%;
 	box-sizing: border-box; /* 패딩까지 포함해서 높이 계산하도록 설정 */
 	/* 큰 화면용 그리드 설정 */
 	grid-template-columns: repeat(8, 1fr);
 	/* 8개 열, 각각 동일한 비율(1fr)로 설정 */
-	grid-template-rows: repeat(7, calc((100% - 70px) / 7)); 
+	grid-template-rows: repeat(7, calc((100% - 140px) / 7)); 
 	/* 5개 행, 최소 100px에서 내용에 맞게 늘어남 */
 	grid-template-areas: 
 		"one 	one 	one 	two 	two 	two 	two 	two"
@@ -64,6 +64,8 @@
 	font-size: 24px;
 	font-weight: bold;
 	color: black;
+	box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.1);
+	 
 }
 
 .dashboard .item-1 {
@@ -155,177 +157,13 @@
 				<div class="dashboard container-fluid px-4 py-4">
 					<!-- 캘린더 -->
 					<div class="item item-1">
-						<div id="fullCalendar" style="height: 100%; width: 100%;"></div>
-						<script>
-								    flatpickr("#fullCalendar", {
-								    	
-								      locale: "ko",
-								      dateFormat: "Y-m-d",
-								      defaultDate: "today",
-								      inline: true,
-								      disableMobile: true,
-								      onReady: function(selectedDates, dateStr, instance) {
-								    	    // 초기 로딩 시 스타일 적용
-								    	    applyStyles(instance);
-								    	  },
-								    	  onMonthChange: function(selectedDates, dateStr, instance) {
-								    	    // 월이 변경될 때마다 스타일 재적용
-								    	    setTimeout(function() {
-								    	      applyStyles(instance);
-								    	    }, 10);
-								    	  },
-								    	  onYearChange: function(selectedDates, dateStr, instance) {
-								    		    // 년도가 변경될 때마다 스타일 재적용
-								    		    setTimeout(function() {
-								    		      applyStyles(instance);
-								    		    }, 10);
-							    		  },
-							    		  onChange: function(selectedDates, dateStr, instance) {
-							    			    // 날짜 선택 변경 시에도 스타일 재적용
-							    			    setTimeout(function() {
-							    			      applyStyles(instance);
-							    			    }, 10);
-						    			  }
-								    	});
-
-								    	// 스타일 적용 함수를 별도로 분리
-								    	function applyStyles(instance) {
-								    	  const cal = instance.calendarContainer;
-								    	  // 기본 컨테이너 설정
-								    	  cal.style.position = "relative";
-								    	  cal.style.top = "0";
-								    	  cal.style.left = "0";
-								    	  cal.style.width = "100%";
-								    	  cal.style.height = "100%";
-								    	  cal.style.maxWidth = "none";
-								    	  
-								    	  // 내부 컨테이너 조정
-								    	  const monthsElement = cal.querySelector('.flatpickr-months');
-								    	  if (monthsElement) monthsElement.style.width = "100%";
-								    	  
-								    	  const weekdaysElement = cal.querySelector('.flatpickr-weekdays');
-								    	  if (weekdaysElement) weekdaysElement.style.width = "100%";
-								    	  
-								    	  const rContainer = cal.querySelector('.flatpickr-rContainer');
-								    	  if (rContainer) {
-								    	    rContainer.style.width = "100%";
-								    	    rContainer.style.flex = "1";
-								    	    rContainer.style.display = "flex";
-								    	    rContainer.style.flexDirection = "column";
-								    	  }
-								    	  
-								    	  const daysElement = cal.querySelector('.flatpickr-days');
-								    	  if (daysElement) {
-								    	    daysElement.style.width = "100%";
-								    	    daysElement.style.height = "100%";
-								    	    daysElement.style.display = "flex";
-								    	    daysElement.style.flexDirection = "column";
-								    	  }
-								    	  
-								    	  const daysContainer = cal.querySelector('.dayContainer');
-								    	  if (daysContainer) {
-								    	    daysContainer.style.width = "100%";
-								    	    daysContainer.style.minWidth = "100%";
-								    	    daysContainer.style.maxWidth = "100%";
-								    	    daysContainer.style.display = "flex";
-								    	    daysContainer.style.flexWrap = "wrap";
-								    	    daysContainer.style.flex = "1";
-								    	    daysContainer.style.alignContent = "stretch";
-								    	  }
-								    	  
-								    	  // 날짜 박스 조정
-								    	  const days = cal.querySelectorAll('.flatpickr-day');
-								    	  const totalWeeks = Math.ceil(days.length / 7);
-								    	  
-								    	  days.forEach(day => {
-								    	    day.style.maxWidth = "100%";
-								    	    day.style.flexBasis = "14.28%";
-								    	    day.style.height = `calc((100% - ${monthsElement.offsetHeight}px - ${weekdaysElement.offsetHeight}px) / ${totalWeeks})`;
-								    	    day.style.lineHeight = "normal";
-								    	    day.style.display = "flex";
-								    	    day.style.justifyContent = "center";
-								    	    day.style.alignItems = "center";
-								    	    day.style.margin = "0";
-								    	    day.style.padding = "0";
-								    	    day.style.boxSizing = "border-box";
-								    	  });
-								    	  
-								    	  // 전체 캘린더를 flex 컨테이너로 설정
-								    	  cal.style.display = "flex";
-								    	  cal.style.flexDirection = "column";
-								    	}
-							    </script>
+						<div id="fullCalendar"></div>
+						<jsp:include page="/WEB-INF/views/sh/calender.jsp" />
 					</div>
 					<!-- 매출매입실적 -->
 					<div class="item item-2">
 						<canvas id="yearsperformChartCanvas"></canvas>
-						<script>
-					    const yearsperformlabels = JSON.parse('${yearsperformlabels}');
-					    const yearsperformSaledata = JSON.parse('${yearsperformSaledata}');
-					    const yearsperformPurchasedata = JSON.parse('${yearsperformPurchasedata}');
-					    
-					    const ctx3 = document.getElementById('yearsperformChartCanvas').getContext('2d');
-					    const yearsPerformChart = new Chart(ctx3, {
-					        type: 'line',
-					        data: {
-					            labels: yearsperformlabels,
-					            datasets: [
-					                {
-					                    label: '매출액',
-					                    data: yearsperformSaledata,
-					                    fill: true,
-					                    borderColor: 'rgba(75, 192, 192, 1)',
-					                    backgroundColor: 'rgba(75, 192, 192, 0)'
-					                },
-					                {
-					                    label: '매입액',  // 새로운 데이터셋의 이름
-					                    data: yearsperformPurchasedata,  // 이미 있는 매입 데이터 변수 사용
-					                    fill: true,
-					                    borderColor: 'rgba(255, 99, 132, 1)',  // 다른 색상 사용
-					                    backgroundColor: 'rgba(255, 99, 132, 0)'
-					                }
-					            ]
-					        },
-					        options: {
-					        	plugins: {
-					        	    title: {
-					        	      display: true,
-					        	      text: '거래실적', // ✅ 여기에 제목
-					        	      font: {
-					        	        size: 18
-					        	      },
-					        	      padding: {
-					        	        top: 10,
-					        	        bottom: 30
-					        	      }
-					        	    }
-					       	  	},
-					            responsive: true,
-					            maintainAspectRatio: false,
-					            scales: {
-					            	x: {
-					            		grid:{display :false}
-					            	},
-					                y: {
-					                	type: 'linear',
-					                    beginAtZero: true,
-					                    grid: {display :false},
-					                    min: 0,
-					                    max: 200000,
-					                    ticks: {
-					                    	display: true,
-					                    	autoSkip: false,
-					                        stepSize: 50000,
-					                        precision: 0, // 👈 추가!
-					                        callback: function(value, index) {
-					                        	  return value % 50000 === 0 ? value : ''; // 50000 단위만 보이게
-					                       	}
-					                    }
-					                }
-					            }
-					        }
-					    });
-					</script>
+						<jsp:include page="/WEB-INF/views/sh/yearsperformance.jsp"/>
 					</div>
 					<!-- 재고현황 -->
 					<div class="item item-3">
@@ -335,82 +173,7 @@
 					<!-- 거래처실적 -->
 					<div class="item item-4">
 						<canvas id="clientChart"></canvas>
-						<script>
-						    const unitPlugin = {
-						    		  id: 'unitPlugin',
-						    		  afterDraw(chart, args, options) {
-						    		    const {ctx, chartArea, scales} = chart;
-						    		    const yScale = scales.y;
-					
-						    		    ctx.save();
-						    		    ctx.font = options.font || '12px Arial';
-						    		    ctx.fillStyle = options.color || 'black';
-						    		    ctx.textAlign = 'center';
-						    		    ctx.textBaseline = 'bottom';
-					
-						    		    // y축 왼쪽, 그래프 영역 위쪽 바로 위 위치 지정
-						    		    const xPos = yScale.left + 30;  // y축 
-						    		    const yPos = chartArea.top - 10; // 그래프 영역 위쪽에서 10px 위
-					
-						    		    ctx.fillText(options.text || '단위: 만원', xPos, yPos);
-					
-						    		    ctx.restore();
-						    		  }
-					   		};
-						    
-						    const labels = ${barlabels};
-						    const data = ${bardata};
-						    
-						    console.log('barlabels raw:', '${barlabels}');
-						    console.log('bardata raw:', '${bardata}');
-		
-						    try {
-						        const labels = JSON.parse('<c:out value="${barlabels}" escapeXml="false"/>');
-						        const data = JSON.parse('<c:out value="${bardata}" escapeXml="false"/>');
-						        console.log('labels parsed:', labels);
-						        console.log('data parsed:', data);
-		
-						        // 차트 생성 코드 여기에 이어서 작성
-						    } catch(e) {
-						        console.error('JSON parse error:', e);
-						    }
-						    // ctx 선언 위치 꼭 여기!
-						    const ctx = document.getElementById('clientChart').getContext('2d');
-						    
-						    const myChart = new Chart(ctx, {
-						        type: 'bar',
-						        data: {
-						            labels: labels,
-						            datasets: [{
-						                label: '거래총액',
-						                data: data,
-						                backgroundColor: 'rgba(54, 162, 235, 0.7)'
-						            }]
-						        },
-						        options: {
-						            responsive: true,
-						        	maintainAspectRatio: false,
-						            scales: {
-						                x: { grid: { display: false } },
-						                y: { beginAtZero: true, grid: { display: false } }
-						            },
-						            plugins: {
-						                title: {
-						                    display: true,
-						                    text: '거래처실적',
-						                    font: { size: 18 },
-						                    padding: { top: 10, bottom: 10 }
-						                },
-						                unitPlugin: {
-						                    text: '단위: 만원',
-						                    font: '14px Arial',
-						                    color: 'gray'
-						                }
-						            }
-						        },
-						        plugins: [unitPlugin]
-						    });
-						</script>
+						<jsp:include page="/WEB-INF/views/sh/clientChart.jsp"/>
 					</div>
 					<!-- 명언 -->
 					<div class="quote-section item item-5">
