@@ -1,6 +1,7 @@
 package com.WiseForce.AssemERP.service.dg;
 
 import java.util.List;
+import java.util.Map;
 
 import com.WiseForce.AssemERP.dto.dg.InventoryDTO;
 import com.WiseForce.AssemERP.dto.dg.InventoryInfoDTO;
@@ -27,4 +28,7 @@ public interface InventoryService {
 	
 	// 월마감 실행
 	boolean doMonthClose(String yearMonth, int empno, int realStatus);
+	
+	// 재고현황 조회
+	List<Map<String, Object>> getInventoryCurrent();
 }

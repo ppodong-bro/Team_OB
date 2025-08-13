@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -159,6 +160,14 @@ public class InventoryServiceImpl implements InventoryService {
 	public boolean doMonthClose(String yearMonth, int empno, int realStatus) {
 		// 월마감 패키지 실행
 		return inventoryDao.doMonthClose(yearMonth, empno, realStatus);
+	}
+
+	// 재고현황 조회
+	@Override
+	public List<Map<String, Object>> getInventoryCurrent() {
+		List<Map<String, Object>> inventoryCurrnetList = inventoryDao.getInventoryCurrent();
+		
+		return inventoryCurrnetList;
 	}
 
 }
