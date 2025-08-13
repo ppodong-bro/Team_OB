@@ -10,7 +10,9 @@ DELETE FROM DEPT;
 DELETE FROM EMP;
 DELETE FROM EMP_IMAGE;
 DELETE FROM INVENTORY;
+DELETE FROM INVENTORY_ADJUST;
 DELETE FROM INVENTORY_CLOSE;
+DELETE FROM INVENTORY_OCCUPY;
 DELETE FROM MONTH_INVENTORY;
 DELETE FROM PARTS;
 DELETE FROM PARTS_PRICE_HIS;
@@ -61,6 +63,7 @@ INSERT INTO common VALUES (700, 999, '마감 구분');
 INSERT INTO common VALUES (700, 0, '마감시작');
 INSERT INTO common VALUES (700, 1, '마감완료');
 INSERT INTO common VALUES (700, 2, '월마감완료');
+INSERT INTO common VALUES (700, 3, '마감취소');
 
 INSERT INTO common VALUES (800, 999, '제품 분류');
 INSERT INTO common VALUES (800, 0, '데스크탑');
@@ -599,6 +602,25 @@ COMMIT;
 --INSERT INTO inventory_close VALUES ('2407', 1, sysdate, sysdate, 1);
 
 /************************************************** 
+ *  재고 점유 비율 : INVENTORY_OCCUPY
+ **************************************************/
+-- 재고 점유 비율은 각 m³
+-- 각각 포장된 상태 기준
+-- 20FT 컨테이너(가장 작은 컨테이너) 기준 33.2m³
+INSERT INTO INVENTORY_OCCUPY VALUES (0/*부품*/, 0/*메인보드*/, 0.012);
+INSERT INTO INVENTORY_OCCUPY VALUES (0/*부품*/, 1/*CPU*/, 0.001);
+INSERT INTO INVENTORY_OCCUPY VALUES (0/*부품*/, 2/*GPU*/, 0.02);
+INSERT INTO INVENTORY_OCCUPY VALUES (0/*부품*/, 3/*메모리*/, 0.001);
+INSERT INTO INVENTORY_OCCUPY VALUES (0/*부품*/, 4/*POWER*/, 0.008);
+INSERT INTO INVENTORY_OCCUPY VALUES (0/*부품*/, 5/*HDD*/, 0.005);
+INSERT INTO INVENTORY_OCCUPY VALUES (0/*부품*/, 6/*SSD*/, 0.001);
+INSERT INTO INVENTORY_OCCUPY VALUES (0/*부품*/, 7/*CASE*/, 0.075);
+INSERT INTO INVENTORY_OCCUPY VALUES (0/*부품*/, 8/*COLLER*/, 0.01);
+INSERT INTO INVENTORY_OCCUPY VALUES (1/*제품*/, 0/*데스크탑*/, 0.075);
+INSERT INTO INVENTORY_OCCUPY VALUES (1/*제품*/, 1/*노트북*/, 0.003);
+INSERT INTO INVENTORY_OCCUPY VALUES (1/*제품*/, 2/*워크스테이션*/, 0.12);
+
+/************************************************** 
  *  제품가격변동이력 : PRODUCT_COSTHIS
  **************************************************/
 INSERT INTO product_costhis VALUES (PRODUCT_COSTHIS_SEQ.nextval, 1, TO_DATE('20250601', 'YYYYMMDD'), TO_DATE('20250609', 'YYYYMMDD'), 1200000);
@@ -1076,35 +1098,35 @@ COMMIT;
 /************************************************** 
  *  발주 : PURCHASE_ORDER
  **************************************************/
-INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, DEL_STATUS, IN_DATE)
-VALUES (4101, 1001, 1003, TO_DATE('2025-07-20', 'YYYY-MM-DD'), 2, 0, TO_DATE('2025-08-01', 'YYYY-MM-DD'));
+INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, COMPLETE_DATE, DEL_STATUS, IN_DATE)
+VALUES (4101, 1001, 1003, TO_DATE('2025-07-20', 'YYYY-MM-DD'), 2, TO_DATE('2025-07-20', 'YYYY-MM-DD'), 0, TO_DATE('2025-08-01', 'YYYY-MM-DD'));
 
-INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, DEL_STATUS, IN_DATE)
-VALUES (4102, 1002, 1003, TO_DATE('2025-07-18', 'YYYY-MM-DD'), 2, 0, TO_DATE('2025-08-04', 'YYYY-MM-DD'));
+INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, COMPLETE_DATE, DEL_STATUS, IN_DATE)
+VALUES (4102, 1002, 1003, TO_DATE('2025-07-18', 'YYYY-MM-DD'), 2, TO_DATE('2025-07-18', 'YYYY-MM-DD'), 0, TO_DATE('2025-08-04', 'YYYY-MM-DD'));
 
-INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, DEL_STATUS, IN_DATE)
-VALUES (4103, 1003, 1003, TO_DATE('2025-07-17', 'YYYY-MM-DD'), 2, 0, TO_DATE('2025-08-01', 'YYYY-MM-DD'));
+INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, COMPLETE_DATE, DEL_STATUS, IN_DATE)
+VALUES (4103, 1003, 1003, TO_DATE('2025-07-17', 'YYYY-MM-DD'), 2, TO_DATE('2025-07-17', 'YYYY-MM-DD'), 0, TO_DATE('2025-08-01', 'YYYY-MM-DD'));
 
-INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, DEL_STATUS, IN_DATE)
-VALUES (4104, 1004, 1003, TO_DATE('2025-07-16', 'YYYY-MM-DD'), 2, 0, TO_DATE('2025-08-01', 'YYYY-MM-DD'));
+INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, COMPLETE_DATE, DEL_STATUS, IN_DATE)
+VALUES (4104, 1004, 1003, TO_DATE('2025-07-16', 'YYYY-MM-DD'), 2, TO_DATE('2025-07-16', 'YYYY-MM-DD'), 0, TO_DATE('2025-08-01', 'YYYY-MM-DD'));
 
-INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, DEL_STATUS, IN_DATE)
-VALUES (4105, 1005, 1003, TO_DATE('2025-07-15', 'YYYY-MM-DD'), 2, 0, TO_DATE('2025-08-02', 'YYYY-MM-DD'));
+INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, COMPLETE_DATE, DEL_STATUS, IN_DATE)
+VALUES (4105, 1005, 1003, TO_DATE('2025-07-15', 'YYYY-MM-DD'), 2, TO_DATE('2025-07-15', 'YYYY-MM-DD'), 0, TO_DATE('2025-08-02', 'YYYY-MM-DD'));
 
-INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, DEL_STATUS, IN_DATE)
-VALUES (4106, 1006, 1003, TO_DATE('2025-07-13', 'YYYY-MM-DD'), 2, 0, TO_DATE('2025-08-03', 'YYYY-MM-DD'));
+INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, COMPLETE_DATE, DEL_STATUS, IN_DATE)
+VALUES (4106, 1006, 1003, TO_DATE('2025-07-13', 'YYYY-MM-DD'), 2, TO_DATE('2025-07-13', 'YYYY-MM-DD'), 0, TO_DATE('2025-08-03', 'YYYY-MM-DD'));
 
-INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, DEL_STATUS, IN_DATE)
-VALUES (4107, 1007, 1003, TO_DATE('2025-07-12', 'YYYY-MM-DD'), 2, 0, TO_DATE('2025-08-01', 'YYYY-MM-DD'));
+INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, COMPLETE_DATE, DEL_STATUS, IN_DATE)
+VALUES (4107, 1007, 1003, TO_DATE('2025-07-12', 'YYYY-MM-DD'), 2, TO_DATE('2025-07-12', 'YYYY-MM-DD'), 0, TO_DATE('2025-08-01', 'YYYY-MM-DD'));
 
-INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, DEL_STATUS, IN_DATE)
-VALUES (4108, 1008, 1003, TO_DATE('2025-07-11', 'YYYY-MM-DD'), 2, 0, TO_DATE('2025-07-31', 'YYYY-MM-DD'));
+INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, COMPLETE_DATE, DEL_STATUS, IN_DATE)
+VALUES (4108, 1008, 1003, TO_DATE('2025-07-11', 'YYYY-MM-DD'), 2, TO_DATE('2025-07-11', 'YYYY-MM-DD'), 0, TO_DATE('2025-07-31', 'YYYY-MM-DD'));
 
-INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, DEL_STATUS, IN_DATE)
-VALUES (4109, 1009, 1003, TO_DATE('2025-07-09', 'YYYY-MM-DD'), 2, 0, TO_DATE('2025-07-31', 'YYYY-MM-DD'));
+INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, COMPLETE_DATE, DEL_STATUS, IN_DATE)
+VALUES (4109, 1009, 1003, TO_DATE('2025-07-09', 'YYYY-MM-DD'), 2, TO_DATE('2025-07-09', 'YYYY-MM-DD'), 0, TO_DATE('2025-07-31', 'YYYY-MM-DD'));
 
-INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, DEL_STATUS, IN_DATE)
-VALUES (4110, 1010, 1003, TO_DATE('2025-07-08', 'YYYY-MM-DD'), 2, 0, TO_DATE('2025-07-31', 'YYYY-MM-DD'));
+INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, COMPLETE_DATE, DEL_STATUS, IN_DATE)
+VALUES (4110, 1010, 1003, TO_DATE('2025-07-08', 'YYYY-MM-DD'), 2, TO_DATE('2025-07-08', 'YYYY-MM-DD'), 0, TO_DATE('2025-07-31', 'YYYY-MM-DD'));
 
 COMMIT;
 
@@ -1131,8 +1153,8 @@ COMMIT;
 /************************************************** 
  *  수주 : SALES_ORDER
  **************************************************/
-INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, DEL_STATUS, IN_DATE) VALUES
-(3001, 2001, 1003, TO_DATE('2025-08-01', 'YYYY-MM-DD'), 2, 0, TO_DATE('2025-08-01', 'YYYY-MM-DD'));
+INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, COMPLETE_DATE, DEL_STATUS, IN_DATE) VALUES
+(3001, 2001, 1003, TO_DATE('2025-08-01', 'YYYY-MM-DD'), 2, TO_DATE('2025-08-01', 'YYYY-MM-DD'), 0, TO_DATE('2025-08-01', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, DEL_STATUS, IN_DATE) VALUES
 (3002, 2002, 1003, TO_DATE('2025-07-03', 'YYYY-MM-DD'), 1, 0, TO_DATE('2025-08-03', 'YYYY-MM-DD'));
@@ -1199,60 +1221,61 @@ VALUES (3010, 10, 14, 0, 1190);
 COMMIT;
 /
 /* 2406부터 현재까지 월마감 시작 */
+DECLARE
+    v_result VARCHAR2(100);
+    v_yymm   VARCHAR2(4);
+    v_start  VARCHAR2(4) := '2406';  -- 시작 월
+    v_end    VARCHAR2(4) := TO_CHAR(SYSDATE, 'YYMM');  -- 오늘 기준 YYMM
+BEGIN
+    v_yymm := v_start;
+
+    WHILE v_yymm <= v_end LOOP
+        month_close.month_close_main(
+            p_sum_yymm     => v_yymm,
+            p_regi_emp_no  => '1001',
+            p_real         => '2', -- 진마감
+            p_result       => v_result
+        );
+        DBMS_OUTPUT.PUT_LINE('[' || v_yymm || '] 실행 결과: ' || v_result);
+        -- 다음 월 계산
+        DECLARE
+            v_year NUMBER;
+            v_month NUMBER;
+        BEGIN
+            v_year  := TO_NUMBER(SUBSTR(v_yymm, 1, 2));
+            v_month := TO_NUMBER(SUBSTR(v_yymm, 3, 2));
+
+            v_month := v_month + 1;
+            IF v_month > 12 THEN
+                v_month := 1;
+                v_year := v_year + 1;
+            END IF;
+
+            v_yymm := LPAD(v_year, 2, '0') || LPAD(v_month, 2, '0');
+        END;
+    END LOOP;
+END;
+/
+/* 240601부터 현재까지 일마감 시작 */
 --DECLARE
 --    v_result VARCHAR2(100);
---    v_yymm   VARCHAR2(4);
---    v_start  VARCHAR2(4) := '2406';  -- 시작 월
---    v_end    VARCHAR2(4) := TO_CHAR(SYSDATE, 'YYMM');  -- 오늘 기준 YYMM
+--    v_yymmdd   VARCHAR2(6);
+--    v_start  VARCHAR2(6) := '240601';  -- 시작 일
+--    v_end    VARCHAR2(6) := TO_CHAR(SYSDATE, 'YYMMDD');  -- 오늘 기준 YYMM
 --BEGIN
---    v_yymm := v_start;
+--    v_yymmdd := v_start;
 --
---    WHILE v_yymm <= v_end LOOP
---        month_close.month_close_main(
---            p_sum_yymm     => v_yymm,
+--    WHILE v_yymmdd <= v_end LOOP
+--        day_close.day_close_main(
+--            p_yymmdd   => v_yymmdd,  -- 파라미터명 변경: p_sum_yymm → p_sum_yymmdd
 --            p_regi_emp_no  => '1001',
 --            p_real         => '2',
 --            p_result       => v_result
 --        );
---        DBMS_OUTPUT.PUT_LINE('[' || v_yymm || '] 실행 결과: ' || v_result);
---        -- 다음 월 계산
---        DECLARE
---            v_year NUMBER;
---            v_month NUMBER;
---        BEGIN
---            v_year  := TO_NUMBER(SUBSTR(v_yymm, 1, 2));
---            v_month := TO_NUMBER(SUBSTR(v_yymm, 3, 2));
---
---            v_month := v_month + 1;
---            IF v_month > 12 THEN
---                v_month := 1;
---                v_year := v_year + 1;
---            END IF;
---
---            v_yymm := LPAD(v_year, 2, '0') || LPAD(v_month, 2, '0');
---        END;
+--        DBMS_OUTPUT.PUT_LINE('[' || v_yymmdd || '] 실행 결과: ' || v_result);
+--        
+--        -- 다음 일자 계산 (이 부분이 핵심!)
+--        v_yymmdd := TO_CHAR(TO_DATE(v_yymmdd, 'YYMMDD') + 1, 'YYMMDD');
 --    END LOOP;
 --END;
-/* 240601부터 현재까지 일마감 시작 */
-DECLARE
-    v_result VARCHAR2(100);
-    v_yymmdd   VARCHAR2(6);
-    v_start  VARCHAR2(6) := '240601';  -- 시작 일
-    v_end    VARCHAR2(6) := TO_CHAR(SYSDATE, 'YYMMDD');  -- 오늘 기준 YYMM
-BEGIN
-    v_yymmdd := v_start;
-
-    WHILE v_yymmdd <= v_end LOOP
-        day_close.day_close_main(
-            p_yymmdd   => v_yymmdd,  -- 파라미터명 변경: p_sum_yymm → p_sum_yymmdd
-            p_regi_emp_no  => '1001',
-            p_real         => '2',
-            p_result       => v_result
-        );
-        DBMS_OUTPUT.PUT_LINE('[' || v_yymmdd || '] 실행 결과: ' || v_result);
-        
-        -- 다음 일자 계산 (이 부분이 핵심!)
-        v_yymmdd := TO_CHAR(TO_DATE(v_yymmdd, 'YYMMDD') + 1, 'YYMMDD');
-    END LOOP;
-END;
-/
+--/

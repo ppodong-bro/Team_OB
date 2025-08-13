@@ -27,7 +27,7 @@ public class InventoryCloseRepositoryImpl implements InventoryCloseRepository {
 				+ "WHERE ic.yearmonth >= :ym_start "
 				+ "AND ic.yearmonth <= :ym_end "
 				+ "AND ic.close_enddate >= :start_date "
-				+ "AND ic.close_startdate <= :end_date "
+				+ "AND ic.close_enddate <= :end_date "
 				+ "AND (:close_status = 999 OR ic.close_status = :close_status) ";
 		TypedQuery<Long> totalCountQuery = entityManager.createQuery(totalCountSql, Long.class)
 				.setParameter("ym_start", inventory_CloseDTO.getYearmonth_start_text())
@@ -44,7 +44,7 @@ public class InventoryCloseRepositoryImpl implements InventoryCloseRepository {
 	public List<Inventory_Close> findAllBySearch(Inventory_CloseDTO inventory_CloseDTO) {
 		// 기간에 따라 검색
 		String startDate = inventory_CloseDTO.getStartDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-		String endDate = inventory_CloseDTO.getEndDate().plusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		String endDate = inventory_CloseDTO.getEndDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 		
 		// 마감상태에 따라 검색
 		String whereCloseStatus = (inventory_CloseDTO.getClose_status() != 999) ? 
@@ -61,7 +61,7 @@ public class InventoryCloseRepositoryImpl implements InventoryCloseRepository {
 				+ "			WHERE yearmonth >= '" + inventory_CloseDTO.getYearmonth_start_text() + "' "
 				+ "			AND yearmonth <= '" + inventory_CloseDTO.getYearmonth_end_text() + "' "
 				+ "			AND close_enddate >= '" + startDate + "' "
-				+ "			AND close_startdate <= TO_DATE('" + endDate + " 23:59:59', 'YYYY-MM-DD HH24:MI:SS') " 
+				+ "			AND close_enddate <= TO_DATE('" + endDate + " 23:59:59', 'YYYY-MM-DD HH24:MI:SS') " 
 				+ 			whereCloseStatus
 				+ "        	ORDER BY yearmonth DESC "
 				+ "    ) ic "
