@@ -138,4 +138,33 @@
 		AND item_no = #{item_no}
 	</select>
 	
+	<select id="getInventoryCurrent" resultType="java.util.Map" statementType="CALLABLE">
+		SELECT 
+		    CASE gi.item_type
+		        WHEN 0 THEN '부품'
+		        ELSE '제품'
+		    END AS label, 
+		    SUM(cnt * io.item_occupy) AS value FROM (
+		    SELECT item_status AS item_type, NVL(parts_status, product_status) AS item_status, cnt FROM (
+		        SELECT * FROM TABLE(calc_real_inventory_all()) i
+		        LEFT JOIN parts pa
+		        ON i.item_no = pa.parts_no
+		        AND i.item_status = 0
+		        LEFT JOIN product pr
+		        ON i.item_no = pr.product_no
+		        AND i.item_status = 1
+		    ) 
+		) gi
+		LEFT JOIN common c
+		ON (gi.item_type = 0 AND c.big_status = 900 AND c.middle_status = gi.item_status
+		OR gi.item_type = 1 AND c.big_status = 800 AND c.middle_status = gi.item_status)
+		LEFT JOIN inventory_occupy io
+		ON gi.item_type = io.item_type
+		AND gi.item_status = io.item_status
+		GROUP BY gi.item_type
+		UNION ALL 
+		SELECT '여유' AS label, MAX(item_occupy) AS value FROM inventory_occupy
+		WHERE item_status = 999
+		GROUP BY '여유'
+    </select>
 </mapper>

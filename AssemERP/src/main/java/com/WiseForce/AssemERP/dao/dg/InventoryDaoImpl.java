@@ -75,4 +75,12 @@ public class InventoryDaoImpl implements InventoryDao {
 		
 		return target_InventoryInfoDTO;
 	}
+
+	// 재고현황 조회
+	@Override
+	public List<Map<String, Object>> getInventoryCurrent() {
+		List<Map<String, Object>> list = session.selectList("com.WiseForce.AssemERP.dg.InventoryMapper.getInventoryCurrent");
+		
+		return list;
+	}
 }
