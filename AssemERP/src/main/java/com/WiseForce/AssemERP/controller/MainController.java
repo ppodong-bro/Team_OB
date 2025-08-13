@@ -3,6 +3,7 @@ package com.WiseForce.AssemERP.controller;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -32,7 +33,7 @@ public class MainController {
 		
 		// 연간실적 그래프
 		List<BigDecimal> yearsperformPurchasedata = performenceService.getPurchaseData();
-		List<Integer> yearsperformSaledata = Arrays.asList(380, 200, 450, 250, 300, 500);
+		List<BigDecimal> yearsperformSaledata = performenceService.getSaleData();
 		List<String> yearsperformlabels =  IntStream.rangeClosed(1, 12)
 										             .mapToObj(i -> String.format("%d월", i))
 										             .collect(Collectors.toList());
@@ -42,9 +43,11 @@ public class MainController {
 		model.addAttribute("yearsperformlabels", mapper.writeValueAsString(yearsperformlabels));
 		
 		
+		
 		// 거래처 실적 그래프
-		List<Integer> bardata = Arrays.asList(16, 20, 25, 6, 3);
-		List<String> barlabels = Arrays.asList("A사", "B사", "C사", "D사", "E사");
+		
+		List<Integer> bardata = performenceService.getClientTotalCost();
+		List<String> barlabels = performenceService.getClientName();
 		
 		
 		
