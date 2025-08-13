@@ -324,8 +324,6 @@ $(document).ready(function() {
 										<div class="input-group input-group-sm" style="width: auto;">
 											<span class="input-group-text">마감일</span> <input type="date" id="startDate" name="startDate" class="form-control form-control-sm"
 												value="${search.startDate }">
-											<%-- 시간까지 받는 input
-									<input type="datetime-local" id="startDate" name="startDate" class="form-control form-control-sm" value="${partsDTO.startDate }"> --%>
 											<span class="px-1">~</span> <input type="date" id="endDate" name="endDate" class="form-control form-control-sm" value="${search.endDate }">
 										</div>
 									</div>
@@ -360,8 +358,8 @@ $(document).ready(function() {
 									<thead class="table-light">
 										<tr>
 											<th style="min-width: 85px;">년월</th>
-											<th>시작일시</th>
-											<th>종료일시</th>
+											<th style="display: none;">시작일시</th>
+											<th>마감일시</th>
 											<th style="min-width: 120px;">마감 상태</th>
 											<th style="min-width: 85px;">담당자</th>
 										</tr>
@@ -370,7 +368,7 @@ $(document).ready(function() {
 										<c:forEach var="inventoryClose" items="${inventoryCloseList}">
 											<tr>
 												<td class="text-center">${inventoryClose.yearmonth}</td>
-												<td class="text-center">${inventoryClose.close_startdate}</td>
+												<td class="text-center" style="display: none;">${inventoryClose.close_startdate}</td>
 												<td class="text-center">${inventoryClose.close_enddate}</td>
 												<td class="text-center"><span class="status-text status-text-close" data-status="${inventoryClose.close_status}"> <span
 														class="dot"></span> <span class="text">${inventoryClose.close_status}</span>
