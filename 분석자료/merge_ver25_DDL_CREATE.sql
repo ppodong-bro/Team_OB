@@ -13,6 +13,7 @@ DROP TABLE ERROR_LOG CASCADE CONSTRAINTS;
 DROP TABLE INVENTORY CASCADE CONSTRAINTS;
 DROP TABLE INVENTORY_ADJUST CASCADE CONSTRAINTS;
 DROP TABLE INVENTORY_CLOSE CASCADE CONSTRAINTS;
+DROP TABLE INVENTORY_OCCUPY CASCADE CONSTRAINTS;
 DROP TABLE MONTH_INVENTORY CASCADE CONSTRAINTS;
 DROP TABLE PARTS CASCADE CONSTRAINTS;
 DROP TABLE PARTS_COSTHIS CASCADE CONSTRAINTS;
@@ -470,6 +471,7 @@ CREATE TABLE SALES_ORDER (
 	sales_date DATE, /* 납기완료일 */
 	out_status NUMBER(1), /* 출고상태 */
 	del_status NUMBER(1), /* 삭제구분 */
+    complete_date DATE, /* 완료일시 */
 	in_date DATE /* 등록일시 */
 );
 
@@ -499,6 +501,8 @@ COMMENT ON COLUMN SALES_ORDER.out_status IS '출고상태';
 
 COMMENT ON COLUMN SALES_ORDER.del_status IS '삭제구분';
 
+COMMENT ON COLUMN SALES_ORDER.complete_Date IS '완료일시';
+
 COMMENT ON COLUMN SALES_ORDER.in_date IS '등록일시';
 
 /* 발주 ***********************************************************************/
@@ -509,6 +513,7 @@ CREATE TABLE PURCHASE_ORDER (
 	purchase_date DATE, /* 납기완료일 */
 	in_status NUMBER(1), /* 입고상태 */
 	del_status NUMBER(1), /* 삭제구분 */
+    complete_date DATE, /* 완료일시 */
 	in_date DATE /* 등록일시 */
 );
 
@@ -537,6 +542,8 @@ COMMENT ON COLUMN PURCHASE_ORDER.purchase_date IS '납기완료일';
 COMMENT ON COLUMN PURCHASE_ORDER.in_status IS '입고상태';
 
 COMMENT ON COLUMN PURCHASE_ORDER.del_status IS '삭제구분';
+
+COMMENT ON COLUMN PURCHASE_ORDER.complete_date IS '완료일시';
 
 COMMENT ON COLUMN PURCHASE_ORDER.in_date IS '등록일시';
 
@@ -819,6 +826,35 @@ COMMENT ON COLUMN inventory_close.close_startdate IS '마감시작일시';
 COMMENT ON COLUMN inventory_close.close_enddate IS '마감종료일시';
 
 COMMENT ON COLUMN inventory_close.emp_no IS '마감처리담당자';
+
+/* 재고 점유 비율 *******************************************************************/
+CREATE TABLE inventory_occupy (
+    item_status NUMBER(7) NOT NULL,
+    item_no NUMBER(7) NOT NULL,
+    item_occupy NUMBER(7,4) NOT NULL
+);
+
+CREATE UNIQUE INDEX PK_inventory_occupy
+	ON inventory_occupy (
+		item_status ASC,
+		item_no ASC
+	);
+
+ALTER TABLE inventory_occupy
+	ADD
+		CONSTRAINT PK_inventory_occupy
+		PRIMARY KEY (
+			item_status,
+            item_no
+		);
+
+COMMENT ON TABLE inventory_occupy IS '재고 점유 비율';
+
+COMMENT ON COLUMN inventory_occupy.item_status IS '제품/부품';
+
+COMMENT ON COLUMN inventory_occupy.item_no IS '재고 구분';
+
+COMMENT ON COLUMN inventory_occupy.item_occupy IS '재고 점유 비율';
 
 /* 거래처 이력 ****************************************************************/
 CREATE TABLE client_HIS (
@@ -1721,7 +1757,9 @@ CREATE OR REPLACE PACKAGE month_close AS
     
     -- 월마감0 : 메인
     PROCEDURE month_close_main(
-    p_sum_yymm in VARCHAR2, p_regi_emp_no in VARCHAR2, p_real in VARCHAR2, 
+    p_sum_yymm in VARCHAR2, -- 마감 년월
+    p_regi_emp_no in VARCHAR2, -- 마감 담당자
+    p_real in VARCHAR2, -- 마감 상태(가마감, 진마감, 마감취소)
     p_result OUT VARCHAR2);
     
     -- 월마감0 : 수불마감 시작 이력 등록
@@ -1729,7 +1767,7 @@ CREATE OR REPLACE PACKAGE month_close AS
     -- 월마감1 : 이번달 기초 재고 등록
     PROCEDURE month_close_prc1 (p_sum_yymm in VARCHAR2);
     -- 월마감2 : 이번달 발주/생산/폐기/수주 반영
-    PROCEDURE month_close_prc2 (p_sum_yymm in VARCHAR2);
+    PROCEDURE month_close_prc2 (p_sum_yymm in VARCHAR2, p_real in VARCHAR2);
     -- 월마감7 : 거래처 실적 기록
     -- 월마감8 : 제품 실적 기록
     -- 월마감9 : 부품 실적 기록
@@ -1753,7 +1791,7 @@ CREATE OR REPLACE PACKAGE BODY month_close AS
         -- 월마감1 : 이번달 기초 재고 등록
         month_close_prc1(p_sum_yymm);
         -- 월마감2 : 이번달 발주/생산/폐기/수주 반영
-        month_close_prc2(p_sum_yymm);
+        month_close_prc2(p_sum_yymm, p_real);
         -- 월마감7 : 거래처 실적 기록
         -- 월마감8 : 제품 실적 기록
         -- 월마감9 : 부품 실적 기록
@@ -1795,13 +1833,8 @@ CREATE OR REPLACE PACKAGE BODY month_close AS
         dbms_output.put_line('month_close_start START p_sum_yymm/p_regi_emp_no ' || p_sum_yymm || '/' || p_regi_emp_no);
         
         dbms_output.put_line('덮어씌워지는 데이터 삭제');
-        -- 수불마감의 이번달 삭제
-        DELETE FROM inventory_close WHERE yearmonth = p_sum_yymm;
         -- 월재고의 기말재고 삭제
         DELETE FROM month_inventory WHERE yearmonth = p_sum_yymm;
-        
-        -- 수불마감 시작 이력 등록
-        INSERT INTO inventory_close(YEARMONTH, CLOSE_STATUS, CLOSE_STARTDATE, CLOSE_ENDDATE, EMP_NO) VALUES (p_sum_yymm, 0, sysdate, null, p_regi_emp_no);
         
         COMMIT;
         
@@ -1853,7 +1886,7 @@ CREATE OR REPLACE PACKAGE BODY month_close AS
     Procedure Name : month_close_prc2
     Description    : 이번달 발주/생산/폐기/수주 반영
     ***************************************************************************/
-    PROCEDURE month_close_prc2(p_sum_yymm in VARCHAR2)
+    PROCEDURE month_close_prc2(p_sum_yymm in VARCHAR2, p_real in VARCHAR2)
     IS
         -- 년월, 부품/제품 구분, 번호, 월재고, 입고, 출고, 생산, 폐기 조회
         CURSOR cur_close_clac IS
@@ -1862,11 +1895,10 @@ CREATE OR REPLACE PACKAGE BODY month_close AS
             M.item_status,
             M.item_no, 
             AVG(M.cnt) AS inventory_cnt, 
-            -- 도건 연구 필요1 : JOIN 중 항목 개수가 많아지면 값이 이상해짐...
-            NVL(SUM(P.purchase_item_cnt),0) AS purchase_cnt, -- 도건 연구 필요1
-            NVL(SUM(S.sales_item_cnt),0) AS sales_cnt, -- 도건 연구 필요1
-            NVL(SUM(II.item_in),0) AS item_in, -- 도건 연구 필요1
-            NVL(SUM(IO.item_out),0) AS item_out -- 도건 연구 필요1
+            NVL(SUM(P.purchase_item_cnt),0) AS purchase_cnt,
+            NVL(SUM(S.sales_item_cnt),0) AS sales_cnt,
+            NVL(SUM(II.item_in),0) AS item_in,
+            NVL(SUM(IO.item_out),0) AS item_out
         FROM (SELECT yearmonth, item_status, item_no, cnt FROM month_inventory 
             WHERE    yearmonth = p_sum_yymm
             AND      startend_status = '0' -- 기초 재고에 한해
@@ -1876,8 +1908,9 @@ CREATE OR REPLACE PACKAGE BODY month_close AS
         (SELECT 0 AS item_status, parts_no AS item_no, SUM(purchase_item_cnt) AS purchase_item_cnt FROM purchase_item 
         WHERE purchase_no IN (
             SELECT purchase_no FROM purchase_order 
-            WHERE TO_CHAR(purchase_date, 'YYMM') = p_sum_yymm
+            WHERE TO_CHAR(complete_date, 'YYMM') = p_sum_yymm
             AND in_status IN (2,3) -- 완료, 마감
+            AND (p_real <> 3 OR TRUNC(complete_date) <> TRUNC(SYSDATE)) -- p_real <> 3 : 마감 취소인 경우 -> complete_date가 오늘인 데이터는 가져오지 않는다.
             )
         GROUP BY parts_no 
         ) P -- 구매 실적
@@ -1885,11 +1918,12 @@ CREATE OR REPLACE PACKAGE BODY month_close AS
         AND M.item_no = P.item_no
         LEFT JOIN
         -- 제품 판매 내역
-        (SELECT 1 AS item_status, product_no AS item_no, sales_item_cnt FROM sales_item
+        (SELECT 1 AS item_status, product_no AS item_no, SUM(sales_item_cnt) AS sales_item_cnt FROM sales_item
         WHERE sales_no IN (
             SELECT sales_no FROM sales_order
-            WHERE TO_CHAR(sales_date, 'YYMM') = p_sum_yymm
+            WHERE TO_CHAR(complete_date, 'YYMM') = p_sum_yymm
             AND out_status IN (2,3) -- 완료, 마감
+            AND (p_real <> 3 OR TRUNC(complete_date) <> TRUNC(SYSDATE)) -- p_real <> 3 : 마감 취소인 경우 -> complete_date가 오늘인 데이터는 가져오지 않는다.
             )
         GROUP BY product_no 
         ) S
@@ -1897,20 +1931,22 @@ CREATE OR REPLACE PACKAGE BODY month_close AS
         AND M.item_no = S.item_no
         LEFT JOIN
         -- 재고 조정IN 내역(제조, 분해, 조정)
-        (SELECT item_status, item_no, SUM(item_cnt)/* 도건 연구 필요1 */ AS item_in FROM inventory_adjust
+        (SELECT item_status, item_no, SUM(item_cnt) AS item_in FROM inventory_adjust
         WHERE TO_CHAR(inout_date, 'YYMM') = p_sum_yymm
         AND item_close_status IN (2,3) -- 완료, 마감
         AND inout_status = 0 -- IN
+        AND (p_real <> 3 OR TRUNC(inout_date) <> TRUNC(SYSDATE)) -- p_real <> 3 : 마감 취소인 경우 -> inout_date가 오늘인 데이터는 가져오지 않는다.
         GROUP BY item_status, item_no
         ) II
         ON M.item_status = II.item_status
         AND M.item_no = II.item_no
         LEFT JOIN
         -- 재고 조정OUT 내역(제조, 분해, 조정)
-        (SELECT item_status, item_no, SUM(item_cnt)/* 도건 연구 필요1 */ AS item_out FROM inventory_adjust
+        (SELECT item_status, item_no, SUM(item_cnt) AS item_out FROM inventory_adjust
         WHERE TO_CHAR(inout_date, 'YYMM') = p_sum_yymm
         AND item_close_status IN (2,3) -- 완료, 마감
         AND inout_status = 1 -- OUT
+        AND (p_real <> 3 OR TRUNC(inout_date) <> TRUNC(SYSDATE)) -- p_real <> 3 : 마감 취소인 경우 -> inout_date가 오늘인 데이터는 가져오지 않는다.
         GROUP BY item_status, item_no
         ) IO
         ON M.item_status = IO.item_status
@@ -2010,9 +2046,31 @@ CREATE OR REPLACE PACKAGE BODY month_close AS
         WHERE item_close_status = 2
         AND TO_CHAR(inout_date, 'YYMM') = p_sum_yymm;
         
-        -- 수불마감 끝 이력 등록
-        UPDATE inventory_close SET CLOSE_STATUS = p_real, CLOSE_ENDDATE = sysdate
-        WHERE yearmonth = p_sum_yymm;
+        -- 마감 취소인지 확인
+        IF p_real <> 3 THEN
+            -- 지난 달의 수불마감을 진행하는 것인지 확인
+            IF p_sum_yymm < TO_CHAR(sysdate, 'YYMM') THEN
+                -- 해당 년월의 마지막날로 저장
+                DELETE FROM inventory_close WHERE yearmonth = TO_CHAR(LAST_DAY(TO_DATE(p_sum_yymm, 'YYMM')), 'YYMMDD');
+                INSERT INTO inventory_close(YEARMONTH, CLOSE_STATUS, CLOSE_STARTDATE, CLOSE_ENDDATE, EMP_NO) 
+                VALUES (TO_CHAR(LAST_DAY(TO_DATE(p_sum_yymm, 'YYMM')), 'YYMMDD'), p_real, sysdate, sysdate, p_regi_emp_no);
+            ELSE
+                -- 오늘자로 저장
+                DELETE FROM inventory_close WHERE yearmonth = TO_CHAR(sysdate, 'YYMMDD');
+                INSERT INTO inventory_close(YEARMONTH, CLOSE_STATUS, CLOSE_STARTDATE, CLOSE_ENDDATE, EMP_NO) 
+                VALUES (TO_CHAR(sysdate, 'YYMMDD'), p_real, sysdate, sysdate, p_regi_emp_no);
+            END IF;
+        ELSE
+            -- 지난 달의 수불마감을 진행하는 것인지 확인
+            IF p_sum_yymm = TO_CHAR(sysdate, 'YYMM') THEN
+                -- 오늘것도 없애
+                DELETE FROM inventory_close WHERE yearmonth = TO_CHAR(sysdate, 'YYMMDD');
+                -- 어제자로 저장
+                DELETE FROM inventory_close WHERE yearmonth = TO_CHAR(sysdate-1, 'YYMMDD');
+                INSERT INTO inventory_close(YEARMONTH, CLOSE_STATUS, CLOSE_STARTDATE, CLOSE_ENDDATE, EMP_NO) 
+                VALUES (TO_CHAR(sysdate-1, 'YYMMDD'), 2/*마감완료처리*/, sysdate, sysdate, p_regi_emp_no);
+            END IF;
+        END IF;
         
         COMMIT;
         

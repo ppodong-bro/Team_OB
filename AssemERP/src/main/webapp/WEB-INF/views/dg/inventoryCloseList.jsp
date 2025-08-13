@@ -129,7 +129,7 @@ $(document).ready(function() {
     	const year = now.getFullYear().toString().slice(2); // YY
     	const month = (now.getMonth() + 1).toString().padStart(2, "0"); // MM
     	const day = now.getDate().toString().padStart(2, "0"); // DD
-    	const yymmdd = year + month + day;
+    	const yymmdd = year + month;
     	
     	// 월마감 진행중 화면으로 변경
     	$("#modalMonthCloseText").text("가마감 진행중입니다...");
@@ -178,7 +178,7 @@ $(document).ready(function() {
     	const year = now.getFullYear().toString().slice(2); // YY
     	const month = (now.getMonth() + 1).toString().padStart(2, "0"); // MM
     	const day = now.getDate().toString().padStart(2, "0"); // DD
-    	const yymmdd = year + month + day;
+    	const yymmdd = year + month;
     	
     	// 월마감 진행중 화면으로 변경
     	$("#modalMonthCloseText").text("월마감 진행중입니다...");
@@ -213,6 +213,54 @@ $(document).ready(function() {
             },
             error: function(xhr, status, error) {
             	$("#modalMonthCloseText").text("월마감이 오류가 발생했습니다.");
+            	$("#spinner").addClass("d-none");// 스피너 지우기
+            }
+        });
+    });
+	// 월마감 취소 버튼 클릭
+    $("#btnMonthCloseCancel").click(function() {
+    	// 비밀번호
+    	const password = $("#modalMonthCloseCancelPassword").val();
+    	
+    	// 년월일 구하기
+    	const now = new Date();
+    	const year = now.getFullYear().toString().slice(2); // YY
+    	const month = (now.getMonth() + 1).toString().padStart(2, "0"); // MM
+    	const day = now.getDate().toString().padStart(2, "0"); // DD
+    	const yymmdd = year + month;
+    	
+    	// 월마감 진행중 화면으로 변경
+    	$("#modalMonthCloseCancelText").text("월마감 취소중입니다...");
+    	$("#spinner").removeClass("d-none");// 스피너 보이기
+    	$("#btnMonthCloseCancel").hide();// 월마감 취소 버튼 비활성화
+    	
+        // Ajax 요청 보내기
+        $.ajax({
+            url: "/inventory/monthClose/3", // 월마감 취소
+            type: "PUT",
+            dataType: "json",
+            contentType: "application/json", // JSON 데이터 전송시 필요
+            data: JSON.stringify({
+            	yearmonth: yymmdd,
+            	emp_no: 1001, //담당자
+            	emp_password: password//비밀번호
+            }),
+            success: function(response) {
+            	if(response.result === "true") {
+                	$("#modalMonthCloseCancelText").text("월마감이 취소되었습니다.");
+                	$("#spinner").addClass("d-none");// 스피너 지우기
+            	}
+            	else if(response.result === "false"){
+                	$("#modalMonthCloseCancelText").text("월마감 취소를 실패했습니다.");
+                	$("#spinner").addClass("d-none");// 스피너 지우기
+            	}
+            	else if(response.result === "password"){
+                	$("#modalMonthCloseCancelText").text("비밀번호가 틀립니다.");
+                	$("#spinner").addClass("d-none");// 스피너 지우기
+            	}
+            },
+            error: function(xhr, status, error) {
+            	$("#modalMonthCloseCancelText").text("월마감 취소 중 오류가 발생했습니다.");
             	$("#spinner").addClass("d-none");// 스피너 지우기
             }
         });
@@ -432,7 +480,6 @@ $(document).ready(function() {
 					<div class="modal-body">
 						<div id="modalMonthCloseCancelText">
 							월마감을 취소하시겠습니까?<p/>
-							이번달 월마감 정보가 삭제됩니다.
 						</div>
 						<div class="currentTime"></div>
 						<p/>

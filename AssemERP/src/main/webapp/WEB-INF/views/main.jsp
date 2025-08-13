@@ -155,7 +155,7 @@
 				<div class="dashboard container-fluid px-4 py-4">
 					<!-- 캘린더 -->
 					<div class="item item-1">
-						<div id="fullCalendar" style="height: 100%; width: 100%;"></div>
+						<div id="fullCalendar"></div>
 						<script>
 								    flatpickr("#fullCalendar", {
 								    	
@@ -212,7 +212,7 @@
 								    	    rContainer.style.flex = "1";
 								    	    rContainer.style.display = "flex";
 								    	    rContainer.style.flexDirection = "column";
-								    	  }
+								    	  }  
 								    	  
 								    	  const daysElement = cal.querySelector('.flatpickr-days');
 								    	  if (daysElement) {

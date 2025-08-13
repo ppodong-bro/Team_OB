@@ -57,7 +57,7 @@ public class InventoryDaoImpl implements InventoryDao {
 		paramMap.put("realStatus", realStatus);//IN
 		paramMap.put("result", "");//OUT
 		// 월마감 패키지 실행
-		session.selectOne("com.WiseForce.AssemERP.dg.InventoryMapper.callDayClose", paramMap);
+		session.selectOne("com.WiseForce.AssemERP.dg.InventoryMapper.callMonthClose", paramMap);
 
 	    // OUT 파라미터 값 읽기
 	    String resultMsg = (String) paramMap.get("result");
