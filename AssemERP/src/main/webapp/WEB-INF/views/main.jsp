@@ -175,13 +175,13 @@
 						<canvas id="clientChart"></canvas>
 						<jsp:include page="/WEB-INF/views/sh/clientChart.jsp"/>
 					</div>
-					<!-- 명언 -->
+					<!-- 날씨 -->
 					<div class="quote-section item item-5">
-							<h1 class="quote-text">뿌리깊은 나무는 흔들리지 않는다</h1>
-							<p class="quote-author">- 이승희 -</p>
+						<div id="weather-widget"></div>
+						<jsp:include page="/WEB-INF/views/sh/weather.jsp"/>
 					</div>
 				</div>
-			</div>
+			</div> 
 			<!-- 이곳에 자신의 코드를 작성하세요 -->
 
 			<jsp:include page="/foot.jsp" />
