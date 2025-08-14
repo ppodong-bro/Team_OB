@@ -8,6 +8,7 @@ import com.WiseForce.AssemERP.dao.km.Purchase_OrderDao;
 import com.WiseForce.AssemERP.dto.km.Purchase_ItemDto;
 import com.WiseForce.AssemERP.dto.km.Purchase_OrderDto;
 import com.WiseForce.AssemERP.dto.km.Purchase_OrderSearchDto;
+import com.WiseForce.AssemERP.dto.sh.PartsDTO;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +54,70 @@ public class Purchase_OrderServiceImpl implements Purchase_OrderService {
 			purchase_OrderDto.setTotInCnt(totInCnt);
 		}
 		return listPurchase;
+	}
+
+	@Override
+	public Purchase_OrderDto detailPurchase(int purchase_No) {
+		Purchase_OrderDto purchase_OrderDto = purchase_OrderDao.detailPurchase(purchase_No);
+		
+		int totCnt = 0;
+		int	totInCnt = 0;
+		int totWaitingCnt = 0;
+		Long totCost = 0L;
+		Long totInCost = 0L;
+		
+		
+		for(Purchase_ItemDto purchase_ItemDto : purchase_OrderDto.getPurchase_Item()) {
+			int cnt = purchase_ItemDto.getPurchase_Item_Cnt();
+			int inCnt = purchase_ItemDto.getPurchase_Item_InCnt();
+			Long cost = purchase_ItemDto.getPurchase_Item_Cost();
+			
+			int waitingCnt = cnt - inCnt;
+			Long cost1 = cnt*cost; 
+			Long cost2 = inCnt*cost;
+			
+			purchase_ItemDto.setPurchase_Item_TotCost(cost1);
+			purchase_ItemDto.setPurchase_Item_TotInCost(cost2);
+			purchase_ItemDto.setPurchase_Item_WaitingCnt(purchase_No);
+			purchase_ItemDto.setPurchase_Item_WaitingCnt(waitingCnt);
+			
+			
+			totCnt += cnt;
+			totInCnt += inCnt;
+			totCost += cost*cnt;
+			totInCost += cost*inCnt;
+			totWaitingCnt += waitingCnt;
+			
+		}
+		
+		purchase_OrderDto.setTotCnt(totCnt);
+		purchase_OrderDto.setTotInCnt(totInCnt);
+		purchase_OrderDto.setTotWaitingCnt(totWaitingCnt);
+		purchase_OrderDto.setTotCost(totCost);
+		purchase_OrderDto.setTotInCost(totInCost);
+		
+		
+		
+		
+		return purchase_OrderDto;
+	}
+
+	@Override
+	public List<PartsDTO> partsPop() {
+		List<PartsDTO> listParts = purchase_OrderDao.partsPop();
+		return listParts;
+	}
+
+	@Override
+	public void createPurchase(Purchase_OrderDto purchase_OrderDto) {
+		purchase_OrderDao.createPurchase(purchase_OrderDto);
+		/*
+		 * List<Purchase_ItemDto> purchase_ItemDto =
+		 * purchase_OrderDto.getPurchase_Item();
+		 * purchase_OrderDao.createPurchaseItem(purchase_ItemDto);
+		 */
+		
+		
 	}
 
 }

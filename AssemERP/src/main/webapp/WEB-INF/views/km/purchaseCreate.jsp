@@ -36,31 +36,31 @@
 
   /* ====================== 제품 팝업 연동 + 중복 방지 ====================== */
   // 이미 선택된 제품번호 보관
-  const selectedProducts = new Set();
+  const selectedParts = new Set();
   // 팝업에서 선택 결과를 넣을 대상 행 및 입력 요소 참조
   let currentRow = null;
-  let targetProductInput = null;
-  let targetProductNameInput = null;
+  let targetPartsInput = null;
+  let targetPartsNameInput = null;
 
-  function openProductPopup(btn) {
+  function openPartsPopup(btn) {
     const tr = btn.closest('tr');
     currentRow = tr;
-    targetProductInput     = tr.querySelector('.productNoInput');
-    targetProductNameInput = tr.querySelector('.productNameInput');
+    targetPartsInput     = tr.querySelector('.partsNoInput');
+    targetPartsNameInput = tr.querySelector('.partsNameInput');
 
     window.open(
-      '${pageContext.request.contextPath}/sales/productPopup',
-      'productPopup',
+      '${pageContext.request.contextPath}/purchase/partsPopup',
+      'partsPopup',
       'width=700,height=560,scrollbars=yes'
     );
   }
 
   // 팝업에서 호출되는 콜백
-  function setProductInfo(product_no, product_name) {
-    const pno = String(product_no);
+  function setPartsInfo(parts_no, parts_name) {
+    const pno = String(parts_no);
 
     // 현재 행의 이전 제품번호
-    const prevNo = targetProductInput?.value ? String(targetProductInput.value) : null;
+    const prevNo = targetPartsInput?.value ? String(targetPartsInput.value) : null;
 
     // 동일 제품을 같은 행에 다시 고른 경우: 그냥 닫기
     if (prevNo && prevNo === pno) {
@@ -69,9 +69,9 @@
     }
 
     // 다른 행에서 이미 선택된 제품이면 막기
-    if (selectedProducts.has(pno)) {
+    if (selectedParts.has(pno)) {
       alert('이미 선택된 제품입니다.');
-      const dup = document.querySelector(`#items-tbody tr[data-product-no="${pno}"]`);
+      const dup = document.querySelector(`#items-tbody tr[data-parts-no="${pno}"]`);
       if (dup) {
         dup.classList.add('table-warning');
         dup.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -81,15 +81,15 @@
     }
 
     // 이전 선택 제거
-    if (prevNo) selectedProducts.delete(prevNo);
+    if (prevNo) selectedParts.delete(prevNo);
 
     // 현재 행에 값 반영
-    if (targetProductInput)     targetProductInput.value = pno;
-    if (targetProductNameInput) targetProductNameInput.value = product_name;
-    if (currentRow)             currentRow.dataset.productNo = pno;
+    if (targetPartsInput)     targetPartsInput.value = pno;
+    if (targetPartsNameInput) targetPartsNameInput.value = parts_name;
+    if (currentRow)             currentRow.dataset.partsNo = pno;
 
     // 선택 목록 갱신
-    selectedProducts.add(pno);
+    selectedParts.add(pno);
 
     // 합계 재계산 필요 시
     if (typeof recalcTotal === 'function') recalcTotal();
@@ -133,12 +133,12 @@
     const tbody  = document.getElementById('items-tbody');
 
     // 수정폼: 기존 선택값을 Set에 미리 반영
-    document.querySelectorAll('#items-tbody .productNoInput').forEach(inp => {
+    document.querySelectorAll('#items-tbody .partsNoInput').forEach(inp => {
       if (inp.value) {
         const p = String(inp.value);
-        selectedProducts.add(p);
+        selectedParts.add(p);
         const tr = inp.closest('tr');
-        if (tr) tr.dataset.productNo = p;
+        if (tr) tr.dataset.partsNo = p;
       }
     });
 
@@ -151,16 +151,16 @@
         tr.innerHTML =
           '<td>' +
             '<div class="input-group input-group-sm">' +
-              '<input type="hidden" class="productNoInput" name="sales_Item['+idx+'].product_No" />' +
-              '<input type="text" class="form-control form-control-sm productNameInput" readonly tabindex="-1" style="background:#f6f6f6;" />' +
-              '<button type="button" class="btn btn-outline-secondary" onclick="openProductPopup(this)">조회</button>' +
+              '<input type="hidden" class="partsNoInput" name="purchase_Item['+idx+'].partsDTO.parts_no" />' +
+              '<input type="text" class="form-control form-control-sm partsNameInput" readonly tabindex="-1" style="background:#f6f6f6;" />' +
+              '<button type="button" class="btn btn-outline-secondary" onclick="openPartsPopup(this)">조회</button>' +
             '</div>' +
           '</td>' +
           '<td class="numeric">' +
-            '<input type="number" min="0" name="sales_Item['+idx+'].sales_Item_Cnt" class="form-control form-control-sm qty-input" required />' +
+            '<input type="number" min="0" name="purchase_Item['+idx+'].purchase_Item_Cnt" class="form-control form-control-sm qty-input" required />' +
           '</td>' +
           '<td class="numeric">' +
-            '<input type="number" step="0.01" min="0" name="sales_Item['+idx+'].sales_Item_Cost" class="form-control form-control-sm cost-input" required />' +
+            '<input type="number" step="0.01" min="0" name="purchase_Item['+idx+'].purchase_Item_Cost" class="form-control form-control-sm cost-input" required />' +
           '</td>' +
           '<td class="numeric">' +
             '<input type="text" class="form-control form-control-plaintext form-control-sm tot-cost" readonly />' +
@@ -179,8 +179,8 @@
       table.addEventListener('click', function(e){
         if (e.target.classList.contains('remove-item-btn')) {
           const tr = e.target.closest('tr');
-          const no = tr.querySelector('.productNoInput')?.value;
-          if (no) selectedProducts.delete(String(no));
+          const no = tr.querySelector('.partsNoInput')?.value;
+          if (no) selectedParts.delete(String(no));
           tr.remove();
           recalcTotal();
         }
@@ -210,22 +210,22 @@
 						<!-- 카드 헤더 (상세 페이지 톤과 동일) -->
 						<div
 							class="card-header d-flex justify-content-between align-items-center">
-							<a href="/sales/list" class="btn btn-outline-light btn-sm"> <i
+							<a href="/purchase/list" class="btn btn-outline-light btn-sm"> <i
 								class="bi bi-list-ul me-1"></i> 목록
 							</a>
 							<h4 class="card-title mb-0">
-								<i class="bi bi-pencil-square me-2"></i>수주 등록
+								<i class="bi bi-pencil-square me-2"></i>발주 등록
 							</h4>
 							<div style="width: 90px;"></div>
 						</div>
 
 						<div class="card-body p-4">
-							<form action="${pageContext.request.contextPath}/sales/create"
+							<form action="${pageContext.request.contextPath}/purchase/create"
 								method="post" style="display: inline;">
 								<!-- 수주 / 거래처 입력 -->
 								<section aria-labelledby="order-create-title" class="info-card"
-									aria-label="수주 및 거래처 정보">
-									<div id="order-create-title" class="info-card-title">수주 /
+									aria-label="발주 및 거래처 정보">
+									<div id="order-create-title" class="info-card-title">발주 /
 										거래처 정보</div>
 									<div class="row g-3">
 										<!-- 거래처 이름 (팝업 조회) -->
@@ -280,17 +280,17 @@
 										<!-- 납기(수주) 일자 -->
 										<div class="col-md-4">
 											<label class="form-label">납기 완료일</label> <input type="date"
-												class="form-control form-control-sm" name="sales_Date" required"/>
+												class="form-control form-control-sm" name="purchase_Date" required/>
 										</div>
 									</div>
 								</section>
 
 								<!-- 제품 목록 -->
 								<section aria-labelledby="product-list-title"
-									class="info-card mt-4" aria-label="제품 목록">
+									class="info-card mt-4" aria-label="부품 목록">
 									<div id="product-list-title"
 										class="info-card-title d-flex justify-content-between align-items-center">
-										<span>제품 목록</span>
+										<span>부품 목록</span>
 										<button type="button" id="add-item-btn"
 											class="btn btn-sm btn-outline-secondary">항목 추가</button>
 									</div>
@@ -300,12 +300,12 @@
 										<table
 											class="table table-sm table-bordered align-middle mb-0 product-table"
 											id="items-table">
-											<caption class="visually-hidden">등록할 제품 목록</caption>
+											<caption class="visually-hidden">등록할 부품 목록</caption>
 											<thead class="table-light">
 												<tr>
-													<th scope="col">제품명</th>
+													<th scope="col">부품명</th>
 													<th scope="col" class="numeric">요청수량</th>
-													<th scope="col" class="numeric">제품 단가</th>
+													<th scope="col" class="numeric">부품 단가</th>
 													<th scope="col" class="numeric">요청 총액</th>
 													<th scope="col">삭제</th>
 												</tr>
@@ -315,20 +315,20 @@
 												<tr>
 													<td>
 														<div class="input-group input-group-sm">
-															<input type="hidden" class="productNoInput"
-																name="sales_Item[0].product_No" /> <input type="text"
-																class="form-control form-control-sm productNameInput "
-																readonly tabindex="-1" style="background: #f6f6f6;"/>
+															<input type="hidden" class="partsNoInput"
+																name="purchase_Item[0].partsDTO.parts_no" /> <input type="text"
+																class="form-control form-control-sm partsNameInput"
+																readonly tabindex="-1" style="background: #f6f6f6;" />
 															<button type="button" class="btn btn-outline-secondary"
-																onclick="openProductPopup(this)">조회</button>
+																onclick="openPartsPopup(this)">조회</button>
 														</div>
 													</td>
 													<td class="numeric"><input type="number" min="0"
-														name="sales_Item[0].sales_Item_Cnt"
+														name="purchase_Item[0].purchase_Item_Cnt"
 														class="form-control form-control-sm qty-input" required />
 													</td>
 													<td class="numeric"><input type="number" step="0.01"
-														min="0" name="sales_Item[0].sales_Item_Cost"
+														min="0" name="purchase_Item[0].purchase_Item_Cost"
 														class="form-control form-control-sm cost-input" required />
 													</td>
 													<td class="numeric"><input type="text"
@@ -356,7 +356,7 @@
 
 								<!-- 액션 버튼 -->
 								<div class="text-end mt-4 d-flex justify-content-end gap-2">
-									<a href="${pageContext.request.contextPath}/sales/list"
+									<a href="${pageContext.request.contextPath}/purchase/list"
 										class="btn btn-outline-secondary btn-sm px-4">취소</a>
 									<button type="submit" class="btn btn-primary btn-sm px-4">등록</button>
 								</div>

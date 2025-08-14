@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.WiseForce.AssemERP.sh.PerformenceMapper">
 	
-	<resultMap type="ClientPerformanceDTO" id="ClientPerformanceMap">
-		<result column="CLIENT_NAME" 	property="client_name"/>
-		<result column="TOTALCOST" 	property="totalcost"/>
+	<resultMap type="Client_PerFormDTO" id="ClientPerformanceMap">
+		<result column="CLIENT_NAME" 	property="client_Name"/>
+		<result column="TOTAL_AMT" 	property="total_Amt"/>
 	</resultMap>
 
 

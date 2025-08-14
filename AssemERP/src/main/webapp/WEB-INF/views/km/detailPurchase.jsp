@@ -44,29 +44,29 @@
 							<%------------------------------------------------------------------------------
 				                		1-1. 목록 버튼 스타일
 				                 	------------------------------------------------------------------------------%>
-							<a href="/sales/list" class="btn btn-outline-light btn-sm"> <i
+							<a href="/purchase/list" class="btn btn-outline-light btn-sm"> <i
 								class="bi bi-list-ul me-1"></i> 목록
 							</a>
 							<%------------------------------------------------------------------------------
 				                		1-2. 타이틀 중앙 정렬 스타일
 				                 	------------------------------------------------------------------------------%>
 							<h4 class="card-title mb-0">
-								<i class="bi bi-pencil-square me-2"></i>수주 상세
+								<i class="bi bi-pencil-square me-2"></i>발주 상세
 							</h4>
 							<div style="width: 90px;"></div>
 						</div>
 						<div class="card-body p-4">
 							<!-- 수주 / 거래처 정보 (읽기 전용 상세) -->
 							<section aria-labelledby="order-info-title" class="info-card"
-								aria-label="수주 및 거래처 정보">
-								<div id="order-info-title" class="info-card-title">수주 /
+								aria-label="발주 및 거래처 정보">
+								<div id="order-info-title" class="info-card-title">발주 /
 									거래처 정보</div>
 								<div class="info-grid">
 									<!-- 수주 번호 -->
 									<div class="field">
-										<div class="field-label">수주 번호</div>
+										<div class="field-label">발주 번호</div>
 										<div class="field-box">
-											<span>${sales_OrderDto.sales_No}</span>
+											<span>${Purchase_OrderDto.purchase_No}</span>
 										</div>
 									</div>
 
@@ -74,7 +74,7 @@
 									<div class="field">
 										<div class="field-label">거래처 이름</div>
 										<div class="field-box">
-											<span>${sales_OrderDto.clientDto.client_Name}</span>
+											<span>${Purchase_OrderDto.clientDto.client_Name}</span>
 										</div>
 									</div>
 
@@ -82,7 +82,7 @@
 									<div class="field">
 										<div class="field-label">주소</div>
 										<div class="field-box">
-											<span>${sales_OrderDto.clientDto.client_Address}</span>
+											<span>${Purchase_OrderDto.clientDto.client_Address}</span>
 										</div>
 									</div>
 
@@ -90,7 +90,7 @@
 									<div class="field">
 										<div class="field-label">이메일</div>
 										<div class="field-box">
-											<span class="small-addon">@</span> <span>${sales_OrderDto.clientDto.client_Email}</span>
+											<span class="small-addon">@</span> <span>${Purchase_OrderDto.clientDto.client_Email}</span>
 										</div>
 									</div>
 
@@ -98,7 +98,7 @@
 									<div class="field">
 										<div class="field-label">거래처 전화번호</div>
 										<div class="field-box">
-											<span>${sales_OrderDto.clientDto.client_Tel}</span>
+											<span>${Purchase_OrderDto.clientDto.client_Tel}</span>
 										</div>
 									</div>
 
@@ -107,7 +107,7 @@
 									<div class="field">
 										<div class="field-label">거래처 담당자</div>
 										<div class="field-box">
-											<span>${sales_OrderDto.clientDto.client_Man}</span>
+											<span>${Purchase_OrderDto.clientDto.client_Man}</span>
 										</div>
 									</div>
 
@@ -116,7 +116,7 @@
 									<div class="field">
 										<div class="field-label">담당자 이름</div>
 										<div class="field-box">
-											<span>${sales_OrderDto.empDTO.empName}</span>
+											<span>${Purchase_OrderDto.empDTO.empName}</span>
 										</div>
 									</div>
 
@@ -124,12 +124,12 @@
 									<div class="field">
 										<div class="field-label">등록 일자</div>
 										<div class="field-box">
-											<span>${fn:substring(sales_OrderDto.in_Date, 0, 10)}</span>
+											<span>${fn:substring(Purchase_OrderDto.in_Date, 0, 10)}</span>
 										</div>
 									</div>
 
 									<!-- 수정 일자: 존재할 때만 보여줌 -->
-									<c:if test="${not empty sales_OrderDto.clientDto.modify_Date}">
+									<c:if test="${not empty Purchase_OrderDto.clientDto.modify_Date}">
 										<div class="field">
 											<div class="field-label">수정 일자</div>
 											<div class="field-box">
@@ -144,50 +144,50 @@
 							<!-- 제품 목록: 수주에 포함된 아이템을 테이블 형식으로 보여줌 -->
 							<section aria-labelledby="product-list-title"
 								class="info-card mt-4" aria-label="제품 목록">
-								<div id="product-list-title" class="info-card-title">제품 목록</div>
+								<div id="product-list-title" class="info-card-title">부품 목록</div>
 								<div class="table-responsive"
 									style="max-height: 360px; overflow: auto;">
 									<table
 										class="table table-sm table-bordered align-middle mb-0 product-table">
-										<caption class="visually-hidden">수주한 제품 목록과 출고/요청 기준
+										<caption class="visually-hidden">발주한 부품 목록과 입고/요청 기준
 											금액</caption>
 										<thead class="table-light">
 											<tr>
-												<th scope="col">제품명</th>
+												<th scope="col">부품명</th>
 												<th scope="col" class="numeric">요청수량</th>
-												<th scope="col" class="numeric">출고수량</th>
-												<th scope="col" class="numeric">출고대기</th>
-												<th scope="col" class="numeric">제품 단가</th>
-												<th scope="col" class="numeric">출고 기준 총액</th>
+												<th scope="col" class="numeric">입고수량</th>
+												<th scope="col" class="numeric">입고대기</th>
+												<th scope="col" class="numeric">부품 단가</th>
+												<th scope="col" class="numeric">입고 기준 총액</th>
 												<th scope="col" class="numeric">요청 기준 총액</th>
 											</tr>
 										</thead>
 										<tbody>
 											<!-- sales_Item이 존재하면 반복, 없으면 안내 메시지 -->
 											<c:choose>
-												<c:when test="${not empty sales_OrderDto.sales_Item}">
-													<c:forEach var="item" items="${sales_OrderDto.sales_Item}">
+												<c:when test="${not empty Purchase_OrderDto.purchase_Item}">
+													<c:forEach var="item" items="${Purchase_OrderDto.purchase_Item}">
 														<tr>
 															<td class="name"><c:out
-																	value="${item.productDto != null ? item.productDto.product_name : '-'}" />
+																	value="${item.partsDTO != null ? item.partsDTO.parts_name : '-'}" />
 															</td>
 															<td class="numeric"><c:out
-																	value="${item.sales_Item_Cnt != null ? item.sales_Item_Cnt : 0}" />
+																	value="${item.purchase_Item_Cnt != null ? item.purchase_Item_Cnt : 0}" />
 															</td>
 															<td class="numeric"><c:out
-																	value="${item.sales_Item_OutCnt != null ? item.sales_Item_OutCnt : 0}" />
+																	value="${item.purchase_Item_InCnt != null ? item.purchase_Item_InCnt : 0}" />
 															</td>
 															<td class="numeric"><c:out
-																	value="${item.sales_Item_WaitingCnt != null ? item.sales_Item_WaitingCnt : 0}" />
+																	value="${item.purchase_Item_WaitingCnt != null ? item.purchase_Item_WaitingCnt : 0}" />
 															</td>
 															<td class="numeric"><fmt:formatNumber
-																	value="${item.sales_Item_Cost != null ? item.sales_Item_Cost : 0}"
+																	value="${item.purchase_Item_Cost != null ? item.purchase_Item_Cost : 0}"
 																	type="number" groupingUsed="true" /></td>
 															<td class="numeric"><fmt:formatNumber
-																	value="${item.sales_Item_TotOutCost != null ? item.sales_Item_TotOutCost : 0}"
+																	value="${item.purchase_Item_TotInCost != null ? item.purchase_Item_TotInCost : 0}"
 																	type="number" groupingUsed="true" /></td>
 															<td class="numeric"><fmt:formatNumber
-																	value="${item.sales_Item_TotCost != null ? item.sales_Item_TotCost : 0}"
+																	value="${item.purchase_Item_TotCost != null ? item.purchase_Item_TotCost : 0}"
 																	type="number" groupingUsed="true" /></td>
 														</tr>
 													</c:forEach>
@@ -203,15 +203,15 @@
 											<!-- 합계 행: 수량/금액 총합 -->
 											<tr class="total-row">
 												<td>합계</td>
-												<td class="numeric">${sales_OrderDto.totCnt}</td>
-												<td class="numeric">${sales_OrderDto.totOutCnt}</td>
-												<td class="numeric">${sales_OrderDto.totWaitingCnt}</td>
+												<td class="numeric">${Purchase_OrderDto.totCnt}</td>
+												<td class="numeric">${Purchase_OrderDto.totInCnt}</td>
+												<td class="numeric">${Purchase_OrderDto.totWaitingCnt}</td>
 												<td class="numeric"></td>
 												<td class="numeric"><fmt:formatNumber
-														value="${sales_OrderDto.totOutCost}" type="number"
+														value="${Purchase_OrderDto.totInCost}" type="number"
 														groupingUsed="true" /></td>
 												<td class="numeric"><fmt:formatNumber
-														value="${sales_OrderDto.totCost}" type="number"
+														value="${Purchase_OrderDto.totCost}" type="number"
 														groupingUsed="true" /></td>
 											</tr>
 										</tfoot>
@@ -225,28 +225,33 @@
 								<!-- out_Status 가 0 이면 승인 -->
 								<!-- out_Status 가 1 이면 완료 -->
 								<c:choose>
-									<c:when test="${sales_OrderDto.out_Status == 0}">
-										<form action="${pageContext.request.contextPath}/sales/modifyStatus"
+									<c:when test="${Purchase_OrderDto.in_Status == 0}">
+										<form action="${pageContext.request.contextPath}/purchase/modifyStatus"
 											method="post" style="display: inline;">
 											<input type="hidden" name="sales_No"
-												value="${sales_OrderDto.sales_No}" />
+												value="${Purchase_OrderDto.purchase_No}" />
 											<button type="submit" class="btn btn-success btn-sm px-4">
 												승인</button>
 										</form>
 									</c:when>
-									<c:when test="${sales_OrderDto.out_Status == 1}">
-										<form action="${pageContext.request.contextPath}/sales/modifyStatus"
+									<c:when test="${Purchase_OrderDto.in_Status == 1}">
+										<form action="${pageContext.request.contextPath}/purchase/modifyStatus"
 											method="post" style="display: inline;">
-											<input type="hidden" name="sales_No"
-												value="${sales_OrderDto.sales_No}" />
+											<input type="hidden" name="purchase_No"
+												value="${Purchase_OrderDto.purchase_No}" />
 											<button type="submit" class="btn btn-primary btn-sm px-4">완료</button>
 										</form>
 									</c:when>
-										<c:when test="${sales_OrderDto.out_Status == 2}">
-										<button type="button" class="btn btn-secondary btn-sm px-4"
-											disabled>완료</button>
+									<c:when test="${Purchase_OrderDto.in_Status == 2}">
+										<form action="${pageContext.request.contextPath}/purchase/modifyStatus"
+											method="post" style="display: inline;">
+											<input type="hidden" name="purchase_No"
+												value="${Purchase_OrderDto.purchase_No}"/>
+										<button type="submit" class="btn btn-danger btn-sm px-4">마감</button>
+										</form>
 									</c:when>
-									<c:when test="${sales_OrderDto.out_Status == 3}">
+
+									<c:when test="${Purchase_OrderDto.in_Status == 3}">
 										<button type="button" class="btn btn-secondary btn-sm px-4"
 											disabled>마감</button>
 									</c:when>
@@ -254,31 +259,31 @@
 
 								<!-- out_Status에 따라 수정 vs 재수주 요청 분기 -->
 								<c:choose>
-									<c:when test="${sales_OrderDto.out_Status == 1}">
+									<c:when test="${Purchase_OrderDto.in_Status == 1}">
 										<form
-											action="${pageContext.request.contextPath}/sales/deleteCreate"
+											action="${pageContext.request.contextPath}/purchase/deleteCreate"
 											method="post" style="display: inline;">
 											<input type="hidden" name="sales_No"
-												value="${sales_OrderDto.sales_No}" />
+												value="${Purchase_OrderDto.purchase_No}" />
 											<button type="submit" class="btn btn-warning btn-sm px-4"
-												onclick="return confirm('정말 재수주 요청하시겠습니까? 수주 취소 후 새로운 등록창으로 이동합니다.');">재수주
+												onclick="return confirm('정말 재수주 요청하시겠습니까?');">재수주
 												요청</button>
 										</form>
 									</c:when>
-									<c:when test="${sales_OrderDto.out_Status == 0}">
+									<c:when test="${Purchase_OrderDto.in_Status == 0}">
 										<a
-											href="${pageContext.request.contextPath}/sales/modifyStart?sales_No=${sales_OrderDto.sales_No}"
+											href="${pageContext.request.contextPath}/purchase/modifyStart?purchase_No=${Purchase_OrderDto.purchase_No}"
 											class="btn btn-outline-primary btn-sm px-4">수정</a>
 									</c:when>
 								</c:choose>
 
 								<c:choose>
 									<c:when
-										test="${sales_OrderDto.out_Status == 0 or sales_OrderDto.out_Status == 1}">
-										<form action="${pageContext.request.contextPath}/sales/delete"
+										test="${Purchase_OrderDto.in_Status == 0 or Purchase_OrderDto.in_Status == 1}">
+										<form action="${pageContext.request.contextPath}/purchase/delete"
 											method="post" style="display: inline;">
 											<input type="hidden" name="sales_No"
-												value="${sales_OrderDto.sales_No}" />
+												value="${Purchase_OrderDto.purchase_No}" />
 											<button type="submit" class="btn btn-danger btn-sm px-4"
 												onclick="return confirm('수주 취소 하시겠습니까?');">수주 취소</button>
 										</form>

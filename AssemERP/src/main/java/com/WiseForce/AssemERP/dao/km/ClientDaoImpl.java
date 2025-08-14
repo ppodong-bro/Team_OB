@@ -95,8 +95,8 @@ public class ClientDaoImpl implements ClientDao {
 	}
 
 	@Override
-	public List<ClientDto> clientAll() {
-		List<ClientDto> clientList = session.selectList("clientAll");
+	public List<ClientDto> clientAll(int client_Gubun) {
+		List<ClientDto> clientList = session.selectList("clientAll", client_Gubun);
 		return clientList;
 	}
 

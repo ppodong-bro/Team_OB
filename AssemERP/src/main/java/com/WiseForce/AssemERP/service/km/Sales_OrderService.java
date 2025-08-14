@@ -1,5 +1,6 @@
 package com.WiseForce.AssemERP.service.km;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -32,5 +33,8 @@ public interface Sales_OrderService {
 	List<Sales_ItemDto> 	salesItemList(int sales_No);
 
 	void 					modifyStatus(int sales_No, List<Sales_ItemDto> salesItemList);
+
+	void closeCheck();
+
 	
 }

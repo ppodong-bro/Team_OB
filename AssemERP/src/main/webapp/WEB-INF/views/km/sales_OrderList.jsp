@@ -188,22 +188,28 @@
 
 
 												<!-- 수정/삭제 버튼 -->
-												<td class="text-center">
-													<!-- 수정 버튼 --> <a
-													href="/sales/modifyStart?sales_No=${order.sales_No}"
-													class="btn btn-sm btn-outline-success"> <i
-														class="bi bi-pencil-square"></i> 수정
-												</a> 
-												<%-- <form
-														action="${pageContext.request.contextPath}/sales/delete"
-														method="post" style="display: inline;"
-														onclick="event.stopPropagation();">
-														<input type="hidden" name="sales_No"
-															value="${order.sales_No}" />
-														<button type="submit"
-															class="btn btn-sm btn-outline-danger">삭제</button>
-													</form> --%>
-												</td>
+												<c:choose>
+													<c:when
+														test="${order.out_Status == 0 or order.out_Status == 1}">
+														<td class="text-center">
+															<!-- 수정 버튼 --> <a
+															href="/sales/modifyStart?sales_No=${order.sales_No}"
+															class="btn btn-sm btn-outline-success"> <i
+																class="bi bi-pencil-square"></i> 수정
+														</a>
+														</td>
+													</c:when>
+												</c:choose>
+												<c:choose>
+													<c:when
+														test="${order.out_Status == 2 or order.out_Status == 3}">
+														<td class="text-center"><a href="#"
+															class="btn btn-sm btn-outline-success disabled keep-look"
+															role="button" aria-disabled="true" tabindex="-1"> <i
+																class="bi bi-pencil-square"></i> 수정
+														</a></td>
+													</c:when>
+												</c:choose>
 											</tr>
 										</c:forEach>
 

@@ -90,11 +90,11 @@ public class ClientController {
 	}
 	
 	@GetMapping("popup")
-	public String searchByName(Model model){
-		List<ClientDto>listClientDto = clientService.clientAll();
+	public String searchByName(@RequestParam("client_Gubun") int client_Gubun,Model model){
+		List<ClientDto>listClientDto = clientService.clientAll(client_Gubun);
 		model.addAttribute("clientList", listClientDto);
 		System.out.println("listClientDto"+listClientDto);
-		return "km/salesPop";
+		return "km/clientPop";
 	}
 
 }

@@ -28,7 +28,7 @@ public interface ClientDao {
 
 	List<ClientDto> searchByName(String client_Name);
 
-	List<ClientDto> clientAll();
+	List<ClientDto> clientAll(int client_Gubun);
 
 	int 			createClient_His(ClientDto clientDto);
 

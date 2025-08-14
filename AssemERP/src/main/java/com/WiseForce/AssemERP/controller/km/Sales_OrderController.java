@@ -1,5 +1,6 @@
 package com.WiseForce.AssemERP.controller.km;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -53,69 +54,77 @@ public class Sales_OrderController {
 
 	@GetMapping("/createStart")
 	public String createStartSales(Model model) {
-		System.out.println("Sales_OrderController createStart Start...");
-		List<ProductDTO> productList = sales_OrderService.productList();
-		List<ClientDto> clientList = clientService.clientAll();
-		model.addAttribute("productList", productList);
-		model.addAttribute("clientList", clientList);
+		sales_OrderService.closeCheck();
+		
+		/*
+		 * System.out.println("Sales_OrderController createStart Start...");
+		 * List<ProductDTO> productList = sales_OrderService.productList();
+		 * List<ClientDto> clientList = clientService.clientAll();
+		 * model.addAttribute("productList", productList);
+		 * model.addAttribute("clientList", clientList);
+		 */
+		model.addAttribute("client_Gubun", 1);
 		return "km/salesCreate";
 	}
 
 	@PostMapping("/create")
 	public String createSales(Sales_OrderDto sales_OrderDto) {
+		sales_OrderService.closeCheck();
 		System.out.println("createSales sales_OrderDto--->" + sales_OrderDto);
 		sales_OrderService.createSales(sales_OrderDto);
 
 		return "redirect:/sales/list";
 	}
-	
+
 	@GetMapping("/modifyStart")
 	public String modifyStart(Sales_OrderDto sales_OrderDto, Model model) {
+		sales_OrderService.closeCheck();
 		Sales_OrderDto sales_OrderDto1 = sales_OrderService.detailSales(sales_OrderDto);
 		model.addAttribute("sales_OrderDto", sales_OrderDto1);
 		return "km/modifySales";
 	}
-	
+
 	@PostMapping("/modify")
 	public String modify(Sales_OrderDto sales_OrderDto) {
+		sales_OrderService.closeCheck();
 		int sales_No = sales_OrderDto.getSales_No();
 		List<Sales_ItemDto> salesItemList = sales_OrderService.salesItemList(sales_No);
 		sales_OrderService.modifySales(sales_OrderDto, salesItemList);
-		
-		
-		return "redirect:/sales/detail?sales_No="+sales_OrderDto.getSales_No();
+
+		return "redirect:/sales/detail?sales_No=" + sales_OrderDto.getSales_No();
 	}
-	
+
 	@PostMapping("modifyStatus")
-	public String modifyStatus (Sales_OrderDto sales_OrderDto) {
+	public String modifyStatus(Sales_OrderDto sales_OrderDto) {
+		sales_OrderService.closeCheck();
 		int sales_No = sales_OrderDto.getSales_No();
 		List<Sales_ItemDto> salesItemList = sales_OrderService.salesItemList(sales_No);
 		sales_OrderService.modifyStatus(sales_No, salesItemList);
-		return "redirect:/sales/detail?sales_No="+sales_OrderDto.getSales_No();
+		return "redirect:/sales/detail?sales_No=" + sales_OrderDto.getSales_No();
 	}
-	
+
 	@PostMapping("/deleteCreate")
 	public String delete(Sales_OrderDto sales_OrderDto) {
-		System.out.println("Sales_OrderController sales_OrderDto-->"+sales_OrderDto);
+		System.out.println("Sales_OrderController sales_OrderDto-->" + sales_OrderDto);
 		sales_OrderService.deleteSales(sales_OrderDto);
-		return"redirect:/sales/createStart";
+		return "redirect:/sales/createStart";
 	}
-	
+
 	@PostMapping("/delete")
 	public String deleteSales(Sales_OrderDto sales_OrderDto) {
-		System.out.println("Sales_OrderController sales_OrderDto-->"+sales_OrderDto);
+		sales_OrderService.closeCheck();
+		System.out.println("Sales_OrderController sales_OrderDto-->" + sales_OrderDto);
 		sales_OrderService.deleteSales(sales_OrderDto);
-		return"redirect:/sales/list";
+		return "redirect:/sales/list";
+
 	}
-	
-	
+
 	@GetMapping("/productPopup")
 	public String productPopup(Model model) {
-
+		
 		List<ProductDTO> productList = sales_OrderService.productList();
 		model.addAttribute("productList", productList);
 		return "km/productPop";
 	}
 
-	
 }
