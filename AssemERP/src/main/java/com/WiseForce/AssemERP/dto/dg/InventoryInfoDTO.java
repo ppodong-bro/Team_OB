@@ -1,6 +1,8 @@
 package com.WiseForce.AssemERP.dto.dg;
 
-import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,6 +19,8 @@ public class InventoryInfoDTO {
 	private int item_status; // 재고 구분
 	private String item_name; // 재고 명
 	private int cnt; // 재고 수량 
+	private String files_no; // 파일의 UUID
 	
 	private int item_adjustcnt; // 조정 재고 수량
+	private List<MultipartFile> files; // 파일들
 }

@@ -23,6 +23,7 @@ public class InventoryDTO {
 	private int item_cnt; // 수량
 	private int item_totalcnt; // 수량
 	private int item_quality; // 품질
+	private String files_no;
 	
 	// 출력
 	private String inout_date_text;

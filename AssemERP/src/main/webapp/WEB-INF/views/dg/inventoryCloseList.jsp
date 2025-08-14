@@ -302,8 +302,8 @@ $(document).ready(function() {
 								<i class="bi bi-calendar-check me-2"></i>월마감 이력
 							</h4>
 							<div>
-								<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalMonthCloseCancel">월마감 취소</button>
-								<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalMonthClose">월마감</button>
+								<button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalMonthCloseCancel">월마감 취소</button>
+								<button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalMonthClose">월마감</button>
 							</div>
 						</div>
 						<div class="card-body">

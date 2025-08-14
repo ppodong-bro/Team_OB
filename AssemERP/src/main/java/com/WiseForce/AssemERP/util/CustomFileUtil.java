@@ -69,51 +69,97 @@ public class CustomFileUtil {
 		return saveName;
 	}
 
-	public ResponseEntity<Resource> getFile(String fileName) {
-		Resource resource = new FileSystemResource(uploadPath+File.separator+fileName);
-	
-		System.out.println("ResponseEntity<Resource> getFile => "+uploadPath+File.separator+fileName);
-	
-		if(!resource.exists()) {
-			// File.separator --> os에 맞는 경로 구분자
-			// 요청 파일 없으면 default.jpeg 보여줘
-			resource = new FileSystemResource(uploadPath+File.separator+"default.jpg");
+	// 폴더별로 구분해서 저장하기 위한 함수
+	public String saveFile(MultipartFile file, String folder/*특정 폴더*/, String uuid) {
+		// 파일이 존재하지 않는 경우 예외처리
+		if (file == null || file.getSize() == 0) {
+			return null;
+		}
+
+		// 저장 폴더 생성
+		String saveFolder = uploadPath + "/" + folder;
+		File tempFolder = new File(saveFolder);
+		if (!tempFolder.exists()) {
+			tempFolder.mkdir();
+		}
+		
+		// 저장 파일 명 지정
+		String saveName = uuid + "_" + file.getOriginalFilename();
+
+		// 저장 경로 지정
+		Path savePath = Paths.get(saveFolder, saveName);
+
+		try {
+			// 파일 복사
+			Files.copy(file.getInputStream(), savePath);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		// 파일 경로 반환
+		return savePath.toString();
+	}
+
+	// 절대경로로 파일 불러오기
+	public ResponseEntity<Resource> getFileRealPath(String filePath) {
+		// 파일 불러오기
+		Resource resource = new FileSystemResource(filePath);
+
+		// 파일이 없는경우
+		if (!resource.exists()) {
+			// 
+			resource = new FileSystemResource(uploadPath + File.separator + "default.jpg");
 		}
 		// 응답 Header 생성후 Content-Type 적용
 		HttpHeaders headers = new HttpHeaders();
-	
+
 		try {
 			headers.add("Content-Type", Files.probeContentType(resource.getFile().toPath()));
 		} catch (Exception e) {
-				return ResponseEntity.internalServerError().build();
+			return ResponseEntity.internalServerError().build();
 		}
-		// 최종적	 	: 200 상태코드 +  응답 Header + 파일 Resource 전달
-		// 주요 목적	: File D/L 또는 Image 보여줄때
+		// 최종적 : 200 상태코드 + 응답 Header + 파일 Resource 전달
 		return ResponseEntity.ok().headers(headers).body(resource);
+	}
+	
+	public ResponseEntity<Resource> getFile(String fileName) {
+		Resource resource = new FileSystemResource(uploadPath + File.separator + fileName);
 
+		System.out.println("ResponseEntity<Resource> getFile => " + uploadPath + File.separator + fileName);
+
+		if (!resource.exists()) {
+			// File.separator --> os에 맞는 경로 구분자
+			// 요청 파일 없으면 default.jpeg 보여줘
+			resource = new FileSystemResource(uploadPath + File.separator + "default.jpg");
+		}
+		// 응답 Header 생성후 Content-Type 적용
+		HttpHeaders headers = new HttpHeaders();
+
+		try {
+			headers.add("Content-Type", Files.probeContentType(resource.getFile().toPath()));
+		} catch (Exception e) {
+			return ResponseEntity.internalServerError().build();
+		}
+		// 최종적 : 200 상태코드 + 응답 Header + 파일 Resource 전달
+		// 주요 목적 : File D/L 또는 Image 보여줄때
+		return ResponseEntity.ok().headers(headers).body(resource);
 	}
 
-
-
 	public void deleteFiles(String fileName) {
-		if(fileName == null || fileName == "") {
+		if (fileName == null || fileName == "") {
 			return;
 		}
-							// 썸네일 있는지 확인하고 삭제
-			String 	thumnailFileName = "s_"+fileName;
-			Path	thumnailPath	 = Paths.get(uploadPath, thumnailFileName);
-			Path	filePath		 = Paths.get(uploadPath, fileName);
+		// 썸네일 있는지 확인하고 삭제
+		String thumnailFileName = "s_" + fileName;
+		Path thumnailPath = Paths.get(uploadPath, thumnailFileName);
+		Path filePath = Paths.get(uploadPath, fileName);
 
-			try {
-				Files.deleteIfExists(filePath);
-				Files.deleteIfExists(thumnailPath);
-			} catch (IOException e) {
-				throw new RuntimeException(e.getMessage());
-			}
-		
-		
+		try {
+			Files.deleteIfExists(filePath);
+			Files.deleteIfExists(thumnailPath);
+		} catch (IOException e) {
+			throw new RuntimeException(e.getMessage());
 		}
-	
+	}
 }
-	
-	

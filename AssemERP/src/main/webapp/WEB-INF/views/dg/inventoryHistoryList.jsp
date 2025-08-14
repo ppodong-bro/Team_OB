@@ -21,7 +21,7 @@ const itemStatusSelect = ${search.item_status_select != null ? search.item_statu
 		fetch(contextPath + "/common/1100")
 			.then(response => response.json())
 			.then(data => {
-				console.log(data);
+				// console.log(data);
 				
 				// <select>에 값 채우기
 				const select = document.getElementById("order_status");
@@ -43,7 +43,7 @@ const itemStatusSelect = ${search.item_status_select != null ? search.item_statu
 		fetch(contextPath + "/common/600")
 			.then(response => response.json())
 			.then(data => {
-				console.log(data);
+				// console.log(data);
 				
 				// <select>에 값 채우기
 				const select = document.getElementById("item_status");
@@ -61,6 +61,62 @@ const itemStatusSelect = ${search.item_status_select != null ? search.item_statu
 			})
 			.catch(error => console.error("/common 호출 오류:", error));
 	});
+
+// 첨부파일 다운로드
+function downloadFiles(element){
+	// 클릭된 버튼의 id 값 가져오기
+	const adjust_id = element.id;
+	
+	// 서버에 파일 요청하기
+    fetch("/files/adjust/" + adjust_id)
+		.then(response => response.json())
+        .then(fileList => {
+        	console.log(fileList);
+            // 파일이 없는 경우
+            if (fileList.length === 0) {
+                alert("다운로드할 파일이 없습니다.");
+                return;
+            }
+            
+            // 각 파일 순차적으로 다운로드
+            fileList.forEach((file, index) => {
+            	console.log(file.fileName, file.filePath);
+                setTimeout(() => {
+                	downloadFile(file.filePath, file.fileName);
+                }, index * 500); // 파일마다 약간의 간격을 두고 다운로드
+            });
+        })
+        .catch(error => console.error('파일 목록 조회 중 에러 발생:', error));
+}
+
+//개별 파일 다운로드
+function downloadFile(filePath, fileName) {
+	// POST 요청 데이터 생성
+    const formData = new FormData();
+    formData.append('filePath', filePath);
+    
+    // fetch로 POST 요청 보내기
+    fetch("/files", {
+        method: 'POST',
+        body: formData
+    })
+   	.then(response => response.blob())
+   	.then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = fileName;
+        
+        document.body.appendChild(a);
+        a.click();
+        
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+   	})
+   	.catch(error => console.error("다운로드 중 에러 발생:", error));
+        
+}
 </script>
 <body>
 	<!-- 전체 레이아웃 -->
@@ -77,7 +133,7 @@ const itemStatusSelect = ${search.item_status_select != null ? search.item_statu
 					<div class="card shadow-sm">
 						<div class="card-header d-flex justify-content-between align-items-center">
 							<h4 class="card-title mb-0">
-								<i class="bi bi-calendar-check me-2"></i>재고 입출고 이력
+								<i class="bi bi-truck me-2"></i>재고 입출고 이력
 							</h4>
 						</div>
 						<div class="card-body">
@@ -134,6 +190,7 @@ const itemStatusSelect = ${search.item_status_select != null ? search.item_statu
 											<th style="width: 85px;">총수량</th>
 											<th style="width: 85px;">변동수량</th>
 											<th>입출고 일시</th>
+											<th style="width: 85px;">첨부파일</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -145,10 +202,12 @@ const itemStatusSelect = ${search.item_status_select != null ? search.item_statu
 												</td>
 												<td class="text-center">
 													<c:choose>
-														<c:when test="${inventoryHistory.order_no != -1}">
+														<c:when test="${inventoryHistory.order_status == 0 || inventoryHistory.order_status == 1}">
+														<!-- 수주,발주 번호가 있는 경우 -->
 														${inventoryHistory.order_no}
 														</c:when>
 														<c:otherwise>
+														<!-- 재고 조정 번호 -->
 														-
 														</c:otherwise>
 													</c:choose>
@@ -171,6 +230,16 @@ const itemStatusSelect = ${search.item_status_select != null ? search.item_statu
 												</td>
 												<!-- 입출고 구분에 따라 +,- 및 색상 변경 -->
 												<td class="text-center">${inventoryHistory.inout_date_text}</td>
+												<td class="text-center">
+													<c:choose>
+														<c:when test="${inventoryHistory.files_no != null }">
+															<button class="btn btn-sm btn-light" id="${inventoryHistory.order_no }" onclick="downloadFiles(this)"><i class="bi bi-download"></i></button>
+														</c:when>
+														<c:otherwise>
+														-
+														</c:otherwise>
+													</c:choose>
+												</td>
 											</tr>
 										</c:forEach>
 									</tbody>
