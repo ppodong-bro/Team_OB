@@ -51,6 +51,8 @@ public class MainController {
 		List<Integer> bardata = performenceService.getClientTotalCost();
 		List<String> barlabels = performenceService.getClientName();
 		
+		System.out.println("bardata => "+bardata );
+		System.out.println("barlabels => "+barlabels );
 		
 		
 		model.addAttribute("bardata", mapper.writeValueAsString(bardata));

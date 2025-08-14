@@ -45,7 +45,7 @@ public class PerformenceDaoImpl implements PerformenceDao {
 		
 		try {
 			saleData = session.selectList("com.WiseForce.AssemERP.sh.PerformenceMapper.shYearsSalePerformence", year);
-			System.out.println("PerformenceDaoImpl getPurchaseData PerChaseData => "+saleData);
+			System.out.println("PerformenceDaoImpl getSaleData saleData => "+saleData);
 		} catch (Exception e) {
 			System.out.println("PerformenceDaoImpl getSaleData Exception => "+e.getMessage());
 		}
@@ -60,10 +60,10 @@ public class PerformenceDaoImpl implements PerformenceDao {
 		List<ClientPerformanceDTO> clientPerformanceDTOs = null;
 		
 		try {
-			clientPerformanceDTOs = session.selectList("shClientPerform");
+			clientPerformanceDTOs = session.selectList("com.WiseForce.AssemERP.sh.PerformenceMapper.shClientPerform");
 			System.out.println("PerformenceDaoImpl getClientPerform clientPerformanceDTOs =>"+clientPerformanceDTOs);
 		} catch (Exception e) {
-			System.out.println("PerformenceDaoImpl getSaleData Exception => "+e.getMessage()); 
+			System.out.println("PerformenceDaoImpl getClientPerform Exception => "+e.getMessage()); 
 		}
 		return clientPerformanceDTOs;
 	}
