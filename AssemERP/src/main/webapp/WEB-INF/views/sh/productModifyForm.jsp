@@ -23,17 +23,23 @@ body {
 	content: " *";
 	color: red;
 }
+
 .image-box {
-	width: 40px; /* 원하는 가로 크기 */
-	height: 40px; /* 원하는 세로 크기 */
+	width: auto; /* 원하는 가로 크기 */
+	height: 300px; /* 원하는 세로 크기 */
 	overflow: hidden;
 }
 
 .image-box img {
 	width: 100%;
 	height: 100%;
-	object-fit: cover; /* 비율 유지 + 잘라서 꽉 채움 */
 	display: block; /* 여백 제거 */
+}
+
+.parent-container {
+	display: flex;
+	flex-direction: column;
+	gap: 60px; /* 항목들 사이 간격을 균일하게 12px 설정 */
 }
 </style>
 
@@ -81,87 +87,10 @@ body {
 								<!-- 제품박스 -->
 								<h5 class="mb-3">기본 정보</h5>
 								<div class="row">
-
-									<div class="col-md-6 mb-3">
-
-										<!-- 제품명 -->
-
-										<label for="productName" class="form-label">제품명</label>
-										<div class="input-group">
-											<span class="input-group-text"> <i class="bi bi-tag"></i></span>
-											<input type="text" class="form-control form-control-sm"
-												id="productName" name="product_name"
-												value="${productDTO.product_name }" required>
-											<div class="invalid-feedback">제품명을 입력해주세요.</div>
-										</div>
-									</div>
-
-									<!-- 제품구분 -->
-									<div class="col-md-6 mb-3">
-										<label for="productStatus" class="form-label">구분</label>
-										<div class="input-group">
-											<span class="input-group-text"><i class="bi bi-grid"></i></span>
-											<select class="form-select form-select-sm w-auto"
-												id="productStatus" name="product_status" required>
-												<option value=""
-													${productDTO.product_status == null ? 'selected' : ''}>선택</option>
-												<option value="0"
-													${productDTO.product_status == 0 ? 'selected' : ''}>데스크탑</option>
-												<option value="1"
-													${productDTO.product_status == 1 ? 'selected' : ''}>노트북</option>
-												<option value="2"
-													${productDTO.product_status == 2 ? 'selected' : ''}>워크스테이션</option>
-											</select>
-											<div class="invalid-feedback">제품종류를 선택해주세요.</div>
-										</div>
-									</div>
-								</div>
-
-								<!-- 등록자 -->
-								<div class="row">
-									<div class="col-md-6 mb-3">
-										<label for="empNo" class="form-label">등록자</label>
-										<div class="input-group">
-											<span class="input-group-text"><i class="bi bi-person"></i></span>
-											<select class="form-control form-control-sm" name="emp_no"
-												id="empNo">
-												<c:forEach var="emp" items="${EmpList}">
-													<option value="${emp.empNo }"
-														${emp.empNo == productDTO.emp_no ? 'selected' : ''}>${emp.empName }</option>
-												</c:forEach>
-											</select>
-
-										</div>
-									</div>
-									<div class="col-md-6 mb-3">
-										<label for="productIndate" class="form-label">등록일</label>
-										<div class="input-group">
-											<input type="date" class="form-control form-control-sm"
-												id="productIndate" name="in_date" readonly="readonly"
-												value="${productDTO.in_date }">
-										</div>
-									</div>
-								</div>
-
-
-								<!-- 부품설명 -->
-								<div class="row">
-									<div class="col-md-6 mb-3">
-										<label for="productContext" class="form-label">제품설명</label>
-										<textarea class="form-control form-control-sm" rows="5"
-											id="productContext" name="product_context"
-											placeholder="설명란에 정보를 입력해주세요">${productDTO.product_context }</textarea>
-
-									</div>
-
-
 									<!-- 이미지 -->
-									<div class="col-md-6 mb-3">
-										<label for="partsfile" class="form-label">제품이미지</label>
-										<div class="input-group">
-											<div
-												style="position: relative; display: inline-flex; margin-right: 15px;">
-												<div class="image-box">
+									<div class="col-md-4 mb-12">
+										<div class="image-box" style="position: relative;">
+											<div class="image-box">
 												<c:choose>
 													<c:when test="${empty productDTO.filename}">
 														<img
@@ -178,13 +107,81 @@ body {
 												<c:if test="${!empty productDTO.filename}">
 													<i class="bi bi-x"
 														onclick="deleteFile(${productDTO.product_no})"
-														style="position: absolute; background-color: red; top: -10px; right: -10px; font-size: 15px; border: solid; border-width: 1px; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;"></i>
+														style="position: absolute; background-color: red; top: 0px; right: 0px; font-size: 30px; border: solid; border-width: 2px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; line-height: 40px;  border-radius: 2px;"></i>
 												</c:if>
-												</div>
 											</div>
-											<input type="file" class="form-control form-control-sm"
-												id="productfile" name="file">
 										</div>
+										<input type="file" class="form-control form-control-sm"
+											id="productfile" name="file">
+									</div>
+
+									<div class="col-md-8 mb-12">
+										<div class="parent-container">
+
+											<!-- 제품명 -->
+											<div class="input-group">
+												<span class="input-group-text autospace"
+													style="width: 100px; display: flex; justify-content: center;">제품명</span>
+												<input type="text" class="form-control form-control-sm"
+													id="productName" name="product_name"
+													value="${productDTO.product_name }" required>
+												<div class="invalid-feedback">제품명을 입력해주세요.</div>
+											</div>
+
+
+											<!-- 제품구분 -->
+
+											<div class="input-group">
+												<span class="input-group-text autospace"
+													style="width: 100px; display: flex; justify-content: center;">구분</span>
+												<select class="form-select form-select-sm w-auto"
+													id="productStatus" name="product_status" required>
+													<option value=""
+														${productDTO.product_status == null ? 'selected' : ''}>선택</option>
+													<option value="0"
+														${productDTO.product_status == 0 ? 'selected' : ''}>데스크탑</option>
+													<option value="1"
+														${productDTO.product_status == 1 ? 'selected' : ''}>노트북</option>
+													<option value="2"
+														${productDTO.product_status == 2 ? 'selected' : ''}>워크스테이션</option>
+												</select>
+												<div class="invalid-feedback">제품종류를 선택해주세요.</div>
+											</div>
+
+											<!-- 등록자 -->
+											<div class="input-group">
+												<span class="input-group-text autospace"
+													style="width: 100px; display: flex; justify-content: center;">등록자</span>
+												<select class="form-control form-control-sm" name="emp_no"
+													id="empNo">
+													<c:forEach var="emp" items="${EmpList}">
+														<option value="${emp.empNo }"
+															${emp.empNo == productDTO.emp_no ? 'selected' : ''}>${emp.empName }</option>
+													</c:forEach>
+												</select>
+											</div>
+
+											<!-- 등록일 -->
+											<div class="input-group">
+												<span class="input-group-text autospace"
+													style="width: 100px; display: flex; justify-content: center;">등록일</span>
+												<input type="date" class="form-control form-control-sm"
+													id="productIndate" name="in_date" readonly="readonly"
+													value="${productDTO.in_date }">
+											</div>
+
+										</div>
+									</div>
+								</div>
+
+
+								<!-- 부품설명 -->
+								<div class="row">
+									<div class="col2-md-12 pt-5">
+										<textarea class="form-control form-control-sm" rows="5"
+											id="productContext" name="product_context"
+											placeholder="설명란에 정보를 입력해주세요">${productDTO.product_context }</textarea>
+
 									</div>
 								</div>
 
@@ -192,100 +189,99 @@ body {
 								<hr class="my-4">
 
 								<!-- BOM 영역 -->
-								<div class="container-fluid px-4 py-4">
-									<!-- 👇 제목과 버튼을 같은 줄, 양쪽 정렬 -->
-									<div
-										class="d-flex justify-content-between align-items-center mb-3">
-										<h5 class="mb-0">제품 구성</h5>
-										<button type="button" class="btn btn-primary" id="addRowBtn">
-											<i class="bi bi-plus-lg"></i>부품 추가
-										</button>
-									</div>
+								<!-- 👇 제목과 버튼을 같은 줄, 양쪽 정렬 -->
+								<div
+									class="d-flex justify-content-between align-items-center mb-3">
+									<h5 class="mb-0">제품 구성</h5>
+									<button type="button" class="btn btn-primary" id="addRowBtn">
+										<i class="bi bi-plus-lg"></i>부품 추가
+									</button>
+								</div>
 
-									<table class="table table-bordered" id="bomTable">
-										<colgroup>
-											<col style="width: 20%;">
-											<col style="width: 5%%;">
-											<col style="width: 15%;">
-											<col style="width: 10%;">
-										</colgroup>
-										<thead>
-											<tr style="text-align: center;">
-												<th>부품구분</th>
-												<th>부품명</th>
-												<th>수량</th>
-												<th>삭제</th>
+								<table class="table table-bordered" id="bomTable">
+									<colgroup>
+										<col style="width: 20%;">
+										<col style="width: 5%%;">
+										<col style="width: 15%;">
+										<col style="width: 10%;">
+									</colgroup>
+									<thead>
+										<tr style="text-align: center;">
+											<th>부품구분</th>
+											<th>부품명</th>
+											<th>수량</th>
+											<th>삭제</th>
+										</tr>
+									</thead>
+									<tbody id="bomTableBody">
+										<c:forEach var="bom" items="${productBomDTOs}"
+											varStatus="status">
+											<tr>
+												<!-- 부품구분 -->
+												<td><select class="form-select" required>
+														<option value="">선택</option>
+														<option value="0"
+															${bom.parts_status == 0 ? 'selected' : ''}>메인보드</option>
+														<option value="1"
+															${bom.parts_status == 1 ? 'selected' : ''}>CPU</option>
+														<option value="2"
+															${bom.parts_status == 2 ? 'selected' : ''}>GPU</option>
+														<option value="3"
+															${bom.parts_status == 3 ? 'selected' : ''}>메모리</option>
+														<option value="4"
+															${bom.parts_status == 4 ? 'selected' : ''}>POWER</option>
+														<option value="5"
+															${bom.parts_status == 5 ? 'selected' : ''}>HDD</option>
+														<option value="6"
+															${bom.parts_status == 6 ? 'selected' : ''}>SDD</option>
+														<option value="7"
+															${bom.parts_status == 7 ? 'selected' : ''}>CASE</option>
+														<option value="8"
+															${bom.parts_status == 8 ? 'selected' : ''}>COOLER</option>
+												</select></td>
+
+												<!-- 부품명 -->
+												<td><select class="form-select" required>
+														<option value="${bom.parts_no}">${bom.parts_name}</option>
+														<c:forEach var="partsDTO" items="${partsDTOs}">
+															<option value="${partsDTO.parts_no}"
+																${partsDTO.parts_no == bom.parts_no ? 'selected' : ''}>
+																${partsDTO.parts_name}</option>
+														</c:forEach>
+												</select></td>
+
+												<!-- 수량 -->
+												<td><input type="number" class="form-control"
+													value="${bom.cnt}" min="1" required /></td>
+
+												<!-- 삭제 버튼 -->
+												<td>
+													<button type="button" class="btn btn-danger"
+														onclick="handleRowDelete(this)">삭제</button>
+												</td>
 											</tr>
-										</thead>
-										<tbody id="bomTableBody">
-											<c:forEach var="bom" items="${productBomDTOs}"
-												varStatus="status">
-												<tr>
-													<!-- 부품구분 -->
-													<td><select class="form-select" required>
-															<option value="">선택</option>
-															<option value="0"
-																${bom.parts_status == 0 ? 'selected' : ''}>메인보드</option>
-															<option value="1"
-																${bom.parts_status == 1 ? 'selected' : ''}>CPU</option>
-															<option value="2"
-																${bom.parts_status == 2 ? 'selected' : ''}>GPU</option>
-															<option value="3"
-																${bom.parts_status == 3 ? 'selected' : ''}>메모리</option>
-															<option value="4"
-																${bom.parts_status == 4 ? 'selected' : ''}>POWER</option>
-															<option value="5"
-																${bom.parts_status == 5 ? 'selected' : ''}>HDD</option>
-															<option value="6"
-																${bom.parts_status == 6 ? 'selected' : ''}>SDD</option>
-															<option value="7"
-																${bom.parts_status == 7 ? 'selected' : ''}>CASE</option>
-															<option value="8"
-																${bom.parts_status == 8 ? 'selected' : ''}>COOLER</option>
-													</select></td>
-
-													<!-- 부품명 -->
-													<td><select class="form-select" required>
-															<option value="${bom.parts_no}">${bom.parts_name}</option>
-															<c:forEach var="partsDTO" items="${partsDTOs}">
-																<option value="${partsDTO.parts_no}"
-																	${partsDTO.parts_no == bom.parts_no ? 'selected' : ''}>
-																	${partsDTO.parts_name}</option>
-															</c:forEach>
-													</select></td>
-
-													<!-- 수량 -->
-													<td><input type="number" class="form-control"
-														value="${bom.cnt}" min="1" required /></td>
-
-													<!-- 삭제 버튼 -->
-													<td>
-														<button type="button" class="btn btn-danger"
-															onclick="handleRowDelete(this)">삭제</button>
-													</td>
-												</tr>
-											</c:forEach>
-										</tbody>
-									</table>
-									<div class="row mt-4 g-2">
-										<%------------------------------------------------------------------------------
+										</c:forEach>
+									</tbody>
+								</table>
+								<div class="row mt-4 g-2">
+									<%------------------------------------------------------------------------------
 					                     		4. Bootstrap 버튼 클릭
 					                     			 - 삭제	: 삭제 이벤트
 					                     			 - 수정	: 수정 이벤트
 					                    	------------------------------------------------------------------------------%>
-										<div class="col-md-4 d-grid">
-											<button type="button" id="deleteBtn" class="btn btn-danger">
-												<i class="bi bi-trash me-2"></i>삭제
-											</button>
-										</div>
-										<div class="col-md-8 d-grid">
-											<button type="submit" class="btn btn-success">
-												<i class="bi bi-check-lg me-2"></i>정보 수정
-											</button>
-										</div>
+									<div class="col-md-4 d-grid">
+										<button type="button" id="deleteBtn" class="btn btn-danger">
+											<i class="bi bi-trash me-2"></i>삭제
+										</button>
+									</div>
+									<div class="col-md-8 d-grid">
+										<button type="submit" class="btn btn-success">
+											<i class="bi bi-check-lg me-2"></i>정보 수정
+										</button>
 									</div>
 								</div>
 							</form>
+
 							<%------------------------------------------------------------------------------
 				                   		5. 삭제 처리를 위한 별도 form
 				                  	------------------------------------------------------------------------------%>
@@ -295,9 +291,11 @@ body {
 									value="${_csrf.token}" /> <input type="hidden"
 									name="product_no" value="${productDTO.product_no}">
 							</form>
+
 						</div>
 					</div>
 				</div>
+
 				<!-- 이곳에 자신의 코드를 작성하세요 -->
 			</div>
 			<jsp:include page="/foot.jsp" />

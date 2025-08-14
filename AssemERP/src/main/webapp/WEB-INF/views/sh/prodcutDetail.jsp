@@ -35,10 +35,11 @@ body {
 	height: 100%;
 	display: block; /* 여백 제거 */
 }
+
 .parent-container {
-  display: flex;
-  flex-direction: column;
-  gap: 30px; /* 항목들 사이 간격을 균일하게 12px 설정 */
+	display: flex;
+	flex-direction: column;
+	gap: 30px; /* 항목들 사이 간격을 균일하게 12px 설정 */
 }
 </style>
 
@@ -105,7 +106,6 @@ body {
 
 									<div class="col-md-8 mb-12">
 										<div class="parent-container">
-											<!-- 제품명 -->
 											<div class="input-group">
 												<span class="input-group-text autospace"
 													style="width: 100px; display: flex; justify-content: center;">제품번호</span>
@@ -115,6 +115,7 @@ body {
 											</div>
 
 
+											<!-- 제품명 -->
 											<div class="input-group">
 												<span class="input-group-text autospace"
 													style="width: 100px; display: flex; justify-content: center;">제품명</span>
@@ -157,42 +158,14 @@ body {
 
 
 								<div class="row">
-									<div class="col-md-6 mb-12 pt-5">
+									<div class="col-md-12 mb-12 pt-5">
 										<!-- 부품설명 -->
 										<div class="input-group">
 											<span class="input-group-text autospace"
 												style="width: 100px; display: flex; justify-content: center;">제품설명</span>
 											<textarea class="form-control form-control-sm" rows="8"
-												id="productContext" name="product_context" readonly="readonly"
-												placeholder="설명란에 정보를 입력해주세요">${productDTO.product_context }</textarea>
-										</div>
-									</div>
-
-									<div class="col-md-6 mb-12 pt-5">
-										<div class="parent-container">
-											<!-- 재고량 -->
-											<div class="input-group">
-												<span class="input-group-text autospace"
-													style="width: 100px; display: flex; justify-content: center;">재고</span>
-												<input type="text" class="form-control form-control-sm"
-													id="real_stuck" name="real_stuck" value="${productDTO.real_stuck }" readonly="readonly">
-											</div>
-
-											<!-- 최근거래가 -->
-											<div class="input-group">
-												<span class="input-group-text autospace"
-													style="width: 150px; display: flex; justify-content: center;">최근 1개월 거래가</span>
-												<input type="text" class="form-control form-control-sm"
-													id="recent_cost" name="recent_cost" value="${productDTO.recent_cost}" readonly="readonly">
-											</div>
-
-											<!-- 최근판매량 -->
-											<div class="input-group">
-												<span class="input-group-text autospace"
-													style="width: 150px; display: flex; justify-content: center;">최근 1개월 판매량</span>
-												<input type="text" class="form-control form-control-sm"
-													id="recent_tradeCnt" name="recent_tradeCnt" value="${productDTO.recent_tradeCnt }" readonly="readonly">
-											</div>
+												id="productContext" name="product_context"
+												readonly="readonly" placeholder="설명란에 정보를 입력해주세요">${productDTO.product_context }</textarea>
 										</div>
 									</div>
 								</div>
@@ -201,85 +174,82 @@ body {
 								<hr class="my-4">
 
 								<!-- BOM 영역 -->
-								<div class="container mt-4">
-									<!-- 👇 제목과 버튼을 같은 줄, 양쪽 정렬 -->
-									<div
-										class="d-flex justify-content-between align-items-center mb-3">
-										<h5 class="mb-0">제품 구성</h5>
-									</div>
-
-									<table class="table table-bordered" id="bomTable">
-										<colgroup>
-											<col style="width: 30%;">
-											<col style="width: 50%;">
-											<col style="width: 20%;">
-										</colgroup>
-										<thead>
-											<tr style="text-align: center;">
-												<th>부품구분</th>
-												<th>부품명</th>
-												<th>수량</th>
-											</tr>
-										</thead>
-										<tbody id="bomTableBody">
-											<c:forEach var="bom" items="${productBomDTOs}"
-												varStatus="status">
-												<tr>
-													<!-- 부품구분 -->
-													<td><select class="form-select" required>
-															<option value="${bom.parts_status }">${bom.parts_statusName}</option>
-															
-													</select></td>
-
-													<!-- 부품명 -->
-													<td><select class="form-select" required>
-															<option value="${bom.parts_no}">${bom.parts_name}</option>
-													</select></td>
-
-													<!-- 수량 -->
-													<td><input type="number" class="form-control"
-														value="${bom.cnt}" min="1" required readonly="readonly" /></td>
-
-													
-												</tr>
-											</c:forEach>
-										</tbody>
-									</table>
+								<!-- 👇 제목과 버튼을 같은 줄, 양쪽 정렬 -->
+								<div
+									class="d-flex justify-content-between align-items-center mb-3">
+									<h5 class="mb-0">제품 구성</h5>
 								</div>
 
-								<div class="row mt-4 g-2">
-									<%------------------------------------------------------------------------------
+								<table class="table table-bordered" id="bomTable">
+									<colgroup>
+										<col style="width: 30%;">
+										<col style="width: 50%;">
+										<col style="width: 20%;">
+									</colgroup>
+									<thead>
+										<tr style="text-align: center;">
+											<th>부품구분</th>
+											<th>부품명</th>
+											<th>수량</th>
+										</tr>
+									</thead>
+									<tbody id="bomTableBody">
+										<c:forEach var="bom" items="${productBomDTOs}"
+											varStatus="status">
+											<tr>
+												<!-- 부품구분 -->
+												<td><select class="form-select" required>
+														<option value="${bom.parts_status }">${bom.parts_statusName}</option>
+
+												</select></td>
+
+												<!-- 부품명 -->
+												<td><select class="form-select" required>
+														<option value="${bom.parts_no}">${bom.parts_name}</option>
+												</select></td>
+
+												<!-- 수량 -->
+												<td><input type="number" class="form-control"
+													value="${bom.cnt}" min="1" required readonly="readonly" /></td>
+
+
+											</tr>
+										</c:forEach>
+									</tbody>
+								</table>
+							</form>
+
+							<div class="row mt-4 g-2">
+								<%------------------------------------------------------------------------------
 					                     		4. Bootstrap 버튼 클릭
 					                     			 - 삭제	: 삭제 이벤트
 					                     			 - 수정	: 수정 이벤트
 					                    	------------------------------------------------------------------------------%>
-									<div class="col-md-4 d-grid">
-										<button type="button" id="deleteBtn" class="btn btn-danger">
-											<i class="bi bi-trash me-2"></i>삭제
-										</button>
-									</div>
-									<div class="col-md-8 d-grid">
-										<button type="button" id="moditfyBtn" class="btn btn-success">
-											<i class="bi bi-check-lg me-2"></i>정보 수정
-										</button>
-									</div>
+								<div class="col-md-4 d-grid">
+									<button type="button" id="deleteBtn" class="btn btn-danger">
+										<i class="bi bi-trash me-2"></i>삭제
+									</button>
 								</div>
-							</form>
-							<%------------------------------------------------------------------------------
+								<div class="col-md-8 d-grid">
+									<button type="button" id="moditfyBtn" class="btn btn-success">
+										<i class="bi bi-check-lg me-2"></i>정보 수정
+									</button>
+								</div>
+								<%------------------------------------------------------------------------------
 				                   		5. 삭제 처리를 위한 별도 form
 				                  	------------------------------------------------------------------------------%>
-							<form id="deleteForm" action="/product/productDeletePro"
-								method="post" class="d-none">
-								<input type="hidden" name="${_csrf.parameterName}"
-									value="${_csrf.token}" /> <input type="hidden"
-									name="product_no" value="${productDTO.product_no}">
-							</form>
-							<form id="modifyForm" action="/product/productModify/${productDTO.product_no }"
-								method="get" class="d-none">
-								<input type="hidden" name="${_csrf.parameterName}"
-									value="${_csrf.token}" /> <input type="hidden"
-									name="product_no" value="${productDTO.product_no}">
-							</form>
+								<form id="deleteForm" action="/product/productDeletePro"
+									method="post" class="d-none">
+									<input type="hidden" name="${_csrf.parameterName}"
+										value="${_csrf.token}" /> <input type="hidden"
+										name="product_no" value="${productDTO.product_no}">
+								</form>
+								<form id="modifyForm"
+									action="/product/productModify/${productDTO.product_no}"
+									method="get">
+									<!-- 파라미터 필요 없음 -->
+								</form>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -295,22 +265,24 @@ body {
 	<jsp:include page="/common_cdn.jsp" />
 
 	<script>
-	// 삭제버튼 링크
-	const deleteBtn = document.getElementById('deleteBtn');
-    if(deleteBtn) {
-        deleteBtn.addEventListener('click', function() {
-            if(confirm('정말로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
-                document.getElementById('deleteForm').submit();
-            }
-        });
-    }
- 	// 수정버튼 링크
-    const moditfyBtn = document.getElementById('moditfyBtn');
-    if(moditfyBtn) {
-    	moditfyBtn.addEventListener('click', function() {
-                document.getElementById('modifyForm').submit();
-        });
-    }
-</script>
+		// 삭제버튼 링크
+		const deleteBtn = document.getElementById('deleteBtn');
+		if (deleteBtn) {
+			deleteBtn.addEventListener('click', function() {
+				if (confirm('정말로 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+					document.getElementById('deleteForm').submit();
+				}
+			});
+		}
+
+		// 수정버튼 링크
+		const moditfyBtn = document.getElementById('moditfyBtn');
+		if (moditfyBtn) {
+		    moditfyBtn.addEventListener('click', function() {
+		        // form 제출 대신 직접 URL로 이동
+		        window.location.href = '/product/productModify/${productDTO.product_no}';
+		    });
+		}
+	</script>
 </body>
 </html>

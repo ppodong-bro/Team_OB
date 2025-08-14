@@ -38,17 +38,23 @@ body {
 	content: " *";
 	color: red;
 }
+
 .image-box {
-	width: 40px; /* 원하는 가로 크기 */
-	height: 40px; /* 원하는 세로 크기 */
+	width: auto; /* 원하는 가로 크기 */
+	height: 300px; /* 원하는 세로 크기 */
 	overflow: hidden;
 }
 
 .image-box img {
 	width: 100%;
 	height: 100%;
-	object-fit: cover; /* 비율 유지 + 잘라서 꽉 채움 */
 	display: block; /* 여백 제거 */
+}
+
+.parent-container {
+	display: flex;
+	flex-direction: column;
+	gap: 30px; /* 항목들 사이 간격을 균일하게 12px 설정 */
 }
 </style>
 <!-- 공통 CSS -->
@@ -83,7 +89,7 @@ body {
 							<%-- 타이틀의 정확한 중앙 정렬을 위한 빈 공간 --%>
 							<div style="width: 90px;"></div>
 						</div>
-						<div class="card-body">
+						<div class="card-body p-4">
 							<form method="post"
 								action="${pageContext.request.contextPath}/parts/partsUpdate"
 								enctype="multipart/form-data">
@@ -94,123 +100,128 @@ body {
 
 								<div class="row">
 									<!-- 부품명 -->
-									<div class="col-md-6 mb-3">
-										<label for="partsName" class="form-label">부품명</label>
-										<div class="input-group">
-											<span class="input-group-text"> <i class="bi bi-tag"></i></span>
-											<input type="text" class="form-control form-control-sm"
-												id="partsName" name="parts_name"
-												value="${partsDTO.parts_name}" required>
-										</div>
-									</div>
-
-									<!-- 부품구분 -->
-									<div class="col-md-6 mb-3">
-										<label for="partsStatus" class="form-label">구분</label>
-										<div class="input-group">
-											<span class="input-group-text"> <i class="bi bi-grid"></i></span>
-											<select class="form-control form-control-sm" id="partsStatus"
-												name="parts_status" required>
-												<option value="">== 선택 ==</option>
-												<option value="0"
-													${partsDTO.parts_status == 0 ? 'selected' : ''}>메인보드</option>
-												<option value="1"
-													${partsDTO.parts_status == 1 ? 'selected' : ''}>CPU</option>
-												<option value="2"
-													${partsDTO.parts_status == 2 ? 'selected' : ''}>GPU</option>
-												<option value="3"
-													${partsDTO.parts_status == 3 ? 'selected' : ''}>메모리</option>
-												<option value="4"
-													${partsDTO.parts_status == 4 ? 'selected' : ''}>파워</option>
-												<option value="5"
-													${partsDTO.parts_status == 5 ? 'selected' : ''}>HDD</option>
-												<option value="6"
-													${partsDTO.parts_status == 6 ? 'selected' : ''}>SSD</option>
-												<option value="7"
-													${partsDTO.parts_status == 7 ? 'selected' : ''}>케이스</option>
-												<option value="8"
-													${partsDTO.parts_status == 8 ? 'selected' : ''}>쿨러</option>
-											</select>
-										</div>
-									</div>
-								</div>
-
-								<div class="row">
-									<!-- 제조사 -->
-									<div class="col-md-6 mb-3">
-										<label for="partsmanufacture" class="form-label">부품제조사</label>
-										<div class="input-group">
-											<span class="input-group-text"><i
-												class="bi bi-buildings"></i></span> <input type="text"
-												class="form-control form-control-sm" id="partsmanufacture"
-												name="manufacture" value="${partsDTO.manufacture }">
-										</div>
-									</div>
-
-									<!-- 등록자 -->
-									<div class="col-md-6 mb-3">
-
-										<label for="empNo" class="form-label">등록자</label>
-										<div class="input-group">
-											<span class="input-group-text"><i class="bi bi-person"></i></span>
-											<select class="form-control form-control-sm" name="emp_no"
-												id="empNo">
-												<c:forEach var="emp" items="${EmpList}">
-													<option value="${emp.empNo }"
-														${emp.empNo == partsDTO.emp_no ? 'selected' : ''}>${emp.empName }</option>
-												</c:forEach>
-											</select>
-										</div>
-									</div>
-								</div>
-								<!-- 등록일 -->
-								<div class="mb-3">
-									<label for="partsIndate" class="form-label">등록일</label>
-									<div class="input-group">
-										<input type="date" class="form-control form-control-sm"
-											id="partsIndate" name="in_date" readonly="readonly"
-											value="${partsDTO.in_date }">
-									</div>
-								</div>
-
-								<!-- 부품설명 -->
-								<div class="mb-3">
-									<label for="partsContext" class="form-label">부품설명</label>
-									<div class="input-group">
-										<textarea class="form-control form-control-sm" rows="5"
-											id="partsContext" name="parts_context">${partsDTO.parts_context }</textarea>
-									</div>
-								</div>
-
-								<!-- 이미지 -->
-								<div class="mb-3">
-									<label for="partsfile" class="form-label">부품이미지</label>
-									<div class="input-group">
-										<div
-											style="position: relative; display: inline-flex; margin-right: 15px;">
+									<div class="col-md-4 mb-12">
+										<div class="image-box" style="position: relative;">
 											<div class="image-box">
-											<c:choose>
-												<c:when test="${empty partsDTO.filename}">
-													<img
-														src="${pageContext.request.contextPath}/upload/default.jpg"
-														alt="기본이미지">
-												</c:when>
-												<c:otherwise>
-													<img
-														src="${pageContext.request.contextPath}/upload/s_${partsDTO.filename}"
-														alt="부품이미지">
-												</c:otherwise>
-											</c:choose>
-											<!-- X 삭제 버튼 -->
-											<c:if test="${!empty partsDTO.filename}">
-												<i class="bi bi-x"
-													onclick="deleteFile(${partsDTO.parts_no})"
-													style="position: absolute; background-color: red; top: -10px; right: -10px; font-size: 15px; border: solid; border-width: 1px; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;"></i>
-											</c:if>
+												<c:choose>
+													<c:when test="${empty partsDTO.filename}">
+														<img
+															src="${pageContext.request.contextPath}/upload/default.jpg"
+															alt="기본이미지">
+													</c:when>
+													<c:otherwise>
+														<img
+															src="${pageContext.request.contextPath}/upload/s_${partsDTO.filename}"
+															alt="부품이미지">
+													</c:otherwise>
+												</c:choose>
+												<!-- X 삭제 버튼 -->
+												<c:if test="${!empty partsDTO.filename}">
+													<i class="bi bi-x"
+														onclick="deleteFile(${partsDTO.parts_no})"
+														style="position: absolute; background-color: red; top: 0px; right: 0px; font-size: 30px; border: solid; border-width: 2px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; line-height: 40px; border-radius: 2px;"></i>
+												</c:if>
 											</div>
 										</div>
 										<input type="file" class="form-control form-control-sm"
 											id="partsfile" name="file">
+									</div>
+
+
+
+
+
+
+
+									<!-- 부품 -->
+									<div class="col-md-8 mb-12">
+										<div class="parent-container">
+											<!-- 부품명 -->
+											<div class="input-group">
+												<span class="input-group-text autospace"
+													style="width: 100px; display: flex; justify-content: center;">부품번호</span>
+												<input type="text" class="form-control form-control-sm"
+													id="partsName" name="parts_name"
+													value="${partsDTO.parts_name}" required>
+											</div>
+
+											<!-- 부품구분 -->
+											<div class="input-group">
+												<span class="input-group-text autospace"
+													style="width: 100px; display: flex; justify-content: center;">구분</span>
+												<select class="form-control form-control-sm"
+													id="partsStatus" name="parts_status" required>
+													<option value="">== 선택 ==</option>
+													<option value="0"
+														${partsDTO.parts_status == 0 ? 'selected' : ''}>메인보드</option>
+													<option value="1"
+														${partsDTO.parts_status == 1 ? 'selected' : ''}>CPU</option>
+													<option value="2"
+														${partsDTO.parts_status == 2 ? 'selected' : ''}>GPU</option>
+													<option value="3"
+														${partsDTO.parts_status == 3 ? 'selected' : ''}>메모리</option>
+													<option value="4"
+														${partsDTO.parts_status == 4 ? 'selected' : ''}>파워</option>
+													<option value="5"
+														${partsDTO.parts_status == 5 ? 'selected' : ''}>HDD</option>
+													<option value="6"
+														${partsDTO.parts_status == 6 ? 'selected' : ''}>SSD</option>
+													<option value="7"
+														${partsDTO.parts_status == 7 ? 'selected' : ''}>케이스</option>
+													<option value="8"
+														${partsDTO.parts_status == 8 ? 'selected' : ''}>쿨러</option>
+												</select>
+											</div>
+
+
+
+
+											<!-- 제조사 -->
+											<div class="input-group">
+
+												<span class="input-group-text autospace"
+													style="width: 100px; display: flex; justify-content: center;">제조사</span><input
+													type="text" class="form-control form-control-sm"
+													id="partsmanufacture" name="manufacture"
+													value="${partsDTO.manufacture }">
+											</div>
+
+
+											<!-- 등록자 -->
+											<div class="input-group">
+												<span class="input-group-text autospace"
+													style="width: 100px; display: flex; justify-content: center;">등록자</span>
+												<select class="form-control form-control-sm" name="emp_no"
+													id="empNo">
+													<c:forEach var="emp" items="${EmpList}">
+														<option value="${emp.empNo }"
+															${emp.empNo == partsDTO.emp_no ? 'selected' : ''}>${emp.empName }</option>
+													</c:forEach>
+												</select>
+											</div>
+
+
+											<!-- 등록일 -->
+											<div class="input-group">
+												<span class="input-group-text autospace"
+													style="width: 100px; display: flex; justify-content: center;">등록일</span>
+												<input type="date" class="form-control form-control-sm"
+													id="partsIndate" name="in_date" readonly="readonly"
+													value="${partsDTO.in_date }">
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<!-- 부품설명 -->
+								<div class="row">
+									<div class="col-md-12 mb-12 pt-5">
+										<div class="input-group">
+											<span class="input-group-text autospace"
+												style="width: 100px; display: flex; justify-content: center;">제품설명</span>
+											<textarea class="form-control form-control-sm" rows="8"
+												id="partsContext" name="parts_context">${partsDTO.parts_context }</textarea>
+										</div>
 									</div>
 								</div>
 

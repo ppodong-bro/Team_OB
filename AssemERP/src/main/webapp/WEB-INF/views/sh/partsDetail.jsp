@@ -77,11 +77,11 @@ body {
 							<div style="width: 90px;"></div>
 						</div>
 						<div class="card-body p-4">
-							<form action="/parts/partsModify" method="get"
+							<form action="/parts/partsUpdate" method="post"
 								class="needs-validation" enctype="multipart/form-data"
 								novalidate>
 								
-								<!-- 제품박스 -->
+								<!-- 부품박스 -->
 								<h5 class="mb-3">기본 정보</h5>
 								<div class="row">
 									<!-- 이미지 -->
@@ -105,7 +105,7 @@ body {
 
 									<div class="col-md-8 mb-12">
 										<div class="parent-container">
-											<!-- 제품명 -->
+											<!-- 부품번호 -->
 											<div class="input-group">
 												<span class="input-group-text autospace"
 													style="width: 100px; display: flex; justify-content: center;">부품번호</span>
@@ -114,7 +114,7 @@ body {
 													readonly="readonly">
 											</div>
 
-
+											<!-- 부품명 -->
 											<div class="input-group">
 												<span class="input-group-text autospace"
 													style="width: 100px; display: flex; justify-content: center;">부품명</span>
@@ -124,7 +124,7 @@ body {
 
 											</div>
 
-											<!-- 제품구분 -->
+											<!-- 부품구분 -->
 											<div class="input-group">
 												<span class="input-group-text autospace"
 													style="width: 100px; display: flex; justify-content: center;">구분</span>
@@ -166,7 +166,7 @@ body {
 
 
 								<div class="row">
-									<div class="col-md-6 mb-12 pt-5">
+									<div class="col-md-12 mb-12 pt-5">
 										<!-- 부품설명 -->
 										<div class="input-group">
 											<span class="input-group-text autospace"
@@ -174,34 +174,6 @@ body {
 											<textarea class="form-control form-control-sm" rows="8"
 												id="partsContext" name="parts_context" readonly="readonly"
 												placeholder="설명란에 정보를 입력해주세요">${partsDTO.parts_context }</textarea>
-										</div>
-									</div>
-
-									<div class="col-md-6 mb-12 pt-5">
-										<div class="parent-container">
-											<!-- 재고량 -->
-											<div class="input-group">
-												<span class="input-group-text autospace"
-													style="width: 100px; display: flex; justify-content: center;">재고</span>
-												<input type="text" class="form-control form-control-sm"
-													id="real_stuck" name="real_stuck" value="${partsDTO.real_stuck}" readonly="readonly">
-											</div>
-
-											<!-- 최근거래가 -->
-											<div class="input-group">
-												<span class="input-group-text autospace"
-													style="width: 100px; display: flex; justify-content: center;">최근거래가</span>
-												<input type="text" class="form-control form-control-sm"
-													id="" name="" value="" readonly="readonly">
-											</div>
-
-											<!-- 최근판매량 -->
-											<div class="input-group">
-												<span class="input-group-text autospace"
-													style="width: 100px; display: flex; justify-content: center;">최근구매량</span>
-												<input type="text" class="form-control form-control-sm"
-													id="" name="" value="" readonly="readonly">
-											</div>
 										</div>
 									</div>
 								</div>
@@ -218,7 +190,7 @@ body {
 										</button>
 									</div>
 									<div class="col-md-8 d-grid">
-										<button type="button" id="modifyBtn" class="btn btn-success" >
+										<button type="button" id="moditfyBtn" class="btn btn-success" >
 											<i class="bi bi-check-lg me-2"></i>정보 수정
 										</button>
 									</div>
@@ -233,10 +205,8 @@ body {
 									value="${_csrf.token}" /> <input type="hidden"
 									name="parts_no" value="${partsDTO.parts_no}">
 							</form>
-							<form id="modfyForm" action="/parts/partsModify/${partsDTO.parts_no }" method="get" class="d-none">
-								<input type="hidden" name="${_csrf.parameterName}"
-									value="${_csrf.token}" /> <input type="hidden"
-									name="parts_no" value="${partsDTO.parts_no}">
+							<form id="modfyForm" action="/parts/partsModify/${partsDTO.parts_no }" method="get">
+								
 							</form>
 						</div>
 					</div>
@@ -262,13 +232,14 @@ body {
             }
         });
     }
-    // 수정 버튼 확인 스크립트
-    const modifyBtn = document.getElementById('modifyBtn');
-    if(modifyBtn) {
-    	modifyBtn.addEventListener('click', function() {
-                document.getElementById('modfyForm').submit();
-        });
-    }
+ // 수정버튼 링크
+	const moditfyBtn = document.getElementById('moditfyBtn');
+	if (moditfyBtn) {
+	    moditfyBtn.addEventListener('click', function() {
+	        // form 제출 대신 직접 URL로 이동
+	        window.location.href = '/parts/partsModify/${partsDTO.parts_no}';
+	    });
+	}
 </script>
 </body>
 </html>
