@@ -7,14 +7,17 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.WiseForce.AssemERP.dao.dg.InventoryDao;
 import com.WiseForce.AssemERP.domain.dg.Common;
 import com.WiseForce.AssemERP.domain.dg.Common_ID;
+import com.WiseForce.AssemERP.domain.dg.Files;
 import com.WiseForce.AssemERP.domain.dg.Inventory;
 import com.WiseForce.AssemERP.domain.dg.Inventory_Adjust;
 import com.WiseForce.AssemERP.domain.dg.Inventory_Close;
@@ -25,9 +28,11 @@ import com.WiseForce.AssemERP.dto.dg.Inventory_CloseDTO;
 import com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO;
 import com.WiseForce.AssemERP.repository.dg.CommonRepository;
 import com.WiseForce.AssemERP.repository.dg.EmpRepository;
+import com.WiseForce.AssemERP.repository.dg.FilesRepository;
 import com.WiseForce.AssemERP.repository.dg.InventoryAdjustRepository;
 import com.WiseForce.AssemERP.repository.dg.InventoryCloseRepository;
 import com.WiseForce.AssemERP.repository.dg.InventoryRepository;
+import com.WiseForce.AssemERP.util.CustomFileUtil;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +51,10 @@ public class InventoryServiceImpl implements InventoryService {
 	private final InventoryRepository inventoryRepository;
 	private final InventoryAdjustRepository inventoryAdjustRepository; // 재고 조정
 	private final InventoryCloseRepository inventoryCloseRepository; // 월마감
+	
+	// 첨부파일
+	private final FilesRepository filesRepository;
+	private final CustomFileUtil fileUtil;
 
 	// 전체 재고의 종류 수 조회
 	@Override
@@ -82,11 +91,31 @@ public class InventoryServiceImpl implements InventoryService {
 		
 		// 상세 정보 가져오기
 		InventoryInfoDTO target_InventoryInfoDTO = inventoryDao.getInventoryInfoById(inventoryInfoDTO);
-		
-		System.out.println(inventoryInfoDTO);
-		System.out.println(target_InventoryInfoDTO);
-		System.out.println(currCnt < nextCnt ? 0/*IN*/ : 1/*OUT*/);
-		System.out.println(Math.abs(currCnt - nextCnt));
+
+		// 첨부파일 초기화
+		String uuid = null;
+		// 첨부파일 존재 확인
+		if(!inventoryInfoDTO.getFiles().isEmpty()) {
+			// UUID 생성
+			uuid = UUID.randomUUID().toString();
+			
+			// 파일들 모두 복사
+			for(MultipartFile file : inventoryInfoDTO.getFiles()) {
+				// 첨부파일 복사
+				String filePath = fileUtil.saveFile(file, "adjust", uuid);
+				
+				// 테스트용 파일
+				Files files = Files.builder()
+						.files_path(filePath)
+						.files_folder("adjust")
+						.filesNo(uuid)
+						.files_name(file.getOriginalFilename())
+						.build();
+
+				// 첨부파일 DB저장
+				filesRepository.save(files);
+			}
+		}
 		
 		// 재고 조정 Entity 생성
 		Inventory_Adjust inventory_Adjust = Inventory_Adjust.builder()
@@ -97,6 +126,7 @@ public class InventoryServiceImpl implements InventoryService {
 				.item_cnt(Math.abs(currCnt - nextCnt))
 				.inout_date(LocalDateTime.now())
 				.item_close_status(2/*완료*/)
+				.files_no(uuid)
 				.build();
 
 		// 재고 조정 Entity 저장

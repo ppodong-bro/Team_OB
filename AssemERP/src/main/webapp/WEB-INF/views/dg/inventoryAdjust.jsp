@@ -50,7 +50,7 @@ body {
 							<!-- 화면에서 전체적으로 사용하는 부품/제품 구분 변수 -->
 							<c:set var="item_type" value="${inventory.item_type == 0 ? '부품' : '제품'}" />
 
-							<form id="updateForm" action="${pageContext.request.contextPath}/inventory/adjust" method="post" class="needs-validation" novalidate>
+							<form id="updateForm" action="${pageContext.request.contextPath}/inventory/adjust" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
 								<div class="row">
 									<div class="col-md-6 mb-3">
 										<label for="item_type" class="form-label">재고 구분</label>
@@ -98,6 +98,13 @@ body {
 											<span class="input-group-text"><i class="bi bi-pencil-square"></i></span> <input type="text" class="form-control" id="item_adjustcnt"
 												name="item_adjustcnt" value="${inventory.cnt }">
 										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-12 mb-3">
+									<label for="files_no" class="form-label">첨부파일</label>
+									<input type="hidden" name="files_no" value="${inventory.files_no }">
+									<input type="file" class="form-control form-control-sm" id="files" name="files" multiple="multiple">
 									</div>
 								</div>
 								<div class="row mt-4 g-2">
