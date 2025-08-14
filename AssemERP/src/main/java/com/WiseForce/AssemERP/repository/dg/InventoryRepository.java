@@ -1,11 +1,11 @@
 package com.WiseForce.AssemERP.repository.dg;
 
 import java.util.List;
+import java.util.Map;
 
-import com.WiseForce.AssemERP.domain.dg.Inventory;
+import org.apache.ibatis.annotations.Select;
+
 import com.WiseForce.AssemERP.dto.dg.InventoryDTO;
-import com.WiseForce.AssemERP.dto.dg.InventoryInfoDTO;
-import com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO;
 
 public interface InventoryRepository {
 

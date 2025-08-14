@@ -42,6 +42,71 @@ try {
 // ctx 선언 위치 꼭 여기!
 const ctx = document.getElementById('clientChart').getContext('2d');
 
+/* //최대값 구하기
+const maxValue = Math.max(...data);
+
+//색상 배열 생성
+const colors = data.map(value => {
+    const opacity = 0 + 1 * (value / maxValue); 
+    // 최소 0.3 투명도, 최대 1 투명도
+    return "rgba(54, 162, 235, "+opacity+")";
+}); */
+
+//최고/최저 색상 (최저: 빨강, 최고: 연한 초록)
+const startColor = [255, 100, 0];     // Red (RGB) - 최저값
+const endColor   = [144, 238, 144]; // LightGreen (RGB) - 최고값
+
+
+// 최대/최소값 구하기
+const maxValue = Math.max(...data);
+const minValue = Math.min(...data);
+
+// 값에 따른 색상 보간 함수
+function interpolateColor(start, end, factor) {
+    return start.map((startVal, i) =>
+        Math.round(startVal + factor * (end[i] - startVal))
+    );
+}
+
+
+//데이터별 색상 배열 생성
+const colors = data.map(value => {
+ const ratio = (value - minValue) / (maxValue - minValue || 1); // 0~1 사이
+ const [r, g, b] = interpolateColor(startColor, endColor, ratio);
+ return "rgb("+[r]+","+[g]+","+[b]+")";
+});
+
+//막대 그림자 플러그인
+const shadowPlugin = {
+    id: 'shadowPlugin',
+    beforeDatasetsDraw(chart, args, pluginOptions) {
+        const { ctx, chartArea: { top, bottom, left, right }, scales: { x, y } } = chart;
+
+        chart.data.datasets.forEach((dataset, i) => {
+            const meta = chart.getDatasetMeta(i);
+            meta.data.forEach(bar => {
+                ctx.save();
+                ctx.shadowColor = 'rgba(0,0,0,0.5)';  // 그림자 색
+                ctx.shadowBlur = 11;                   // 번짐 정도
+                ctx.shadowOffsetX = 3;                 // X축 이동
+                
+                ctx.fillStyle = bar.options.backgroundColor;
+                ctx.fillRect(
+                    bar.x - bar.width / 2,
+                    bar.y,
+                    bar.width,
+                    bottom - bar.y
+                );
+                ctx.restore();
+            });
+        });
+
+        // 기본 막대 그리기 방지
+        args.cancel = true;
+    }
+};
+
+
 const myChart = new Chart(ctx, {
     type: 'bar',
     data: {
@@ -49,7 +114,7 @@ const myChart = new Chart(ctx, {
         datasets: [{
             label: '거래총액',
             data: data,
-            backgroundColor: 'rgba(54, 162, 235, 0.7)'
+            backgroundColor: colors
         }]
     },
     options: {
@@ -76,6 +141,6 @@ const myChart = new Chart(ctx, {
             }
         }
     },
-    plugins: [unitPlugin]
+    plugins: [shadowPlugin, unitPlugin]
 });
 </script>

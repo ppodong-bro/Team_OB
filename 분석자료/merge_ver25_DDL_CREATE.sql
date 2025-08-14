@@ -829,30 +829,30 @@ COMMENT ON COLUMN inventory_close.emp_no IS '마감처리담당자';
 
 /* 재고 점유 비율 *******************************************************************/
 CREATE TABLE inventory_occupy (
+    item_type NUMBER(7) NOT NULL,
     item_status NUMBER(7) NOT NULL,
-    item_no NUMBER(7) NOT NULL,
     item_occupy NUMBER(7,4) NOT NULL
 );
 
 CREATE UNIQUE INDEX PK_inventory_occupy
 	ON inventory_occupy (
-		item_status ASC,
-		item_no ASC
+		item_type ASC,
+		item_status ASC
 	);
 
 ALTER TABLE inventory_occupy
 	ADD
 		CONSTRAINT PK_inventory_occupy
 		PRIMARY KEY (
-			item_status,
-            item_no
+			item_type,
+            item_status
 		);
 
 COMMENT ON TABLE inventory_occupy IS '재고 점유 비율';
 
-COMMENT ON COLUMN inventory_occupy.item_status IS '제품/부품';
+COMMENT ON COLUMN inventory_occupy.item_type IS '제품/부품';
 
-COMMENT ON COLUMN inventory_occupy.item_no IS '재고 구분';
+COMMENT ON COLUMN inventory_occupy.item_status IS '재고 구분';
 
 COMMENT ON COLUMN inventory_occupy.item_occupy IS '재고 점유 비율';
 

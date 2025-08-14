@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.WiseForce.AssemERP.service.dg.InventoryService;
 import com.WiseForce.AssemERP.service.km.ClientService;
 import com.WiseForce.AssemERP.service.sh.PartsService;
 import com.WiseForce.AssemERP.service.sh.PerformenceService;
@@ -25,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class MainController {
 	
 	private final PerformenceService performenceService;
+	private final InventoryService inventoryService;
 	
 	@GetMapping("/")
 	public String mainPage(Model model) throws JsonProcessingException {
@@ -54,15 +56,10 @@ public class MainController {
 		model.addAttribute("bardata", mapper.writeValueAsString(bardata));
 		model.addAttribute("barlabels", mapper.writeValueAsString(barlabels));
 
-		
 		// 재고현황 그래프
-		List<Integer> inventoryData = Arrays.asList(80, 20);
-		List<String> inventoryLabels = Arrays.asList("보유", " ");
-
-		model.addAttribute("inventoryLabels", mapper.writeValueAsString(inventoryLabels));
-		model.addAttribute("inventoryData", mapper.writeValueAsString(inventoryData));
-
-
+		List<Map<String, Object>> inventoryCurrent = inventoryService.getInventoryCurrent();
+//		System.out.println(inventoryCurrent);
+        model.addAttribute("inventoryCurrent", mapper.writeValueAsString(inventoryCurrent)); // 자바 객체를 JSON 문자열로 변환
 
 		return "main"; // src/main/webapp/WEB-INF/views/main.jsp
 	}
