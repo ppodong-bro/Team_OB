@@ -2,40 +2,56 @@
     pageEncoding="UTF-8"%>
 <script type="text/javascript">
 var apiKey = "3762f8ee478a85fab073fbe9eab9fce3";
-var widget = document.getElementById("weather-widget");
 
-function getWeather(lat, lon) {
-    var url = "https://api.openweathermap.org/data/2.5/weather?lat=" + lat 
-            + "&lon=" + lon + "&appid=" + apiKey + "&units=metric&lang=kr";
+function loadWeather() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function(pos) {
+                fetchWeather(pos.coords.latitude, pos.coords.longitude);
+            },
+            function() {
+                fetchWeather(37.5665, 126.9780);
+            }
+        );
+    } else {
+        fetchWeather(37.5665, 126.9780);
+    }
+}
 
-    fetch(url)
-        .then(function(res) { return res.json(); })
-        .then(function(data) {
-            var iconUrl = "https://openweathermap.org/img/wn/" + data.weather[0].icon + "@2x.png";
-            widget.innerHTML = ""
-                + "<h3>" + data.name + " 날씨</h3>"
-                + "<img src='" + iconUrl + "' alt='" + data.weather[0].description + "' style='width:60px; height:60px;'>"
-                + "<p>🌡️ " + data.main.temp + "°C</p>"
-                + "<p>☁️ " + data.weather[0].description + "</p>"
-                + "<p>💧 습도: " + data.main.humidity + "%</p>";
+function fetchWeather(lat, lon) {
+    console.log("위도, 경도:", lat, lon);
+
+    var currentUrl = "https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon +
+                     "&appid=" + apiKey + "&units=metric&lang=kr";
+    console.log("현재 날씨 API 호출:", currentUrl);
+
+    fetch(currentUrl)
+        .then(res => {
+            console.log("현재 날씨 응답 상태:", res.status);
+            return res.json();
         })
-        .catch(function(err) {
-            console.error(err);
-            widget.innerHTML = "<p>날씨 정보를 불러올 수 없습니다.</p>";
+        .then(data => {
+            console.log("현재 날씨 데이터:", data);
+            if (!data.weather) {
+                document.getElementById("current-weather").innerHTML = "<p>날씨 데이터를 불러올 수 없습니다.</p>";
+                return;
+            }
+            document.getElementById("location").innerHTML = data.name;
+            document.getElementById("current-weather").innerHTML =
+                "<img src='https://openweathermap.org/img/wn/" + data.weather[0].icon + "@2x.png'>" +
+                "<h2>" + Math.round(data.main.temp) + "°C</h2>"; 
+                /* + "<p>" + data.weather[0].description + "</p>"; */ // 영문 번역 이슈. 
+            document.getElementById("weather-details").innerHTML =
+                "<div>습도<br>" + data.main.humidity + "%</div>" +
+                "<div>풍속<br>" + data.wind.speed + " m/s</div>" +
+                "<div>체감온도<br>" + Math.round(data.main.feels_like) + "°C</div>";
+        })
+        .catch(err => {
+            console.error("현재 날씨 API 오류:", err);
+            document.getElementById("current-weather").innerHTML = "<p>API 요청 실패</p>";
         });
 }
 
-// 현재 위치 가져오기
-if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-        function(pos) { getWeather(pos.coords.latitude, pos.coords.longitude); },
-        function(err) {
-            console.warn("위치 접근 거부됨. 기본 위치로 Seoul 사용");
-            getWeather(37.5665, 126.9780); // 서울 좌표
-        }
-    );
-} else {
-    alert("브라우저에서 위치 정보를 지원하지 않습니다.");
-    getWeather(37.5665, 126.9780); // 서울 좌표
-}
+// 페이지 로드 시 자동 실행
+loadWeather();
 </script>
