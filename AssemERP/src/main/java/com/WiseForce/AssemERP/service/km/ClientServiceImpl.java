@@ -95,8 +95,8 @@ public class ClientServiceImpl implements ClientService {
 	}
 
 	@Override
-	public List<ClientDto> clientAll() {
-		List<ClientDto> clientList = clientDao.clientAll();
+	public List<ClientDto> clientAll(int client_Gubun) {
+		List<ClientDto> clientList = clientDao.clientAll(client_Gubun);
 		return clientList;
 	}
 	

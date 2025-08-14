@@ -129,4 +129,10 @@ public class Sales_OrderDaoImpl implements Sales_OrderDao {
 		return sales_OrderDto;
 	}
 
+	@Override
+	public int closeCheck() {
+		int closeCheck = session.selectOne("closeCheck");
+		return closeCheck;
+	}
+
 }

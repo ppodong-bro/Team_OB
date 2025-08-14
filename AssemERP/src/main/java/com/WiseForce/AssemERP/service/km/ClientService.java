@@ -23,6 +23,6 @@ public interface ClientService {
 
 	List<ClientDto> 	searchByName(String client_Name);
 
-	List<ClientDto> 	clientAll();
+	List<ClientDto> 	clientAll(int client_Gubun);
 
 }

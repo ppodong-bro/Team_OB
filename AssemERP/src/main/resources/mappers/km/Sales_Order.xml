@@ -283,6 +283,12 @@
     UPDATE SET M.CNT       = NVL(M.CNT,0) + 1,
                M.TOTAL_AMT = NVL(M.TOTAL_AMT,0) + SRC.AMT
 	</insert>
+	
+	<select id="closeCheck" resultType="int">
+		SELECT COUNT(*)
+		FROM   INVENTORY_CLOSE
+		WHERE  YEARMONTH = TO_CHAR(SYSDATE ,'YYMMDD')
+	</select>
 
 
 

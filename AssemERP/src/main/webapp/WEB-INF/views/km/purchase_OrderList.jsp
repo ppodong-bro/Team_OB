@@ -29,7 +29,7 @@
 				    <div class="card shadow-sm">
 				        <div class="card-header d-flex justify-content-between align-items-center">
 				            <h4 class="card-title mb-0"><i class="bi bi-list-ul"></i> 발주 목록</h4>
-            					<a href="/sales/createStart" class="btn btn-primary"><i class="bi bi-plus-lg"></i>등록</a>
+            					<a href="/purchase/createStart" class="btn btn-primary"><i class="bi bi-plus-lg"></i>등록</a>
 				        </div>
 				        <div class="card-body">
 
@@ -48,8 +48,8 @@
 								<!-- 유형 -->
 								<div class="col-auto">
 									<div class="input-group input-group-sm">
-										<span class="input-group-text">출고상태</span> <select
-											name="out_Status" class="form-select">
+										<span class="input-group-text">입고상태</span> <select
+											name="in_Status" class="form-select">
 											<option value="">전체</option>
 											<option value="0"
 												${Purchase_OrderSearchDto.in_Status == 0 ? 'selected' : ''}>요청</option>
@@ -76,11 +76,11 @@
 								<div class="col-auto">
 									<div class="input-group input-group-sm">
 										<span class="input-group-text">납기완료일</span> <input type="date"
-											name="sales_Date_Start" class="form-control"
+											name="purchase_Date_Start" class="form-control"
 											placeholder="시작일"
 											value="${Purchase_OrderSearchDto.purchase_Date_Start}" /> <span
 											class="input-group-text">~</span> <input type="date"
-											name="sales_Date_End" class="form-control" placeholder="종료일"
+											name="purchase_Date_End" class="form-control" placeholder="종료일"
 											value="${Purchase_OrderSearchDto.purchase_Date_End}" />
 									</div>
 								</div>
@@ -112,26 +112,15 @@
 									<tbody>
 										<c:forEach var="order" items="${listPurchase}" varStatus="st">
 											<tr style="cursor: pointer;"
-												onclick="location.href='<c:url value='/sales/detail?sales_No=${order.purchase_No}'/>'">
+												onclick="location.href='<c:url value='/purchase/detail?purchase_No=${order.purchase_No}'/>'">
 												<!-- 순번 -->
 												<td class="text-center">${st.index + 1}</td>
 
-												<!-- 수주번호 (detail 링크) -->
+												<!-- 발주번호 (detail 링크) -->
 												<td class="text-center">${order.purchase_No}</td>
 
 												<!-- client → clientName -->
 												<td>${order.clientDto.client_Name}</td>
-
-
-												<%-- 		<!-- salesItems 컬렉션 출력 -->
-										<td><c:forEach var="item" items="${order.sales_Item}"
-												varStatus="ist">
-												<!-- 예: 상품번호(수량) 형태로 표시 -->
-												${ist.index + 1}. ${item.productDto.product_name}
-										        (요청수량: ${item.sales_Item_Cnt},
-										         출고수량: ${item.sales_Item_OutCnt})<br />
-											</c:forEach></td> --%>
-
 
 												<c:choose>
 													<c:when test="${not empty order.purchase_Item}">
@@ -139,7 +128,7 @@
 														<c:set var="othersCount"
 															value="${fn:length(order.purchase_Item) - 1}" />
 
-														<!-- 제품명 -->
+														<!-- 부품명 -->
 														<td><c:out value="${first.partsDTO.parts_name}" />
 															<c:if test="${othersCount > 0}">
 													 &nbsp;외 ${othersCount}종
@@ -149,7 +138,7 @@
 														<td class="text-center"><c:out
 																value="${order.totCnt}" /></td>
 
-														<!-- 출고수량 (총합) -->
+														<!-- 입고수량 (총합) -->
 														<td class="text-center"><c:out
 																value="${order.totInCnt}" /></td>
 													</c:when>
@@ -168,7 +157,7 @@
 												<!-- 납기 완료일 -->
 												<td>${order.purchase_Date}</td>
 
-												<!-- 출고 상태 -->
+												<!-- 입고 상태 -->
 												<td class="text-center"><span class="status-text"
 													data-status="${order.in_Status}"> <span class="dot"></span>
 														<c:choose>
@@ -193,7 +182,7 @@
 														action="${pageContext.request.contextPath}/purchase/delete"
 														method="post" style="display: inline;"
 														onclick="event.stopPropagation();">
-														<input type="hidden" name="sales_No"
+														<input type="hidden" name="purchase_No"
 															value="${order.purchase_No}" />
 														<button type="submit"
 															class="btn btn-sm btn-outline-danger">삭제</button>

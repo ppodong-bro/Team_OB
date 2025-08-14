@@ -182,10 +182,10 @@
 		WHERE CLIENT_NAME LIKE '%' || #{value} || '%'
 	</select>
 	
-	<select id="clientAll" resultMap="popupMap">
+	<select id="clientAll" parameterType="int" resultMap="popupMap">
 		SELECT C.CLIENT_NO, C.CLIENT_NAME, C.CLIENT_EMAIL, C.CLIENT_ADDRESS, C.CLIENT_TEL, C.CLIENT_MAN, E.EMP_NO, E.EMP_NAME
 		FROM CLIENT C LEFT JOIN EMP E ON C.EMP_NO = E.EMP_NO
-		WHERE C.CLIENT_GUBUN = 1 AND C.DEL_STATUS = 0
+		WHERE C.CLIENT_GUBUN = #{value}  AND C.DEL_STATUS = 0
 	</select>
 	
 	<insert id="createClient_His" parameterType="ClientDto">

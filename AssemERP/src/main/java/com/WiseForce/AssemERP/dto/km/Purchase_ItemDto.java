@@ -18,9 +18,11 @@ public class Purchase_ItemDto {
 	private int			parts_no;
 	private int 		purchase_Item_Cnt;
 	private int 		purchase_Item_InCnt;
+	private int 		purchase_Item_WaitingCnt;
 	private Long 		purchase_Item_Cost;
 	private Long 		purchase_Item_TotCost;
 	private Long 		purchase_Item_TotInCost;
+	
 	private PartsDTO 	partsDTO;
 
 }

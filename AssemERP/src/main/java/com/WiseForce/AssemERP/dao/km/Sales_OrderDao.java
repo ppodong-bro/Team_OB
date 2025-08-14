@@ -42,5 +42,7 @@ public interface Sales_OrderDao {
 
 	Sales_OrderDto 			getCompleteDateAndClientNo(int sales_No);
 
+	int 					closeCheck();
+
 
 }
