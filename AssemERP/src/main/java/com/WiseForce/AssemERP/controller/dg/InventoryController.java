@@ -67,14 +67,9 @@ public class InventoryController {
 	}
 
 	@PostMapping("/inventory/adjust")
-	public String inventoryAdjust_Post(InventoryInfoDTO inventoryInfoDTO, Model model) {
-		System.out.println(inventoryInfoDTO);
-		
+	public String inventoryAdjust_Post(@ModelAttribute/*MultipartFile를 포함한 DTO에 넣기 위한 @*/ InventoryInfoDTO inventoryInfoDTO, Model model) {
 		// 재고 실 수량 조정
 		boolean result = inventoryService.adjustRealInventoryById(inventoryInfoDTO);
-		
-
-		// 검색 및 페이징 정보 그대로
 		
 		// PostMapping은 redirect로 재고 조정 화면 이동
 		return "redirect:/inventory";

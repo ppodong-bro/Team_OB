@@ -10,6 +10,7 @@ DROP TABLE DEPT CASCADE CONSTRAINTS;
 DROP TABLE EMP CASCADE CONSTRAINTS;
 DROP TABLE EMP_IMAGE CASCADE CONSTRAINTS;
 DROP TABLE ERROR_LOG CASCADE CONSTRAINTS;
+DROP TABLE FILES CASCADE CONSTRAINTS;
 DROP TABLE INVENTORY CASCADE CONSTRAINTS;
 DROP TABLE INVENTORY_ADJUST CASCADE CONSTRAINTS;
 DROP TABLE INVENTORY_CLOSE CASCADE CONSTRAINTS;
@@ -266,6 +267,36 @@ COMMENT ON COLUMN error_log.error_coment IS '에러 설명';
 
 COMMENT ON COLUMN error_log.error_date IS '에러 일시';
 
+/* 파일 ***********************************************************************/
+CREATE TABLE files (
+	files_path VARCHAR2(1000) NOT NULL, /* 파일경로 */
+	files_folder VARCHAR2(1000) NOT NULL, /* 폴더경로 */
+	files_no VARCHAR2(100) NOT NULL, /* 파일번호:UUID */
+	files_name VARCHAR2(1000) NOT NULL /* 파일명 */
+);
+
+CREATE UNIQUE INDEX PK_files
+	ON files (
+		files_path ASC
+	);
+
+ALTER TABLE files
+	ADD
+		CONSTRAINT PK_files
+		PRIMARY KEY (
+			files_path
+		);
+
+COMMENT ON TABLE files IS '파일';
+
+COMMENT ON COLUMN files.files_path IS '파일경로';
+
+COMMENT ON COLUMN files.files_folder IS '폴더경로';
+
+COMMENT ON COLUMN files.files_no IS '파일번호:UUID';
+
+COMMENT ON COLUMN files.files_name IS '파일명';
+
 /* 재고 ***********************************************************************/
 CREATE TABLE inventory (
 	inventory_his_no NUMBER(7) NOT NULL, /* 재고변동이력번호 */
@@ -322,6 +353,7 @@ CREATE TABLE inventory_adjust (
 	item_no NUMBER(7) NOT NULL, /* 제품/부품번호 */
 	inout_status NUMBER(1) NOT NULL, /* 입/출고 구분 */
 	item_cnt NUMBER(10), /* 변동 수량 */
+	files_no VARCHAR2(1000), /* 첨부파일 */
 	inout_date DATE NOT NULL, /* 입/출고일시 */
     item_close_status NUMBER(1) NOT NULL /* 마감 구분 */
 );
@@ -351,6 +383,8 @@ COMMENT ON COLUMN inventory_adjust.item_no IS '제품/부품번호';
 COMMENT ON COLUMN inventory_adjust.inout_status IS '입/출고 구분';
 
 COMMENT ON COLUMN inventory_adjust.item_cnt IS '변동 수량';
+
+COMMENT ON COLUMN inventory_adjust.files_no IS '첨부파일';
 
 COMMENT ON COLUMN inventory_adjust.inout_date IS '입/출고일시';
 
@@ -1441,7 +1475,7 @@ AFTER INSERT ON inventory_adjust -- 조정, 생산, 분해 INSERT
 FOR EACH ROW
 BEGIN
     INSERT INTO inventory (inventory_his_no, order_status, order_no, item_status, item_no, inout_status, item_cnt, item_totalcnt, inout_date, item_quality) 
-    VALUES (inventory_seq.nextval, :NEW.adjust_status, -1/*order_no없음*/, :NEW.item_status, :NEW.item_no, :NEW.inout_status, :NEW.item_cnt, null, sysdate, 0/*품질*/);
+    VALUES (inventory_seq.nextval, :NEW.adjust_status, :NEW.inventory_adjust_no, :NEW.item_status, :NEW.item_no, :NEW.inout_status, :NEW.item_cnt, null, sysdate, 0/*품질*/);
 END;
 /
 /************************************************** 
@@ -1836,6 +1870,19 @@ CREATE OR REPLACE PACKAGE BODY month_close AS
         -- 월재고의 기말재고 삭제
         DELETE FROM month_inventory WHERE yearmonth = p_sum_yymm;
         
+        -- 수주 테이블 마감 -> 완료 처리
+        UPDATE sales_order SET out_status = 2
+        WHERE out_status = 3
+        AND TO_CHAR(complete_date, 'YYMM') = p_sum_yymm;
+        -- 발주 테이블 마감 -> 완료 처리
+        UPDATE purchase_order SET in_status =2
+        WHERE in_status = 3
+        AND TO_CHAR(complete_date, 'YYMM') = p_sum_yymm;
+        -- 조정 테이블 마감 -> 완료 처리
+        UPDATE inventory_adjust SET item_close_status = 2
+        WHERE item_close_status = 3
+        AND TO_CHAR(inout_date, 'YYMM') = p_sum_yymm;
+        
         COMMIT;
         
         dbms_output.put_line('month_close_start END');
@@ -1967,33 +2014,26 @@ CREATE OR REPLACE PACKAGE BODY month_close AS
                 v_cnt := v_cnt + rec_close_clac.item_in; -- 조정(+)
                 v_cnt := v_cnt - rec_close_clac.item_out; -- 조정(-)
                 
-                IF rec_close_clac.item_no = 8 THEN
-                    dbms_output.put_line(rec_close_clac.item_status || '/' || rec_close_clac.item_no || ' : ' || v_cnt);
-                    dbms_output.put_line('rec_close_clac.purchase_cnt : ' || rec_close_clac.purchase_cnt);
-                    dbms_output.put_line('rec_close_clac.sales_cnt : ' || rec_close_clac.sales_cnt);
-                    dbms_output.put_line('rec_close_clac.item_in : ' || rec_close_clac.item_in);
-                    dbms_output.put_line('rec_close_clac.item_out : ' || rec_close_clac.item_out);
-                END IF;
+                -- 기말재고 등록
+                INSERT INTO month_inventory       
+                    (yearmonth
+                    ,startend_status
+                    ,item_status
+                    ,item_no
+                    ,cnt
+                    ,in_date
+                )
+                VALUES(p_sum_yymm
+                    , 1 -- 기말재고
+                    , rec_close_clac.item_status
+                    , rec_close_clac.item_no
+                    , v_cnt
+                    , SYSDATE
+                );
                 ------------------------------------------------------------------
                 --    만약 창고 기초재고가 판매량보다 크다면 기말재고 입력 
                 ------------------------------------------------------------------
-                IF v_cnt >= 0 THEN  
-                    INSERT INTO month_inventory       
-                        (yearmonth
-                        ,startend_status
-                        ,item_status
-                        ,item_no
-                        ,cnt
-                        ,in_date
-                    )
-                    VALUES(p_sum_yymm
-                        , 1 -- 기말재고
-                        , rec_close_clac.item_status
-                        , rec_close_clac.item_no
-                        , v_cnt
-                        , SYSDATE
-                    );
-                ELSE
+                IF v_cnt < 0 THEN  
                     --부족한 개수
                     g_prod_cnt := -v_cnt;
                     --에러 기록
@@ -2036,11 +2076,11 @@ CREATE OR REPLACE PACKAGE BODY month_close AS
         -- 수주 테이블 완료 -> 마감 처리
         UPDATE sales_order SET out_status = 3
         WHERE out_status = 2
-        AND TO_CHAR(in_date, 'YYMM') = p_sum_yymm;
+        AND TO_CHAR(complete_date, 'YYMM') = p_sum_yymm;
         -- 발주 테이블 완료 -> 마감 처리
         UPDATE purchase_order SET in_status = 3
         WHERE in_status = 2
-        AND TO_CHAR(in_date, 'YYMM') = p_sum_yymm;
+        AND TO_CHAR(complete_date, 'YYMM') = p_sum_yymm;
         -- 조정 테이블 완료 -> 마감 처리
         UPDATE inventory_adjust SET item_close_status = 3
         WHERE item_close_status = 2
@@ -2317,6 +2357,22 @@ CREATE OR REPLACE PACKAGE BODY day_close AS
                         , SYSDATE
                     );
                 ELSE
+                    -- 재고가 없어져 버려서 -재고라도 일단 기말재고로 등록
+                    INSERT INTO month_inventory       
+                        (yearmonth
+                        ,startend_status
+                        ,item_status
+                        ,item_no
+                        ,cnt
+                        ,in_date
+                    )
+                    VALUES(p_yymmdd
+                        , 1 -- 기말재고
+                        , rec_close_clac.item_status
+                        , rec_close_clac.item_no
+                        , v_cnt
+                        , SYSDATE
+                    );
                     --부족한 개수
                     g_prod_cnt := -v_cnt;
                     --에러 기록

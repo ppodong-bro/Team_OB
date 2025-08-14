@@ -70,20 +70,21 @@ public class InventoryRepositoryImpl implements InventoryRepository {
 				"AND i1.item_status = " + inventoryDTO.getItem_status_select() : "AND i1.item_status <> 999";
 		String whereItemName = "AND (NVL(pa.parts_name, '') LIKE :itemnotext OR NVL(pr.product_name, '') LIKE :itemnotext)";
 		// 입출고 일시에 따라 검색
-		String wherInoutDate = "AND inout_date >= '" + inventoryDTO.getStartDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "' "
-				+ "AND inout_date <= TO_DATE('" + inventoryDTO.getEndDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + " 23:59:59', 'YYYY-MM-DD HH24:MI:SS') ";
+		String wherInoutDate = "AND i1.inout_date >= '" + inventoryDTO.getStartDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "' "
+				+ "AND i1.inout_date <= TO_DATE('" + inventoryDTO.getEndDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + " 23:59:59', 'YYYY-MM-DD HH24:MI:SS') ";
 		
 		System.out.println("whereOrderNo: " + whereItemName);
 		
 		// createNativeQuery : 실제 DB의 테이블명, 칼럼명을 사용하여 쿼리 진행
-		String findAllBySearchSql = "SELECT inventory_his_no, order_status, order_no, item_status, item_no, item_no_text, inout_status, inout_date, item_cnt, item_totalcnt, item_quality "
+		String findAllBySearchSql = "SELECT inventory_his_no, order_status, order_no, item_status, item_no, item_no_text, inout_status, inout_date, item_cnt, item_totalcnt, item_quality, files_no "
 				+ "FROM ( "
 				+ "    SELECT ROWNUM rn, i0.* "
 				+ "    FROM ( "
-				+ "        	SELECT inventory_his_no, order_status, order_no, item_status, item_no, NVL(parts_name, product_name) AS item_no_text, inout_status, inout_date, item_cnt, item_totalcnt, item_quality"
+				+ "        	SELECT inventory_his_no, order_status, order_no, i1.item_status, i1.item_no, NVL(parts_name, product_name) AS item_no_text, i1.inout_status, i1.inout_date, i1.item_cnt, item_totalcnt, item_quality, ia.files_no"
 				+ "        	FROM inventory i1 "
 				+ "			LEFT JOIN parts pa ON i1.item_status = 0 AND i1.item_no = pa.parts_no "
 				+ "			LEFT JOIN product pr ON i1.item_status = 1 AND i1.item_no = pr.product_no "
+				+ "			LEFT JOIN inventory_adjust ia ON i1.order_no = ia.inventory_adjust_no "
 				+ 			whereOrderStatus + " "
 				+ 			whereOrderNo + " "
 				+			whereItemStatus + " "
@@ -94,7 +95,7 @@ public class InventoryRepositoryImpl implements InventoryRepository {
 				+ ") "
 				+ "WHERE rn BETWEEN :start AND :end";
 
-		System.out.println(findAllBySearchSql);
+		System.out.println("findAllBySearchSql" + findAllBySearchSql);
 
 		// 두 번째 인자로 엔티티 클래스를 주면 자동으로 매핑 시도
 		Query findAllBySearchQuery = entityManager.createNativeQuery(findAllBySearchSql);
@@ -126,7 +127,8 @@ public class InventoryRepositoryImpl implements InventoryRepository {
 						.inout_date_text(((Timestamp)row[7]).toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
 						.item_cnt((int)row[8])
 						.item_totalcnt((int)row[9])
-						.item_quality((int)row[10])						
+						.item_quality((int)row[10])
+						.files_no((String)row[11])
 						.build())
 				.collect(Collectors.toList());
 		
