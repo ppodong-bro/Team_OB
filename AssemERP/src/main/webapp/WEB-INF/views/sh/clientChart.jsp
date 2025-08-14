@@ -23,8 +23,8 @@ const unitPlugin = {
 		  }
 };
 
-const labels = ${barlabels};
-const data = ${bardata};
+const labels = JSON.parse('${barlabels}');
+const data = JSON.parse('${bardata}');
 
 console.log('barlabels raw:', '${barlabels}');
 console.log('bardata raw:', '${bardata}');
@@ -42,15 +42,6 @@ try {
 // ctx 선언 위치 꼭 여기!
 const ctx = document.getElementById('clientChart').getContext('2d');
 
-/* //최대값 구하기
-const maxValue = Math.max(...data);
-
-//색상 배열 생성
-const colors = data.map(value => {
-    const opacity = 0 + 1 * (value / maxValue); 
-    // 최소 0.3 투명도, 최대 1 투명도
-    return "rgba(54, 162, 235, "+opacity+")";
-}); */
 
 //최고/최저 색상 (최저: 빨강, 최고: 연한 초록)
 const startColor = [255, 100, 0];     // Red (RGB) - 최저값

@@ -1,4 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <!DOCTYPE html>
@@ -8,8 +9,11 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <!-- 캘린더를 위한 flatpickr JS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 <!-- 캘린더의 한국어 지원 -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -18,7 +22,9 @@
 <!-- 캘린더의 구글폰트링크 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link
+	href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap"
+	rel="stylesheet">
 
 <!-- 공통 CSS -->
 <jsp:include page="/common.jsp" />
@@ -35,10 +41,9 @@
 	/* 큰 화면용 그리드 설정 */
 	grid-template-columns: repeat(8, 1fr);
 	/* 8개 열, 각각 동일한 비율(1fr)로 설정 */
-	grid-template-rows: repeat(7, calc((100% - 140px) / 7)); 
+	grid-template-rows: repeat(7, calc(( 100% - 140px)/7));
 	/* 5개 행, 최소 100px에서 내용에 맞게 늘어남 */
-	grid-template-areas: 
-		"one 	one 	one 	two 	two 	two 	two 	two"
+	grid-template-areas: "one 	one 	one 	two 	two 	two 	two 	two"
 		"one 	one 	one 	two 	two 	two 	two 	two"
 		"one 	one 	one 	two 	two 	two 	two 	two"
 		"three 	three 	three 	two 	two 	two 	two 	two"
@@ -65,7 +70,7 @@
 	font-weight: bold;
 	color: black;
 	box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.1);
-	 
+	padding: 10px;
 }
 
 .dashboard .item-1 {
@@ -77,6 +82,7 @@
 	/* 수직 방향 가운데 정렬 */
 	flex-direction: column;
 	align-items: center; /* 내용이 세로로 쌓이게 (선택 사항) */
+	padding: 0px;
 }
 
 .dashboard .item-2 {
@@ -97,50 +103,63 @@
 .dashboard .item-5 {
 	grid-area: five;
 	background-color: #F0F0F0;
+ 	height: 100%; /* 혹시 부모도 높이 제한이 있다면 채우기 */
+ 	
+    background: rgba(255,255,255,0.2);
+    border-radius: 10px;
+    text-align: center;
+    padding: 0px;
 }
 
-/* 명언이 담길 섹션 */
-.quote-section {
+.weather-widget {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column; /* 세로 배치 */
+    border-radius: 15px;
+    color: white;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, #4facfe, #00f2fe);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    box-sizing: border-box;
+    padding: 10px 20px;
+    
+}
+
+.weather-header {
+    flex: 0 0 15%; /* 헤더 비율 */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+}
+
+.weather-main {
+    flex: 0 0 55%; /* 메인 비율 */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    box-sizing: border-box;
-    background: linear-gradient(135deg, #f0f4f8, #e8f0f6);
-    border-radius: 15px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    /* hover 효과 제거 - 섹션은 움직이지 않음 */
 }
 
-/* 명언 텍스트에만 들썩거림 효과 추가 */
-.quote-text {
-    font-family: 'Noto Sans KR', sans-serif;
-    color: #2c3e50;
-    max-width: 90%;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s ease; /* 부드러운 애니메이션 효과 */
+.weather-details {
+    flex: 0 0 30%; /* 디테일 비율 */
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    font-size: 24px;
 }
 
-/* 텍스트에 호버 효과 추가 */
-.quote-section:hover .quote-text {
-    transform: translateY(-5px); /* 텍스트만 위로 살짝 이동 */
-    color: #1a2a3a; /* 색상 약간 더 진하게 */
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.12); /* 그림자 더 선명하게 */
+.weather-main img {
+    width: 150px;
+    height: 150px;
 }
 
-/* 작가 이름 */
-.quote-author {
-    font-family: 'Noto Sans KR', sans-serif;
-    color: #7f8c8d;
-    transition: all 0.3s ease; /* 부드러운 애니메이션 효과 */
+.weather-main h2 {
+    font-size: 40px;
+    margin: 5px 0;
 }
 
-/* 작가 이름도 함께 움직이게 하기 */
-.quote-section:hover .quote-author {
-    transform: translateY(-5px);
-    color: #5f6c6d; /* 색상 약간 더 진하게 */
-}
 </style>
 </head>
 <body>
@@ -163,7 +182,7 @@
 					<!-- 매출매입실적 -->
 					<div class="item item-2">
 						<canvas id="yearsperformChartCanvas"></canvas>
-						<jsp:include page="/WEB-INF/views/sh/yearsperformance.jsp"/>
+						<jsp:include page="/WEB-INF/views/sh/yearsperformance.jsp" />
 					</div>
 					<!-- 재고현황 -->
 					<div class="item item-3">
@@ -173,15 +192,26 @@
 					<!-- 거래처실적 -->
 					<div class="item item-4">
 						<canvas id="clientChart"></canvas>
-						<jsp:include page="/WEB-INF/views/sh/clientChart.jsp"/>
+						<jsp:include page="/WEB-INF/views/sh/clientChart.jsp" />
 					</div>
 					<!-- 날씨 -->
-					<div class="quote-section item item-5">
-						<div id="weather-widget"></div>
-						<jsp:include page="/WEB-INF/views/sh/weather.jsp"/>
+					<div class="item item-5">
+						<div class="weather-widget" id="weather-widget">
+							<div class="weather-header">
+								<div id="location">위치 불러오는 중...</div>
+								<button
+									style="background: none; border: none; color: white; cursor: pointer;"
+									onclick="loadWeather()">⟳ 새로고침</button>
+							</div>
+							<div class="weather-main" id="current-weather">
+								<p>날씨 데이터를 불러오는 중...</p>
+							</div>
+							<div class="weather-details" id="weather-details"></div>
+							<jsp:include page="/WEB-INF/views/sh/weather.jsp" />
+						</div>
 					</div>
 				</div>
-			</div> 
+			</div>
 			<!-- 이곳에 자신의 코드를 작성하세요 -->
 
 			<jsp:include page="/foot.jsp" />
