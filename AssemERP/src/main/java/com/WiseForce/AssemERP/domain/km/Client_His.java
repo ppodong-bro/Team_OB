@@ -16,7 +16,7 @@ import lombok.Setter;
 public class Client_His {
 	@EmbeddedId
 	private Client_His_Id 	client_His_Id;
-	private String 			end_Date;
+	private LocalDateTime	end_Date;
 	private int 			emp_No;
 	private String 			client_Name;
 	private int	   			client_Gubun;

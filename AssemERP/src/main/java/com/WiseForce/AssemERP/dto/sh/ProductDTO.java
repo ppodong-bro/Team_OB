@@ -29,7 +29,7 @@ public class ProductDTO {
     private int 		del_status;
     private int			emp_no;
     private LocalDate	in_date;
-
+    
     // paging
     private int start;
     private int end;

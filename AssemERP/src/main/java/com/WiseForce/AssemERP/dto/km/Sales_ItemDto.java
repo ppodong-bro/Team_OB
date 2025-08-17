@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 public class Sales_ItemDto {
 	private int 			sales_No;
 	private int 			product_No;
+	private int				product_Version;
 	private int				sales_Item_Cnt;
 	private int	 			sales_Item_OutCnt;
 	private int				sales_Item_WaitingCnt;

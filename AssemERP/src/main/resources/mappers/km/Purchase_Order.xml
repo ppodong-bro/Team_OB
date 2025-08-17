@@ -43,7 +43,10 @@
 
 	<resultMap type="Purchase_OrderDto" id="detailPurchaseMap">
 		<id column="PURCHASE_NO" property="purchase_No" />
+		<result column="PURCHASE_DATE" property="purchase_Date"/>
 		<result column="COMPLETE_DATE" property="complete_Date" />
+		<result column="IN_STATUS"	   property="in_Status"/>
+		<result column="MODIFY_DATE"   property="modify_Date"/>
 		<result column="IN_DATE" property="in_Date" />
 
 		<association javaType="ClientDto" property="clientDto">
@@ -66,8 +69,8 @@
 			<id column="PARTS_NO" property="parts_no" />
 			<result column="PURCHASE_ITEM_CNT"
 				property="purchase_Item_Cnt" />
-			<result column="PURCHASE_ITEM_OUTCNT"
-				property="purchase_Item_OutCnt" />
+			<result column="PURCHASE_ITEM_INCNT"
+				property="purchase_Item_InCnt" />
 			<result column="PURCHASE_ITEM_COST"
 				property="purchase_Item_Cost" />
 			<association javaType="PartsDTO" property="partsDTO">
@@ -108,7 +111,7 @@
 		parameterType="Purchase_OrderSearchDto" resultMap="purchase_OrderMap">
 		SELECT P.PURCHASE_NO, P.PURCHASE_DATE, P.IN_STATUS, P.DEL_STATUS
 			 , P.COMPLETE_DATE, P.IN_DATE
-		     , C.CLIENT_NO, C.CLIENT_NAME, E.EMP_NO, E.EMP_NAME
+		     , H.CLIENT_NO, H.CLIENT_NAME, E.EMP_NO, E.EMP_NAME
 		     , I.PARTS_NO, I.PURCHASE_ITEM_CNT, I.PURCHASE_ITEM_INCNT
 		     , I.PURCHASE_ITEM_COST, PA.PARTS_NAME
 		FROM (SELECT ROWNUM RN, A.*
@@ -118,7 +121,8 @@
 					ORDER BY PURCHASE_NO DESC
 					) A
 			  )P
-			  LEFT JOIN CLIENT C ON P.CLIENT_NO = C.CLIENT_NO
+			  LEFT JOIN CLIENT_HIS H ON P.CLIENT_NO = H.CLIENT_NO AND COALESCE(P.MODIFY_DATE, P.IN_DATE)
+												     		    	   BETWEEN H.START_DATE AND H.END_DATE
 			  LEFT JOIN EMP E ON P.EMP_NO = E.EMP_NO
 			  LEFT JOIN PURCHASE_ITEM I ON P.PURCHASE_NO = I.PURCHASE_NO
 			  LEFT JOIN PARTS PA ON I.PARTS_NO = PA.PARTS_NO
@@ -144,22 +148,28 @@
 	</select>
 
 	<select id="detailPurchase" parameterType="int" resultMap="detailPurchaseMap">
-		SELECT P.PURCHASE_NO, P.COMPLETE_DATE, P.IN_DATE
-			 , C.CLIENT_NO, C.CLIENT_NAME, C.CLIENT_ADDRESS, C.CLIENT_EMAIL
-             , C.CLIENT_TEL, C.CLIENT_MAN, E.EMP_NO, E.EMP_NAME
+		SELECT P.PURCHASE_NO, P.PURCHASE_DATE, P.COMPLETE_DATE, P.IN_DATE, P.IN_STATUS, P.MODIFY_DATE
+			 , H.CLIENT_NO, H.CLIENT_NAME, H.CLIENT_ADDRESS, H.CLIENT_EMAIL
+             , H.CLIENT_TEL, H.CLIENT_MAN, E.EMP_NO, E.EMP_NAME
              , I.PURCHASE_ITEM_CNT, I.PURCHASE_ITEM_INCNT, I.PURCHASE_ITEM_COST
 		     , PA.PARTS_NO, PA.PARTS_NAME
-		FROM   PURCHASE_ORDER P LEFT JOIN CLIENT C ON P.CLIENT_NO = C.CLIENT_NO
+		FROM   PURCHASE_ORDER P LEFT JOIN CLIENT_HIS H ON P.CLIENT_NO = H.CLIENT_NO AND COALESCE(P.MODIFY_DATE, P.IN_DATE)
+												     		    	    BETWEEN H.START_DATE AND H.END_DATE
 								LEFT JOIN EMP E ON P.EMP_NO = E.EMP_NO
 								LEFT JOIN PURCHASE_ITEM I ON P.PURCHASE_NO = I.PURCHASE_NO
 								LEFT JOIN PARTS PA ON I.PARTS_NO = PA.PARTS_NO
 		WHERE P.PURCHASE_NO = #{value}
 	</select>
 	
-	<select id="partsPop" resultType="partsDTO">
+	<select id="partsPop" parameterType="string" resultType="partsDTO">
 		SELECT *
 		FROM   PARTS
-		WHERE  DEL_STATUS = 0
+		<where>
+		DEL_STATUS = 0
+		<if test="_parameter != null and _parameter != ''">
+		AND PARTS_NAME LIKE '%' || #{_parameter} || '%'
+		</if>
+		</where>
 	</select>
 	
 	
@@ -172,7 +182,7 @@
 		VALUES (#{purchase_No}, #{clientDto.client_No}, #{empDTO.empNo}, #{purchase_Date, jdbcType=DATE}, 0, 0, SYSDATE)
 	</insert>
 	
-	<insert id="createPurchaseItem" parameterType="purchase_ItemDto">
+	<insert id="createPurchaseItem" parameterType="purchase_OrderDto">
 
 		INSERT INTO PURCHASE_ITEM (PURCHASE_NO, PARTS_NO, PURCHASE_ITEM_CNT, PURCHASE_ITEM_INCNT, PURCHASE_ITEM_COST)
 		<foreach collection="purchase_Item" item="item" separator="UNION ALL">
@@ -181,4 +191,97 @@
 		</foreach>
 	
 	</insert>
+	
+	<select id="closeCheckPurchase" resultType="int">
+		SELECT COUNT(*)
+		FROM   INVENTORY_CLOSE
+		WHERE  YEARMONTH = TO_CHAR(SYSDATE, 'YYMMDD')
+	</select>
+	
+	<update id="modifyPurchase" parameterType="Purchase_OrderDto">
+		UPDATE PURCHASE_ORDER 
+		SET CLIENT_NO 	  = #{clientDto.client_No},
+		    EMP_NO    	  =  #{empDTO.empNo},
+		    PURCHASE_DATE = #{purchase_Date, jdbcType=DATE},
+		    MODIFY_DATE = SYSDATE
+		WHERE  PURCHASE_NO = #{purchase_No}
+	</update>
+	
+	<delete id="deletePurchaseItem" parameterType="Purchase_OrderDto">
+	  DELETE FROM PURCHASE_ITEM
+	  WHERE PURCHASE_NO = #{purchase_No}
+	  <if test="purchase_Item != null and purchase_Item.size() > 0">
+	    AND PARTS_NO IN
+	    <foreach collection="purchase_Item" item="item" open="(" separator="," close=")">
+	      #{item.partsDTO.parts_no}
+	    </foreach>
+	  </if>
+	</delete>
+	
+	<select id="getInStatus" parameterType="int" resultType="int">
+		SELECT IN_STATUS
+		FROM   PURCHASE_ORDER
+		WHERE  PURCHASE_NO = #{value}
+	</select>
+	<select id="getPartsNo" parameterType="int" resultType="int">
+	SELECT PARTS_NO
+	FROM   PURCHASE_ITEM
+	WHERE  PURCHASE_NO = #{value}
+	</select>
+	
+	<update id="modifyInStatus" parameterType="map">
+		UPDATE PURCHASE_ORDER
+		SET    IN_STATUS = #{in_Status}
+		WHERE  PURCHASE_NO = #{purchase_No}
+	</update>
+	
+	<update id="modifyCompletePurchase" parameterType="map">
+		UPDATE PURCHASE_ORDER
+		SET	   IN_STATUS = #{in_Status},
+			   COMPLETE_DATE = SYSDATE
+		WHERE  PURCHASE_NO = #{purchase_No}
+	</update>
+	
+	<update id="modifyCompletePurchaseItem" parameterType="map">
+		BEGIN
+		<foreach collection="parts_no" item="item" >
+		UPDATE PURCHASE_ITEM
+		SET    PURCHASE_ITEM_INCNT = PURCHASE_ITEM_CNT
+		WHERE  PURCHASE_NO 	= #{purchase_No} AND
+		       PARTS_NO 	= #{item};
+		</foreach>
+		END;
+	</update>
+	
+	<select id="getPurchaseItem" parameterType="int" resultType="Purchase_ItemDto">
+		SELECT *
+		FROM   PURCHASE_ITEM
+		WHERE  PURCHASE_NO = #{value}
+	</select>
+	
+	<update id="returnInStatus" parameterType="Map">
+		UPDATE PURCHASE_ORDER
+		SET	   IN_STATUS = #{in_Status},
+			   COMPLETE_DATE = null
+		WHERE  PURCHASE_NO = #{purchase_No}
+	</update>
+	
+	<update id="returnPurchaseItem" parameterType="java.util.List">
+		BEGIN
+		<foreach collection="list" item="item">
+		UPDATE PURCHASE_ITEM
+		SET    PURCHASE_ITEM_INCNT = 0
+		WHERE  PURCHASE_NO = #{item.purchase_No}
+		AND    PARTS_NO = #{item.parts_no};
+		</foreach>
+		END; 
+	</update>
+	
+	<update id="deletePurchase" parameterType="int">
+		UPDATE PURCHASE_ORDER
+		SET	   DEL_STATUS = 1
+		WHERE  PURCHASE_NO = #{value}
+	</update>
+
+	
 </mapper>

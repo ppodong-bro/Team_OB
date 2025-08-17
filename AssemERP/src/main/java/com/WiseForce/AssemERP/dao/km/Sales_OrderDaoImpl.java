@@ -1,6 +1,9 @@
 package com.WiseForce.AssemERP.dao.km;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +14,7 @@ import com.WiseForce.AssemERP.dto.km.ClientDto;
 import com.WiseForce.AssemERP.dto.km.Sales_ItemDto;
 import com.WiseForce.AssemERP.dto.km.Sales_OrderDto;
 import com.WiseForce.AssemERP.dto.km.Sales_OrderSearchDto;
+import com.WiseForce.AssemERP.dto.sh.ProductBomDTO;
 import com.WiseForce.AssemERP.dto.sh.ProductDTO;
 
 import lombok.RequiredArgsConstructor;
@@ -48,9 +52,9 @@ public class Sales_OrderDaoImpl implements Sales_OrderDao {
 	}
 
 	@Override
-	public List<ProductDTO> productList() {
+	public List<ProductDTO> productList(String product_Name) {
 		LocalDateTime time = LocalDateTime.now();
-		List<ProductDTO> productList = session.selectList("salesProductList");
+		List<ProductDTO> productList = session.selectList("salesProductList", product_Name);
 		return productList;
 	}
 
@@ -87,10 +91,10 @@ public class Sales_OrderDaoImpl implements Sales_OrderDao {
 	}
 
 	@Override
-	public void modifyStatus(int sales_No, int status) {
+	public int modifyStatus(int sales_No, int status) {
 		Map<String, Object> salesStatus = Map.of("sales_No",sales_No, "out_Status",status);
-		session.update("modifyOutStatus", salesStatus);
-		
+		int result = session.update("modifyOutStatus", salesStatus);
+		return result;
 	}
 
 	@Override
@@ -131,8 +135,46 @@ public class Sales_OrderDaoImpl implements Sales_OrderDao {
 
 	@Override
 	public int closeCheck() {
-		int closeCheck = session.selectOne("closeCheck");
+		int closeCheck = session.selectOne("closeCheckSales");
 		return closeCheck;
 	}
+
+	@Override
+	public int returnComplete(Integer out_Status, int sales_No, List<Sales_ItemDto> listSalesItem) {
+		Map<String, Object> sales_OrderMap = Map.of("out_Status", out_Status, "sales_No", sales_No);
+		session.update("returnComplete", sales_OrderMap);
+		int result = session.update("returnSalesItem", listSalesItem);
+		return result;
+	}
+
+	@Override
+	public List<ProductBomDTO> findBomByProduct(int productNo, int version) {
+		   Map<String, Object> params = new HashMap<>();
+	        params.put("product_no", productNo);
+	        params.put("product_version", version);
+	        List<ProductBomDTO> list = session.selectList("findBomByProduct", params);
+	        System.out.println("list------>"+list);
+	        // selectList는 결과가 없으면 빈 리스트를 반환(null 아님)
+	        return list;
+//	        return session.selectList("findBomByProduct", params);
+	}
+
+	
+	@Override
+	public List<Map<String, Object>> findPartsStocks(List<Integer> partsNos) {
+	    if (partsNos == null || partsNos.isEmpty()) return Collections.emptyList();
+	    Map<String,Object> p = new HashMap<>();
+	    p.put("partsNos", partsNos);
+	    return session.selectList("findPartsStocks", p);
+	}
+
+//	@Override
+//	public List<Map<String,Object>> findProductStocks(List<Integer> productNos) {
+//	    if (productNos == null || productNos.isEmpty()) return Collections.emptyList();
+//	    Map<String,Object> p = new HashMap<>();
+//	    p.put("productNos", productNos);
+//	    return session.selectList("findProductStocks", p);
+//	}
+
 
 }

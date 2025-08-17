@@ -1,6 +1,7 @@
 package com.WiseForce.AssemERP.dao.km;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
@@ -38,8 +39,8 @@ public class Purchase_OrderDaoImpl implements Purchase_OrderDao {
 	}
 
 	@Override
-	public List<PartsDTO> partsPop() {
-		List<PartsDTO> listParts = session.selectList("partsPop");
+	public List<PartsDTO> partsPop(String parts_Name) {
+		List<PartsDTO> listParts = session.selectList("partsPop", parts_Name);
 		return listParts;
 	}
 
@@ -51,10 +52,79 @@ public class Purchase_OrderDaoImpl implements Purchase_OrderDao {
 		
 	}
 
-	/*
-	 * @Override public void createPurchaseItem(List<Purchase_ItemDto>
-	 * purchase_ItemDto) { session.insert("createPurchaseItem", purchase_ItemDto);
-	 * 
-	 * }
-	 */
+	@Override
+	public int checkClose() {
+		int checkClose = session.selectOne("closeCheckPurchase");
+		return checkClose;
+	}
+
+	@Override
+	public void modifyPurchase(Purchase_OrderDto purchase_OrderDto) {
+		System.out.println("modifyPurchase-> purchase_OrderDto -> "+ purchase_OrderDto);
+//		List<Purchase_ItemDto> purchaseItem = purchase_OrderDto.getPurchase_Item();
+//		System.out.println("purchaseItem"+purchaseItem);
+		session.delete("deletePurchaseItem", purchase_OrderDto);
+		session.update("modifyPurchase",purchase_OrderDto);
+		session.update("createPurchaseItem",purchase_OrderDto);
+	}
+
+	@Override
+	public int getInStatus(int purchase_No) {
+		int in_Status = session.selectOne("getInStatus", purchase_No);
+		return in_Status;
+	}
+
+	@Override
+	public void modifyStatus(int purchase_No, int in_Status) {
+	
+		Map<String, Object> map = Map.of("purchase_No", purchase_No, "in_Status", in_Status);
+		System.out.println("map->"+map);
+		session.update("modifyInStatus", map);
+		
+	}
+
+	@Override
+	public void modifyComplete(int purchase_No, int in_Status, List<Integer> parts_no) {
+		Map<String, Object> map = Map.of("purchase_No", purchase_No, "in_Status", in_Status);
+		Map<String,Object> itemMap = Map.of("purchase_No", purchase_No, "in_Status", in_Status, "parts_no", parts_no);
+		session.update("modifyCompletePurchase", map);
+		session.update("modifyCompletePurchaseItem", itemMap);
+		
+	}
+
+	@Override
+	public List<Integer> getPartsNo(int purchase_No) {
+		List<Integer> partsNo = session.selectList("getPartsNo",purchase_No);
+		System.out.println("partsNo"+partsNo);
+		return partsNo;
+	}
+
+	@Override
+	public List<Purchase_ItemDto> getPurchaseItem(int purchase_No) {
+		List<Purchase_ItemDto> listPurchaseItem = session.selectList("getPurchaseItem", purchase_No);
+		return listPurchaseItem;
+	}
+
+	@Override
+	public int returnInStatus(int purchase_No, Integer in_Status) {
+		Map<String, Object> returnList = Map.of("purchase_No", purchase_No, "in_Status", in_Status);
+		int result = session.update("returnInStatus", returnList);
+		
+		return result;
+	}
+
+	@Override
+	public int returnPurchaseItem(int purchase_No, List<Purchase_ItemDto> listPurchaseItem) {
+		
+		int result = session.update("returnPurchaseItem", listPurchaseItem);
+		return result;
+	}
+
+
+	@Override
+	public int deletePurchase(int purchase_No) {
+		int result = session.update("deletePurchase", purchase_No);
+		return result;
+	}
+
 }

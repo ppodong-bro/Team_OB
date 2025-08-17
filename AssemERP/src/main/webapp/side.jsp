@@ -126,7 +126,7 @@ $(document).ready(function() {
 				<div class="collapse" id="salespurchase-collapse">
 					<ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
 						<li><a href="${pageContext.request.contextPath}/sales/list" class="link-body-emphasis d-inline-flex text-decoration-none rounded">수주 관리</a></li>
-						<li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">발주 관리</a></li>
+						<li><a href="${pageContext.request.contextPath}/purchase/list" class="link-body-emphasis d-inline-flex text-decoration-none rounded">발주 관리</a></li>
 					</ul>
 				</div>
 			</li>

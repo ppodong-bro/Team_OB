@@ -5,6 +5,7 @@ import java.util.List;
 import com.WiseForce.AssemERP.dto.CommonDTO;
 import com.WiseForce.AssemERP.dto.km.ClientDto;
 import com.WiseForce.AssemERP.dto.km.ClientSearchDto;
+import com.WiseForce.AssemERP.dto.sm.EmpDTO;
 
 public interface ClientService {
 
@@ -23,6 +24,8 @@ public interface ClientService {
 
 	List<ClientDto> 	searchByName(String client_Name);
 
-	List<ClientDto> 	clientAll(int client_Gubun);
+	List<ClientDto> 	clientAll(int client_Gubun, String client_Name);
+
+	List<EmpDTO> 		listEmp(String empName);
 
 }

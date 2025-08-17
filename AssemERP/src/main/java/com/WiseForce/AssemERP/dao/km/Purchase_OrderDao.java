@@ -15,9 +15,30 @@ public interface Purchase_OrderDao {
 
 	Purchase_OrderDto 		detailPurchase(int purchase_No);
 
-	List<PartsDTO> 			partsPop();
+	List<PartsDTO> 			partsPop(String parts_Name);
 
 	void 					createPurchase(Purchase_OrderDto purchase_OrderDto);
+
+	int 					checkClose();
+
+	void 					modifyPurchase(Purchase_OrderDto purchase_OrderDto);
+
+	int 					getInStatus(int purchase_No);
+
+	void 					modifyStatus(int purchase_No, int in_Status);
+
+	void 					modifyComplete(int purchase_No, int in_Status, List<Integer> parts_no);
+
+	List<Integer> 			getPartsNo(int purchase_No);
+
+	List<Purchase_ItemDto>  getPurchaseItem(int purchase_No);
+
+	int 					returnInStatus(int purchase_No, Integer in_Status);
+
+	int 					returnPurchaseItem(int purchase_No, List<Purchase_ItemDto> listPurchaseItem);
+
+	int 					deletePurchase(int purchase_No);
+
 
 
 }
