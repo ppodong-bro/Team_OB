@@ -23,8 +23,13 @@
 			<jsp:include page="/header.jsp" />
 
 			<!-- 이곳에 자신의 코드를 작성하세요 -->
+			<c:if test="${not empty error}">
+				<div class="alert alert-danger">${error}</div>
+			</c:if>
+			<c:if test="${not empty success}">
+				<div class="alert alert-success">${success}</div>
+			</c:if>
 			<div id="contents">
-
 				<div class="container-fluid px-4">
 					<div class="card shadow-sm">
 						<div
@@ -296,13 +301,14 @@
 								</div>
 							</div>
 						</div>
-						<!-- 이곳에 자신의 코드를 작성하세요 -->
-						<!-- 부트스트랩 CDN -->
-						<jsp:include page="/common_cdn.jsp" />
-						<jsp:include page="/foot.jsp" />
+
 					</div>
 				</div>
 			</div>
+			<!-- 이곳에 자신의 코드를 작성하세요 -->
+			<!-- 부트스트랩 CDN -->
+			<jsp:include page="/common_cdn.jsp" />
+			<jsp:include page="/foot.jsp" />
 		</div>
 	</div>
 	<script src="…bootstrap.js"></script>

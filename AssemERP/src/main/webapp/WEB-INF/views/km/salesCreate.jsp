@@ -13,11 +13,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>수주 등록</title>
 
+<!-- 오늘 날짜 문자열 (납기 min 값에서 사용) -->
+<jsp:useBean id="now" class="java.util.Date" />
+<fmt:formatDate value="${now}" pattern="yyyy-MM-dd" var="todayStr"
+	timeZone="Asia/Seoul" />
+
 <script>
   /* ====================== 거래처 팝업 연동 ====================== */
   function openClientPopup() {
     window.open(
-      '${pageContext.request.contextPath}/client/popup?client_Gubun=${client_Gubun}',
+      '${pageContext.request.contextPath}/client/popup?client_Gubun=${client_Gubun}&client_Name=',
       'clientPopup',
       'width=600,height=500,scrollbars=yes'
     );
@@ -38,26 +43,30 @@
   // 이미 선택된 제품번호 보관
   const selectedProducts = new Set();
   // 팝업에서 선택 결과를 넣을 대상 행 및 입력 요소 참조
-  let currentRow = null;
-  let targetProductInput = null;
-  let targetProductNameInput = null;
+	let currentRow = null;
+	let targetProductInput = null;
+	let targetProductNameInput = null;
+	let targetProductVersionInput = null;
 
   function openProductPopup(btn) {
     const tr = btn.closest('tr');
     currentRow = tr;
     targetProductInput     = tr.querySelector('.productNoInput');
     targetProductNameInput = tr.querySelector('.productNameInput');
+    targetProductVersionInput = tr.querySelector('.productVersionInput');
+    
 
     window.open(
-      '${pageContext.request.contextPath}/sales/productPopup',
+      '${pageContext.request.contextPath}/sales/productPopup?product_Name=',
       'productPopup',
       'width=700,height=560,scrollbars=yes'
     );
   }
 
   // 팝업에서 호출되는 콜백
-  function setProductInfo(product_no, product_name) {
-    const pno = String(product_no);
+	function setProductInfo(product_no, product_name, product_version) {
+	  const pno = String(product_no);
+
 
     // 현재 행의 이전 제품번호
     const prevNo = targetProductInput?.value ? String(targetProductInput.value) : null;
@@ -86,6 +95,7 @@
     // 현재 행에 값 반영
     if (targetProductInput)     targetProductInput.value = pno;
     if (targetProductNameInput) targetProductNameInput.value = product_name;
+    if (targetProductVersionInput) targetProductVersionInput.value = product_version;
     if (currentRow)             currentRow.dataset.productNo = pno;
 
     // 선택 목록 갱신
@@ -149,9 +159,10 @@
 
         const tr = document.createElement('tr');
         tr.innerHTML =
-          '<td>' +
+            '<td>' +
             '<div class="input-group input-group-sm">' +
-              '<input type="hidden" class="productNoInput" name="sales_Item['+idx+'].product_No" />' +
+              '<input type="hidden" class="productNoInput" name="sales_Item['+idx+'].product_No" required/>' +
+              '<input type="hidden" class="productVersionInput" name="sales_Item['+idx+'].product_Version"/>' +
               '<input type="text" class="form-control form-control-sm productNameInput" readonly tabindex="-1" style="background:#f6f6f6;" />' +
               '<button type="button" class="btn btn-outline-secondary" onclick="openProductPopup(this)">조회</button>' +
             '</div>' +
@@ -165,10 +176,12 @@
           '<td class="numeric">' +
             '<input type="text" class="form-control form-control-plaintext form-control-sm tot-cost" readonly />' +
           '</td>' +
-          '<td class="text-center">' +
-            '<button type="button" class="btn btn-sm btn-outline-danger remove-item-btn" title="행 삭제">&times;</button>' +
+          ' 	<td class="text-center">' +
+            '<button type="button" class="btn btn-sm btn-outline-danger remove-item-btn"> <i class="bi bi-trash"></i> 삭제</button>' +
           '</td>';
-
+	 /* '<td class="text-center">' +
+     '<button type="button" class="btn btn-sm btn-outline-danger remove-item-btn" title="행 삭제">&times;</button>' +
+   '</td>'; */
         tbody.appendChild(tr);
       });
     }
@@ -204,13 +217,19 @@
 			<jsp:include page="/header.jsp" />
 
 			<!-- 컨텐츠 영역 시작 -->
+			<c:if test="${not empty error}">
+				<div class="alert alert-danger">${error}</div>
+			</c:if>
+			<c:if test="${not empty success}">
+				<div class="alert alert-success">${success}</div>
+			</c:if>
 			<div id="contents">
 				<div class="container-fluid px-4">
 					<div class="card shadow-sm">
 						<!-- 카드 헤더 (상세 페이지 톤과 동일) -->
 						<div
 							class="card-header d-flex justify-content-between align-items-center">
-							<a href="/sales/list" class="btn btn-outline-light btn-sm"> <i
+							<a href="/sales/list" class="btn btn-outline-dark btn-sm"> <i
 								class="bi bi-list-ul me-1"></i> 목록
 							</a>
 							<h4 class="card-title mb-0">
@@ -234,9 +253,11 @@
 												class="text-danger">*</span></label>
 											<div class="input-group input-group-sm">
 												<input type="hidden" id="clientNoInput"
-													name="clientDto.client_No" /> <input type="text"
-													id="clientNameInput" class="form-control form-control-sm"
-													readonly required placeholder="조회 버튼으로 선택" />
+													name="clientDto.client_No"
+													value="${sales_OrderDto.clientDto.client_No}" required />
+												<input type="text" id="clientNameInput"
+													class="form-control form-control-sm" readonly required
+													placeholder="조회 버튼으로 선택" />
 												<button type="button" class="btn btn-outline-secondary"
 													onclick="openClientPopup()">조회</button>
 											</div>
@@ -245,7 +266,8 @@
 										<!-- 주소 -->
 										<div class="col-md-4">
 											<label class="form-label">주소</label> <input type="text"
-												id="clientAddressInput" class="form-control form-control-sm" />
+												id="clientAddressInput" class="form-control form-control-sm"
+												readonly />
 										</div>
 
 										<!-- 이메일 -->
@@ -253,20 +275,22 @@
 											<label class="form-label">이메일</label>
 											<div class="input-group input-group-sm">
 												<span class="input-group-text">@</span> <input type="email"
-													id="clientEmailInput" class="form-control" />
+													id="clientEmailInput" class="form-control" readonly />
 											</div>
 										</div>
 
 										<!-- 전화 -->
 										<div class="col-md-4">
 											<label class="form-label">거래처 전화번호</label> <input type="text"
-												id="clientTelInput" class="form-control form-control-sm" />
+												id="clientTelInput" class="form-control form-control-sm"
+												readonly />
 										</div>
 
 										<!-- 거래처 담당자 -->
 										<div class="col-md-4">
 											<label class="form-label">거래처 담당자</label> <input type="text"
-												id="clientManInput" class="form-control form-control-sm" />
+												id="clientManInput" class="form-control form-control-sm"
+												readonly />
 										</div>
 
 										<!-- 내부 담당자 -->
@@ -277,10 +301,16 @@
 												readonly />
 										</div>
 
-										<!-- 납기(수주) 일자 -->
-										<div class="col-md-4">
+										<!-- 납기(<!-- 수주) 일자 -->
+										<!--<div class="col-md-4">
 											<label class="form-label">납기 완료일</label> <input type="date"
 												class="form-control form-control-sm" name="sales_Date" required"/>
+										</div> -->
+										<div class="col-md-4">
+											<label class="form-label">납기 완료일</label> <input type="date"
+												id="salesDate" class="form-control form-control-sm"
+												name="sales_Date" min="${todayStr}" required />
+											<div id="dateError" class="form-text" style="color: #dc3545;"></div>
 										</div>
 									</div>
 								</section>
@@ -307,7 +337,7 @@
 													<th scope="col" class="numeric">요청수량</th>
 													<th scope="col" class="numeric">제품 단가</th>
 													<th scope="col" class="numeric">요청 총액</th>
-													<th scope="col">삭제</th>
+													<th scope="col" class="text-center">삭제</th>
 												</tr>
 											</thead>
 											<tbody id="items-tbody">
@@ -316,9 +346,13 @@
 													<td>
 														<div class="input-group input-group-sm">
 															<input type="hidden" class="productNoInput"
-																name="sales_Item[0].product_No" /> <input type="text"
-																class="form-control form-control-sm productNameInput "
-																readonly tabindex="-1" style="background: #f6f6f6;"/>
+																name="sales_Item[0].product_No" />
+															<!-- ✅ 버전 hidden 추가 -->
+															<input type="hidden" class="productVersionInput"
+																name="sales_Item[0].product_Version" /> <input
+																type="text"
+																class="form-control form-control-sm productNameInput"
+																readonly tabindex="-1" style="background: #f6f6f6;" />
 															<button type="button" class="btn btn-outline-secondary"
 																onclick="openProductPopup(this)">조회</button>
 														</div>
@@ -334,10 +368,16 @@
 													<td class="numeric"><input type="text"
 														class="form-control form-control-plaintext form-control-sm tot-cost"
 														readonly /></td>
-													<td class="text-center">
+													<!-- <td class="text-center">
 														<button type="button"
 															class="btn btn-sm btn-outline-danger remove-item-btn"
 															title="행 삭제">&times;</button>
+													</td> -->
+													<td class="text-center">
+														<button type="button"
+															class="btn btn-sm btn-outline-danger remove-item-btn">
+															<i class="bi bi-trash"></i> 삭제
+														</button>
 													</td>
 												</tr>
 											</tbody>

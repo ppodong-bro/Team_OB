@@ -23,15 +23,25 @@
 			<jsp:include page="/header.jsp" />
 
 			<!-- 이곳에 자신의 코드를 작성하세요 -->
-				<div id="contents">
+			<c:if test="${not empty error}">
+				<div class="alert alert-danger">${error}</div>
+			</c:if>
+			<c:if test="${not empty success}">
+				<div class="alert alert-success">${success}</div>
+			</c:if>
+			<div id="contents">
 
 				<div class="container-fluid px-4">
-				    <div class="card shadow-sm">
-				        <div class="card-header d-flex justify-content-between align-items-center">
-				            <h4 class="card-title mb-0"><i class="bi bi-list-ul"></i> 발주 목록</h4>
-            					<a href="/purchase/createStart" class="btn btn-primary"><i class="bi bi-plus-lg"></i>등록</a>
-				        </div>
-				        <div class="card-body">
+					<div class="card shadow-sm">
+						<div
+							class="card-header d-flex justify-content-between align-items-center">
+							<h4 class="card-title mb-0">
+								<i class="bi bi-list-ul"></i> 발주 목록
+							</h4>
+							<a href="/purchase/createStart" class="btn btn-primary"><i
+								class="bi bi-plus-lg"></i>등록</a>
+						</div>
+						<div class="card-body">
 
 							<!-- 검색 폼 -->
 							<form method="get" action="list"
@@ -80,7 +90,8 @@
 											placeholder="시작일"
 											value="${Purchase_OrderSearchDto.purchase_Date_Start}" /> <span
 											class="input-group-text">~</span> <input type="date"
-											name="purchase_Date_End" class="form-control" placeholder="종료일"
+											name="purchase_Date_End" class="form-control"
+											placeholder="종료일"
 											value="${Purchase_OrderSearchDto.purchase_Date_End}" />
 									</div>
 								</div>
@@ -129,8 +140,8 @@
 															value="${fn:length(order.purchase_Item) - 1}" />
 
 														<!-- 부품명 -->
-														<td><c:out value="${first.partsDTO.parts_name}" />
-															<c:if test="${othersCount > 0}">
+														<td><c:out value="${first.partsDTO.parts_name}" /> <c:if
+																test="${othersCount > 0}">
 													 &nbsp;외 ${othersCount}종
 													</c:if></td>
 
@@ -173,21 +184,28 @@
 
 
 												<!-- 수정/삭제 버튼 -->
-												<td class="text-center">
-													<!-- 수정 버튼 --> <a
-													href="<c:url value='/purchase/modifyStart?purchase_No=${order.purchase_No}'/>"
-													class="btn btn-sm btn-outline-primary me-1"
-													onclick="event.stopPropagation();">수정</a> <!-- 삭제 버튼 -->
-													<form
-														action="${pageContext.request.contextPath}/purchase/delete"
-														method="post" style="display: inline;"
-														onclick="event.stopPropagation();">
-														<input type="hidden" name="purchase_No"
-															value="${order.purchase_No}" />
-														<button type="submit"
-															class="btn btn-sm btn-outline-danger">삭제</button>
-													</form>
-												</td>
+												<c:choose>
+													<c:when
+														test="${order.in_Status == 0 or order.in_Status == 1}">
+														<td class="text-center">
+															<!-- 수정 버튼 --> <a
+															href="/purchase/modifyStart?purchase_No=${order.purchase_No}"
+															class="btn btn-sm btn-outline-success"> <i
+																class="bi bi-pencil-square"></i> 수정
+														</a>
+														</td>
+													</c:when>
+												</c:choose>
+												<c:choose>
+													<c:when
+														test="${order.in_Status == 2 or order.in_Status == 3}">
+														<td class="text-center"><a href="#"
+															class="btn btn-sm btn-outline-success disabled keep-look"
+															role="button" aria-disabled="true" tabindex="-1"> <i
+																class="bi bi-pencil-square"></i> 수정
+														</a></td>
+													</c:when>
+												</c:choose>
 											</tr>
 										</c:forEach>
 
@@ -274,13 +292,13 @@
 								</div>
 							</div>
 						</div>
-						<!-- 이곳에 자신의 코드를 작성하세요 -->
-						<!-- 부트스트랩 CDN -->
-						<jsp:include page="/common_cdn.jsp" />
-						<jsp:include page="/foot.jsp" />
 					</div>
 				</div>
 			</div>
+			<!-- 이곳에 자신의 코드를 작성하세요 -->
+			<!-- 부트스트랩 CDN -->
+			<jsp:include page="/common_cdn.jsp" />
+			<jsp:include page="/foot.jsp" />
 		</div>
 	</div>
 	<script src="…bootstrap.js"></script>

@@ -114,12 +114,12 @@
 												<td>${client.client_Email}</td>
 												<td class="text-center">${client.client_Man}</td>
 												<!-- 수정 버튼 -->
-												<td class="text-center">
-				                                <a href="/client/modifyStart?client_No=${client.client_No}" class="btn btn-sm btn-outline-success">
-				                                    <i class="bi bi-pencil-square"></i> 수정
-				                                </a>
-				                            	</td>
-<%-- 													<form
+												<td class="text-center"><a
+													href="/client/modifyStart?client_No=${client.client_No}"
+													class="btn btn-sm btn-outline-success"> <i
+														class="bi bi-pencil-square"></i> 수정
+												</a></td>
+												<%-- 													<form
 														action="${pageContext.request.contextPath}/client/delete"
 														method="post" style="display: inline;"
 														onclick="event.stopPropagation();">
@@ -212,11 +212,11 @@
 						</div>
 					</div>
 				</div>
-				<!-- 이곳에 자신의 코드를 작성하세요 -->
-				<!-- 부트스트랩 CDN -->
-				<jsp:include page="/common_cdn.jsp" />
-				<jsp:include page="/foot.jsp" />
 			</div>
+			<!-- 이곳에 자신의 코드를 작성하세요 -->
+			<!-- 부트스트랩 CDN -->
+			<jsp:include page="/common_cdn.jsp" />
+			<jsp:include page="/foot.jsp" />
 		</div>
 	</div>
 

@@ -5,6 +5,7 @@ import java.util.List;
 
 
 import com.WiseForce.AssemERP.dto.km.ClientDto;
+import com.WiseForce.AssemERP.dto.km.PartsShortageDto;
 import com.WiseForce.AssemERP.dto.km.Sales_ItemDto;
 import com.WiseForce.AssemERP.dto.km.Sales_OrderDto;
 import com.WiseForce.AssemERP.dto.km.Sales_OrderSearchDto;
@@ -22,7 +23,7 @@ public interface Sales_OrderService {
 
 	Sales_OrderDto 			detailSales(Sales_OrderDto sales_OrderDto1);
 
-	List<ProductDTO> 		productList();
+	List<ProductDTO> 		productList(String product_Name);
 
 	void 					createSales(Sales_OrderDto sales_OrderDto);
 
@@ -35,6 +36,12 @@ public interface Sales_OrderService {
 	void 					modifyStatus(int sales_No, List<Sales_ItemDto> salesItemList);
 
 	void closeCheck();
+
+	void 					accessModify(Sales_OrderDto sales_OrderDto);
+
+	int 					returnStatus (int sales_No);
+
+	List<PartsShortageDto>  shortages(Sales_OrderDto sales_OrderDto);
 
 	
 }

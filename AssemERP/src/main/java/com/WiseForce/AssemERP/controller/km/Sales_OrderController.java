@@ -1,7 +1,9 @@
 package com.WiseForce.AssemERP.controller.km;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,8 +11,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.WiseForce.AssemERP.dto.km.ClientDto;
+import com.WiseForce.AssemERP.dto.km.PartsShortageDto;
 import com.WiseForce.AssemERP.dto.km.Sales_ItemDto;
 import com.WiseForce.AssemERP.dto.km.Sales_OrderDto;
 import com.WiseForce.AssemERP.dto.km.Sales_OrderSearchDto;
@@ -48,42 +53,110 @@ public class Sales_OrderController {
 	public String detailSales(Sales_OrderDto sales_OrderDto1, Model model) {
 
 		Sales_OrderDto sales_OrderDto = sales_OrderService.detailSales(sales_OrderDto1);
+//		LocalDateTime modifyDate = sales_OrderDto.getModify_Date();
+//		LocalDateTime completeDate = sales_OrderDto.getComplete_Date();
+//		LocalDateTime inDate	   = sales_OrderDto.getIn_Date();
+//		
+//		System.out.println("completeDate"+completeDate);
+//		
+//		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm:ss");
+//		
+//		String modify = (modifyDate != null)?modifyDate.format(dateTimeFormatter):"";
+//		String in	  = inDate.format(dateTimeFormatter);
+//		String complete = (completeDate != null)?completeDate.format(dateTimeFormatter):"";
+		
+		
 		model.addAttribute("sales_OrderDto", sales_OrderDto);
+//		model.addAttribute("modify", modify);
+//		model.addAttribute("in", in);
+//		model.addAttribute("complete", complete);
+		
 		return "km/detailSales";
 	}
 
 	@GetMapping("/createStart")
-	public String createStartSales(Model model) {
-		sales_OrderService.closeCheck();
-		
-		/*
-		 * System.out.println("Sales_OrderController createStart Start...");
-		 * List<ProductDTO> productList = sales_OrderService.productList();
-		 * List<ClientDto> clientList = clientService.clientAll();
-		 * model.addAttribute("productList", productList);
-		 * model.addAttribute("clientList", clientList);
-		 */
-		model.addAttribute("client_Gubun", 1);
-		return "km/salesCreate";
+	public String createStartSales(Model model, RedirectAttributes ra) {
+		try {
+			sales_OrderService.closeCheck();
+			model.addAttribute("client_Gubun", 1);
+			return "km/salesCreate";
+		} catch (IllegalArgumentException e) {
+			ra.addFlashAttribute("error", e.getMessage());
+			return "redirect:/sales/list";
+		}
 	}
 
 	@PostMapping("/create")
-	public String createSales(Sales_OrderDto sales_OrderDto) {
-		sales_OrderService.closeCheck();
+	public String createSales(Sales_OrderDto sales_OrderDto, RedirectAttributes ra) {
+		
 		System.out.println("createSales sales_OrderDto--->" + sales_OrderDto);
-		sales_OrderService.createSales(sales_OrderDto);
+		
+	    List<PartsShortageDto> shortages = sales_OrderService.shortages(sales_OrderDto);
+
+	    if (!shortages.isEmpty()) {
+	        ra.addFlashAttribute("shortages", shortages);
+	        ra.addFlashAttribute("pendingSalesOrder", sales_OrderDto);
+	        return "redirect:/sales/shortageConfirm";
+	    }
+	    
+	    sales_OrderService.createSales(sales_OrderDto);
 
 		return "redirect:/sales/list";
 	}
+	
+	@GetMapping("/shortageConfirm")
+	public String shortageConfirm() {
+	    return "km/shortageConfirm";
+	}
+	
 
-	@GetMapping("/modifyStart")
-	public String modifyStart(Sales_OrderDto sales_OrderDto, Model model) {
-		sales_OrderService.closeCheck();
-		Sales_OrderDto sales_OrderDto1 = sales_OrderService.detailSales(sales_OrderDto);
-		model.addAttribute("sales_OrderDto", sales_OrderDto1);
-		return "km/modifySales";
+//	@PostMapping("/confirmToPurchase")
+//	public String confirmToPurchase(
+//	        @RequestParam(value = "shortagesJson", required = false) String shortagesJson,
+//	        RedirectAttributes ra
+//	) {
+//	    if (shortagesJson == null || shortagesJson.isBlank()) {
+//	        shortagesJson = "[]";
+//	    }
+//	    ra.addFlashAttribute("prefillShortagesJson", shortagesJson);
+//	    return "redirect:/purchase/createStart";
+//	}
+	
+	@PostMapping("/confirmToPurchase")
+	public String confirmToPurchase(@RequestParam("shortagesJson") String shortagesJson,
+	                                RedirectAttributes ra) {
+	    ra.addFlashAttribute("prefillShortagesJson", shortagesJson);
+	    return "redirect:/purchase/createStart";
 	}
 
+	@GetMapping("/modifyStart")
+	public String modifyStart(Sales_OrderDto sales_OrderDto, Model model, RedirectAttributes ra) {
+		try {
+			sales_OrderService.closeCheck();
+			Sales_OrderDto sales_OrderDto1 = sales_OrderService.detailSales(sales_OrderDto);
+			model.addAttribute("client_Gubun", 1);
+			model.addAttribute("sales_OrderDto", sales_OrderDto1);
+			return "km/modifySales";
+		} catch (IllegalArgumentException e) {
+			ra.addFlashAttribute("error", e.getMessage());
+			return "redirect:/sales/list";
+		}
+	}
+
+	@GetMapping("/detailPageModifyStart")
+	public String detailPageModifyStartt(Sales_OrderDto sales_OrderDto, Model model, RedirectAttributes ra) {
+		try {
+			sales_OrderService.closeCheck();
+			Sales_OrderDto sales_OrderDto1 = sales_OrderService.detailSales(sales_OrderDto);
+			model.addAttribute("sales_OrderDto", sales_OrderDto1);
+			model.addAttribute("client_Gubun", 1);
+			return "km/modifySales";
+		} catch (IllegalArgumentException e) {
+			ra.addFlashAttribute("error", e.getMessage());
+			return "redirect:/sales/detail?sales_No=" + sales_OrderDto.getSales_No();
+		}
+	}
+	
 	@PostMapping("/modify")
 	public String modify(Sales_OrderDto sales_OrderDto) {
 		sales_OrderService.closeCheck();
@@ -95,36 +168,65 @@ public class Sales_OrderController {
 	}
 
 	@PostMapping("modifyStatus")
-	public String modifyStatus(Sales_OrderDto sales_OrderDto) {
-		sales_OrderService.closeCheck();
-		int sales_No = sales_OrderDto.getSales_No();
-		List<Sales_ItemDto> salesItemList = sales_OrderService.salesItemList(sales_No);
-		sales_OrderService.modifyStatus(sales_No, salesItemList);
-		return "redirect:/sales/detail?sales_No=" + sales_OrderDto.getSales_No();
+	public String modifyStatus(Sales_OrderDto sales_OrderDto, RedirectAttributes ra) {
+		try {
+			
+			sales_OrderService.closeCheck();
+			int sales_No = sales_OrderDto.getSales_No();
+			List<Sales_ItemDto> salesItemList = sales_OrderService.salesItemList(sales_No);
+			sales_OrderService.modifyStatus(sales_No, salesItemList);
+			return "redirect:/sales/detail?sales_No=" + sales_OrderDto.getSales_No();
+			
+		} catch (IllegalArgumentException e) {
+			
+			ra.addFlashAttribute("error", e.getMessage());
+			return "redirect:/sales/detail?sales_No=" + sales_OrderDto.getSales_No();
+		}
 	}
-
-	@PostMapping("/deleteCreate")
-	public String delete(Sales_OrderDto sales_OrderDto) {
-		System.out.println("Sales_OrderController sales_OrderDto-->" + sales_OrderDto);
-		sales_OrderService.deleteSales(sales_OrderDto);
-		return "redirect:/sales/createStart";
+	
+	@PostMapping("/accessModify")
+	public String accessModify(Sales_OrderDto sales_OrderDto, RedirectAttributes ra) {
+		try {
+			sales_OrderService.closeCheck();
+			sales_OrderService.accessModify(sales_OrderDto);
+			Sales_OrderDto sales_OrderDto1 = sales_OrderService.detailSales(sales_OrderDto);
+			System.out.println("Sales_OrderController sales_OrderDto-->" + sales_OrderDto);
+			ra.addFlashAttribute("sales_OrderDto", sales_OrderDto1);
+			ra.addFlashAttribute("client_Gubun", 1);
+			return "redirect:/sales/modifyStart";
+		} catch( IllegalArgumentException e) {
+			ra.addFlashAttribute("error", e.getMessage());
+			return "redirect:/sales/detail?sales_No=" + sales_OrderDto.getSales_No();
+		}
 	}
-
+	
 	@PostMapping("/delete")
-	public String deleteSales(Sales_OrderDto sales_OrderDto) {
-		sales_OrderService.closeCheck();
-		System.out.println("Sales_OrderController sales_OrderDto-->" + sales_OrderDto);
-		sales_OrderService.deleteSales(sales_OrderDto);
-		return "redirect:/sales/list";
-
+	public String deleteSales(Sales_OrderDto sales_OrderDto, RedirectAttributes ra) {
+		try {
+			sales_OrderService.closeCheck();
+			System.out.println("Sales_OrderController sales_OrderDto-->" + sales_OrderDto);
+			sales_OrderService.deleteSales(sales_OrderDto);
+			return "redirect:/sales/list";
+		} catch (IllegalArgumentException e) {	
+			ra.addFlashAttribute("error", e.getMessage());
+			return "redirect:/sales/detail?sales_No=" + sales_OrderDto.getSales_No();
+		}
 	}
 
 	@GetMapping("/productPopup")
-	public String productPopup(Model model) {
-		
-		List<ProductDTO> productList = sales_OrderService.productList();
+	public String productPopup(@RequestParam("product_Name") String product_Name ,Model model) {
+
+		List<ProductDTO> productList = sales_OrderService.productList(product_Name);
 		model.addAttribute("productList", productList);
 		return "km/productPop";
+	}
+	
+	@PostMapping("returnStatus")
+	public String returnOutStatus(@RequestParam("sales_No") int sales_No, RedirectAttributes ra) {
+		int result = sales_OrderService.returnStatus(sales_No);
+		ra.addFlashAttribute("result", result);
+		return "redirect:/sales/detail?sales_No="+sales_No;
+		
 	}
 
 }

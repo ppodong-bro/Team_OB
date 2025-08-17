@@ -72,13 +72,15 @@ public class Purchase_OrderServiceImpl implements Purchase_OrderService {
 			int inCnt = purchase_ItemDto.getPurchase_Item_InCnt();
 			Long cost = purchase_ItemDto.getPurchase_Item_Cost();
 			
+			System.out.println("cnt="+cnt);
+			System.out.println("incnt="+inCnt);
 			int waitingCnt = cnt - inCnt;
+			System.out.println("cnt-inCnt="+waitingCnt);
 			Long cost1 = cnt*cost; 
 			Long cost2 = inCnt*cost;
 			
 			purchase_ItemDto.setPurchase_Item_TotCost(cost1);
 			purchase_ItemDto.setPurchase_Item_TotInCost(cost2);
-			purchase_ItemDto.setPurchase_Item_WaitingCnt(purchase_No);
 			purchase_ItemDto.setPurchase_Item_WaitingCnt(waitingCnt);
 			
 			
@@ -103,13 +105,14 @@ public class Purchase_OrderServiceImpl implements Purchase_OrderService {
 	}
 
 	@Override
-	public List<PartsDTO> partsPop() {
-		List<PartsDTO> listParts = purchase_OrderDao.partsPop();
+	public List<PartsDTO> partsPop(String parts_Name){
+		List<PartsDTO> listParts = purchase_OrderDao.partsPop(parts_Name);
 		return listParts;
 	}
 
 	@Override
 	public void createPurchase(Purchase_OrderDto purchase_OrderDto) {
+		
 		purchase_OrderDao.createPurchase(purchase_OrderDto);
 		/*
 		 * List<Purchase_ItemDto> purchase_ItemDto =
@@ -118,6 +121,86 @@ public class Purchase_OrderServiceImpl implements Purchase_OrderService {
 		 */
 		
 		
+	}
+
+	@Override
+	public void checkClose() {
+		int checkClose = purchase_OrderDao.checkClose();
+		if(checkClose == 1) {
+			throw new IllegalArgumentException("금일 마감으로 인해 발주 등록, 수정, 취소 불가");
+		}
+	}
+
+	@Override
+	public void modifyPurchase(Purchase_OrderDto purchase_OrderDto) {
+		purchase_OrderDao.modifyPurchase(purchase_OrderDto);
+	}
+
+	@Override
+	public void modifyStatus(int purchase_No) {
+		int in_Status = purchase_OrderDao.getInStatus(purchase_No);
+		List<Integer> parts_no = purchase_OrderDao.getPartsNo(purchase_No);
+		System.out.println("in_Status"+in_Status);
+		switch(in_Status) {
+		
+		case 0 -> in_Status = 1;
+		
+		case 1 -> in_Status = 2;
+		
+		}
+		System.out.println("in_Status1"+in_Status);
+		if (in_Status == 1) {
+			purchase_OrderDao.modifyStatus(purchase_No, in_Status);
+		} else if(in_Status == 2) {
+			purchase_OrderDao.modifyComplete(purchase_No, in_Status, parts_no);
+		}
+		
+	}
+
+	@Override
+	public int returnInStatus(int purchase_No) {
+		Integer in_Status = purchase_OrderDao.getInStatus(purchase_No);
+		
+		if(in_Status != null) {
+			switch(in_Status) {
+			
+			case 2 -> in_Status = 1;
+			
+			case 1 -> in_Status = 0;
+			
+			
+			}
+			
+		}else {
+			throw new IllegalArgumentException("잘못된 입고 상태값");
+		}
+			
+		if(in_Status == 1) {
+			List<Purchase_ItemDto> listPurchaseItem = purchase_OrderDao.getPurchaseItem(purchase_No);
+			System.out.println("List<Purchase_ItemDto> listPurchaseItem"+listPurchaseItem);
+			
+			int result = purchase_OrderDao.returnInStatus(purchase_No, in_Status);
+			int itemReusult = purchase_OrderDao.returnPurchaseItem(purchase_No, listPurchaseItem);
+			
+			return result;
+		} else if(in_Status ==0) {
+			int result = purchase_OrderDao.returnInStatus(purchase_No, in_Status);
+			return result;
+		} else {
+			throw new IllegalArgumentException("잘못된 입고 상태값");
+		}
+	}
+
+	@Override
+	public int deletePurchase(int purchase_No) {
+//		List<Purchase_ItemDto> purchaseItemList = purchase_OrderDao.getPurchaseItem(purchase_No);
+		Purchase_OrderDto purchase_OrderDto = purchase_OrderDao.detailPurchase(purchase_No);
+		
+		System.out.println("purchase_OrderDto->"+purchase_OrderDto);
+		
+		int result = purchase_OrderDao.deletePurchase(purchase_No);
+		
+		return result;
 	}
 
 }

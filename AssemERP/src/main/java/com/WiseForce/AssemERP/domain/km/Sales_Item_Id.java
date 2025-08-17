@@ -14,4 +14,5 @@ import lombok.Setter;
 public class Sales_Item_Id {
 	private int sales_No;
 	private int product_No;
+	private int product_Version;
 }

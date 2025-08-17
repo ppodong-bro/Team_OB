@@ -14,8 +14,18 @@ public interface Purchase_OrderService {
 
 	Purchase_OrderDto 		detailPurchase(int purchase_No);
 
-	List<PartsDTO> 			partsPop();
+	List<PartsDTO> 			partsPop(String parts_Name);
 
 	void 					createPurchase(Purchase_OrderDto purchase_OrderDto);
+
+	void 					checkClose();
+
+	void 					modifyPurchase(Purchase_OrderDto purchase_OrderDto);
+
+	void 					modifyStatus(int purchase_No);
+
+	int 					returnInStatus(int purchase_No);
+
+	int 					deletePurchase(int purchase_No);
 
 }
