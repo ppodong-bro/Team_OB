@@ -5,7 +5,9 @@ import java.util.List;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
+import com.WiseForce.AssemERP.domain.sh.Parts;
 import com.WiseForce.AssemERP.dto.sh.PartsDTO;
+import com.WiseForce.AssemERP.dto.sh.ProductDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -130,6 +132,27 @@ public class PartsDaoImpl implements PartsDao {
 		
 		return part_name;
 	}
+
+
+	@Override
+	public List<PartsDTO> searchByName(String keyword) {
+		List<PartsDTO> result = null;
+		System.out.println("PartsDaoImpl searchByName keyword =>"+keyword);
+		
+		try {
+			result = session.selectList("shSearchByPartsName", keyword);
+			System.out.println("PartsDaoImpl searchByName result => "+result);
+		} catch (Exception e) {
+			System.out.println("PartsDaoImpl searchByName Exception =>"+e.getMessage());
+		}
+		
+		return result;
+	}
+
+
+	
+
+
 
 
 

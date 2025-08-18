@@ -43,14 +43,14 @@ const yearsPerformChart = new Chart(ctx3, {
                 label: '매출액',
                 data: yearsperformSaledata,
                 fill: true,
-                borderColor: 'rgba(75, 192, 192, 1)',
+                borderColor: 'rgba(255, 99, 132, 1)',  
                 backgroundColor: 'rgba(75, 192, 192, 0)'
             },
             {
                 label: '매입액',  // 새로운 데이터셋의 이름
                 data: yearsperformPurchasedata,  // 이미 있는 매입 데이터 변수 사용
                 fill: true,
-                borderColor: 'rgba(255, 99, 132, 1)',  // 다른 색상 사용
+                borderColor: 'rgba(75, 192, 192, 1)',	// 다른 색상 사용
                 backgroundColor: 'rgba(255, 99, 132, 0)'
             }
         ]

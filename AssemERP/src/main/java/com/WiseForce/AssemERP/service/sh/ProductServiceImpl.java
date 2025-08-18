@@ -256,4 +256,12 @@ public class ProductServiceImpl implements ProductService {
 		}
 	}
 
+	@Override
+	public List<ProductDTO> searchByName(String keyword) {
+		
+		return productDao.searchByName(keyword);
+	}
+
+
+
 }

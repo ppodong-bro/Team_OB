@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.WiseForce.AssemERP.service.dg.InventoryService;
 import com.WiseForce.AssemERP.service.km.ClientService;
 import com.WiseForce.AssemERP.service.sh.PartsService;
-import com.WiseForce.AssemERP.service.sh.PerformenceService;
+import com.WiseForce.AssemERP.service.sh.PerformanceService;
 import com.WiseForce.AssemERP.service.sh.ProductService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MainController {
 	
-	private final PerformenceService performenceService;
+	private final PerformanceService performanceService;
 	private final InventoryService inventoryService;
 	
 	@GetMapping("/")
@@ -34,8 +34,8 @@ public class MainController {
 		System.out.println("mainPage Strart...");
 		
 		// 연간실적 그래프
-		List<BigDecimal> yearsperformPurchasedata = performenceService.getPurchaseData();
-		List<BigDecimal> yearsperformSaledata = performenceService.getSaleData();
+		List<BigDecimal> yearsperformPurchasedata = performanceService.getPurchaseData();
+		List<BigDecimal> yearsperformSaledata = performanceService.getSaleData();
 		List<String> yearsperformlabels =  IntStream.rangeClosed(1, 12)
 										             .mapToObj(i -> String.format("%d월", i))
 										             .collect(Collectors.toList());
@@ -48,8 +48,8 @@ public class MainController {
 		
 		// 거래처 실적 그래프
 		
-		List<Integer> bardata = performenceService.getClientTotalCost();
-		List<String> barlabels = performenceService.getClientName();
+		List<Integer> bardata = performanceService.getClientTotalCost();
+		List<String> barlabels = performanceService.getClientName();
 		
 		System.out.println("bardata => "+bardata );
 		System.out.println("barlabels => "+barlabels );
