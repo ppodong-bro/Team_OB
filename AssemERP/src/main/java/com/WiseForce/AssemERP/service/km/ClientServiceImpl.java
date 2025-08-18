@@ -41,16 +41,24 @@ public class ClientServiceImpl implements ClientService {
 	}
 
 	@Override
-	public int createClient(ClientDto clientDto) {
+	public String createClient(ClientDto clientDto) {
 		int result = clientDao.createClient(clientDto);
 		int result1 = clientDao.createClient_His(clientDto);
 		
-		
-		return result;
+		if(result1 == 1) {
+			String success = "거래처 등록 성공";
+			return success;
+		} else if(result == 0) {
+			String fail = "거래처 등록 실패";
+			return fail;
+		} else {
+			throw new IllegalArgumentException("잘못된 요청");
+		}
+
 	}
 
 	@Override
-	public int modifyClient(ClientDto clientDto1) {
+	public String modifyClient(ClientDto clientDto1) {
 		
 		LocalDateTime modifyDay 			= LocalDateTime.now();
 		
@@ -72,19 +80,40 @@ public class ClientServiceImpl implements ClientService {
 												   .build()
 												   ;
 		
+		
 		clientDto1.setModify_Date(modifyDay);
 		
 		clientDao.modifyClient_His(client_HisDto);
 		
+		int result1 = clientDao.createClient_His(clientDto1);
 		int result = clientDao.modifyClient(clientDto1);
+		
+		if(result == 1) {
+			String success = "거래처 수정 성공";
+			return success;
+		} else if(result == 0) {
+			String fail = "거래처 수정 실패";
+			return fail;
+		} else {
+			throw new IllegalArgumentException("잘못된 요청");
+		}
 													   
-		return result;
 	}
 
 	@Override
-	public int deleteClient(ClientDto clientDto1) {
+	public String deleteClient(ClientDto clientDto1) {
 		int result = clientDao.deleteClient(clientDto1);
-		return result;
+		
+		if(result == 1) {
+			String success = "거래처 삭제 성공";
+			return success;
+		} else if (result == 0) {
+			String fail = "거래처 삭제 실패";
+			return fail;
+		} else {
+			throw new IllegalArgumentException("잘못된 요청");
+		}
+		
 	}
 
 	@Override
