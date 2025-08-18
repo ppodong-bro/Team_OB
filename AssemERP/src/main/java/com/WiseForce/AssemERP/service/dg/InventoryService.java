@@ -7,6 +7,8 @@ import com.WiseForce.AssemERP.dto.dg.InventoryDTO;
 import com.WiseForce.AssemERP.dto.dg.InventoryInfoDTO;
 import com.WiseForce.AssemERP.dto.dg.Inventory_CloseDTO;
 import com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO;
+import com.WiseForce.AssemERP.dto.km.Sales_ItemDto;
+import com.WiseForce.AssemERP.dto.sh.PartsDTO;
 
 public interface InventoryService {
 	// 현재 재고 목록 조회
@@ -31,4 +33,7 @@ public interface InventoryService {
 	
 	// 재고현황 조회
 	List<Map<String, Object>> getInventoryCurrent();
+	
+	// 판매에 필요한 재고 확인
+	Map<PartsDTO, Integer> getRequirementsForSales(List<Sales_ItemDto> sales_ItemDtos);
 }

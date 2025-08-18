@@ -2,6 +2,7 @@ package com.WiseForce.AssemERP.controller.km;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,13 +15,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.WiseForce.AssemERP.dto.dg.InventoryInfoDTO;
 import com.WiseForce.AssemERP.dto.km.ClientDto;
 import com.WiseForce.AssemERP.dto.km.PartsShortageDto;
 import com.WiseForce.AssemERP.dto.km.Sales_ItemDto;
 import com.WiseForce.AssemERP.dto.km.Sales_OrderDto;
 import com.WiseForce.AssemERP.dto.km.Sales_OrderSearchDto;
+import com.WiseForce.AssemERP.dto.sh.PartsDTO;
 import com.WiseForce.AssemERP.dto.sh.ProductDTO;
 import com.WiseForce.AssemERP.dto.sm.EmpDTO;
+import com.WiseForce.AssemERP.service.dg.InventoryService;
 import com.WiseForce.AssemERP.service.km.ClientService;
 import com.WiseForce.AssemERP.service.km.Sales_OrderService;
 import com.WiseForce.AssemERP.util.Paging;
@@ -33,6 +37,7 @@ import lombok.RequiredArgsConstructor;
 public class Sales_OrderController {
 	private final Sales_OrderService sales_OrderService;
 	private final ClientService clientService;
+	private final InventoryService inventoryService;
 
 	@GetMapping("/list")
 	public String listSales(Sales_OrderSearchDto sales_OrderSearchDto, Model model) {
@@ -91,8 +96,30 @@ public class Sales_OrderController {
 		
 		System.out.println("createSales sales_OrderDto--->" + sales_OrderDto);
 		
-	    List<PartsShortageDto> shortages = sales_OrderService.shortages(sales_OrderDto);
+		// View용 부족한 부품의 DTO
+		List<PartsShortageDto> shortages = new ArrayList<>();
+		
+		// 부족한 부품 정보 및 수량
+		Map<PartsDTO, Integer> requirementsForSalesMap = inventoryService.getRequirementsForSales(sales_OrderDto.getSales_Item());
 
+		for(PartsDTO key : requirementsForSalesMap.keySet()) {
+			// 실재고 조회를 위한 DTO
+			InventoryInfoDTO inventoryInfoDTO = InventoryInfoDTO.builder().item_type(0/*부품*/).item_no(key.getParts_no()).build();
+			// 필요한 부품의 실재고
+			int realCnt = inventoryService.getRealInventoryById(inventoryInfoDTO).getCnt();
+
+			PartsShortageDto partsShortageDto = PartsShortageDto.builder()
+					.parts_no(key.getParts_no()) // 부품번호
+					.parts_name(key.getParts_name()) // 부품명
+					.required_cnt(realCnt + requirementsForSalesMap.get(key)) // 필요 부품 수량
+					.available_cnt(realCnt) // 보유 부품 수량
+					.shortage_cnt(requirementsForSalesMap.get(key)) // 부족 부품 수량
+					.build();
+
+			// View용 부족한 부품 리스트에 추가
+			shortages.add(partsShortageDto);
+		}
+		
 	    if (!shortages.isEmpty()) {
 	        ra.addFlashAttribute("shortages", shortages);
 	        ra.addFlashAttribute("pendingSalesOrder", sales_OrderDto);
