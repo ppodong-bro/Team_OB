@@ -136,11 +136,31 @@
 								</section>
 
 								<!-- 액션 버튼 -->
-								<div class="text-end mt-4 d-flex justify-content-end gap-2">
+								<%-- <div class="text-end mt-4 d-flex justify-content-end gap-2">
 									<a href="<c:url value='/client/list'/>"
 										class="btn btn-outline-secondary btn-sm px-4">취소</a>
 									<button type="submit" class="btn btn-primary btn-sm px-4">수정</button>
 								</div>
+								 --%>
+								<!-- 디자인은 아래(그리드+큰 버튼), 기능은 위(취소 링크 / 수정 submit) -->
+								<div class="row mt-4 g-2">
+									<!-- 취소: 링크 -->
+									<div class="col-md-4 d-grid">
+										<a href="<c:url value='/client/list'/>"
+											class="btn btn-outline-secondary btn-sm px-4" role="button">
+											<i class="bi bi-x-circle me-2"></i>취소
+										</a>
+									</div>
+
+									<!-- 수정: 폼 제출 -->
+									<div class="col-md-8 d-grid">
+										<button type="submit" id="modifyBtn"
+											class="btn btn-primary btn-sm px-4">
+											<i class="bi bi-check-lg me-2"></i>수정
+										</button>
+									</div>
+								</div>
+
 							</form>
 						</div>
 					</div>

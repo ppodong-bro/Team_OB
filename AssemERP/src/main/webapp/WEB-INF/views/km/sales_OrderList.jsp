@@ -29,6 +29,12 @@
 			<c:if test="${not empty success}">
 				<div class="alert alert-success">${success}</div>
 			</c:if>
+			<c:if test="${not empty createSuccess}">
+				<div class="alert alert-success">${createSuccess}</div>createFail
+			</c:if>
+			<c:if test="${not empty createFail}">
+				<div class="alert alert-danger">${createFail}</div>
+			</c:if>
 			<div id="contents">
 				<div class="container-fluid px-4">
 					<div class="card shadow-sm">
@@ -105,17 +111,18 @@
 								<table class="table table-bordered align-middle ">
 									<thead class="table-light">
 										<tr>
-											<th class="text-center">#</th>
-											<th class="text-center">수주번호</th>
-											<th class="text-center">거래처명</th>
-											<th class="text-center">제품명</th>
-											<th class="text-center">요청수량</th>
-											<th class="text-center">출고수량</th>
-											<th class="text-center">총액</th>
-											<th class="text-center">납기완료일</th>
-											<th class="text-center">출고상태</th>
-											<th class="text-center">담당자</th>
-											<th class="text-center">수정</th>
+											<th style="width: 5%;" class="text-center">#</th>
+											<th style="width: 7%;" class="text-center">수주번호</th>
+											<th style="width: 10%;" class="text-center">거래처명</th>
+											<th style="width: 23%;" class="text-center">제품명</th>
+											<th style="width: 6%;" class="text-center">요청수량</th>
+											<th style="width: 6%;" class="text-center">출고수량</th>
+											<th style="width: 7%;" class="text-center">총액</th>
+											<th style="width: 10%;" class="text-center">납기완료일</th>
+											<th style="width: 6%;" class="text-center">출고상태</th>
+											<th style="width: 8%;" class="text-center">담당자</th>
+											<th style="width: 10%;" class="text-center">등록일</th>
+											<th style="width: 8%;" class="text-center">수정</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -175,7 +182,7 @@
 												</td>
 
 												<!-- 납기 완료일 -->
-												<td>${order.sales_Date}</td>
+												<td class="text-center">${order.sales_Date}</td>
 
 												<!-- 출고 상태 -->
 												<td class="text-center"><span class="status-text"
@@ -191,8 +198,10 @@
 												<!-- client → clientMan -->
 												<td class="text-center">${order.empDTO.empName}</td>
 
+												<td class="text-center">${fn:substring(order.in_Date, 0, 10)}</td>
 
-												<!-- 수정/삭제 버튼 -->
+
+												<!-- 수정 버튼 -->
 												<c:choose>
 													<c:when
 														test="${order.out_Status == 0 or order.out_Status == 1}">
@@ -221,7 +230,7 @@
 										<!-- 조회 결과 없을 때 -->
 										<c:if test="${empty listSales}">
 											<tr>
-												<td colspan="10" class="text-center">조회된 데이터가 없습니다.</td>
+												<td colspan="11" class="text-center">조회된 데이터가 없습니다.</td>
 											</tr>
 										</c:if>
 									</tbody>

@@ -1,12 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <!DOCTYPE html>
 <html>
 <head>
 <!-- 공통 CSS -->
 <jsp:include page="/common.jsp" />
-<link href="/css/list.css" rel="stylesheet">
+<!-- <link href="/css/list.css" rel="stylesheet"> -->
 <meta charset="UTF-8">
 <title>Insert title here</title>
 </head>
@@ -20,6 +21,12 @@
 			<jsp:include page="/header.jsp" />
 
 			<!-- 이곳에 자신의 코드를 작성하세요 -->
+			<c:if test="${not empty error}">
+				<div class="alert alert-danger">${error}</div>
+			</c:if>
+			<c:if test="${not empty success}">
+				<div class="alert alert-success">${success}</div>
+			</c:if>
 			<div id="contents">
 
 				<div class="container-fluid px-4">
@@ -92,14 +99,15 @@
 								<table class="table table-bordered align-middle list-table">
 									<thead class="table-light">
 										<tr>
-											<th class="text-center">#</th>
-											<th class="text-center">거래처번호</th>
-											<th class="text-center">거래처명</th>
-											<th class="text-center">유형</th>
-											<th class="text-center">주소</th>
-											<th class="text-center">이메일</th>
-											<th class="text-center">거래처 담당자</th>
-											<th class="text-center">수정</th>
+											<th style="width: 5%;" class="text-center">#</th>
+											<th style="width: 5%;" class="text-center">거래처번호</th>
+											<th style="width: 12%;" class="text-center">거래처명</th>
+											<th style="width: 8%;" class="text-center">유형</th>
+											<th style="width: 20%;" class="text-center">주소</th>
+											<th style="width: 15%;" class="text-center">이메일</th>
+											<th style="width: 7%;" class="text-center">거래처 담당자</th>
+											<th style="width: 10%;" class="text-center">등록일</th>
+											<th style="width: 8%;" class="text-center">수정</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -113,6 +121,7 @@
 												<td>${client.client_Address}</td>
 												<td>${client.client_Email}</td>
 												<td class="text-center">${client.client_Man}</td>
+												<td class="text-center">${fn:substring(client.in_Date, 0, 10)}</td>
 												<!-- 수정 버튼 -->
 												<td class="text-center"><a
 													href="/client/modifyStart?client_No=${client.client_No}"
@@ -134,7 +143,7 @@
 										<!-- 조회 결과 없을 때 -->
 										<c:if test="${empty clientList}">
 											<tr>
-												<td colspan="9" class="text-center">조회된 데이터가 없습니다.</td>
+												<td colspan="10" class="text-center">조회된 데이터가 없습니다.</td>
 											</tr>
 										</c:if>
 									</tbody>

@@ -71,11 +71,11 @@ public class ClientDaoImpl implements ClientDao {
 		return result;
 	}
 
-	@Override
-	public void modifyClient_HisEnd(Client_HisDto client_HisDto) {
-		session.update("client_HisEnd", client_HisDto);
-
-	}
+//	@Override
+//	public void modifyClient_HisEnd(Client_HisDto client_HisDto) {
+//		session.update("client_HisEnd", client_HisDto);
+//
+//	}
 
 	@Override
 	public void modifyClient_His(Client_HisDto client_HisDto) {
@@ -83,7 +83,7 @@ public class ClientDaoImpl implements ClientDao {
 
 		session.update("client_HisEnd", client_HisDto);
 
-		session.insert("client_His", client_HisDto);
+//		session.insert("createClient_His", client_HisDto);
 
 	}
 
@@ -101,9 +101,9 @@ public class ClientDaoImpl implements ClientDao {
 	}
 
 	@Override
-	public void perform(Client_PerformDto client_PerformDto) {
-		session.insert("client_Perform", client_PerformDto);
-		
+	public int perform(Client_PerformDto client_PerformDto) {
+		int result = session.insert("client_Perform", client_PerformDto);
+		return result;
 	}
 
 	@Override

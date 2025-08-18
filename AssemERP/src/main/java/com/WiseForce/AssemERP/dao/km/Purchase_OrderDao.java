@@ -17,17 +17,17 @@ public interface Purchase_OrderDao {
 
 	List<PartsDTO> 			partsPop(String parts_Name);
 
-	void 					createPurchase(Purchase_OrderDto purchase_OrderDto);
+	int 					createPurchase(Purchase_OrderDto purchase_OrderDto);
 
 	int 					checkClose();
 
-	void 					modifyPurchase(Purchase_OrderDto purchase_OrderDto);
+	int 					modifyPurchase(Purchase_OrderDto purchase_OrderDto);
 
 	int 					getInStatus(int purchase_No);
 
-	void 					modifyStatus(int purchase_No, int in_Status);
+	int 					modifyStatus(int purchase_No, int in_Status);
 
-	void 					modifyComplete(int purchase_No, int in_Status, List<Integer> parts_no);
+	int 					modifyComplete(int purchase_No, int in_Status, List<Integer> parts_no);
 
 	List<Integer> 			getPartsNo(int purchase_No);
 

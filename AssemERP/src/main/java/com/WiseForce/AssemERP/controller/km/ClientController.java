@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.WiseForce.AssemERP.dto.CommonDTO;
 import com.WiseForce.AssemERP.dto.km.ClientDto;
@@ -72,9 +73,16 @@ public class ClientController {
 	}
 	
 	@PostMapping("create")
-	public String createClient(ClientDto clientDto) {
+	public String createClient(ClientDto clientDto, RedirectAttributes ra) {
 		System.out.println("ClientController createClient Start...");
-		int result = clientService.createClient(clientDto);
+		
+		String result = clientService.createClient(clientDto);
+		
+		if(result == "거래처 등록 성공") {
+			ra.addFlashAttribute("success", result);
+		} else if(result == "거래처 등록 실패") {
+			ra.addFlashAttribute("error", result);
+		}
 		
 		return "redirect:/client/list";
 	}
@@ -88,17 +96,30 @@ public class ClientController {
 	}
 	
 	@PostMapping("modify")
-	public String modifyClient(ClientDto clientDto1) {
-		int result = clientService.modifyClient(clientDto1);
+	public String modifyClient(ClientDto clientDto1, RedirectAttributes ra) {
+		String result = clientService.modifyClient(clientDto1);
+		
+		if(result == "거래처 수정 성공") {
+			ra.addFlashAttribute("success", result);
+		} else if(result =="거래처 수정 실패") {
+			ra.addFlashAttribute("error", result);
+		}
 		
 		System.out.println("ClientController modifyClient result->"+result);
 		return"redirect:/client/list";
 	}
 	
 	@PostMapping("delete")
-	public String deleteClient(ClientDto clientDto1) {
+	public String deleteClient(ClientDto clientDto1, RedirectAttributes ra) {
 		System.out.println("ClientController deleteClient Start...");
-		int result = clientService.deleteClient(clientDto1);
+		String result = clientService.deleteClient(clientDto1);
+		
+		if(result == "거래처 삭제 성공") {
+			ra.addFlashAttribute("success", result);
+		} else if(result == "거래처 삭제 실패") {
+			ra.addFlashAttribute("error", result);
+		}
+		
 		return "redirect:/client/list";
 	}
 	
