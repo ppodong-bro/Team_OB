@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.WiseForce.AssemERP.sh.PerformenceMapper">
+<mapper namespace="com.WiseForce.AssemERP.sh.PerformanceMapper">
 	
 	<resultMap type="ClientPerformanceDTO" id="ClientPerformanceMap">
 		<result column="client_name" 	property="client_name"/>
@@ -10,7 +10,7 @@
 
 
 
-	<select id="shYearsPurchasePerformence" parameterType="int" resultType="java.math.BigDecimal">
+	<select id="shYearsPurchasePerformance" parameterType="int" resultType="java.math.BigDecimal">
 		<![CDATA[
 		SELECT NVL(t.total_amount, 0) AS total_amount
 		FROM
@@ -33,7 +33,7 @@
 		]]>
 	</select>
 	
-	<select id="shYearsSalePerformence" parameterType="int" resultType="java.math.BigDecimal">
+	<select id="shYearsSalePerformance" parameterType="int" resultType="java.math.BigDecimal">
 		<![CDATA[
 		SELECT NVL(t.total_amount, 0) AS total_amount
 		FROM
@@ -85,5 +85,50 @@
 		    ORDER BY client_total_data.totalcost DESC    
 		    )
 	    ]]>
+	</select>
+	
+	
+	<select id="shProductPerform" parameterType="int" resultType="YearsPerformDTO">
+		<![CDATA[
+		WITH months AS (
+    		SELECT ADD_MONTHS(TRUNC(SYSDATE, 'MM'), -6 + LEVEL - 1) AS month_date
+    		FROM DUAL
+    		CONNECT BY LEVEL <= 7
+		)
+		SELECT TO_CHAR(m.month_date, 'YYYY-MM') AS each_month,
+       	NVL(SUM(si.totalCost), 0) AS item_totalCost
+		FROM months m
+		LEFT JOIN sales_order so ON TRUNC(so.in_date, 'MM') = m.month_date
+		LEFT JOIN
+    	(SELECT sales_no, SUM(sales_item_outcnt*sales_item_cost) as totalCost
+     		FROM sales_item
+     		WHERE product_no = #{value}
+     		GROUP BY sales_no) si
+		ON so.sales_no = si.sales_no
+		GROUP BY m.month_date
+		ORDER BY m.month_date
+		]]>
+	</select>
+	
+	<select id="shPartsPerform" parameterType="int" resultType="YearsPerformDTO">
+		<![CDATA[
+		WITH months AS (
+		SELECT ADD_MONTHS(TRUNC(SYSDATE, 'MM'), -6 + LEVEL - 1) AS month_date
+		FROM DUAL
+		CONNECT BY LEVEL <= 7
+		)
+		SELECT TO_CHAR(m.month_date, 'YYYY-MM') AS each_month,
+		NVL(SUM(pi.totalCost), 0) AS item_totalCost
+		FROM months m
+		LEFT JOIN purchase_order po ON TRUNC(po.in_date, 'MM') = m.month_date
+		LEFT JOIN
+		(SELECT purchase_no, SUM(purchase_item_incnt*purchase_item_cost) as totalCost
+		FROM purchase_item
+		WHERE parts_no = #{value}
+		GROUP BY purchase_no) pi
+		ON po.purchase_no = pi.purchase_no
+		GROUP BY m.month_date
+		ORDER BY m.month_date
+	 ]]>
 	</select>
 </mapper>

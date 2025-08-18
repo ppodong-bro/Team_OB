@@ -29,4 +29,6 @@ public interface ProductDao {
 
 	int getProductRecentTradeCnt(int product_no);
 
+	List<ProductDTO> searchByName(String keyword);
+
 }

@@ -108,4 +108,11 @@
 	              AND TRUNC(SYSDATE)
 	</select>
 	
+	<select id="shSearchByProductName" parameterType="String" resultType="ProductDTO">
+		SELECT product_no, product_name
+		FROM product
+		WHERE del_status = 0
+		AND LOWER(product_name) LIKE LOWER('%' || #{keyword} || '%')
+	</select>
+	
 </mapper>

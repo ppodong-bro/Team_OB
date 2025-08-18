@@ -88,7 +88,7 @@
 		WHERE rn &gt;= #{start}       
 	</select>
 	
-	<select id="shfindPartsByStatus" parameterType="int" resultType="partsDTO">
+	<select id="shfindPartsByStatus" parameterType="int" resultType="PartsDTO">
 		SELECT *
 		FROM PARTS
 		WHERE PARTS_STATUS = #{parts_status}
@@ -105,6 +105,13 @@
 		SELECT parts_name
 		FROM parts
 		where parts_no = #{parts_no}	
+	</select>
+
+	<select id="shSearchByPartsName" parameterType="String" resultType="PartsDTO">
+		SELECT parts_no, parts_name
+		FROM parts
+		WHERE del_status = 0
+		AND LOWER(parts_name) LIKE LOWER('%' || #{keyword} || '%')
 	</select>
 
 </mapper>

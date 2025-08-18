@@ -7,8 +7,9 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
-import com.WiseForce.AssemERP.dao.sh.PerformenceDao;
+import com.WiseForce.AssemERP.dao.sh.PerformanceDao;
 import com.WiseForce.AssemERP.dto.sh.ClientPerformanceDTO;
+import com.WiseForce.AssemERP.dto.sh.YearsPerformDTO;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -16,25 +17,25 @@ import lombok.RequiredArgsConstructor;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class PerformenceServiceImpl implements PerformenceService {
+public class PerformanceServiceImpl implements PerformanceService {
 
-	private final PerformenceDao performenceDao;
+	private final PerformanceDao performanceDao;
 
 	@Override
 	public List<BigDecimal> getPurchaseData() {
 		
-		return performenceDao.getPurchaseData();
+		return performanceDao.getPurchaseData();
 	}
 
 	@Override
 	public List<BigDecimal> getSaleData() {
 		// TODO Auto-generated method stub
-		return performenceDao.getSaleData();
+		return performanceDao.getSaleData();
 	}
 
 	@Override
 	public List<Integer> getClientTotalCost() {
-		List<ClientPerformanceDTO> clientPerformanceDTOs = performenceDao.getClientPerform();
+		List<ClientPerformanceDTO> clientPerformanceDTOs = performanceDao.getClientPerform();
 		// DB값 없을경우 리턴
 		if(clientPerformanceDTOs == null) return null;
 		// 클라이언트 이름추출 
@@ -47,7 +48,7 @@ public class PerformenceServiceImpl implements PerformenceService {
 
 	@Override
 	public List<String> getClientName() {
-		List<ClientPerformanceDTO> clientPerformanceDTOs = performenceDao.getClientPerform();
+		List<ClientPerformanceDTO> clientPerformanceDTOs = performanceDao.getClientPerform();
 		// DB값 없을경우 리턴
 		if(clientPerformanceDTOs == null) return null;
 		// 클라이언트 총거래액추출
@@ -56,6 +57,18 @@ public class PerformenceServiceImpl implements PerformenceService {
 			client_name.add(row.getClient_name());
 		}
 		return client_name;
+	}
+
+	@Override
+	public List<YearsPerformDTO> searchProductById(int id) {
+		
+		return performanceDao.searchProductById(id);
+	}
+
+	@Override
+	public List<YearsPerformDTO> searchPartsById(int id) {
+		
+		return performanceDao.searchPartsById(id);
 	}
 
 	

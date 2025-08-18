@@ -3,6 +3,7 @@ package com.WiseForce.AssemERP.dao.sh;
 import java.util.List;
 
 import com.WiseForce.AssemERP.dto.sh.PartsDTO;
+import com.WiseForce.AssemERP.dto.sh.ProductDTO;
 
 public interface PartsDao {
 
@@ -22,4 +23,8 @@ public interface PartsDao {
 
 	String partsNameFromPartno(Integer parts_no);
 
+	List<PartsDTO> searchByName(String keyword);
+
+
 }
+ 
