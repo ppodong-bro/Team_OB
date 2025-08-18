@@ -195,3 +195,128 @@
   width: 18%;
 }
 
+@charset "UTF-8";
+
+/* 상태 텍스트 + 점 표시 */
+.status-text {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.9rem;
+  gap: 4px;
+}
+.status-text .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.status-text[data-status="0"] .dot { background: #ffc107; } /* 요청 */
+.status-text[data-status="1"] .dot { background: #66ff66; } /* 승인 */
+.status-text[data-status="2"] .dot { background: #33bbff; } /* 완료 */
+.status-text[data-status="3"] .dot { background: #bfbfbf; } /* 마감 */
+
+/* 제품(상세) 테이블 */
+.product-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+.product-table thead th {
+  position: sticky;
+  top: 0;
+  background: #f8f9fa;
+  z-index: 2;
+  vertical-align: bottom;
+  padding: 0.6rem;
+}
+.product-table tbody td,
+.product-table tfoot td {
+  padding: 0.5rem 0.6rem;
+  vertical-align: middle;
+}
+
+/* 숫자/이름/합계 유틸 */
+.numeric { text-align: right; white-space: nowrap; }
+.name    { white-space: nowrap; }
+.total-row {
+  font-weight: 600;
+  background-color: #e9ecef;
+}
+
+/* 카드형 정보 블록 */
+.info-card {
+  background: #fff;
+  border: 1px solid #d8e0ea;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  max-width: 100%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+.info-card-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: .75rem;
+  letter-spacing: .5px;
+}
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem 1.25rem;
+}
+.field { display: flex; flex-direction: column; }
+.field-label {
+  font-size: .65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: .25rem;
+  color: #515a6b;
+  letter-spacing: .5px;
+}
+.field-box {
+  background: #f7f9fc;
+  border: 1px solid #dfe4ea;
+  border-radius: .5rem;
+  padding: 0.4rem .75rem;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  min-height: 32px;
+}
+.small-addon {
+  flex: 0 0 auto;
+  font-size: .9rem;
+  color: #495057;
+  padding-right: 4px;
+}
+
+/* -------- 리스트 공통(bootstrap .table 커스텀) -------- */
+body { line-height: 1.5; }
+
+.table { table-layout: fixed; }         /* 고정 레이아웃로 행 높이 안정화 */
+.table th,
+.table td {
+  padding: .5rem .75rem;
+  line-height: 1.25;
+  vertical-align: middle;
+}
+.table tbody tr { height: 48px; }       /* 필요 시 값 조절 */
+
+/* 긴 텍스트 생략표 */
+.table .truncate {
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 폼/버튼 높이 균일화 */
+.form-control,
+.form-select,
+.input-group-text,
+.btn {
+  line-height: 1.25;
+  padding-top: .375rem;
+  padding-bottom: .375rem;
+}
+
