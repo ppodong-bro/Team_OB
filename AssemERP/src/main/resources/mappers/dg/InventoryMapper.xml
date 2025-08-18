@@ -167,4 +167,14 @@
 		WHERE item_status = 999
 		GROUP BY '여유'
     </select>
+    
+	<select id="getRequirementsForProduct" parameterType="com.WiseForce.AssemERP.dto.km.Sales_ItemDto" resultType="java.util.Map">
+		SELECT parts_no, cnt * #{sales_Item_Cnt} AS cnt FROM product_bom 
+		WHERE product_no = #{product_No} 
+		AND product_version = (
+		    SELECT MAX(product_version) FROM product_bom
+		    WHERE product_no = #{product_No} 
+		)
+    </select>
+    
 </mapper>
