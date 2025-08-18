@@ -506,6 +506,7 @@ CREATE TABLE SALES_ORDER (
 	out_status NUMBER(1), /* 출고상태 */
 	del_status NUMBER(1), /* 삭제구분 */
     complete_date DATE, /* 완료일시 */
+    modify_date DATE, /* 수정일시 */
 	in_date DATE /* 등록일시 */
 );
 
@@ -537,6 +538,8 @@ COMMENT ON COLUMN SALES_ORDER.del_status IS '삭제구분';
 
 COMMENT ON COLUMN SALES_ORDER.complete_Date IS '완료일시';
 
+COMMENT ON COLUMN SALES_ORDER.modify_date IS '수정일시';
+
 COMMENT ON COLUMN SALES_ORDER.in_date IS '등록일시';
 
 /* 발주 ***********************************************************************/
@@ -548,6 +551,7 @@ CREATE TABLE PURCHASE_ORDER (
 	in_status NUMBER(1), /* 입고상태 */
 	del_status NUMBER(1), /* 삭제구분 */
     complete_date DATE, /* 완료일시 */
+    modify_date DATE, /* 수정일시 */
 	in_date DATE /* 등록일시 */
 );
 
@@ -578,6 +582,8 @@ COMMENT ON COLUMN PURCHASE_ORDER.in_status IS '입고상태';
 COMMENT ON COLUMN PURCHASE_ORDER.del_status IS '삭제구분';
 
 COMMENT ON COLUMN PURCHASE_ORDER.complete_date IS '완료일시';
+
+COMMENT ON COLUMN PURCHASE_ORDER.modify_date IS '수정일시';
 
 COMMENT ON COLUMN PURCHASE_ORDER.in_date IS '등록일시';
 
@@ -636,6 +642,7 @@ COMMENT ON COLUMN client.in_date IS '등록일자';
 CREATE TABLE SALES_ITEM (
 	sales_no NUMBER(7) NOT NULL, /* 수주번호 */
 	product_no NUMBER(7) NOT NULL, /* 제품번호 */
+    product_version NUMBER(7) NOT NULL, /* 제품버전 */
 	sales_item_cnt NUMBER(10), /* 요청수량 */
 	sales_item_outcnt NUMBER(10), /* 출고수량 */
 	sales_item_cost NUMBER(10) /* 단가 */
@@ -644,7 +651,8 @@ CREATE TABLE SALES_ITEM (
 CREATE UNIQUE INDEX PK_SALES_ITEM
 	ON SALES_ITEM (
 		sales_no ASC,
-		product_no ASC
+		product_no ASC,
+        product_version ASC
 	);
 
 ALTER TABLE SALES_ITEM
@@ -652,7 +660,8 @@ ALTER TABLE SALES_ITEM
 		CONSTRAINT PK_SALES_ITEM
 		PRIMARY KEY (
 			sales_no,
-			product_no
+			product_no,
+            product_version
 		);
 
 COMMENT ON TABLE SALES_ITEM IS '수주 제품';
@@ -660,6 +669,8 @@ COMMENT ON TABLE SALES_ITEM IS '수주 제품';
 COMMENT ON COLUMN SALES_ITEM.sales_no IS '수주번호';
 
 COMMENT ON COLUMN SALES_ITEM.product_no IS '제품번호';
+
+COMMENT ON COLUMN SALES_ITEM.product_version IS '제품버전';
 
 COMMENT ON COLUMN SALES_ITEM.sales_item_cnt IS '요청수량';
 
@@ -893,8 +904,8 @@ COMMENT ON COLUMN inventory_occupy.item_occupy IS '재고 점유 비율';
 /* 거래처 이력 ****************************************************************/
 CREATE TABLE client_HIS (
 	client_no NUMBER(7) NOT NULL, /* 거래처번호 */
-	start_date VARCHAR2(8) NOT NULL, /* 시작일자 */
-	end_date VARCHAR2(8) NOT NULL, /* 종료일자 */
+	start_date DATE NOT NULL, /* 시작일자 */
+	end_date DATE NOT NULL, /* 종료일자 */
 	emp_no NUMBER(7), /* 사원번호 */
 	client_name VARCHAR2(100), /* 거래처명 */
 	client_gubun NUMBER(1), /* 거래처유형 */
@@ -1364,7 +1375,8 @@ BEGIN
         CURSOR cur_trans IS
             SELECT parts_no, cnt
             FROM product_bom
-            WHERE product_no = :NEW.product_no;
+            WHERE product_no = :NEW.product_no
+            AND product_version = :NEW.product_version;
     BEGIN
         IF INSERTING THEN
             DBMS_OUTPUT.PUT_LINE('sales_item INSERT 발생' || :NEW.product_no);
@@ -1476,6 +1488,30 @@ FOR EACH ROW
 BEGIN
     INSERT INTO inventory (inventory_his_no, order_status, order_no, item_status, item_no, inout_status, item_cnt, item_totalcnt, inout_date, item_quality) 
     VALUES (inventory_seq.nextval, :NEW.adjust_status, :NEW.inventory_adjust_no, :NEW.item_status, :NEW.item_no, :NEW.inout_status, :NEW.item_cnt, null, sysdate, 0/*품질*/);
+END;
+/
+CREATE OR REPLACE TRIGGER TRIGGER_CREATE_PRODUCT
+AFTER INSERT ON product
+FOR EACH ROW
+BEGIN
+    -- 기초재고 등록
+    INSERT INTO month_inventory (yearmonth, startend_status, item_status, item_no, cnt, in_date) 
+    VALUES (TO_CHAR(:NEW.in_date, 'YYMM'), 0/*기초*/, 1/*제품*/, :NEW.product_no, 0, :NEW.in_date);
+    -- 기말재고 등록
+    INSERT INTO month_inventory (yearmonth, startend_status, item_status, item_no, cnt, in_date) 
+    VALUES (TO_CHAR(:NEW.in_date, 'YYMM'), 1/*기말*/, 1/*제품*/, :NEW.product_no, 0, :NEW.in_date);
+END;
+/
+CREATE OR REPLACE TRIGGER TRIGGER_CREATE_PARTS
+AFTER INSERT ON parts
+FOR EACH ROW
+BEGIN
+    -- 기초재고 등록
+    INSERT INTO month_inventory (yearmonth, startend_status, item_status, item_no, cnt, in_date) 
+    VALUES (TO_CHAR(:NEW.in_date, 'YYMM'), 0/*기초*/, 0/*부품*/, :NEW.parts_no, 0, :NEW.in_date);
+    -- 기말재고 등록
+    INSERT INTO month_inventory (yearmonth, startend_status, item_status, item_no, cnt, in_date) 
+    VALUES (TO_CHAR(:NEW.in_date, 'YYMM'), 1/*기말*/, 0/*부품*/, :NEW.parts_no, 0, :NEW.in_date);
 END;
 /
 /************************************************** 
@@ -1777,6 +1813,14 @@ BEGIN
     END LOOP;
     
     COMMIT;
+END;
+/
+-- 월마감 실행용 프로시저
+CREATE OR REPLACE PROCEDURE exec_month_close_scheduler(p_regi_emp_no in VARCHAR2, p_real in VARCHAR2, 
+    p_result OUT VARCHAR2) 
+IS
+BEGIN
+    month_close.month_close_main(TO_CHAR(sysdate, 'YYMM'), p_regi_emp_no, p_real, p_result);
 END;
 /
 /************************************************** 
