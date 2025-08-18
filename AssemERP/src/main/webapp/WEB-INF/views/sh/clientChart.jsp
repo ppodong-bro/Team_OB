@@ -26,19 +26,9 @@ const unitPlugin = {
 const labels = JSON.parse('${barlabels}');
 const data = JSON.parse('${bardata}');
 
-console.log('barlabels raw:', '${barlabels}');
-console.log('bardata raw:', '${bardata}');
+//onsole.log('barlabels raw:', '${barlabels}');
+//console.log('bardata raw:', '${bardata}');
 
-try {
-    const labels = JSON.parse('<c:out value="${barlabels}" escapeXml="false"/>');
-    const data = JSON.parse('<c:out value="${bardata}" escapeXml="false"/>');
-    console.log('labels parsed:', labels);
-    console.log('data parsed:', data);
-
-    // 차트 생성 코드 여기에 이어서 작성
-} catch(e) {
-    console.error('JSON parse error:', e);
-}
 // ctx 선언 위치 꼭 여기!
 const ctx = document.getElementById('clientChart').getContext('2d');
 

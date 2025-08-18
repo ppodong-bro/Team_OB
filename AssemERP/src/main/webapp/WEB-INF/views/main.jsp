@@ -40,24 +40,24 @@
 	box-sizing: border-box; /* 패딩까지 포함해서 높이 계산하도록 설정 */
 	/* 큰 화면용 그리드 설정 */
 	grid-template-columns: repeat(8, 1fr);
-	/* 8개 열, 각각 동일한 비율(1fr)로 설정 */
 	grid-template-rows: repeat(7, calc(( 100% - 140px)/7));
-	/* 5개 행, 최소 100px에서 내용에 맞게 늘어남 */
-	grid-template-areas: "one 	one 	one 	two 	two 	two 	two 	two"
-		"one 	one 	one 	two 	two 	two 	two 	two"
-		"one 	one 	one 	two 	two 	two 	two 	two"
-		"three 	three 	three 	two 	two 	two 	two 	two"
-		"three 	three 	three 	four 	four 	four 	five 	five"
-		"three 	three 	three 	four 	four 	four 	five 	five"
-		"three 	three 	three 	four 	four 	four 	five 	five";
+	grid-template-areas: 
+	"two 	two 	two 	two 	two 	three 	three 	three"
+	"two 	two 	two 	two 	two 	three 	three 	three"
+	"two 	two 	two 	two 	two 	three 	three 	three"
+	"two 	two 	two 	two 	two 	three 	three 	three"
+	"four 	four 	four 	four 	one 	one 	five 	five"
+	"four 	four 	four 	four 	one 	one 	five 	five"
+	"four 	four 	four 	four 	one 	one 	five 	five";
 }
 
 /* 작은 화면용 미디어 쿼리 */
-@media ( max-width : 768px) {
+@media ( max-width : 992px) {
 	.dashboard {
+		/* 작은 화면용 그리드 설정 */
 		grid-template-columns: 1fr;
-		grid-template-areas: "one" "one" "two" "two" "two" "three" "three"
-			"three" "four" "four" "five" "five";
+		grid-template-rows: repeat(8, 1fr);
+		grid-template-areas: "two" "two" "three" "three" "four" "four" "one" "five";
 	}
 }
 
@@ -135,7 +135,7 @@
 }
 
 .weather-main {
-    flex: 0 0 55%; /* 메인 비율 */
+    flex: 0 0 60%; /* 메인 비율 */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -143,21 +143,11 @@
 }
 
 .weather-details {
-    flex: 0 0 30%; /* 디테일 비율 */
+    flex: 0 0 25%; /* 디테일 비율 */
     display: flex;
     justify-content: space-around;
     align-items: center;
     font-size: 24px;
-}
-
-.weather-main img {
-    width: 150px;
-    height: 150px;
-}
-
-.weather-main h2 {
-    font-size: 40px;
-    margin: 5px 0;
 }
 
 </style>
@@ -182,7 +172,7 @@ function openyearsPerformDetail() {
 
 			<!-- 이곳에 자신의 코드를 작성하세요 -->
 			<div id="contents">
-				<div class="dashboard container-fluid px-4 py-4">
+				<div class="dashboard container-fluid">
 					<!-- 캘린더 -->
 					<div class="item item-1">
 						<div id="fullCalendar"></div>
@@ -210,7 +200,7 @@ function openyearsPerformDetail() {
 								<div id="location">위치 불러오는 중...</div>
 								<button
 									style="background: none; border: none; color: white; cursor: pointer;"
-									onclick="loadWeather()">⟳ 새로고침</button>
+									onclick="loadWeather()">⟳</button>
 							</div>
 							<div class="weather-main" id="current-weather">
 								<p>날씨 데이터를 불러오는 중...</p>
