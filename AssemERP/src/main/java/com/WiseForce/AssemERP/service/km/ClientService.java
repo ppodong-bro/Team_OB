@@ -16,11 +16,11 @@ public interface ClientService {
 
 	ClientDto 			detailClient(ClientDto clientDto1);
 
-	int 				createClient(ClientDto clientDto);
+	String 				createClient(ClientDto clientDto);
 
-	int 				modifyClient(ClientDto clientDto1);
+	String 				modifyClient(ClientDto clientDto1);
 
-	int 				deleteClient(ClientDto clientDto1);
+	String 				deleteClient(ClientDto clientDto1);
 
 	List<ClientDto> 	searchByName(String client_Name);
 

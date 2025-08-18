@@ -45,11 +45,12 @@ public class Purchase_OrderDaoImpl implements Purchase_OrderDao {
 	}
 
 	@Override
-	public void createPurchase(Purchase_OrderDto purchase_OrderDto) {
-		session.insert("createPurchase", purchase_OrderDto);
+	public int createPurchase(Purchase_OrderDto purchase_OrderDto) {
+		int result = session.insert("createPurchase", purchase_OrderDto);
 		session.insert("createPurchaseItem", purchase_OrderDto);
 		System.out.println("purchase_OrderDto----------->"+purchase_OrderDto);
 		
+		return result;
 	}
 
 	@Override
@@ -59,13 +60,15 @@ public class Purchase_OrderDaoImpl implements Purchase_OrderDao {
 	}
 
 	@Override
-	public void modifyPurchase(Purchase_OrderDto purchase_OrderDto) {
+	public int modifyPurchase(Purchase_OrderDto purchase_OrderDto) {
 		System.out.println("modifyPurchase-> purchase_OrderDto -> "+ purchase_OrderDto);
 //		List<Purchase_ItemDto> purchaseItem = purchase_OrderDto.getPurchase_Item();
 //		System.out.println("purchaseItem"+purchaseItem);
 		session.delete("deletePurchaseItem", purchase_OrderDto);
-		session.update("modifyPurchase",purchase_OrderDto);
+		int result = session.update("modifyPurchase",purchase_OrderDto);
 		session.update("createPurchaseItem",purchase_OrderDto);
+		
+		return result;
 	}
 
 	@Override
@@ -75,21 +78,23 @@ public class Purchase_OrderDaoImpl implements Purchase_OrderDao {
 	}
 
 	@Override
-	public void modifyStatus(int purchase_No, int in_Status) {
+	public int modifyStatus(int purchase_No, int in_Status) {
 	
 		Map<String, Object> map = Map.of("purchase_No", purchase_No, "in_Status", in_Status);
 		System.out.println("map->"+map);
-		session.update("modifyInStatus", map);
+		int result = session.update("modifyInStatus", map);
 		
+		return result;
 	}
 
 	@Override
-	public void modifyComplete(int purchase_No, int in_Status, List<Integer> parts_no) {
+	public int modifyComplete(int purchase_No, int in_Status, List<Integer> parts_no) {
 		Map<String, Object> map = Map.of("purchase_No", purchase_No, "in_Status", in_Status);
 		Map<String,Object> itemMap = Map.of("purchase_No", purchase_No, "in_Status", in_Status, "parts_no", parts_no);
-		session.update("modifyCompletePurchase", map);
-		session.update("modifyCompletePurchaseItem", itemMap);
-		
+		int result =session.update("modifyCompletePurchase", map);
+					session.update("modifyCompletePurchaseItem", itemMap);
+	
+		return result;
 	}
 
 	@Override

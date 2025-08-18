@@ -107,17 +107,18 @@
 								<table class="table table-bordered align-middle ">
 									<thead class="table-light">
 										<tr>
-											<th class="text-center">#</th>
-											<th class="text-center">발주번호</th>
-											<th class="text-center">거래처명</th>
-											<th class="text-center">부품명</th>
-											<th class="text-center">요청수량</th>
-											<th class="text-center">입고수량</th>
-											<th class="text-center">총액</th>
-											<th class="text-center">납기완료일</th>
-											<th class="text-center">입고상태</th>
-											<th class="text-center">담당자</th>
-											<th class="text-center">수정/삭제</th>
+											<th style="width: 5%;" class="text-center">#</th>
+											<th style="width: 7%;" class="text-center">발주번호</th>
+											<th style="width: 10%;" class="text-center">거래처명</th>
+											<th style="width: 23%;" class="text-center">부품명</th>
+											<th style="width: 6%;" class="text-center">요청수량</th>
+											<th style="width: 6%;" class="text-center">입고수량</th>
+											<th style="width: 7%;" class="text-center">총액</th>
+											<th style="width: 10%;" class="text-center">납기완료일</th>
+											<th style="width: 6%;" class="text-center">입고상태</th>
+											<th style="width: 8%;" class="text-center">담당자</th>
+											<th style="width: 10%;" class="text-center">등록일</th>
+											<th style="width: 8%;" class="text-center">수정</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -166,7 +167,7 @@
 												</td>
 
 												<!-- 납기 완료일 -->
-												<td>${order.purchase_Date}</td>
+												<td class="text-center">${order.purchase_Date}</td>
 
 												<!-- 입고 상태 -->
 												<td class="text-center"><span class="status-text"
@@ -181,6 +182,8 @@
 
 												<!-- client → clientMan -->
 												<td class="text-center">${order.empDTO.empName}</td>
+
+												<td class="text-center">${fn:substring(order.in_Date, 0, 10)}</td>
 
 
 												<!-- 수정/삭제 버튼 -->

@@ -25,21 +25,21 @@ public interface Sales_OrderService {
 
 	List<ProductDTO> 		productList(String product_Name);
 
-	void 					createSales(Sales_OrderDto sales_OrderDto);
+	int 					createSales(Sales_OrderDto sales_OrderDto);
 
-	void 					modifySales(Sales_OrderDto sales_OrderDto, List<Sales_ItemDto> salesItemList);
+	String 					modifySales(Sales_OrderDto sales_OrderDto, List<Sales_ItemDto> salesItemList);
 
-	void 					deleteSales(Sales_OrderDto sales_OrderDto);
+	String 					deleteSales(Sales_OrderDto sales_OrderDto);
 
 	List<Sales_ItemDto> 	salesItemList(int sales_No);
 
-	void 					modifyStatus(int sales_No, List<Sales_ItemDto> salesItemList);
+	String 					modifyStatus(int sales_No, List<Sales_ItemDto> salesItemList);
 
 	void closeCheck();
 
 	void 					accessModify(Sales_OrderDto sales_OrderDto);
 
-	int 					returnStatus (int sales_No);
+	String 					returnStatus (int sales_No);
 
 	List<PartsShortageDto>  shortages(Sales_OrderDto sales_OrderDto);
 

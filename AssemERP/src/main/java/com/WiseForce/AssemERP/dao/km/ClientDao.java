@@ -23,7 +23,7 @@ public interface ClientDao {
 
 	int 			deleteClient(ClientDto clientDto1);
 
-	void 			modifyClient_HisEnd(Client_HisDto client_HisDto);
+//	void 			modifyClient_HisEnd(Client_HisDto client_HisDto);
 
 	void 			modifyClient_His(Client_HisDto client_HisDto1);
 
@@ -33,7 +33,7 @@ public interface ClientDao {
 
 	int 			createClient_His(ClientDto clientDto);
 
-	void 			perform(Client_PerformDto client_PerformDto);
+	int 			perform(Client_PerformDto client_PerformDto);
 
 	void 			returnPerform(Client_PerformDto client_PerformDto);
 

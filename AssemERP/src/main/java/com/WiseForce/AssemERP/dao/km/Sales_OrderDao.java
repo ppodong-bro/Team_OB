@@ -15,10 +15,6 @@ import com.WiseForce.AssemERP.dto.sh.ProductDTO;
 
 public interface Sales_OrderDao {
 
-//	int 					salesTotCnt();
-//
-//	List<Sales_OrderDto> 	salesList(Sales_OrderDto sales_OrderDto);
-
 	int 					totSales(Sales_OrderSearchDto sales_OrderSearchDto);
 
 	List<Sales_OrderDto> 	listSales(Sales_OrderSearchDto sales_OrderSearchDto);
@@ -27,11 +23,11 @@ public interface Sales_OrderDao {
 
 	List<ProductDTO> 	    productList(String product_Name);
 
-	void 					createSales(Sales_OrderDto sales_OrderDto);
+	int						createSales(Sales_OrderDto sales_OrderDto);
 
-	void 					modifySales(Sales_OrderDto sales_OrderDto, List<Sales_ItemDto> salesItemList);
+	int 					modifySales(Sales_OrderDto sales_OrderDto, List<Sales_ItemDto> salesItemList);
 
-	void 					deleteSales(Sales_OrderDto sales_OrderDto);
+	int 					deleteSales(Sales_OrderDto sales_OrderDto);
 
 	List<Sales_ItemDto> 	salesItemList(int sales_No);
 

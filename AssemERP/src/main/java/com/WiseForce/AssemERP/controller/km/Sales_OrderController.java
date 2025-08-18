@@ -58,23 +58,7 @@ public class Sales_OrderController {
 	public String detailSales(Sales_OrderDto sales_OrderDto1, Model model) {
 
 		Sales_OrderDto sales_OrderDto = sales_OrderService.detailSales(sales_OrderDto1);
-//		LocalDateTime modifyDate = sales_OrderDto.getModify_Date();
-//		LocalDateTime completeDate = sales_OrderDto.getComplete_Date();
-//		LocalDateTime inDate	   = sales_OrderDto.getIn_Date();
-//		
-//		System.out.println("completeDate"+completeDate);
-//		
-//		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm:ss");
-//		
-//		String modify = (modifyDate != null)?modifyDate.format(dateTimeFormatter):"";
-//		String in	  = inDate.format(dateTimeFormatter);
-//		String complete = (completeDate != null)?completeDate.format(dateTimeFormatter):"";
-		
-		
 		model.addAttribute("sales_OrderDto", sales_OrderDto);
-//		model.addAttribute("modify", modify);
-//		model.addAttribute("in", in);
-//		model.addAttribute("complete", complete);
 		
 		return "km/detailSales";
 	}
@@ -126,7 +110,15 @@ public class Sales_OrderController {
 	        return "redirect:/sales/shortageConfirm";
 	    }
 	    
-	    sales_OrderService.createSales(sales_OrderDto);
+	    int result = sales_OrderService.createSales(sales_OrderDto);
+	    
+	    if(result == 1) {
+	    	String message = "수주 요청 완료";
+	    	ra.addFlashAttribute("createSuccess", message);
+	    } else if (result == 0) {
+	    	String message = "수주 요청 실패";
+	    	ra.addFlashAttribute("createFail", message);
+	    }
 
 		return "redirect:/sales/list";
 	}
@@ -185,11 +177,16 @@ public class Sales_OrderController {
 	}
 	
 	@PostMapping("/modify")
-	public String modify(Sales_OrderDto sales_OrderDto) {
+	public String modify(Sales_OrderDto sales_OrderDto, RedirectAttributes ra) {
 		sales_OrderService.closeCheck();
 		int sales_No = sales_OrderDto.getSales_No();
 		List<Sales_ItemDto> salesItemList = sales_OrderService.salesItemList(sales_No);
-		sales_OrderService.modifySales(sales_OrderDto, salesItemList);
+		String result = sales_OrderService.modifySales(sales_OrderDto, salesItemList);
+		if(result == "수주 수정 성공") {
+			ra.addFlashAttribute("success", result);
+		} else if (result == "수주 수정 실패") {
+			ra.addFlashAttribute("fail", result);
+		}
 
 		return "redirect:/sales/detail?sales_No=" + sales_OrderDto.getSales_No();
 	}
@@ -201,7 +198,17 @@ public class Sales_OrderController {
 			sales_OrderService.closeCheck();
 			int sales_No = sales_OrderDto.getSales_No();
 			List<Sales_ItemDto> salesItemList = sales_OrderService.salesItemList(sales_No);
-			sales_OrderService.modifyStatus(sales_No, salesItemList);
+			String result = sales_OrderService.modifyStatus(sales_No, salesItemList);
+			if(result == "수주 승인 성공") {
+				ra.addFlashAttribute("success", result);
+			} else if (result == "수주 승인 실패") {
+				ra.addFlashAttribute("fail", result);
+			} else if (result == "수주 완료 성공") {
+				ra.addFlashAttribute("success", result);
+			} else if (result == "수주 완료 실패") {
+				ra.addFlashAttribute("fail", result);
+			}
+			
 			return "redirect:/sales/detail?sales_No=" + sales_OrderDto.getSales_No();
 			
 		} catch (IllegalArgumentException e) {
@@ -232,7 +239,13 @@ public class Sales_OrderController {
 		try {
 			sales_OrderService.closeCheck();
 			System.out.println("Sales_OrderController sales_OrderDto-->" + sales_OrderDto);
-			sales_OrderService.deleteSales(sales_OrderDto);
+			String result = sales_OrderService.deleteSales(sales_OrderDto);
+			
+			if(result == "수주 삭제 성공") {
+				ra.addFlashAttribute("success", result);
+			} else if (result == "수주 삭제 실패") {
+				ra.addFlashAttribute("fail", result);
+			}
 			return "redirect:/sales/list";
 		} catch (IllegalArgumentException e) {	
 			ra.addFlashAttribute("error", e.getMessage());
@@ -250,9 +263,29 @@ public class Sales_OrderController {
 	
 	@PostMapping("returnStatus")
 	public String returnOutStatus(@RequestParam("sales_No") int sales_No, RedirectAttributes ra) {
-		int result = sales_OrderService.returnStatus(sales_No);
-		ra.addFlashAttribute("result", result);
-		return "redirect:/sales/detail?sales_No="+sales_No;
+		try {
+			sales_OrderService.closeCheck();
+			
+			String result = sales_OrderService.returnStatus(sales_No);
+			
+			if(result == "수주 완료 취소 성공") {
+				ra.addFlashAttribute("success", result);
+			} else if (result == "수주 완료 취소 실패") {
+				ra.addFlashAttribute("fail", result);
+			} else if (result == "수주 승인 취소 성공") {
+				ra.addFlashAttribute("success", result);
+			} else if (result == "수주 승인 취소 실패") {
+				ra.addFlashAttribute("fail", result);
+			}
+			
+			return "redirect:/sales/detail?sales_No="+sales_No;
+		
+		} catch (IllegalArgumentException e){
+			ra.addFlashAttribute("error", e.getMessage());	
+			return "redirect:/sales/detail?sales_No="+sales_No;
+		}
+		
+		
 		
 	}
 
