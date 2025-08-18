@@ -19,26 +19,26 @@ function loadWeather() {
 }
 
 function fetchWeather(lat, lon) {
-    console.log("위도, 경도:", lat, lon);
+    // console.log("위도, 경도:", lat, lon);
 
     var currentUrl = "https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon +
                      "&appid=" + apiKey + "&units=metric&lang=kr";
-    console.log("현재 날씨 API 호출:", currentUrl);
+     console.log("현재 날씨 API 호출:", currentUrl);
 
     fetch(currentUrl)
         .then(res => {
-            console.log("현재 날씨 응답 상태:", res.status);
+            // console.log("현재 날씨 응답 상태:", res.status);
             return res.json();
         })
         .then(data => {
-            console.log("현재 날씨 데이터:", data);
+            // console.log("현재 날씨 데이터:", data);
             if (!data.weather) {
                 document.getElementById("current-weather").innerHTML = "<p>날씨 데이터를 불러올 수 없습니다.</p>";
                 return;
             }
             document.getElementById("location").innerHTML = data.name;
             document.getElementById("current-weather").innerHTML =
-                "<img src='https://openweathermap.org/img/wn/" + data.weather[0].icon + "@2x.png'>" +
+                "<img src='https://openweathermap.org/img/wn/" + data.weather[0].icon + "@2x.png' style='height: 100%; object-fit: cover;'>" +
                 "<h2>" + Math.round(data.main.temp) + "°C</h2>"; 
                 /* + "<p>" + data.weather[0].description + "</p>"; */ // 영문 번역 이슈. 
             document.getElementById("weather-details").innerHTML =
