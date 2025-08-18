@@ -24,5 +24,7 @@ public interface PartsService {
 
 	void deleteParts(int parts_no);
 
+	List<PartsDTO> searchByName(String keyword);
+
 
 }

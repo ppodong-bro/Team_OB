@@ -35,4 +35,7 @@ public interface ProductService {
 
 	void deleteProduct(int product_no);
 
+	List<ProductDTO> searchByName(String keyword);
+
+
 }

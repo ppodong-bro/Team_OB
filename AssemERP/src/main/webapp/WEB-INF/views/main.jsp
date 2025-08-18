@@ -161,6 +161,15 @@
 }
 
 </style>
+<script>
+function openyearsPerformDetail() {
+  window.open(
+    "perform/yearsPerform", // 팝업에 띄울 페이지
+    "팝업창",
+    "width=1000,height=1000,scrollbars=yes,resizable=yes"
+  );
+}
+</script>
 </head>
 <body>
 	<!-- 전체 레이아웃 -->
@@ -180,7 +189,7 @@
 						<jsp:include page="/WEB-INF/views/sh/calender.jsp" />
 					</div>
 					<!-- 매출매입실적 -->
-					<div class="item item-2">
+					<div class="item item-2" onclick="openyearsPerformDetail()">
 						<canvas id="yearsperformChartCanvas"></canvas>
 						<jsp:include page="/WEB-INF/views/sh/yearsperformance.jsp" />
 					</div>
