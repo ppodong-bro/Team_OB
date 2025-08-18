@@ -7,15 +7,17 @@
 <jsp:include page="/common.jsp" />
 <meta charset="UTF-8">
 <title>Assem ERP</title>
-</head>
-<style>
-/* 기본 상태 (선택되지 않은 부품/제품)의 폰트 색상을 회색으로 */
-.btn-outline-primary {
-	color: #6c757d; /* 짙은 회색 */
-	border-color: #0d6efd; /* 원래 부트스트랩 primary 색상 테두리 유지 */
+<style type="text/css">
+#btn-exceldownload:hover {
+	background: #70d967; //죽음의 인도자 형초
 }
+
 </style>
+</head>
 <script type="text/javascript">
+	// JSP 변수를 JavaScript 변수로 저장
+	const contextPath = "${pageContext.request.contextPath}";
+
 	// 부품,제품 구분
 	const itemType = ${search.item_type != null ? search.item_type : 0};
 	const itemStatusSelect = ${search.item_status_select != null ? search.item_status_select : 999};
@@ -27,7 +29,7 @@
 		// console.log(itemType_common);
 		
 		// common의 내용 가져오기 
-		fetch("/common/" + itemType_common)
+		fetch(contextPath + "/common/" + itemType_common)
 			.then(response => response.json())
 			.then(data => {
 				// console.log("불러온 데이터:", data);
@@ -63,10 +65,47 @@
 			break;
 		}
 
-		var link = "/inventory?item_type=" + item_type;
+		var link = contextPath + "/inventory?item_type=" + item_type;
 		//console.log("link", link)
 		location.href = link;
 	}
+	
+//Excel 다운로드
+function excelDownload(){
+	// JSP 변수를 JavaScript 변수로 저장
+	const contextPath = "${pageContext.request.contextPath}";
+	
+	/* 검색조건에 맞는 데이터 모두 가져온다(AJAX) */
+	fetch(contextPath + "/inventory/excel?item_type=" + itemType)
+		.then(response => response.json())
+		.then(data => {
+			// 워크북 생성
+			const workbook = XLSX.utils.book_new();
+
+			// JSON을 워크시트로 변환
+			const worksheet = XLSX.utils.json_to_sheet(data);
+
+			// 워크시트를 워크북에 추가
+			XLSX.utils.book_append_sheet(workbook, worksheet, "사원목록");
+
+			/* 파일명 지정 */
+			const fileName = itemType == 0 ? "부품" : "제품";
+			
+			// 현재 시간 포맷팅하기
+			const now = new Date();
+			const year = now.getFullYear();
+			const month = String(now.getMonth() + 1).padStart(2, '0');
+			const day = String(now.getDate()).padStart(2, '0');
+
+			// 시간 문자열 만들기
+			const timeString = year + month + day;
+
+			// 파일로 저장
+			// 브라우저에서는 다운로드 형태로 저장됨
+			XLSX.writeFile(workbook, fileName + "재고목록_" + timeString + ".xlsx");
+		})
+		.catch(error => console.error("다운로드 오류:", error));
+}
 </script>
 <body>
 	<!-- 화면에서 전체적으로 사용하는 부품/제품 구분 변수 -->
@@ -93,7 +132,7 @@
 						</div>
 						<div class="card-body">
 							<!-- 검색 폼 시작 -->
-							<form method="get" action="inventory" class="row gx-2 gy-1 align-items-center mb-4">
+							<form method="get" action="${pageContext.request.contextPath}/inventory" class="row gx-2 gy-1 align-items-center mb-4">
 								<!-- 부품/제품 -->
 								<div class="col-auto">
 									<div class="btn-group" role="group" aria-label="Basic radio toggle button group">
@@ -133,22 +172,28 @@
 											<i class="bi bi-search"></i> 검색
 										</button>
 									</div>
+									<!-- 엑셀 다운로드 버튼 -->
+									<div class="col-auto">
+										<button type="button" class="btn btn-outline-secondary btn-sm text-nowrap" id="btn-exceldownload" onclick="excelDownload()">
+											<img alt="excel" src="${pageContext.request.contextPath}/img/icon_excel.png" style="width: 24px;">
+										</button>
+									</div>
 								</div>
 							</form>
 							<!-- 검색 폼 마지막 -->
 							<!-- List 테이블 시작 -->
 							<div class="table-responsive">
-								<table class="table table-bordered align-middle">
+								<table class="table table-bordered align-middle list-table">
 									<thead class="table-light">
 										<tr>
-											<th class="text-center" style="white-space: nowrap;">#</th>
-											<th class="text-center" style="white-space: nowrap;">${item_type }번호</th>
-											<th class="text-center" style="min-width: 115px; white-space: nowrap;">${item_type }구분</th>
-											<th class="text-center" style="white-space: nowrap;">${item_type }명</th>
-											<th class="text-center" style="white-space: nowrap;">수량</th>
-											<th class="text-center" style="white-space: nowrap;">수정</th>
-											<th class="text-center" style="display: none;">적정 수량</th>
-											<th class="text-center" style="display: none;">편차</th>
+											<th style="width: 50px;">#</th>
+											<th style="width: 85px;">${item_type }번호</th>
+											<th style="width: 85px;">${item_type }구분</th>
+											<th style="min-width: 250px;">${item_type }명</th>
+											<th style="width: 100px;">수량</th>
+											<th style="width: 85px;">수정</th>
+											<th style="display: none;">적정 수량</th>
+											<th style="display: none;">편차</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -159,11 +204,10 @@
 												<td class="text-center">${realInventory.item_status}</td>
 												<td>${realInventory.item_name}</td>
 												<td class="text-center">${realInventory.cnt}</td>
-												<td class="text-center">
-					                                <a href="${pageContext.request.contextPath}/inventory/adjust?item_type=${search.item_type}&item_no=${realInventory.item_no}" class="btn btn-sm btn-outline-success">
-					                                    <i class="bi bi-pencil-square"></i> 수정
-					                                </a>
-				                                </td>
+												<td class="text-center"><a
+													href="${pageContext.request.contextPath}/inventory/adjust?item_type=${search.item_type}&item_no=${realInventory.item_no}"
+													class="btn btn-sm btn-outline-success"> <i class="bi bi-pencil-square"></i> 수정
+												</a></td>
 												<td class="text-center" style="display: none;">${realInventory.proper_cnt}</td>
 												<td class="text-center" style="display: none;">${realInventory.diff_cnt}</td>
 											</tr>

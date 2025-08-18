@@ -16,6 +16,7 @@ import com.WiseForce.AssemERP.dto.sh.PartsDTO;
 import com.WiseForce.AssemERP.dto.sh.ProductBomDTO;
 import com.WiseForce.AssemERP.dto.sh.ProductDTO;
 import com.WiseForce.AssemERP.repository.dg.EmpRepository;
+import com.WiseForce.AssemERP.repository.sh.PartsRepository;
 import com.WiseForce.AssemERP.repository.sh.ProductRepository;
 
 import jakarta.transaction.Transactional;
@@ -31,7 +32,8 @@ public class ProductServiceImpl implements ProductService {
 	private final PartsDao partsDao;
 	private final PlatformTransactionManager platformTransactionManager;
 	private final EmpRepository empRepository;
-
+	private final PartsRepository partsRepository;
+	
 	@Override
 	public int getTotalCount() {
 		int totalCount = productDao.getTotalProduct();
@@ -135,7 +137,12 @@ public class ProductServiceImpl implements ProductService {
 			productDTO = ProductDTO.chageProductDTO(product.get());
 			// 제품분류번호에 맞는 제품분류명 가져오기
 			productDTO.setProduct_statusName(productStatus_IntToString(productDTO.getProduct_status()));
-
+			// 사원번호에 맞는 사원이름 가져오기
+			productDTO.setEmp_name(empRepository.getEmpNameFromEmpNo(productDTO.getEmp_no()));
+			// 최근거래가 가져오기
+			productDTO.setRecent_cost(productDao.getProductRecentCost(productDTO.getProduct_no()));
+			// 최근거래량 가져오기
+			productDTO.setRecent_tradeCnt(productDao.getProductRecentTradeCnt(productDTO.getProduct_no()));
 		}
 		System.out.println("ProductServiceImpl getfindById productDTO => " + productDTO);
 
@@ -146,9 +153,12 @@ public class ProductServiceImpl implements ProductService {
 	public List<ProductBomDTO> getBomInfo(int product_no) {
 		List<ProductBomDTO> bomDTOs = productDao.getBomList(product_no);
 		
+		
+		
 		// 제품분류번호에 맞는 제품분류명 가져오기
 		for (ProductBomDTO dto : bomDTOs) {
 			dto.setParts_statusName(partsStatus_IntToString(dto.getParts_status()));
+			dto.setParts_name(partsDao.partsNameFromPartno(dto.getParts_no()));
 		}
 
 		return bomDTOs;
@@ -171,16 +181,16 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public void productBOMUpdate(ProductDTO productDTO) {
 
-		// 기존 BOM정보 삭제 
-		TransactionStatus transactionStatusDelete = platformTransactionManager
-				.getTransaction(new DefaultTransactionDefinition());
-		try {
-			productDao.productBOMDelete(productDTO.getProduct_no());
-			platformTransactionManager.commit(transactionStatusDelete);
-		} catch (Exception e) {
-			platformTransactionManager.rollback(transactionStatusDelete);
-			System.out.println("ProductServiceImpl productBOMUpdate transactionStatus1 Exception => " + e.getMessage());
-		}
+//		// 기존 BOM정보 삭제 
+//		TransactionStatus transactionStatusDelete = platformTransactionManager
+//				.getTransaction(new DefaultTransactionDefinition());
+//		try {
+//			productDao.productBOMDelete(productDTO.getProduct_no());
+//			platformTransactionManager.commit(transactionStatusDelete);
+//		} catch (Exception e) {
+//			platformTransactionManager.rollback(transactionStatusDelete);
+//			System.out.println("ProductServiceImpl productBOMUpdate transactionStatus1 Exception => " + e.getMessage());
+//		}
 		
 		// BOM리스트가 null일경우 저장하지 않음
 		if (productDTO.getProductBOMList() != null) {

@@ -46,8 +46,17 @@ public class PartsDTO {
     // 이미지
     private MultipartFile file;
     
+    // 재고
+    private int real_stuck; 
+    
     // 사원명가져오기
     private String emp_name;
+    
+    // 최근거래가
+    private int recent_cost;
+    
+    // 최근거래량
+    private int recent_tradeCnt;
     
     public static PartsDTO chagePartsDTO(Parts parts) {
     	return PartsDTO.builder()

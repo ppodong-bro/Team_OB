@@ -1,6 +1,7 @@
 package com.WiseForce.AssemERP.dao.km;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
@@ -8,6 +9,8 @@ import org.springframework.stereotype.Repository;
 import com.WiseForce.AssemERP.dto.km.ClientDto;
 import com.WiseForce.AssemERP.dto.km.ClientSearchDto;
 import com.WiseForce.AssemERP.dto.km.Client_HisDto;
+import com.WiseForce.AssemERP.dto.km.Client_PerformDto;
+import com.WiseForce.AssemERP.dto.sm.EmpDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -46,6 +49,13 @@ public class ClientDaoImpl implements ClientDao {
 		System.out.println("ClientDao createClient result->" + result);
 		return result;
 	}
+	
+	@Override
+	public int createClient_His(ClientDto clientDto) {
+		System.out.println("clientDto-------------------------------->"+clientDto);
+		int result = session.insert("createClient_His", clientDto);
+		return result;
+	}
 
 	@Override
 	public int modifyClient(ClientDto clientDto1) {
@@ -72,9 +82,6 @@ public class ClientDaoImpl implements ClientDao {
 
 
 		session.update("client_HisEnd", client_HisDto);
-		
-		// 중복 제거를 위한 delete문
-		session.delete("client_HisDelete", client_HisDto);
 
 		session.insert("client_His", client_HisDto);
 
@@ -87,9 +94,32 @@ public class ClientDaoImpl implements ClientDao {
 	}
 
 	@Override
-	public List<ClientDto> clientAll() {
-		List<ClientDto> clientList = session.selectList("clientAll");
+	public List<ClientDto> clientAll(int client_Gubun, String client_Name) {
+		Map<String, Object> clientPopMap = Map.of("client_Gubun", client_Gubun, "client_Name", client_Name);
+		List<ClientDto> clientList = session.selectList("clientAll", clientPopMap);
 		return clientList;
 	}
+
+	@Override
+	public void perform(Client_PerformDto client_PerformDto) {
+		session.insert("client_Perform", client_PerformDto);
+		
+	}
+
+	@Override
+	public void returnPerform(Client_PerformDto client_PerformDto) {
+		session.update("returnPerform", client_PerformDto);
+		session.delete("deletePerform", client_PerformDto);
+		
+	}
+
+	@Override
+	public List<EmpDTO> listEmp(String empName) {
+		List<EmpDTO> listEmp = session.selectList("listEmpOfClient",empName);
+		System.out.println("listEmp->"+listEmp);
+		return listEmp;
+	}
+
+
 
 }

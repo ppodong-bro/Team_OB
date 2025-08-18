@@ -24,6 +24,8 @@ public class Sales_OrderDto {
 	private LocalDate sales_Date;
 	private int out_Status;
 	private int del_Status;
+	private LocalDateTime complete_Date;
+	private LocalDateTime modify_Date;
 	private LocalDateTime in_Date;
 	private List<Sales_ItemDto> sales_Item;
 	private ClientDto clientDto;
@@ -39,6 +41,5 @@ public class Sales_OrderDto {
 	private int  totWaitingCnt; // 모든 품목에 대한 출고 대기 수량 합
 	private Long totCost;    // 모든 제품 총액
 	private Long totOutCost; // 출고 제품 기준 총액
-		// TODO Auto-generated method stub
 		
 	}

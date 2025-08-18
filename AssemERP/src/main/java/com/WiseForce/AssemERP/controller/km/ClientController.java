@@ -1,7 +1,10 @@
 package com.WiseForce.AssemERP.controller.km;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.WiseForce.AssemERP.dto.CommonDTO;
 import com.WiseForce.AssemERP.dto.km.ClientDto;
 import com.WiseForce.AssemERP.dto.km.ClientSearchDto;
+import com.WiseForce.AssemERP.dto.sm.EmpDTO;
 import com.WiseForce.AssemERP.service.km.ClientService;
 import com.WiseForce.AssemERP.util.Paging;
 
@@ -45,7 +50,16 @@ public class ClientController {
 	public String detailClient(ClientDto clientDto1, Model model) {
 		System.out.println("ClientController detailClient Start...");
 		ClientDto clientDto = clientService.detailClient(clientDto1);
+//		LocalDateTime inDate =clientDto.getIn_Date();
+//		LocalDateTime modifyDate = clientDto.getModify_Date();
+//		
+//		DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm:ss");
+//		String modifyFmt = modifyDate.format(dateTimeFormat);
+//		String inDateFmt = modifyDate.format(dateTimeFormat);
+		
 		model.addAttribute("clientDto", clientDto);
+//		model.addAttribute("modify", modifyFmt);
+//		model.addAttribute("inDate", inDateFmt);
 		
 		return "km/detailClient";
 	}
@@ -89,14 +103,20 @@ public class ClientController {
 	}
 	
 	@GetMapping("popup")
-
-	public String searchByName(Model model){
-		List<ClientDto>listClientDto = clientService.clientAll();
+	public String searchByName(@RequestParam("client_Gubun") int client_Gubun, @RequestParam("client_Name") String client_Name ,Model model){
+		List<ClientDto>listClientDto = clientService.clientAll(client_Gubun, client_Name);
 		model.addAttribute("clientList", listClientDto);
+		model.addAttribute("client_Gubun", client_Gubun);
 		System.out.println("listClientDto"+listClientDto);
-		return "km/salesPop";
+		return "km/clientPop";
 	}
 	
+	@GetMapping("empPopup")
+	public String empPopup(@RequestParam("empName") String empName, Model model) {
+		List<EmpDTO> listEmp = clientService.listEmp(empName);
+		model.addAttribute("empList", listEmp);
+		return "km/empPop";
+	}
 
 }
 

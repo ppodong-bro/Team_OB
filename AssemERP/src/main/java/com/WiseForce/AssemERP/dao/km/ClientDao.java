@@ -5,6 +5,9 @@ import java.util.List;
 import com.WiseForce.AssemERP.dto.km.ClientDto;
 import com.WiseForce.AssemERP.dto.km.ClientSearchDto;
 import com.WiseForce.AssemERP.dto.km.Client_HisDto;
+import com.WiseForce.AssemERP.dto.km.Client_PerformDto;
+import com.WiseForce.AssemERP.dto.km.Sales_ItemDto;
+import com.WiseForce.AssemERP.dto.sm.EmpDTO;
 
 public interface ClientDao {
 
@@ -26,7 +29,15 @@ public interface ClientDao {
 
 	List<ClientDto> searchByName(String client_Name);
 
-	List<ClientDto> clientAll();
+	List<ClientDto> clientAll(int client_Gubun, String client_Name);
+
+	int 			createClient_His(ClientDto clientDto);
+
+	void 			perform(Client_PerformDto client_PerformDto);
+
+	void 			returnPerform(Client_PerformDto client_PerformDto);
+
+	List<EmpDTO> 	listEmp(String empName);
 		
 }
 

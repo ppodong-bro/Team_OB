@@ -5,6 +5,7 @@
 <html lang="ko">
 <head>
 <jsp:include page="/common.jsp" />
+<link href="/css/list.css" rel="stylesheet">
 <meta charset="UTF-8">
 <title>제품관리</title>
 <!-- 공통 CSS -->
@@ -90,20 +91,21 @@
 
 							<!-- List 테이블 시작 -->
 							<div class="table-responsive">
-								<table class="table table-bordered align-middle">
+								<table class="table table-bordered align-middle list-table">
 									<thead class="table-light">
 										<tr style="text-align: center;">
-											<th>제품번호</th>
-											<th>제품명</th>
-											<th>종류</th>
-											<th>등록자</th>
-											<th>등록일</th>
-											<th class="text-center">수정</th>
+											<th style="width: 10%;">제품번호</th>
+											<th style="width: 40%;">제품명</th>
+											<th style="width: 15%;">종류</th>
+											<th style="width: 10%;">등록자</th>
+											<th style="width: 15%;">등록일</th>
+											<th style="width: 10%;" class="text-center">수정</th>
 										</tr>
 									</thead>
 									<tbody>
 										<c:forEach var="productDTO" items="${productDTOs}">
-											<tr>
+											<tr style="cursor: pointer;"
+												onclick="location.href='<c:url value='/product/productDetail/${productDTO.product_no}'/>'">
 												<td style="text-align: center;">${productDTO.product_no}</td>
 												<td>${productDTO.product_name}</td>
 												<td style="text-align: center;">${productDTO.product_statusName}</td>
@@ -111,7 +113,7 @@
 												<td style="text-align: center;">${productDTO.in_date}</td>
 												<td class="text-center">
 													<button type="button"
-														onclick="location.href='/product/productModify/${productDTO.product_no}'"
+														onclick="event.stopPropagation(); location.href='/product/productModify/${productDTO.product_no}'"
 														class="btn btn-sm btn-outline-success">
 														<i class="bi bi-pencil-square"></i> 수정
 													</button>

@@ -94,11 +94,20 @@ public class ProductDaoImpl implements ProductDao {
 		
 		System.out.println("ProductDaoImpl productBOMUpdate list =>"+list.size());
 		
-		// 제품번호주입
-		for(ProductBomDTO bomDTO : list) {
-			bomDTO.setProduct_no(product_no);
-			System.out.println("ProductDaoImpl productBOMUpdate bomDTO => "+bomDTO);
-			session.insert("shPrdouctBOMUpdate", bomDTO);
+		try {
+			// 제품BOM 버전찾기
+			int product_version = session.selectOne("shProductBOMFindVersion", product_no);
+			System.out.println(" ProductDaoImpl productBOMUpdate product_version => "+product_version);
+			// 제품번호 / 버전주입
+			for(ProductBomDTO bomDTO : list) {
+				bomDTO.setProduct_no(product_no);
+				bomDTO.setProduct_version(product_version+1);
+				System.out.println("ProductDaoImpl productBOMUpdate bomDTO => "+bomDTO);
+				session.insert("shPrdouctBOMUpdate", bomDTO);
+			}
+			
+		} catch (Exception e) {
+			System.out.println("ProductDaoImpl productBOMUpdate Exception => "+e.getMessage());
 		}
 		
 	}
@@ -123,7 +132,36 @@ public class ProductDaoImpl implements ProductDao {
 		return result;
 	}
 
+	@Override
+	public int getProductRecentCost(int product_no) {
+		double recent_cost = 0;
 		
+		try {
+			recent_cost = session.selectOne("shProductRecentCost", product_no);
+			System.out.println("ProductDaoImpl getProductRecentCost recent_cost => "+recent_cost);
+		} catch (Exception e) {
+			System.out.println("ProductDaoImpl getProductRecentCost Exception => "+e.getMessage());
+		}
+		
+		return (int) recent_cost;
+	}
+
+	@Override
+	public int getProductRecentTradeCnt(int product_no) {
+		int tradeCnt = 0;
+		
+		try {
+			tradeCnt = session.selectOne("shProductRecentTradeCnt", product_no);
+			System.out.println("ProductDaoImpl getProductRecentTradeCnt tradeCnt => "+tradeCnt);
+		} catch (Exception e) {
+			System.out.println("ProductDaoImpl getProductRecentTradeCnt Exception => "+e.getMessage());
+		}
+		
+		
+		return tradeCnt;
+	}
+
+	
 
 	
 

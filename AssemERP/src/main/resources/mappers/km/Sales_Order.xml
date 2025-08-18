@@ -14,6 +14,8 @@
 		<result column="SALES_DATE" property="sales_Date" />
 		<result column="OUT_STATUS" property="out_Status" />
 		<result column="DEL_STATUS" property="del_Status" />
+		<result	column="COMPLETE_DATE" property="complete_Date"/>
+		<result column="MODIFY_DATE"	property="modify_Date"/>
 		<result column="IN_DATE" 	property="in_Date" />
 
 		<association property="clientDto" javaType="ClientDto">
@@ -47,6 +49,7 @@
 		<collection property="sales_Item" ofType="Sales_ItemDto">
 			<id column="SALES_NO" 				property="sales_No" />
 			<id column="PRODUCT_NO" 			property="product_No" />
+			<id column="PRODUCT_VERSION"		property="product_Version"/>
 			<result column="SALES_ITEM_CNT" 	property="sales_Item_Cnt" />
 			<result column="SALES_ITEM_OUTCNT"	property="sales_Item_OutCnt" />
 			<result column="SALES_ITEM_COST" 	property="sales_Item_Cost" />
@@ -54,12 +57,30 @@
 			<association property="productDto" javaType="ProductDTO">
 				<id column="PRODUCT_NO" 		property="product_no" />
 				<result column="PRODUCT_NAME" 	property="product_name" />
+				
 			</association>
+			
 		</collection>
 
 	</resultMap>
 	
-	<resultMap type="Sales_OrderDto" id="createListMap"></resultMap>
+	<resultMap type="Sales_OrderDto" id="clientNoAndCloseDate">
+		<id column="SALES_NO" property="sales_No"/>
+		<result column="COMPLETE_DATE" property="complete_Date"/>
+		
+		<association property="clientDto" javaType="ClientDto">
+			<id	column="CLIENT_NO" property="client_No"/>
+		</association>
+	</resultMap>
+	
+	<resultMap type="ProductDTO" id="productDTOMap">
+		<id column="PRODUCT_NO"	property="product_no"/>
+		<result	column="PRODUCT_NAME" property="product_name"/>
+		<collection property="productBOMList" ofType="ProductBomDTO">
+			<id	column="PRODUCT_VERSION" property="product_version"/>
+		</collection>
+	</resultMap>
+	
 
 	<select id="totSales" parameterType="Sales_OrderSearchDto"
 		resultType="int">
@@ -108,7 +129,8 @@
 			    	  ) O
 		      )S
     	LEFT JOIN CLIENT  C ON S.CLIENT_NO = C.CLIENT_NO
-    	LEFT JOIN CLIENT_HIS H ON S.CLIENT_NO = H.CLIENT_NO AND S.IN_DATE BETWEEN H.START_DATE AND END_DATE
+    	LEFT JOIN CLIENT_HIS H ON S.CLIENT_NO = H.CLIENT_NO AND COALESCE(S.MODIFY_DATE, S.IN_DATE)
+												     		    BETWEEN H.START_DATE AND H.END_DATE
     	LEFT JOIN EMP     E ON S.EMP_NO    = E.EMP_NO
     	LEFT JOIN SALES_ITEM I ON S.SALES_NO = I.SALES_NO
     	LEFT JOIN PRODUCT P ON I.PRODUCT_NO = P.PRODUCT_NO
@@ -141,30 +163,48 @@
 	</select>
 	
 	<select id="detailSales" parameterType="int" resultMap="sales_OrderMap">
-		SELECT S.SALES_NO, S.SALES_DATE, S.OUT_STATUS, S.DEL_STATUS
+		SELECT S.SALES_NO, S.SALES_DATE, S.OUT_STATUS, S.DEL_STATUS, S.COMPLETE_DATE, S.MODIFY_DATE
          	 , S.IN_DATE, H.CLIENT_NO, H.CLIENT_NAME, H.CLIENT_EMAIL
          	 , H.CLIENT_MAN, H.CLIENT_ADDRESS, H.CLIENT_TEL
          	 , E.EMP_NO, E.EMP_NAME
-         	 , I.PRODUCT_NO, I.SALES_ITEM_CNT, I.SALES_ITEM_OUTCNT
-         	 , I.SALES_ITEM_COST, P.PRODUCT_NO, P.PRODUCT_NAME
-        FROM SALES_ORDER S LEFT JOIN CLIENT C ON S.CLIENT_NO = C.CLIENT_NO
-        				   LEFT JOIN CLIENT_HIS H ON S.CLIENT_NO = H.CLIENT_NO AND S.IN_DATE BETWEEN H.START_DATE AND H.END_DATE
+         	 , I.PRODUCT_NO, I.PRODUCT_VERSION, I.SALES_ITEM_CNT, I.SALES_ITEM_OUTCNT
+         	 , I.SALES_ITEM_COST, P.PRODUCT_NAME
+        FROM SALES_ORDER S LEFT JOIN CLIENT_HIS H ON S.CLIENT_NO = H.CLIENT_NO AND COALESCE(S.MODIFY_DATE, S.IN_DATE)
+												     							   BETWEEN H.START_DATE AND H.END_DATE
         	    		   LEFT JOIN EMP    E ON S.EMP_NO    = E.EMP_NO
         	    		   LEFT JOIN SALES_ITEM I ON S.SALES_NO = I.SALES_NO
         	    		   LEFT JOIN PRODUCT P ON I.PRODUCT_NO = P.PRODUCT_NO
-        WHERE S.SALES_NO = #{sales_No}
+        WHERE S.SALES_NO = #{value}
 	</select>
 	
-	<select id="salesProductList" resultType="ProductDTO">
-		SELECT PRODUCT_NO, PRODUCT_NAME
-		FROM PRODUCT
+	<!-- 	<select id="salesProductList" resultMap="productDTOMap">
+		SELECT p.PRODUCT_NO, p.PRODUCT_NAME, b.PRODUCT_VERSION
+		FROM PRODUCT p
+		JOIN PRODUCT_BOM b
+		  ON b.PRODUCT_NO = p.PRODUCT_NO
+		WHERE b.PRODUCT_VERSION = (
+		  SELECT MAX(PRODUCT_VERSION)
+		  FROM PRODUCT_BOM 
+		  WHERE PRODUCT_NO = p.PRODUCT_NO
+		)
+		</select> -->
+		
+	<select id="salesProductList" parameterType="string" resultMap="productDTOMap">
+		SELECT p.PRODUCT_NO, p.PRODUCT_NAME, b.PRODUCT_VERSION
+		FROM PRODUCT p
+		JOIN PRODUCT_BOM b
+		  ON b.PRODUCT_NO = p.PRODUCT_NO
+		<where>
+		b.PRODUCT_VERSION = (
+		  SELECT MAX(PRODUCT_VERSION)
+		  FROM PRODUCT_BOM 
+		  WHERE PRODUCT_NO = p.PRODUCT_NO
+		)
+		<if test="_parameter != null and _parameter != ''">
+		AND PRODUCT_NAME LIKE '%' || #{_parameter} || '%'
+		</if>
+		</where>
 	</select>
-	
-	<select id="salesClientList" resultType="clientDto">
-		SELECT *
-		FROM CLIENT
-	</select>
-	
 		
 	<insert id="createSales" parameterType="Sales_OrderDto">
 		<selectKey keyProperty="sales_No" resultType="int" order="BEFORE">
@@ -178,9 +218,9 @@
 		
 	<insert id="createSales_Item" parameterType="sales_OrderDto">
 	
-		INSERT INTO SALES_ITEM (SALES_NO, PRODUCT_NO, SALES_ITEM_CNT, SALES_ITEM_OUTCNT, SALES_ITEM_COST)
+		INSERT INTO SALES_ITEM (SALES_NO, PRODUCT_NO, PRODUCT_VERSION, SALES_ITEM_CNT, SALES_ITEM_OUTCNT, SALES_ITEM_COST)
 		<foreach collection="sales_Item" item="item" separator="UNION ALL">
-			SELECT #{sales_No}, #{item.product_No}, #{item.sales_Item_Cnt}, #{item.sales_Item_OutCnt}, #{item.sales_Item_Cost}
+			SELECT #{sales_No}, #{item.product_No}, #{item.product_Version}, #{item.sales_Item_Cnt}, #{item.sales_Item_OutCnt}, #{item.sales_Item_Cost}
 			FROM DUAL
 		</foreach>
 		
@@ -200,14 +240,13 @@
 		<if test="sales_Date != null">
 			SALES_DATE = #{sales_Date, jdbcType=DATE},
 		</if>
-		<if test="out_Status != null">
-			OUT_STATUS = #{out_Status},
-		</if>
 		<if test="del_Status != null">
-			DEL_STATUS = #{del_Status}
+			DEL_STATUS = #{del_Status},
 		</if>
+			MODIFY_DATE = SYSDATE
 		</set>
 		WHERE SALES_NO = #{sales_No}
+		AND   OUT_STATUS IN(0,1)
 	</update>
 	
 	<update id="deleteSales" parameterType="Sales_OrderDto">
@@ -215,5 +254,127 @@
 		SET DEL_STATUS = 1
 		WHERE SALES_NO = #{sales_No}
 	</update>
+	
+	<update id="modifyComplete" parameterType="java.util.List">
+		BEGIN
+		<foreach collection="list" item="item">
+			UPDATE SALES_ITEM
+			SET SALES_ITEM_OUTCNT = #{item.sales_Item_Cnt}
+			WHERE SALES_NO = #{item.sales_No} AND PRODUCT_NO = #{item.product_No};
+		</foreach>
+		END;
+	</update>
+	
+	<delete id="deleteToUpdate" parameterType="java.util.List">
+	BEGIN
+		<foreach collection="list" item="item">
+		DELETE FROM SALES_ITEM WHERE SALES_NO = #{item.sales_No} AND PRODUCT_NO = #{item.product_No} AND PRODUCT_VERSION = #{item.product_Version};
+		</foreach>
+	END;
+	</delete>
+
+	<select id="salesItemAll" parameterType= "int" resultType="Sales_ItemDto">
+		SELECT *
+		FROM   SALES_ITEM
+		WHERE  SALES_NO = #{value}
+	</select>
+	
+	<select id="selectOutStatus" parameterType="int" resultType="int">
+		SELECT OUT_STATUS
+		FROM   SALES_ORDER
+		WHERE  SALES_NO = #{value}
+	</select>
+	
+	<update id="modifyOutStatus" parameterType="Map">
+		UPDATE SALES_ORDER
+		SET	   OUT_STATUS = #{out_Status}
+		WHERE  SALES_NO = #{sales_No}
+	</update>
+	
+	<update id="completeStatus" parameterType="Map">
+		UPDATE SALES_ORDER
+		SET	   OUT_STATUS = #{out_Status},
+			   COMPLETE_DATE = SYSDATE
+		WHERE  SALES_NO 	  = #{sales_No}
+	</update>
+	
+	<select id="getCompleteDateAndClientNo" parameterType="int" resultMap="clientNoAndCloseDate">
+		SELECT S.COMPLETE_DATE, C.CLIENT_NO
+		FROM   SALES_ORDER S LEFT JOIN CLIENT C ON S.CLIENT_NO = C.CLIENT_NO
+		WHERE  S.SALES_NO = #{sales_No}
+	</select>
+	
+	<select id="closeCheckSales" resultType="int">
+		SELECT COUNT(*)
+		FROM   INVENTORY_CLOSE
+		WHERE  YEARMONTH = TO_CHAR(SYSDATE ,'YYMMDD')
+	</select>
+	
+	<update id="returnComplete" parameterType="Map">
+		UPDATE SALES_ORDER
+		SET    OUT_STATUS = #{out_Status},
+			   COMPLETE_DATE = NULL
+		WHERE  SALES_NO = #{sales_No}
+	</update>
+	
+	<update id="returnSalesItem" parameterType="java.util.List">
+		BEGIN
+		<foreach collection="list" item="item">
+		UPDATE SALES_ITEM
+		SET    SALES_ITEM_OUTCNT = 0
+		WHERE  SALES_NO = #{item.sales_No}
+		AND    PRODUCT_NO = #{item.product_No}
+		AND    PRODUCT_VERSION = #{item.product_Version};
+		</foreach>
+		END;
+	</update>
+	
+	<select id="findBomByProduct" resultType="ProductBomDTO">
+	  SELECT
+	    b.product_no,
+	    b.parts_no,
+	    b.cnt,
+	    b.product_version,
+	    p.parts_name
+	  FROM PRODUCT_BOM b
+	  JOIN PARTS p ON p.parts_no = b.parts_no
+	  WHERE b.product_no = #{product_no}
+	    AND b.product_version = #{product_version}
+	</select>
+
+  
+	<select id="findPartsStocks" resultType="map">
+	  SELECT
+	    i.item_no        "parts_no",
+	    NVL(SUM(CASE
+	              WHEN i.inout_status = 0 THEN i.item_cnt   -- IN  (+)
+	              WHEN i.inout_status = 1 THEN -i.item_cnt  -- OUT (−)
+	              ELSE 0
+	            END), 0) "stock"
+	  FROM INVENTORY i
+	  WHERE i.item_status = 0
+	    AND i.item_no IN
+	    <foreach collection="partsNos" item="no" open="(" separator="," close=")">
+	      #{no}
+	    </foreach>
+	  GROUP BY i.item_no
+	</select>
+	
+<!-- <select id="findProductStocks" resultType="map">
+  SELECT
+    i.item_no        "product_no",
+    NVL(SUM(CASE
+              WHEN i.inout_status = 0 THEN i.item_cnt
+              WHEN i.inout_status = 1 THEN -i.item_cnt
+              ELSE 0
+            END), 0) "stock"
+  FROM INVENTORY i
+  WHERE i.item_status = 1
+    AND i.item_no IN
+    <foreach collection="productNos" item="no" open="(" separator="," close=")">
+      #{no}
+    </foreach>
+  GROUP BY i.item_no
+</select> -->
 
 </mapper>

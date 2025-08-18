@@ -38,160 +38,159 @@ body {
 
 			<!-- 이곳에 자신의 코드를 작성하세요 -->
 			<div id="contents">
-				<div class="container">
-					<div class="row justify-content-center">
-						<div class="col-lg-8">
-							<div class="card shadow-sm">
-								<%------------------------------------------------------------------------------
+				<div class="container-fluid px-4 py-4">
+					<div class="card shadow-sm">
+						<%------------------------------------------------------------------------------
                 					1. Card Header 정중앙
                 				 ------------------------------------------------------------------------------%>
-								<div
-									class="card-header d-flex justify-content-between align-items-center">
-									<%------------------------------------------------------------------------------
+						<div
+							class="card-header d-flex justify-content-between align-items-center">
+							<%------------------------------------------------------------------------------
                 						1-1. 목록 버튼 스타일
                  					------------------------------------------------------------------------------%>
-									<a href="/parts/partsList" class="btn btn-outline-light btn-sm">
-										<i class="bi bi-list-ul me-1"></i> 목록
-									</a>
-									<%------------------------------------------------------------------------------
+							<a href="/parts/partsList" class="btn btn-outline-light btn-sm">
+								<i class="bi bi-list-ul me-1"></i> 목록
+							</a>
+							<%------------------------------------------------------------------------------
                 						1-2. 타이틀 중앙 정렬 스타일
                  					------------------------------------------------------------------------------%>
-									<h4 class="card-title mb-0">신규 제품 등록</h4>
-									<%-- 타이틀의 정확한 중앙 정렬을 위한 빈 공간 --%>
-									<div style="width: 90px;"></div>
+							<h4 class="card-title mb-0">신규 제품 등록</h4>
+							<%-- 타이틀의 정확한 중앙 정렬을 위한 빈 공간 --%>
+							<div style="width: 90px;"></div>
+						</div>
+						<div class="card-body p-4">
+							<!-- 제품박스 -->
+							<form action="/product/productCreate" method="post"
+								class="needs-validation" enctype="multipart/form-data"
+								novalidate>
+								<input type="hidden" name="${_csrf.parameterName}"
+									value="${_csrf.token}" />
+
+								<h5 class="mb-3">기본 정보</h5>
+								<div class="row">
+
+									<div class="col-md-6 mb-3">
+
+										<!-- 제품명 -->
+
+										<label for="productName" class="form-label">제품명</label>
+										<div class="input-group">
+											<span class="input-group-text"> <i class="bi bi-tag"></i>
+											</span> <input type="text" class="form-control form-control-sm"
+												id="productName" name="product_name" required>
+											<div class="invalid-feedback">제품명을 입력해주세요.</div>
+										</div>
+									</div>
+
+									<!-- 제품구분 -->
+									<div class="col-md-6 mb-3">
+										<label for="productStatus" class="form-label">구분</label>
+										<div class="input-group">
+											<span class="input-group-text"> <i class="bi bi-grid"></i></span>
+											<select class="form-select form-select-sm w-auto"
+												id="productStatus" name="product_status" required>
+												<option value="">선택</option>
+												<option value="0">데스크탑</option>
+												<option value="1">노트북</option>
+												<option value="2">워크스테이션</option>
+											</select>
+											<div class="invalid-feedback">제품종류를 선택해주세요.</div>
+										</div>
+									</div>
 								</div>
-								<div class="card-body p-4">
-									<!-- 제품박스 -->
-									<form action="/product/productCreate" method="post"
-										class="needs-validation" 
-										enctype="multipart/form-data"
-										novalidate>
-										<input type="hidden" name="${_csrf.parameterName}"
-											value="${_csrf.token}" />
 
-										<h5 class="mb-3">기본 정보</h5>
-										<div class="row">
+								<div class="row">
+									<!-- 등록자 -->
+									<div class="col-md-6 mb-3">
+										<label for="empNo" class="form-label">등록자</label>
+										<div class="input-group">
+											<span class="input-group-text"> <i
+												class="bi bi-person"></i></span> <select
+												class="form-control form-control-sm" name="emp_no"
+												id="empNo">
+												<c:forEach var="emp" items="${EmpList}">
+													<option value="${emp.empNo }">${emp.empName }</option>
+												</c:forEach>
+											</select>
 
-											<div class="col-md-6 mb-3">
-
-												<!-- 제품명 -->
-
-												<label for="productName" class="form-label">제품명</label>
-												<div class="input-group">
-													<span class="input-group-text"> <i class="bi bi-tag"></i>
-													</span> <input type="text" class="form-control form-control-sm"
-														id="productName" name="product_name" required>
-													<div class="invalid-feedback">제품명을 입력해주세요.</div>
-												</div>
-											</div>
-
-											<!-- 제품구분 -->
-											<div class="col-md-6 mb-3">
-												<label for="productStatus" class="form-label">구분</label>
-												<div class="input-group">
-													<span class="input-group-text"> 
-														<i class="bi bi-grid"></i></span> 
-														<select	class="form-select form-select-sm w-auto" id="productStatus" name="product_status" required>
-															<option value="">선택</option>
-															<option value="0">데스크탑</option>
-															<option value="1">노트북</option>
-															<option value="2">워크스테이션</option>
-														</select>
-													<div class="invalid-feedback">제품종류를 선택해주세요.</div>
-												</div>
-											</div>
 										</div>
+									</div>
+									<!-- 이미지 -->
+									<div class="col-md-6 mb-3">
+										<label for="productfile" class="form-label">제품이미지</label> <input
+											type="file" class="form-control form-control-sm"
+											id="productfile" name="file">
+									</div>
+								</div>
 
-										<div class="row">
-										<!-- 등록자 -->
-											<div class="col-md-6 mb-3">
-												<label for="empNo" class="form-label">등록자</label>
-												<div class="input-group">
-													<span class="input-group-text">
-													<i class="bi bi-person"></i></span> 
-													<select class="form-control form-control-sm" name="emp_no" id="empNo">
-														<c:forEach var="emp" items="${EmpList}">
-															<option value="${emp.empNo }">${emp.empName }</option>
-														</c:forEach>
-													</select>
+								<!-- 부품설명 -->
+								<div class="col-md-6 mb-3">
+									<label for="productContext" class="form-label">제품설명</label>
+									<textarea class="form-control form-control-sm" rows="5"
+										id="productContext" name="product_context"
+										placeholder="설명란에 정보를 입력해주세요"></textarea>
+								</div>
+								<!-- 제품 기본정보 종료 -->
 
-												</div>
-											</div>
-											<!-- 이미지 -->
-											<div class="col-md-6 mb-3">
-												<label for="productfile" class="form-label">제품이미지</label> 
-												<input type="file" class="form-control form-control-sm" id="productfile" name="file">
-											</div>
-										</div>
+								<hr class="my-4">
 
-										<!-- 부품설명 -->
-										<div class="col-md-6 mb-3">
-											<label for="productContext" class="form-label">제품설명</label>
-											<textarea class="form-control form-control-sm" rows="5"
-												id="productContext" name="product_context"
-												placeholder="설명란에 정보를 입력해주세요"></textarea>
-										</div>
-										<!-- 제품 기본정보 종료 -->
+								<!-- BOM 영역 -->
+								<div class="container-fluid px-4 py-4">
+									<!-- 👇 제목과 버튼을 같은 줄, 양쪽 정렬 -->
+									<div
+										class="d-flex justify-content-between align-items-center mb-3">
+										<h5 class="mb-0">제품 구성</h5>
+										<button type="button" class="btn btn-primary" id="addRowBtn">
+											<i class="bi bi-plus-lg"></i>부품 추가
+										</button>
+									</div>
 
-										<hr class="my-4">
+									<table class="table table-bordered" id="bomTable">
+										<!-- 테이블 헤더 비율 설정 -->
+										<colgroup>
+											<col style="width: 20%;">
+											<col style="width: 5%%;">
+											<col style="width: 15%;">
+											<col style="width: 10%;">
+										</colgroup>
+										<thead>
+											<tr style="text-align: center;">
+												<th>부품구분</th>
+												<th>부품명</th>
+												<th>수량</th>
+												<th>삭제</th>
+											</tr>
+										</thead>
+										<tbody id="bomTableBody">
+											<!-- JavaScript로 행이 추가됨 -->
+										</tbody>
+									</table>
+								</div>
 
-										<!-- BOM 영역 -->
-										<div class="container mt-4">
-											<!-- 👇 제목과 버튼을 같은 줄, 양쪽 정렬 -->
-											<div class="d-flex justify-content-between align-items-center mb-3">
-												<h5 class="mb-0">제품 구성</h5>
-												<button type="button" class="btn btn-primary" id="addRowBtn">
-													<i class="bi bi-plus-lg"></i>부품 추가</button>
-											</div>
-
-											<table class="table table-bordered" id="bomTable">
-												<!-- 테이블 헤더 비율 설정 -->
-												<colgroup>
-													<col style="width: 20%;">
-													<col style="width: 5%%;">
-													<col style="width: 15%;">
-													<col style="width: 10%;">
-												</colgroup>
-												<thead>
-													<tr style="text-align: center;">
-														<th>부품구분</th>
-														<th>부품명</th>
-														<th>수량</th>
-														<th>삭제</th>
-													</tr>
-												</thead>
-												<tbody id="bomTableBody">
-													<!-- JavaScript로 행이 추가됨 -->
-												</tbody>
-											</table>
-										</div>
-
-										<div class="row mt-4 g-2">
-											<%------------------------------------------------------------------------------
+								<div class="row mt-4 g-2">
+									<%------------------------------------------------------------------------------
 					                     		4. Bootstrap 버튼 클릭
 					                     			 - 초기화   : 화면 Clear
 					                     			 - XX 등록 : 등록 이벤트
 					                    	------------------------------------------------------------------------------%>
-											<div class="col-6 d-grid">
-												<button type="reset" class="btn btn-outline-secondary">
-													<i class="bi bi-arrow-counterclockwise me-2"></i>초기화
-												</button>
-											</div>
-											<div class="col-6 d-grid">
-												<button type="submit" class="btn btn-primary">
-													<i class="bi bi-check-lg me-2"></i>등록
-												</button>
-											</div>
-										</div>
-									</form>
-
-
+									<div class="col-6 d-grid">
+										<button type="reset" class="btn btn-outline-secondary">
+											<i class="bi bi-arrow-counterclockwise me-2"></i>초기화
+										</button>
+									</div>
+									<div class="col-6 d-grid">
+										<button type="submit" class="btn btn-primary">
+											<i class="bi bi-check-lg me-2"></i>등록
+										</button>
+									</div>
 								</div>
-							</div>
+							</form>
 
 
 						</div>
 					</div>
+
+
 				</div>
 				<!-- 이곳에 자신의 코드를 작성하세요 -->
 			</div>
@@ -202,8 +201,8 @@ body {
 
 	<!-- 부트스트랩 CDN -->
 	<jsp:include page="/common_cdn.jsp" />
-	
-<script>
+
+	<script>
 let rowIndex = document.querySelectorAll("#bomTableBody tr").length;
 
 // 페이지초기 select name값 설정
@@ -376,6 +375,6 @@ document.querySelector("form").addEventListener("submit", function (e) {
     }
 });
 
-</script> 
+</script>
 </body>
 </html>

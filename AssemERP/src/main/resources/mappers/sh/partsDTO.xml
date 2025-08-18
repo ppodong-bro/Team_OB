@@ -101,4 +101,10 @@
 		WHERE parts_no = #{parts_no}
 	</update>
 	
+	<select id="shPartsNameFromPartsno" parameterType="Integer" resultType="String">
+		SELECT parts_name
+		FROM parts
+		where parts_no = #{parts_no}	
+	</select>
+
 </mapper>

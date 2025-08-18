@@ -1,5 +1,7 @@
 package com.WiseForce.AssemERP.domain.km;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,5 +16,5 @@ import lombok.Setter;
 public class Client_His_Id {
 	
 	private int client_No;
-	private String start_Date;
+	private LocalDateTime start_Date;
 }

@@ -16,6 +16,7 @@ public class ProductBomDTO {
 	private int product_no;
 	private Integer parts_no;
 	private Integer cnt;
+	private Integer product_version;
 	
 	
 	// 이름전환

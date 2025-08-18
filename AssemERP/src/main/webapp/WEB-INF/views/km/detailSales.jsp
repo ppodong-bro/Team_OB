@@ -13,7 +13,7 @@
 <meta charset="UTF-8">
 <!-- 반응형 대응: 모바일 등에서 제대로 보이게 하는 뷰포트 설정 -->
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>거래처 상세</title>
+<title>수주 상세</title>
 </head>
 <body>
 	<div id="layout">
@@ -27,6 +27,12 @@
 			<jsp:include page="/header.jsp" />
 
 			<!-- 컨텐츠 영역 시작 -->
+			<c:if test="${not empty error}">
+				<div class="alert alert-danger">${error}</div>
+			</c:if>
+			<c:if test="${not empty success}">
+				<div class="alert alert-success">${success}</div>
+			</c:if>
 			<div id="contents">
 				<!-- <div class="container px-4"> -->
 				<!-- 기존영역 주석처리 -->
@@ -44,7 +50,7 @@
 							<%------------------------------------------------------------------------------
 				                		1-1. 목록 버튼 스타일
 				                 	------------------------------------------------------------------------------%>
-							<a href="/sales/list" class="btn btn-outline-light btn-sm"> <i
+							<a href="/sales/list" class="btn btn-outline-dark btn-sm"> <i
 								class="bi bi-list-ul me-1"></i> 목록
 							</a>
 							<%------------------------------------------------------------------------------
@@ -119,25 +125,38 @@
 											<span>${sales_OrderDto.empDTO.empName}</span>
 										</div>
 									</div>
+									
+											<!-- 수정 일자: 존재할 때만 보여줌 -->
+									<c:if test="${not empty sales_OrderDto.complete_Date}">
+										<div class="field">
+											<div class="field-label">완료 일자 </div>
+											<div class="field-box">
 
+											<span>${fn:substring(sales_OrderDto.complete_Date, 0, 10)}</span>
+											</div>
+										</div>
+									</c:if>
+											<!-- 수정 일자: 존재할 때만 보여줌 -->
+									<c:if test="${not empty sales_OrderDto.modify_Date}">
+										<div class="field">
+											<div class="field-label">최근 수정 일자</div>
+											<div class="field-box">
+
+											<span>${fn:substring(sales_OrderDto.modify_Date, 0, 10)}</span>
+											</div>
+										</div>
+									</c:if>
+									
 									<!-- 등록 일자: 날짜 포맷 처리 -->
 									<div class="field">
 										<div class="field-label">등록 일자</div>
 										<div class="field-box">
-											<span>${fn:substring(sales_OrderDto.in_Date, 0, 10)}</span>
+										
+										<span>${fn:substring(sales_OrderDto.in_Date, 0, 10)}</span>
 										</div>
 									</div>
 
-									<!-- 수정 일자: 존재할 때만 보여줌 -->
-									<c:if test="${not empty sales_OrderDto.clientDto.modify_Date}">
-										<div class="field">
-											<div class="field-label">수정 일자</div>
-											<div class="field-box">
-
-												<span>${formattedModDate}</span>
-											</div>
-										</div>
-									</c:if>
+							
 								</div>
 							</section>
 
@@ -226,78 +245,74 @@
 								<!-- out_Status 가 1 이면 완료 -->
 								<c:choose>
 									<c:when test="${sales_OrderDto.out_Status == 0}">
-										<form action="${pageContext.request.contextPath}/sales/modify"
+										<form
+											action="${pageContext.request.contextPath}/sales/modifyStatus"
 											method="post" style="display: inline;">
 											<input type="hidden" name="sales_No"
-												value="${sales_OrderDto.sales_No}" /> <input type="hidden"
-												name="out_Status" value="1" />
-											<!-- 여기에 1을 고정해 넘김 -->
-											<button type="submit" class="btn btn-success btn-sm px-4">
-												승인</button>
+												value="${sales_OrderDto.sales_No}" />
+											<button type="submit" class="btn btn-success btn-sm px-4"
+												onclick="return confirm('수주를 승인 하시겠습니까?');">승인</button>
 										</form>
+										<a
+											href="${pageContext.request.contextPath}/sales/detailPageModifyStart?sales_No=${sales_OrderDto.sales_No}"
+											class="btn btn-outline-primary btn-sm px-4" onclick="return confirm('수주를 수정 하시겠습니까?');">수정</a>
+										<form action="${pageContext.request.contextPath}/sales/delete"
+											method="post" style="display: inline;">
+											<input type="hidden" name="sales_No"
+												value="${sales_OrderDto.sales_No}" />
+											<button type="submit" class="btn btn-danger btn-sm px-4"
+												onclick="return confirm('수주 취소 하시겠습니까?');">수주 취소</button>
+										</form>
+
 									</c:when>
 									<c:when test="${sales_OrderDto.out_Status == 1}">
-										<form action="${pageContext.request.contextPath}/sales/modify"
+										<form
+											action="${pageContext.request.contextPath}/sales/modifyStatus"
+											method="post" style="display: inline;">
+											<input type="hidden" name="sales_No"
+												value="${sales_OrderDto.sales_No}" />
+											<button type="submit" class="btn btn-primary btn-sm px-4"onclick="return confirm('수주를 완료 하시겠습니까?');">완료</button>
+										</form>
+										<form
+											action="${pageContext.request.contextPath}/sales/accessModify"
 											method="post" style="display: inline;">
 											<input type="hidden" name="sales_No"
 												value="${sales_OrderDto.sales_No}" /> <input type="hidden"
-												name="out_Status" value="2" />
-											<button type="submit" class="btn btn-primary btn-sm px-4">완료</button>
+												name="out_Status" value="${sales_OrderDto.out_Status}">
+											<button type="submit" class="btn btn-warning btn-sm px-4"
+												onclick="return confirm('정말 재수주 요청하시겠습니까? 요청 상태로 변경 후 해당 수주 수정 창으로 이동합니다.');">재수주
+												요청</button>
+										</form>
+
+										<form
+											action="${pageContext.request.contextPath}/sales/returnStatus"
+											method="post" style="display: inline;">
+											<input type="hidden" name="sales_No"
+												value="${sales_OrderDto.sales_No}" />
+											<button type="submit" class="btn btn-primary btn-sm px-4"
+												onclick="return confirm('정말 승인 상태를 취소 하시겠습니까? 요청 상태로 변환 후 해당 수주 상세 페이지로 이동합니다.');">승인
+												취소</button>
+										</form>
+										<form action="${pageContext.request.contextPath}/sales/delete"
+											method="post" style="display: inline;">
+											<input type="hidden" name="sales_No"
+												value="${sales_OrderDto.sales_No}" />
+											<button type="submit" class="btn btn-danger btn-sm px-4"
+												onclick="return confirm('수주 취소 하시겠습니까?');">수주 취소</button>
 										</form>
 									</c:when>
 									<c:when test="${sales_OrderDto.out_Status == 2}">
-										<button type="button" class="btn btn-secondary btn-sm px-4"
-											disabled>완료</button>
-									</c:when>
-
-									<c:when test="${sales_OrderDto.out_Status == 3}">
-										<button type="button" class="btn btn-secondary btn-sm px-4"
-											disabled>마감</button>
-									</c:when>
-								</c:choose>
-
-								<!-- out_Status에 따라 수정 vs 재수주 요청 분기 -->
-								<c:choose>
-									<c:when test="${sales_OrderDto.out_Status == 1}">
 										<form
-											action="${pageContext.request.contextPath}/sales/deleteCreate"
+											action="${pageContext.request.contextPath}/sales/returnStatus"
 											method="post" style="display: inline;">
 											<input type="hidden" name="sales_No"
 												value="${sales_OrderDto.sales_No}" />
-											<button type="submit" class="btn btn-warning btn-sm px-4"
-												onclick="return confirm('정말 재수주 요청하시겠습니까?');">재수주
-												요청</button>
-										</form>
-									</c:when>
-									<c:when test="${sales_OrderDto.out_Status == 0}">
-										<a
-											href="${pageContext.request.contextPath}/sales/modifyStart?sales_No=${sales_OrderDto.sales_No}"
-											class="btn btn-outline-primary btn-sm px-4">수정</a>
-									</c:when>
-								</c:choose>
-
-								<c:choose>
-									<c:when
-										test="${sales_OrderDto.out_Status == 1 or sales_OrderDto.out_Status == 0}">
-										<form action="${pageContext.request.contextPath}/sales/delete"
-											method="post" style="display: inline;">
-											<input type="hidden" name="sales_No"
-												value="${sales_OrderDto.sales_No}" />
-											<button type="submit" class="btn btn-danger btn-sm px-4"
-												onclick="return confirm('수주 취소 하시겠습니까?');">수주 취소</button>
-										</form>
-									</c:when>
-									<c:when test="${sales_OrderDto.out_Status == 0}">
-										<form action="${pageContext.request.contextPath}/sales/delete"
-											method="post" style="display: inline;">
-											<input type="hidden" name="sales_No"
-												value="${sales_OrderDto.sales_No}" />
-											<button type="submit" class="btn btn-danger btn-sm px-4"
-												onclick="return confirm('수주 취소 하시겠습니까?');">수주 취소</button>
+											<button type="submit" class="btn btn-primary btn-sm px-4"
+												onclick="return confirm('정말 완료 상태를 취소 하시겠습니까? 승인 상태로 변환 후 해당 수주 상세 페이지로 이동합니다.');">완료
+												취소</button>
 										</form>
 									</c:when>
 								</c:choose>
-
 							</div>
 						</div>
 					</div>

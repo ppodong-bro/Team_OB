@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.WiseForce.AssemERP.domain.sh.Parts;
+import com.WiseForce.AssemERP.dto.dg.InventoryInfoDTO;
 import com.WiseForce.AssemERP.dto.sh.PartsDTO;
 import com.WiseForce.AssemERP.dto.sm.EmpDTO;
+import com.WiseForce.AssemERP.service.dg.InventoryService;
 import com.WiseForce.AssemERP.service.sh.PartsService;
 import com.WiseForce.AssemERP.service.sm.EmpService;
 import com.WiseForce.AssemERP.util.CustomFileUtil;
@@ -30,6 +32,7 @@ public class PartsController {
 	private final PartsService partsService;
 	private final CustomFileUtil fileUtil;
 	private final EmpService empService;
+	private final InventoryService inventoryService;
 
 	@GetMapping("partsList")
 	public String partsListPageStart(PartsDTO partsDTO, Model model) {
@@ -189,4 +192,24 @@ public class PartsController {
 		return "redirect:partsList";
 	}
 
+	@GetMapping("partsDetail/{parts_no}")
+	public String partsDetail(@PathVariable(name = "parts_no")int parts_no, Model model) {
+		// 부품 기본 정보 가져오기
+		PartsDTO partsDTO = partsService.findbyID(parts_no);
+		
+		// 부품의 Type, No로 실재고 가져오기 
+		InventoryInfoDTO inventoryInfoDTOFrom = InventoryInfoDTO.builder()
+				.item_type(0)
+				.item_no(partsDTO.getParts_no())
+				.build();
+		InventoryInfoDTO inventoryInfoDTOTo = inventoryService.getRealInventoryById(inventoryInfoDTOFrom);
+		
+		partsDTO.setReal_stuck(inventoryInfoDTOTo.getCnt());
+		
+		System.out.println("PartsController partsDetail inventoryInfoDTOTo.getCnt() => "+inventoryInfoDTOTo.getCnt());
+		
+		model.addAttribute("partsDTO", partsDTO);
+		
+		return "sh/partsDetail";
+	}
 }

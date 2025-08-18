@@ -85,4 +85,27 @@
 		SET del_status = 1
 		WHERE product_no = #{product_no}
 	</update>
+	
+	<select id="shProductRecentCost" parameterType="int" resultType="double">
+	    SELECT AVG(b.sales_item_cost)
+	    FROM sales_order a
+	    LEFT JOIN sales_item b 
+	        ON a.sales_no = b.sales_no
+	       	AND b.product_no = #{product_no}
+	    WHERE TRUNC(a.in_date) 
+	          BETWEEN TRUNC(ADD_MONTHS(SYSDATE, -1)) 
+	              AND TRUNC(SYSDATE)
+	</select>
+	
+	<select id="shProductRecentTradeCnt" parameterType="int" resultType="int">
+		SELECT SUM(b.sales_item_outcnt)
+	    FROM sales_order a
+	    LEFT JOIN sales_item b 
+	        ON a.sales_no = b.sales_no
+	       	AND b.product_no = #{product_no}
+	    WHERE TRUNC(a.in_date) 
+	          BETWEEN TRUNC(ADD_MONTHS(SYSDATE, -1)) 
+	              AND TRUNC(SYSDATE)
+	</select>
+	
 </mapper>

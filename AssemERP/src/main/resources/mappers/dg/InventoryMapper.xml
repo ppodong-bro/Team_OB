@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.WiseForce.AssemERP.dg.InventoryMapper">
-
 	<select id="callCalcRealInventoryAllCnt" statementType="CALLABLE"
 		parameterType="com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO"
 		resultType="int">
@@ -29,16 +28,18 @@
 	            ELSE -1
 	        END
 	    AND I.item_status_no = C.middle_status
-		WHERE item_type = #{item_type} 
-		<if test="item_no_text != null and item_no_text != ''">
-		    AND item_no = #{item_no_text}
-		</if>
-		<if test="item_status_select != 999">
-		    AND item_status_no = #{item_status_select}
-		</if>
-		<if test="item_name_text != null and item_name_text != ''">
-		    AND item_name LIKE '%' || #{item_name_text} || '%'
-		</if>
+		<where>
+			AND item_type = #{item_type} 
+			<if test="item_no_text != null and item_no_text != ''">
+			    AND item_no = #{item_no_text}
+			</if>
+			<if test="item_status_select != 999">
+			    AND item_status_no = #{item_status_select}
+			</if>
+			<if test="item_name_text != null and item_name_text != ''">
+			    AND item_name LIKE '%' || #{item_name_text} || '%'
+			</if>
+		</where>
 	</select>
 	
 	<select id="callCalcRealInventoryAll" statementType="CALLABLE"
@@ -71,27 +72,30 @@
 			            ELSE -1
 			        END
 			    AND I.item_status_no = C.middle_status
-				WHERE item_type = #{item_type} 
-				<if test="item_no_text != null and item_no_text != ''">
-				    AND item_no = #{item_no_text}
-				</if>
-				<if test="item_status_select != 999">
-				    AND item_status_no = #{item_status_select}
-				</if>
-				<if test="item_name_text != null and item_name_text != ''">
-				    AND item_name LIKE '%' || #{item_name_text} || '%'
-				</if>
+				<where>
+					AND item_type = #{item_type} 
+					<if test="item_no_text != null and item_no_text != ''">
+					    AND item_no = #{item_no_text}
+					</if>
+					<if test="item_status_select != 999">
+					    AND item_status_no = #{item_status_select}
+					</if>
+					<if test="item_name_text != null and item_name_text != ''">
+					    AND item_name LIKE '%' || #{item_name_text} || '%'
+					</if>
+				</where>
 				ORDER BY item_no
 				) RID 
 			) 
 		WHERE rn BETWEEN #{start} and #{end}
 	</select>
 	
-	<select id="callCalcRealInventoryById" statementType="CALLABLE"
+	<select id="callCalcRealInventoryAllById" statementType="CALLABLE"
 		parameterType="com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO"
 		resultType="com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO">
-		SELECT * FROM TABLE(calc_real_inventory(#{item_type}))
-		WHERE item_no = #{item_no}
+		SELECT * FROM TABLE(calc_real_inventory_all())
+		WHERE item_status = #{item_type}
+		AND item_no = #{item_no}
 	</select>
 
 	<!-- {전체} : 로 CallableStatement용 SQL이라는것을 명확히 함 -->
@@ -103,4 +107,64 @@
 		#{result, mode=OUT, jdbcType=VARCHAR}
 		) }
 	</select>
+	<select id="callDayClose" parameterType="Inventory_CloseDTO" statementType="CALLABLE">
+		{ CALL day_close.day_close_main(
+		#{yearmonth, mode=IN, jdbcType=VARCHAR},
+		#{emp_no, mode=IN, jdbcType=VARCHAR},
+		#{realStatus, mode=IN, jdbcType=VARCHAR},
+		#{result, mode=OUT, jdbcType=VARCHAR}
+		) }
+	</select>
+	
+	<select id="getInventoryInfoById" statementType="CALLABLE"
+		parameterType="com.WiseForce.AssemERP.dto.dg.InventoryInfoDTO"
+		resultType="com.WiseForce.AssemERP.dto.dg.InventoryInfoDTO">
+		SELECT * FROM (
+			SELECT RI.item_status AS item_type, RI.item_no,
+			       NVL(PA.parts_status, PR.product_status) AS item_status,
+			       NVL(PA.parts_name, PR.product_name) AS item_name,
+			       RI.cnt
+			FROM (SELECT * FROM TABLE(calc_real_inventory_all())) RI
+			LEFT JOIN  
+				(SELECT product_no, product_status, product_name FROM product) PR 
+				ON RI.item_status = 1 
+				AND RI.item_no = PR.product_no
+			LEFT JOIN 
+				(SELECT parts_no, parts_status, parts_name FROM parts) PA 
+				ON RI.item_status = 0 
+				AND RI.item_no = PA.parts_no
+		)
+		WHERE item_type = #{item_type} 
+		AND item_no = #{item_no}
+	</select>
+	
+	<select id="getInventoryCurrent" resultType="java.util.Map" statementType="CALLABLE">
+		SELECT 
+		    CASE gi.item_type
+		        WHEN 0 THEN '부품'
+		        ELSE '제품'
+		    END AS label, 
+		    SUM(cnt * io.item_occupy) AS value FROM (
+		    SELECT item_status AS item_type, NVL(parts_status, product_status) AS item_status, cnt FROM (
+		        SELECT * FROM TABLE(calc_real_inventory_all()) i
+		        LEFT JOIN parts pa
+		        ON i.item_no = pa.parts_no
+		        AND i.item_status = 0
+		        LEFT JOIN product pr
+		        ON i.item_no = pr.product_no
+		        AND i.item_status = 1
+		    ) 
+		) gi
+		LEFT JOIN common c
+		ON (gi.item_type = 0 AND c.big_status = 900 AND c.middle_status = gi.item_status
+		OR gi.item_type = 1 AND c.big_status = 800 AND c.middle_status = gi.item_status)
+		LEFT JOIN inventory_occupy io
+		ON gi.item_type = io.item_type
+		AND gi.item_status = io.item_status
+		GROUP BY gi.item_type
+		UNION ALL 
+		SELECT '여유' AS label, MAX(item_occupy) AS value FROM inventory_occupy
+		WHERE item_status = 999
+		GROUP BY '여유'
+    </select>
 </mapper>

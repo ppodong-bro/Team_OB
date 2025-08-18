@@ -7,9 +7,11 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.WiseForce.AssemERP.dao.km.ClientDao;
+import com.WiseForce.AssemERP.dto.CommonDTO;
 import com.WiseForce.AssemERP.dto.km.ClientDto;
 import com.WiseForce.AssemERP.dto.km.ClientSearchDto;
 import com.WiseForce.AssemERP.dto.km.Client_HisDto;
+import com.WiseForce.AssemERP.dto.sm.EmpDTO;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -41,39 +43,40 @@ public class ClientServiceImpl implements ClientService {
 	@Override
 	public int createClient(ClientDto clientDto) {
 		int result = clientDao.createClient(clientDto);
+		int result1 = clientDao.createClient_His(clientDto);
+		
+		
 		return result;
 	}
 
 	@Override
 	public int modifyClient(ClientDto clientDto1) {
 		
-		int result = clientDao.modifyClient(clientDto1);
-		
-		LocalDateTime minusModifyDay 		= LocalDateTime.now().minusDays(1);
 		LocalDateTime modifyDay 			= LocalDateTime.now();
+		
 		
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 		
-		String modifyEndDate 				= minusModifyDay.format(dateTimeFormatter);
-		String modifyStartDate    			= modifyDay.format(dateTimeFormatter);
+	
 		
 		Client_HisDto client_HisDto = Client_HisDto.builder()
-												    .client_No(clientDto1.getClient_No())
-												    .start_Date(modifyStartDate)
-												    .end_Date(modifyEndDate)
-												    .emp_No(clientDto1.getEmpDTO().getEmpNo())
-												    .client_Name(clientDto1.getClient_Name())
-												    .client_Gubun(clientDto1.getClient_Gubun())
-												    .client_Man(clientDto1.getClient_Man())
-												    .client_Email(clientDto1.getClient_Email())
-												    .client_Tel(clientDto1.getClient_Tel())
-												    .client_Address(clientDto1.getClient_Address())
-												    .build()
-												    ;
+												   .client_No(clientDto1.getClient_No())
+												   .start_Date(modifyDay)
+												   .emp_No(clientDto1.getEmpDTO().getEmpNo())
+												   .client_Name(clientDto1.getClient_Name())
+												   .client_Gubun(clientDto1.getClient_Gubun())
+												   .client_Man(clientDto1.getClient_Man())
+												   .client_Email(clientDto1.getClient_Email())
+												   .client_Tel(clientDto1.getClient_Tel())
+												   .client_Address(clientDto1.getClient_Address())
+												   .build()
+												   ;
+		
+		clientDto1.setModify_Date(modifyDay);
 		
 		clientDao.modifyClient_His(client_HisDto);
 		
-		
+		int result = clientDao.modifyClient(clientDto1);
 													   
 		return result;
 	}
@@ -91,9 +94,15 @@ public class ClientServiceImpl implements ClientService {
 	}
 
 	@Override
-	public List<ClientDto> clientAll() {
-		List<ClientDto> clientList = clientDao.clientAll();
+	public List<ClientDto> clientAll(int client_Gubun, String client_Name) {
+		List<ClientDto> clientList = clientDao.clientAll(client_Gubun, client_Name);
 		return clientList;
+	}
+
+	@Override
+	public List<EmpDTO> listEmp(String empName) {
+		List<EmpDTO> listEmp = clientDao.listEmp(empName);
+		return listEmp;
 	}
 	
 }

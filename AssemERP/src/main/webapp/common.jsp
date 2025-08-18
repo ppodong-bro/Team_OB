@@ -159,4 +159,64 @@ body {
 .status-text-close[data-status="3"] .dot {
 	background: #dc3545;//마감 오류
 }
+
+/* 리스트에 대한 공통 정의 */
+.list-table {
+  table-layout: auto;
+  width: 100%;
+  border-collapse: collapse;
+}
+/* 셀 내 텍스트가 넘칠 경우 ... 처리 */
+.list-table th {
+	text-align: center;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.list-table td {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 250px;
+}
+
+/* 읽기전용 속성 disable처럼 만들기 */
+.readonly {
+	background-color: #e9ecef; /* disabled 배경색과 비슷하게 */
+}
+
+/* 대시보드관련 css */
+/* 헤더(월 이름 등) 글자 크기 조절 */
+.fc-header-toolbar {
+	font-size: 16px;
+}
+
+/* 요일 헤더 글자 크기 조절 */
+.fc-col-header-cell-cushion {
+	font-size: 14px;
+}
+
+/* 날짜 숫자 크기 조절 */
+.fc-daygrid-day-number {
+	font-size: 14px;
+}
+/* 헤더 툴바 영역 전체 크기 축소 */
+.fc-toolbar {
+	font-size: 12px; /* 폰트 크기 줄이기 */
+	padding: 4px 8px; /* 위아래, 좌우 패딩 조정 */
+}
+
+/* 툴바 버튼 크기 축소 */
+.fc-toolbar button {
+	padding: 4px 8px; /* 버튼 내부 패딩 줄이기 */
+	font-size: 12px; /* 버튼 텍스트 폰트 크기 */
+	min-width: auto; /* 기본 최소 너비 없애기 */
+}
+
+/* 헤더 중앙 제목 크기 조정 */
+.fc-toolbar-title {
+	font-size: 14px; /* 제목 폰트 크기 */
+	padding: 0;
+	margin: 0 5px;
+}
 </style>
