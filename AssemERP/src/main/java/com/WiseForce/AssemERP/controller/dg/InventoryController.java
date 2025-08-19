@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,10 +36,11 @@ public class InventoryController {
 	private final InventoryService inventoryService;
 
 	@GetMapping("/inventory")
+	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_HR_MANAGER', 'ROLE_ITEM_MANAGER', 'ROLE_ITEM_MANAGER', 'ROLE_INVENTORY_MANAGER', 'ROLE_INVENTORY_USER')")
 	public String inventory(Real_InventoryDTO real_InventoryDTO, Model model) {
 		// 현재 재고의 종류 수 조회
 		int totalTypeCount = inventoryService.getTotalTypeCount(real_InventoryDTO);
-		
+			
 		// 전체 개수와 요청한 현재 페이지를 토대로 start와 end를 설정한다.
 		Paging page = new Paging(totalTypeCount, real_InventoryDTO.getCurrentPage());
 		real_InventoryDTO.setStart(page.getStart());
@@ -56,6 +58,7 @@ public class InventoryController {
 	}
 	
 	@GetMapping("/inventory/adjust")
+	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_HR_MANAGER', 'ROLE_ITEM_MANAGER', 'ROLE_ITEM_MANAGER', 'ROLE_INVENTORY_MANAGER', 'ROLE_INVENTORY_USER')")
 	public String inventoryAdjust_Get(InventoryInfoDTO inventoryInfoDTO, Model model) {
 		// 재고 정보 조회하기(item_type, item_no만 사용)
 		InventoryInfoDTO target_InventoryInfoDTO = inventoryService.getRealInventoryById(inventoryInfoDTO);
@@ -67,6 +70,7 @@ public class InventoryController {
 	}
 
 	@PostMapping("/inventory/adjust")
+	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_INVENTORY_MANAGER')")
 	public String inventoryAdjust_Post(@ModelAttribute/*MultipartFile를 포함한 DTO에 넣기 위한 @*/ InventoryInfoDTO inventoryInfoDTO, Model model) {
 		// 재고 실 수량 조정
 		boolean result = inventoryService.adjustRealInventoryById(inventoryInfoDTO);
@@ -76,6 +80,7 @@ public class InventoryController {
 	}
 	
 	@GetMapping("/inventory/history")
+	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_HR_MANAGER', 'ROLE_ITEM_MANAGER', 'ROLE_ITEM_MANAGER', 'ROLE_INVENTORY_MANAGER', 'ROLE_INVENTORY_USER')")
 	public String inventoryHistory(InventoryDTO inventoryDTO, Model model) {
 		// 검색을 위한 기본 설정을 정해준다.
 		// 입출고일시
@@ -104,6 +109,7 @@ public class InventoryController {
 	}
 	
 	@GetMapping("/inventory/close")
+	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_HR_MANAGER', 'ROLE_ITEM_MANAGER', 'ROLE_ITEM_MANAGER', 'ROLE_INVENTORY_MANAGER', 'ROLE_INVENTORY_USER')")
 	public String inventoryClose(Inventory_CloseDTO inventory_CloseDTO, Model model) {
 		// 검색을 위한 기본 설정을 정해준다.
 		// 기본 날짜
@@ -143,6 +149,7 @@ public class InventoryController {
 	}
 
 	@PutMapping("/inventory/monthClose/{real_status}")
+	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_INVENTORY_MANAGER')")
 	@ResponseBody
 	public Map<String, Object> monthClose(@RequestBody Inventory_CloseDTO inventory_CloseDTO, @PathVariable("real_status") int realStatus) {
 		System.out.println(inventory_CloseDTO.getEmp_password());
@@ -159,6 +166,7 @@ public class InventoryController {
 	}
 
 	@DeleteMapping("/inventory/monthClose")
+	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_INVENTORY_MANAGER')")
 	@ResponseBody
 	public Map<String, Object> monthCloseCancel(@RequestBody Inventory_CloseDTO inventory_CloseDTO) {
 		System.out.println(inventory_CloseDTO.getEmp_password());
@@ -175,6 +183,7 @@ public class InventoryController {
 	}
 
 	@GetMapping("/inventory/excel")
+	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_HR_MANAGER', 'ROLE_ITEM_MANAGER', 'ROLE_ITEM_MANAGER', 'ROLE_INVENTORY_MANAGER', 'ROLE_INVENTORY_USER')")
 	@ResponseBody
 	public Object inventoryExcelDownload(Real_InventoryDTO real_InventoryDTO) {
 		// 현재 재고의 종류 수 조회
