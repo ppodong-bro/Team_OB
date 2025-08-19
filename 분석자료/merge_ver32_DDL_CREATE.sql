@@ -111,7 +111,7 @@ INCREMENT BY 1 -- 증가값
 NOCACHE -- 캐시 안 함 (옵션)
 NOCYCLE; -- 마지막 값 이후 다시 1로 돌아가지 않음
 
---  거래처 (CLIENT) 시퀀스
+--  거래처(CLIENT) 시퀀스
 DROP SEQUENCE CLIENT_SEQ;
 CREATE SEQUENCE CLIENT_SEQ
 START WITH 1001 -- 시작 숫자
@@ -122,7 +122,7 @@ NOCYCLE; -- 마지막 값 이후 다시 1로 돌아가지 않음
 --  수주(SALES) 시퀀스
 DROP SEQUENCE SALES_SEQ;
 CREATE SEQUENCE SALES_SEQ
-START WITH 3001 -- 시작 숫자
+START WITH 3041 -- 시작 숫자
 INCREMENT BY 1 -- 증가값
 NOCACHE -- 캐시 안 함 (옵션)
 NOCYCLE; -- 마지막 값 이후 다시 1로 돌아가지 않음
@@ -130,12 +130,10 @@ NOCYCLE; -- 마지막 값 이후 다시 1로 돌아가지 않음
 --  발주(PURCHASE) 시퀀스
 DROP SEQUENCE PURCHASE_SEQ;
 CREATE SEQUENCE PURCHASE_SEQ
-START WITH 4001 -- 시작 숫자
+START WITH 4141 -- 시작 숫자
 INCREMENT BY 1 -- 증가값
 NOCACHE -- 캐시 안 함 (옵션)
 NOCYCLE; -- 마지막 값 이후 다시 1로 돌아가지 않음
-
-
 /************************************************** 
  *  CREATE TABLE
  **************************************************/
