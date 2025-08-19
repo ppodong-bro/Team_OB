@@ -38,7 +38,7 @@
 							<h4 class="card-title mb-0">
 								<i class="bi bi-list-ul"></i> 발주 목록
 							</h4>
-							<a href="/purchase/createStart" class="btn btn-primary"><i
+							<a href="/purchase/createStart" class="btn btn-primary" onclick="return confirm('발주를 등록 하시겠습니까?');"><i
 								class="bi bi-plus-lg"></i>등록</a>
 						</div>
 						<div class="card-body">
@@ -190,10 +190,11 @@
 												<c:choose>
 													<c:when
 														test="${order.in_Status == 0 or order.in_Status == 1}">
-														<td class="text-center">
-															<!-- 수정 버튼 --> <a
-															href="/purchase/modifyStart?purchase_No=${order.purchase_No}"
-															class="btn btn-sm btn-outline-success"> <i
+														<td class="text-center" onclick="event.stopPropagation()">
+															<a
+															href="<c:url value='/purchase/modifyStart?purchase_No=${order.purchase_No}'/>"
+															class="btn btn-sm btn-outline-success"
+															onclick="return confirm('발주를 수정 하시겠습니까?');"> <i
 																class="bi bi-pencil-square"></i> 수정
 														</a>
 														</td>
@@ -202,11 +203,13 @@
 												<c:choose>
 													<c:when
 														test="${order.in_Status == 2 or order.in_Status == 3}">
-														<td class="text-center"><a href="#"
+														<td class="text-center" onclick="event.stopPropagation()">
+															<a href="#"
 															class="btn btn-sm btn-outline-success disabled keep-look"
 															role="button" aria-disabled="true" tabindex="-1"> <i
 																class="bi bi-pencil-square"></i> 수정
-														</a></td>
+														</a>
+														</td>
 													</c:when>
 												</c:choose>
 											</tr>

@@ -233,31 +233,31 @@ public class Sales_OrderServiceImpl implements Sales_OrderService {
 			
 			} else if (status == 2) {
 			
-			sales_OrderDao.completeStatus(sales_No, status, salesItemList);
+			int result = sales_OrderDao.completeStatus(sales_No, status, salesItemList);
 			
-			
-			List<Sales_ItemDto> items = sales_OrderDao.salesItemList(sales_No);
-			
-			for (Sales_ItemDto sales_ItemDto : items) {
-
-				long cost = (long) sales_ItemDto.getSales_Item_Cost();
-				int	 outCnt  = sales_ItemDto.getSales_Item_OutCnt();
-				
-				totCost += cost*outCnt;
-				
-			}
-			System.out.println("totCost??????????????????????????->"+totCost);
-			Sales_OrderDto sales_OrderDto = sales_OrderDao.getCompleteDateAndClientNo(sales_No);
-			System.out.println("sales_OrderDto----------------------------------------->" + sales_OrderDto);
-			Client_PerformDto client_PerformDto = Client_PerformDto.builder()
-																   .dYearMonth(sales_OrderDto.getComplete_Date())
-																   .total_Amt(totCost)
-																   .client_No(sales_OrderDto.getClientDto().getClient_No())
-																   .build();
-
-			System.out.println("client_PerformDto ->" + client_PerformDto);
-
-			int result = clinetDao.perform(client_PerformDto);
+//			
+//			List<Sales_ItemDto> items = sales_OrderDao.salesItemList(sales_No);
+//			
+//			for (Sales_ItemDto sales_ItemDto : items) {
+//
+//				long cost = (long) sales_ItemDto.getSales_Item_Cost();
+//				int	 outCnt  = sales_ItemDto.getSales_Item_OutCnt();
+//				
+//				totCost += cost*outCnt;
+//				
+//			}
+//			System.out.println("totCost??????????????????????????->"+totCost);
+//			Sales_OrderDto sales_OrderDto = sales_OrderDao.getCompleteDateAndClientNo(sales_No);
+//			System.out.println("sales_OrderDto----------------------------------------->" + sales_OrderDto);
+//			Client_PerformDto client_PerformDto = Client_PerformDto.builder()
+//																   .dYearMonth(sales_OrderDto.getComplete_Date())
+//																   .total_Amt(totCost)
+//																   .client_No(sales_OrderDto.getClientDto().getClient_No())
+//																   .build();
+//
+//			System.out.println("client_PerformDto ->" + client_PerformDto);
+//
+//			int result = clinetDao.perform(client_PerformDto);
 			
 			if(result == 1) {
 				String success = "수주 완료 성공";
@@ -322,25 +322,25 @@ public class Sales_OrderServiceImpl implements Sales_OrderService {
 			}
 				
 		if(out_Status == 1) {
-			Sales_OrderDto sales_OrderDto = sales_OrderDao.getCompleteDateAndClientNo(sales_No);
+//			Sales_OrderDto sales_OrderDto = sales_OrderDao.getCompleteDateAndClientNo(sales_No);
 			List<Sales_ItemDto> listSalesItem = sales_OrderDao.salesItemList(sales_No);
-			Long totCost = 0L;
+//			Long totCost = 0L;
 			
-			System.out.println("Sales_OrderDto sales_OrderDto"+sales_OrderDto);
-			
-			for(Sales_ItemDto sales_ItemDto : listSalesItem) {
-				Long cost = sales_ItemDto.getSales_Item_Cost();
-				int	 outCnt = sales_ItemDto.getSales_Item_OutCnt();
-				
-				totCost += cost*outCnt;
-			}
-			Client_PerformDto client_PerformDto = Client_PerformDto.builder()
-																   .client_No(sales_OrderDto.getClientDto().getClient_No())
-																   .dYearMonth(sales_OrderDto.getComplete_Date())
-																   .total_Amt(totCost)
-																   .build()
-																   ;
-			clinetDao.returnPerform(client_PerformDto);
+//			System.out.println("Sales_OrderDto sales_OrderDto"+sales_OrderDto);
+//			
+//			for(Sales_ItemDto sales_ItemDto : listSalesItem) {
+//				Long cost = sales_ItemDto.getSales_Item_Cost();
+//				int	 outCnt = sales_ItemDto.getSales_Item_OutCnt();
+//				
+//				totCost += cost*outCnt;
+//			}
+//			Client_PerformDto client_PerformDto = Client_PerformDto.builder()
+//																   .client_No(sales_OrderDto.getClientDto().getClient_No())
+//																   .dYearMonth(sales_OrderDto.getComplete_Date())
+//																   .total_Amt(totCost)
+//																   .build()
+//																   ;
+//			clinetDao.returnPerform(client_PerformDto);
 			
 			int result = sales_OrderDao.returnComplete(out_Status, sales_No, listSalesItem);
 			

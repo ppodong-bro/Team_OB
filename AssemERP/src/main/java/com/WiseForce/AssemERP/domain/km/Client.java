@@ -23,8 +23,8 @@ import lombok.ToString;
 @Setter
 @Getter
 @SequenceGenerator(
-		name = 			"client_seq",
-		sequenceName = 	"client_seq_gen",
+		name = 			"client_seq_gen",
+		sequenceName = 	"client_seq",
 		initialValue = 1011,
 		allocationSize = 1
 		)
@@ -37,7 +37,7 @@ public class Client {
 	@Id
 	@GeneratedValue(
 			strategy  = GenerationType.SEQUENCE,
-			generator = "client_seq"
+			generator = "client_seq_gen"
 			)
 	private int client_no;
 	

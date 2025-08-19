@@ -371,7 +371,7 @@ transparent;
 													<th class="numeric">요청수량</th>
 													<th class="numeric">부품 단가</th>
 													<th class="numeric">요청 총액</th>
-													<th class="text-center">삭제</th>
+													<th style="width: 7%;" class="text-center">삭제</th>
 												</tr>
 											</thead>
 											<tbody id="items-tbody">

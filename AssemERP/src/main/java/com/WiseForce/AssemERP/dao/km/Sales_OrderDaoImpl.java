@@ -113,11 +113,13 @@ public class Sales_OrderDaoImpl implements Sales_OrderDao {
 	}
 
 	@Override
-	public void completeStatus(int sales_No, int status, List<Sales_ItemDto> salesItemList) {
+	public int completeStatus(int sales_No, int status, List<Sales_ItemDto> salesItemList) {
 		Map<String, Object> salesStatus = Map.of("sales_No", sales_No, "out_Status", status);
 		int result = session.update("completeStatus", salesStatus);
 		System.out.println("result----------------->"+result);
 		session.update("modifyComplete", salesItemList);
+		
+		return result;
 		
 	}
 

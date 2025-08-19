@@ -337,7 +337,7 @@
 													<th scope="col" class="numeric">요청수량</th>
 													<th scope="col" class="numeric">제품 단가</th>
 													<th scope="col" class="numeric">요청 총액</th>
-													<th scope="col" class="text-center">삭제</th>
+													<th style="width: 7%;" scope="col" class="text-center">삭제</th>
 												</tr>
 											</thead>
 											<tbody id="items-tbody">

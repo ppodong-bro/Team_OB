@@ -448,7 +448,7 @@
 													<th scope="col" class="numeric">요청수량</th>
 													<th scope="col" class="numeric">제품 단가</th>
 													<th scope="col" class="numeric">요청 총액</th>
-													<th scope="col">삭제</th>
+													<th style="width: 7%;" scope="col">삭제</th>
 												</tr>
 											</thead>
 											<tbody id="items-tbody">
@@ -494,7 +494,7 @@
 																		<i class="bi bi-trash"></i> 삭제
 																	</button>
 																</td>
-																</td>
+																
 															</tr>
 														</c:forEach>
 													</c:when>

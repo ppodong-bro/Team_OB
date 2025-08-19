@@ -184,7 +184,7 @@
 													<c:forEach var="item"
 														items="${Purchase_OrderDto.purchase_Item}">
 														<tr>
-															<td class="name"><c:out
+															<td class="name text-truncate" title="<c:out value='${item.partsDTO != null ? item.partsDTO.parts_name : "-"}'/>"><c:out
 																	value="${item.partsDTO != null ? item.partsDTO.parts_name : '-'}" />
 															</td>
 															<td class="numeric"><c:out
@@ -360,7 +360,7 @@
 													</c:if>
 													<button type="submit"
 														class="btn btn-danger btn-sm px-4 w-100"
-														onclick="return confirm('발주 취소 하시겠습니까?');">
+														onclick="return confirm('발주를 취소 하시겠습니까?');">
 														<i class="bi bi-trash me-1"></i>발주 취소
 													</button>
 												</form>
@@ -401,7 +401,7 @@
 													</c:if>
 													<button type="submit"
 														class="btn btn-outline-primary btn-sm px-4 w-100"
-														onclick="return confirm('정말 재발주 요청하시겠습니까?');">
+														onclick="return confirm('정말 재발주 요청하시겠습니까? 요청 상태로 변환 후 해당 발주 수정 페이지로 이동합니다.');">
 														<i class="bi bi-arrow-repeat me-1"></i>재발주 요청
 													</button>
 												</form>
@@ -420,7 +420,7 @@
 													</c:if>
 													<button type="submit"
 														class="btn btn-secondary btn-sm px-4 w-100"
-														onclick="return confirm('발주를 승인 취소 하시겠습니까?');">
+														onclick="return confirm('정말 승인 상태를 취소 하시겠습니까? 요청 상태로 변환 후 해당 발주 상세 페이지로 이동합니다.');">
 														<i class="bi bi-x-circle me-1"></i>승인 취소
 													</button>
 												</form>
@@ -439,7 +439,7 @@
 													</c:if>
 													<button type="submit"
 														class="btn btn-danger btn-sm px-4 w-100"
-														onclick="return confirm('발주 취소 하시겠습니까?');">
+														onclick="return confirm('발주를 취소 하시겠습니까?');">
 														<i class="bi bi-trash me-1"></i>발주 취소
 													</button>
 												</form>
@@ -460,7 +460,7 @@
 													</c:if>
 													<button type="submit"
 														class="btn btn-secondary btn-sm px-4 w-100"
-														onclick="return confirm('발주를 완료 취소 하시겠습니까?');">
+														onclick="return confirm('정말 완료 상태를 취소 하시겠습니까? 승인 상태로 변환 후 해당 발주 상세 페이지로 이동합니다.');">
 														<i class="bi bi-arrow-counterclockwise me-1"></i>완료 취소
 													</button>
 												</form>

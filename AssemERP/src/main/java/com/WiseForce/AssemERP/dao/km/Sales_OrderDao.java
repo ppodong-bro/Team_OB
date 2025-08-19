@@ -37,7 +37,7 @@ public interface Sales_OrderDao {
 
 	int 					selectOutStatus(int sales_No);
 
-	void 					completeStatus (int sales_No, int status, List<Sales_ItemDto> salesItemList);
+	int 					completeStatus (int sales_No, int status, List<Sales_ItemDto> salesItemList);
 
 	void 					closeStatus(int sales_No, int status);
 

@@ -142,7 +142,7 @@
       <form id="toPurchaseForm" method="post" action="${pageContext.request.contextPath}/sales/confirmToPurchase">
         <input type="hidden" name="shortagesJson" id="shortagesJson"/>
         <div class="d-flex gap-2 justify-content-end">
-          <a href="${pageContext.request.contextPath}/sales/createStart" class="btn btn-outline-secondary">취소</a>
+          <a href="${pageContext.request.contextPath}/sales/detail?sales_No=${pendingSalesOrder.sales_No}" class="btn btn-outline-secondary">취소</a>
           <button type="button" class="btn btn-primary" onclick="submitShortages()">발주로 이동</button>
         </div>
       </form>
