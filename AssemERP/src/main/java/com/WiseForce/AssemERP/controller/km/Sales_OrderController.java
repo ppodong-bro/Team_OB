@@ -89,8 +89,8 @@ public class Sales_OrderController {
 		for(PartsDTO key : requirementsForSalesMap.keySet()) {
 			// 실재고 조회를 위한 DTO
 			InventoryInfoDTO inventoryInfoDTO = InventoryInfoDTO.builder().item_type(0/*부품*/).item_no(key.getParts_no()).build();
-			// 필요한 부품의 실재고
-			int realCnt = inventoryService.getRealInventoryById(inventoryInfoDTO).getCnt();
+			// 필요한 부품의 가용재고
+			int realCnt = inventoryService.getAbleInventoryById(inventoryInfoDTO).getCnt();
 
 			PartsShortageDto partsShortageDto = PartsShortageDto.builder()
 					.parts_no(key.getParts_no()) // 부품번호

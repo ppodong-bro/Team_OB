@@ -23,6 +23,8 @@ public interface InventoryDao {
 
 	// 재고 상세 정보 조회
 	InventoryInfoDTO getInventoryInfoById(InventoryInfoDTO inventoryInfoDTO);
+	// 가용 재고 상세 정보 조회
+	InventoryInfoDTO getAbleInventoryInfoById(InventoryInfoDTO inventoryInfoDTO);
 
 	// 재고현황 조회
 	List<Map<String, Object>> getInventoryCurrent();

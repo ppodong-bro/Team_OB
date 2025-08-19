@@ -75,11 +75,24 @@ public class InventoryDaoImpl implements InventoryDao {
 		
 		return target_InventoryInfoDTO;
 	}
+	// 가용 재고 상세 정보 조회
+	@Override
+	public InventoryInfoDTO getAbleInventoryInfoById(InventoryInfoDTO inventoryInfoDTO) {
+		InventoryInfoDTO target_InventoryInfoDTO = session.selectOne("com.WiseForce.AssemERP.dg.InventoryMapper.getAbleInventoryInfoById", inventoryInfoDTO);
+		
+		return target_InventoryInfoDTO;
+	}
 
 	// 재고현황 조회
 	@Override
 	public List<Map<String, Object>> getInventoryCurrent() {
-		List<Map<String, Object>> list = session.selectList("com.WiseForce.AssemERP.dg.InventoryMapper.getInventoryCurrent");
+		// 제품,부품,여유
+//		List<Map<String, Object>> list = session.selectList("com.WiseForce.AssemERP.dg.InventoryMapper.getInventoryCurrent");
+
+		// 부품,여유
+		List<Map<String, Object>> list = session.selectList("com.WiseForce.AssemERP.dg.InventoryMapper.getInventoryCurrentParts");
+		
+		System.out.println(list);
 		
 		return list;
 	}

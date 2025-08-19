@@ -17,6 +17,8 @@ public interface InventoryService {
 
 	// 재고 상세 조회
 	InventoryInfoDTO getRealInventoryById(InventoryInfoDTO inventoryInfoDTO);
+	// 가용 재고 상세 조회
+	InventoryInfoDTO getAbleInventoryById(InventoryInfoDTO inventoryInfoDTO);
 	// 재고 조정
 	boolean adjustRealInventoryById(InventoryInfoDTO inventoryInfoDTO);
 	
