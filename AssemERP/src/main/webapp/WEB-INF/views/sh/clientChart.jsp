@@ -70,14 +70,12 @@ const myChart = new Chart(ctx, {
         labels: labels,
         datasets: [
             {
-                label: '판매처',
-                data: salesData,
-                backgroundColor: 'rgba(255,150,150,0.8)' // 연한 빨강
-            },
-            {
-                label: '구매처',
-                data: purchaseData,
-                backgroundColor: 'rgba(150,150,255,0.8)' // 연한 파랑
+                label: '거래처 실적',
+                data: data,
+                backgroundColor: data.map((_, i) => i < 5 ? 
+                    'rgba(255,150,150,0.8)' : // 앞 5개는 연한 빨강 (판매처)
+                    'rgba(150,150,255,0.8)'   // 뒤 5개는 연한 파랑 (구매처)
+                )
             }
         ]
     },
