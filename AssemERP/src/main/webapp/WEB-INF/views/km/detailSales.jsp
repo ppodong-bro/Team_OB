@@ -190,7 +190,7 @@
 												<c:when test="${not empty sales_OrderDto.sales_Item}">
 													<c:forEach var="item" items="${sales_OrderDto.sales_Item}">
 														<tr>
-															<td class="name"><c:out
+															<td class= "name text-truncate" title="<c:out value='${item.productDto != null ? item.productDto.product_name : "-"}'/>"><c:out
 																	value="${item.productDto != null ? item.productDto.product_name : '-'}" />
 															</td>
 															<td class="numeric"><c:out
@@ -422,7 +422,7 @@
 													</c:if>
 													<button type="submit"
 														class="btn btn-danger btn-sm px-4 w-100"
-														onclick="return confirm('수주 취소 하시겠습니까?');">
+														onclick="return confirm('수주를 취소 하시겠습니까?');">
 														<i class="bi bi-trash me-1"></i>수주 취소
 													</button>
 												</form>
@@ -465,7 +465,7 @@
 													</c:if>
 													<button type="submit"
 														class="btn btn-outline-primary btn-sm px-4 w-100"
-														onclick="return confirm('정말 재수주 요청하시겠습니까? 요청 상태로 변경 후 해당 수주 수정 창으로 이동합니다.');">
+														onclick="return confirm('정말 재수주 요청하시겠습니까? 요청 상태로 변경 후 해당 수주 수정 페이지로 이동합니다.');">
 														<i class="bi bi-arrow-repeat me-1"></i>재수주 요청
 													</button>
 												</form>
@@ -503,7 +503,7 @@
 													</c:if>
 													<button type="submit"
 														class="btn btn-danger btn-sm px-4 w-100"
-														onclick="return confirm('수주 취소 하시겠습니까?');">
+														onclick="return confirm('수주를 취소 하시겠습니까?');">
 														<i class="bi bi-trash me-1"></i>수주 취소
 													</button>
 												</form>

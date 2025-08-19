@@ -80,35 +80,35 @@ public class Sales_OrderController {
 		
 		System.out.println("createSales sales_OrderDto--->" + sales_OrderDto);
 		
-		// View용 부족한 부품의 DTO
-		List<PartsShortageDto> shortages = new ArrayList<>();
-		
-		// 부족한 부품 정보 및 수량
-		Map<PartsDTO, Integer> requirementsForSalesMap = inventoryService.getRequirementsForSales(sales_OrderDto.getSales_Item());
-
-		for(PartsDTO key : requirementsForSalesMap.keySet()) {
-			// 실재고 조회를 위한 DTO
-			InventoryInfoDTO inventoryInfoDTO = InventoryInfoDTO.builder().item_type(0/*부품*/).item_no(key.getParts_no()).build();
-			// 필요한 부품의 가용재고
-			int realCnt = inventoryService.getAbleInventoryById(inventoryInfoDTO).getCnt();
-
-			PartsShortageDto partsShortageDto = PartsShortageDto.builder()
-					.parts_no(key.getParts_no()) // 부품번호
-					.parts_name(key.getParts_name()) // 부품명
-					.required_cnt(realCnt + requirementsForSalesMap.get(key)) // 필요 부품 수량
-					.available_cnt(realCnt) // 보유 부품 수량
-					.shortage_cnt(requirementsForSalesMap.get(key)) // 부족 부품 수량
-					.build();
-
-			// View용 부족한 부품 리스트에 추가
-			shortages.add(partsShortageDto);
-		}
-		
-	    if (!shortages.isEmpty()) {
-	        ra.addFlashAttribute("shortages", shortages);
-	        ra.addFlashAttribute("pendingSalesOrder", sales_OrderDto);
-	        return "redirect:/sales/shortageConfirm";
-	    }
+//		// View용 부족한 부품의 DTO
+//		List<PartsShortageDto> shortages = new ArrayList<>();
+//		
+//		// 부족한 부품 정보 및 수량
+//		Map<PartsDTO, Integer> requirementsForSalesMap = inventoryService.getRequirementsForSales(sales_OrderDto.getSales_Item());
+//
+//		for(PartsDTO key : requirementsForSalesMap.keySet()) {
+//			// 실재고 조회를 위한 DTO
+//			InventoryInfoDTO inventoryInfoDTO = InventoryInfoDTO.builder().item_type(0/*부품*/).item_no(key.getParts_no()).build();
+//			// 필요한 부품의 가용재고
+//			int realCnt = inventoryService.getAbleInventoryById(inventoryInfoDTO).getCnt();
+//
+//			PartsShortageDto partsShortageDto = PartsShortageDto.builder()
+//					.parts_no(key.getParts_no()) // 부품번호
+//					.parts_name(key.getParts_name()) // 부품명
+//					.required_cnt(realCnt + requirementsForSalesMap.get(key)) // 필요 부품 수량
+//					.available_cnt(realCnt) // 보유 부품 수량
+//					.shortage_cnt(requirementsForSalesMap.get(key)) // 부족 부품 수량
+//					.build();
+//
+//			// View용 부족한 부품 리스트에 추가
+//			shortages.add(partsShortageDto);
+//		}
+//		
+//	    if (!shortages.isEmpty()) {
+//	        ra.addFlashAttribute("shortages", shortages);
+//	        ra.addFlashAttribute("pendingSalesOrder", sales_OrderDto);
+//	        return "redirect:/sales/shortageConfirm";
+//	    }
 	    
 	    int result = sales_OrderService.createSales(sales_OrderDto);
 	    
@@ -195,7 +195,44 @@ public class Sales_OrderController {
 	public String modifyStatus(Sales_OrderDto sales_OrderDto, RedirectAttributes ra) {
 		try {
 			
+			
+			
 			sales_OrderService.closeCheck();
+			
+			Sales_OrderDto sales_OrderDto1 = sales_OrderService.detailSales(sales_OrderDto);
+			System.out.println("sales_OrderDto1->>>>>>>>>."+sales_OrderDto1);
+			
+			if(sales_OrderDto1.getOut_Status() == 0) {
+				List<PartsShortageDto> shortages = new ArrayList<>();
+				
+				// 부족한 부품 정보 및 수량
+				Map<PartsDTO, Integer> requirementsForSalesMap = inventoryService.getRequirementsForSales(sales_OrderDto1.getSales_Item());
+
+				for(PartsDTO key : requirementsForSalesMap.keySet()) {
+					// 실재고 조회를 위한 DTO
+					InventoryInfoDTO inventoryInfoDTO = InventoryInfoDTO.builder().item_type(0/*부품*/).item_no(key.getParts_no()).build();
+					// 필요한 부품의 가용재고
+					int realCnt = inventoryService.getAbleInventoryById(inventoryInfoDTO).getCnt();
+
+					PartsShortageDto partsShortageDto = PartsShortageDto.builder()
+							.parts_no(key.getParts_no()) // 부품번호
+							.parts_name(key.getParts_name()) // 부품명
+							.required_cnt(realCnt + requirementsForSalesMap.get(key)) // 필요 부품 수량
+							.available_cnt(realCnt) // 보유 부품 수량
+							.shortage_cnt(requirementsForSalesMap.get(key)) // 부족 부품 수량
+							.build();
+
+					// View용 부족한 부품 리스트에 추가
+					shortages.add(partsShortageDto);
+				}
+				
+			    if (!shortages.isEmpty()) {
+			        ra.addFlashAttribute("shortages", shortages);
+			        ra.addFlashAttribute("pendingSalesOrder", sales_OrderDto1);
+			        return "redirect:/sales/shortageConfirm";
+			    }
+				
+			}
 			int sales_No = sales_OrderDto.getSales_No();
 			List<Sales_ItemDto> salesItemList = sales_OrderService.salesItemList(sales_No);
 			String result = sales_OrderService.modifyStatus(sales_No, salesItemList);

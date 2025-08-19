@@ -42,8 +42,10 @@ public class ClientServiceImpl implements ClientService {
 
 	@Override
 	public String createClient(ClientDto clientDto) {
+		
 		int result = clientDao.createClient(clientDto);
 		int result1 = clientDao.createClient_His(clientDto);
+		
 		
 		if(result1 == 1) {
 			String success = "거래처 등록 성공";

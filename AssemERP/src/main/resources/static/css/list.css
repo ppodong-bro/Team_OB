@@ -195,8 +195,6 @@
   width: 18%;
 }
 
-@charset "UTF-8";
-
 /* 상태 텍스트 + 점 표시 */
 .status-text {
   display: inline-flex;

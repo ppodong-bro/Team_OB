@@ -28,8 +28,8 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @SequenceGenerator(
-		name 		 = 	"sales_seq",
-		sequenceName = 	"sales_seq_gen",
+		name 		 = 	"sales_seq_gen",
+		sequenceName = 	"sales_seq",
 		initialValue =  3011,
 		allocationSize = 1
 		)
@@ -37,7 +37,7 @@ public class Sales_Order {
 	@Id
 	@GeneratedValue(
 			strategy  = GenerationType.SEQUENCE,
-			generator = "sales_seq" 
+			generator = "sales_seq_gen" 
 			)
 	private int sales_no;
 	

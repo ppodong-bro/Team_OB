@@ -36,7 +36,7 @@
 							<h4 class="card-title mb-0">
 								<i class="bi bi-list-ul"></i> 거래처 목록
 							</h4>
-							<a href="/client/createStart" class="btn btn-primary"><i
+						<a href="/client/createStart" class="btn btn-primary" onclick="return confirm('거래처를 등록 하시겠습니까?');"><i
 								class="bi bi-plus-lg"></i>등록</a>
 						</div>
 						<div class="card-body">
@@ -123,11 +123,14 @@
 												<td class="text-center">${client.client_Man}</td>
 												<td class="text-center">${fn:substring(client.in_Date, 0, 10)}</td>
 												<!-- 수정 버튼 -->
-												<td class="text-center"><a
-													href="/client/modifyStart?client_No=${client.client_No}"
-													class="btn btn-sm btn-outline-success"> <i
+												<td class="text-center" onclick="event.stopPropagation()">
+													<a
+													href="<c:url value='/client/modifyStart?client_No=${client.client_No}'/>"
+													class="btn btn-sm btn-outline-success"
+													onclick="return confirm('거래처를 수정 하시겠습니까?');"> <i
 														class="bi bi-pencil-square"></i> 수정
-												</a></td>
+												</a>
+												</td>
 												<%-- 													<form
 														action="${pageContext.request.contextPath}/client/delete"
 														method="post" style="display: inline;"

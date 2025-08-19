@@ -208,7 +208,7 @@
 		
 	<insert id="createSales" parameterType="Sales_OrderDto">
 		<selectKey keyProperty="sales_No" resultType="int" order="BEFORE">
-			SELECT SALES_SEQ_GEN.NEXTVAL
+			SELECT SALES_SEQ.NEXTVAL
 			FROM   DUAL
 		</selectKey>
 			

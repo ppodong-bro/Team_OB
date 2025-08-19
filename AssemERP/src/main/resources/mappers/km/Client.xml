@@ -129,7 +129,7 @@
 	
 	<insert id="createClient" parameterType="ClientDto">
 		<selectKey keyProperty="client_No" resultType="int" order="BEFORE">
-			SELECT CLIENT_SEQ_GEN.NEXTVAL
+			SELECT CLIENT_SEQ.NEXTVAL
 			FROM   DUAL
 		</selectKey>
 			INSERT INTO Client 

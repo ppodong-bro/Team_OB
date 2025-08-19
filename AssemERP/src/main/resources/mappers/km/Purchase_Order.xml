@@ -175,7 +175,7 @@
 	
 	<insert id="createPurchase" parameterType="Purchase_OrderDto">
 		<selectKey keyProperty="purchase_No" resultType="int" order="BEFORE"> 
-			SELECT PURCHASE_SEQ_GEN.NEXTVAL
+			SELECT PURCHASE_SEQ.NEXTVAL
 			FROM   DUAL
 		</selectKey>
 		INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, DEL_STATUS, IN_DATE) 

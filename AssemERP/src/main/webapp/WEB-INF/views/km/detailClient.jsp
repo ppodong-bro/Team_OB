@@ -140,28 +140,12 @@
 									</div>
 								</div>
 							</section>
-
-							<!-- 하단 버튼 (목록/수정) -->
-							<%-- <div class="text-end mt-4 d-flex justify-content-end gap-2">
-								<a
-									href="<c:url value='/client/modifyStart?client_No=${clientDto.client_No}'/>"
-									class="btn btn-outline-primary btn-sm px-4">수정</a>
-							</div> --%>
-							<!-- 	<div class="row mt-4 g-2">
-								삭제 (POST 전송)
-								<div class="col-md-4 d-grid">
-									<button type="button" id="deleteBtn" class="btn btn-danger"
-										onclick="if (confirm('정말 삭제하시겠어요?')) { document.getElementById('deleteForm').submit(); }">
-										<i class="bi bi-trash me-2"></i>삭제
-									</button>
-								</div> -->
-
 							<div class="row mt-4 g-2">
 								<!-- 삭제 (POST) -->
 								<div class="col-md-4 d-grid">
 									<form id="deleteForm" class="m-0" method="post"
 										action="<c:url value='/client/delete'/>"
-										onsubmit="return confirm('정말 삭제하시겠어요?');">
+										onsubmit="return confirm('거래처를 삭제 하시겠습니까?');">
 										<input type="hidden" name="client_No"
 											value="${clientDto.client_No}" /> <input type="hidden"
 											name="${_csrf.parameterName}" value="${_csrf.token}" />
@@ -176,9 +160,10 @@
 								<div class="col-md-8 d-grid">
 									<button type="button" id="moditfyBtn"
 										class="btn btn-success btn-sm px-4 w-100"
-										onclick="location.href='<c:url value='/client/modifyStart?client_No=${clientDto.client_No}'/>';">
-										<i class="bi bi-check-lg me-2"></i>정보 수정
+										onclick="if (confirm('거래처를 수정 하시겠습니까?')) {location.href = '<c:url value='/client/modifyStart?client_No=${clientDto.client_No}'/>';}">
+										<i class="bi bi-check-lg me-2"></i>거래처 수정
 									</button>
+
 								</div>
 							</div>
 						</div>

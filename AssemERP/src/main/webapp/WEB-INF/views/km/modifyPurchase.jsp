@@ -340,7 +340,7 @@
 													<th scope="col" class="numeric">요청수량</th>
 													<th scope="col" class="numeric">부품 단가</th>
 													<th scope="col" class="numeric">요청 총액</th>
-													<th scope="col">삭제</th>
+													<th style="width: 7%;" scope="col">삭제</th>
 												</tr>
 											</thead>
 											<tbody id="items-tbody">
@@ -436,12 +436,12 @@
 								</section>
 
 								<!-- 액션 버튼 -->
-							<%-- 	<div class="text-end mt-4 d-flex justify-content-end gap-2">
+								<%-- 	<div class="text-end mt-4 d-flex justify-content-end gap-2">
 									<a href="${pageContext.request.contextPath}/purchase/list"
 										class="btn btn-outline-secondary btn-sm px-4">취소</a>
 									<button type="submit" class="btn btn-primary btn-sm px-4">저장</button>
 								</div> --%>
-									<div class="row mt-4 g-2">
+								<div class="row mt-4 g-2">
 									<!-- 취소: 링크 -->
 									<div class="col-md-4 d-grid">
 										<a href="<c:url value='/purchase/list'/>"
@@ -469,13 +469,10 @@
 			<!-- 부트스트랩 CDN -->
 			<jsp:include page="/common_cdn.jsp" />
 			<jsp:include page="/foot.jsp" />
+
+			<script
+				src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 		</div>
 	</div>
-	<script src="…bootstrap.js"></script>
 </body>
 </html>
-<!--       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-	    </div>
-	  </div>
-	</body>
-	</html> -->
