@@ -90,6 +90,14 @@ public class InventoryServiceImpl implements InventoryService {
 		
 		return target_InventoryInfoDTO;
 	}
+	// 가용 재고 상세 조회
+	@Override
+	public InventoryInfoDTO getAbleInventoryById(InventoryInfoDTO inventoryInfoDTO) {
+		// 상세 정보 가져오기
+		InventoryInfoDTO target_InventoryInfoDTO = inventoryDao.getAbleInventoryInfoById(inventoryInfoDTO);
+		
+		return target_InventoryInfoDTO;
+	}
 	
 	// 재고 실 수량 조정
 	@Override
@@ -242,8 +250,9 @@ public class InventoryServiceImpl implements InventoryService {
 		for(Integer key : requirementsPartsMergeMap.keySet()) {
 			// 실재고 조회를 위한 DTO
 			InventoryInfoDTO inventoryInfoDTO = InventoryInfoDTO.builder().item_type(0/*부품*/).item_no(key).build();
-			// 필요한 부품의 실재고
-			int realCnt = inventoryDao.getInventoryInfoById(inventoryInfoDTO).getCnt();
+			// 필요한 부품의 가용재고
+//			int realCnt = inventoryDao.getInventoryInfoById(inventoryInfoDTO).getCnt();
+			int realCnt = inventoryDao.getAbleInventoryInfoById(inventoryInfoDTO).getCnt();
 			
 			// 실재고 - 필요한 개수
 			int diffCnt = realCnt - requirementsPartsMergeMap.get(key);

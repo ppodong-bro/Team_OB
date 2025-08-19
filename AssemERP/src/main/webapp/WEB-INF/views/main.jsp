@@ -7,6 +7,7 @@
 <head>
 <!-- 차트를 위한 JS라이브러리 -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 
 <!-- 캘린더를 위한 flatpickr JS -->
 <link
@@ -193,7 +194,7 @@ function openClientPerformDetail() {
 					<!-- 재고현황 -->
 					<div class="item item-3">
 						<canvas id="doughnutChart"></canvas>
-						<jsp:include page="/WEB-INF/views/dg/doughnutChart.jsp" />
+						<jsp:include page="/WEB-INF/views/dg/js_inventoryCurrent.jsp" />
 					</div>
 					<!-- 거래처실적 -->
 					<div class="item item-4" onclick="openClientPerformDetail()">

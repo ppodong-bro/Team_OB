@@ -160,15 +160,24 @@ html, body {
 	height: 60px;
 	bottom: 0;
 	margin: 0;
+	padding: 5px 20px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	border-top: #CCE4F6 solid 3px;
 	z-index: 1000;
+	
+	display: flex;
+	justify-content: space-between; /* 요소들 사이에 균일한 간격 배치 */
 }
 
 .footer span {
 	font-size: 0.7rem;
+}
+@media ( max-width : 992px) {
+	.footer span {
+		font-size: 0.5rem;
+	}
 }
 
 /* Modal 창 */

@@ -137,6 +137,27 @@
 		WHERE item_type = #{item_type} 
 		AND item_no = #{item_no}
 	</select>
+	<select id="getAbleInventoryInfoById" statementType="CALLABLE"
+		parameterType="com.WiseForce.AssemERP.dto.dg.InventoryInfoDTO"
+		resultType="com.WiseForce.AssemERP.dto.dg.InventoryInfoDTO">
+		SELECT * FROM (
+			SELECT RI.item_status AS item_type, RI.item_no,
+			       NVL(PA.parts_status, PR.product_status) AS item_status,
+			       NVL(PA.parts_name, PR.product_name) AS item_name,
+			       RI.cnt
+			FROM (SELECT * FROM TABLE(calc_able_inventory_all())) RI
+			LEFT JOIN  
+				(SELECT product_no, product_status, product_name FROM product) PR 
+				ON RI.item_status = 1 
+				AND RI.item_no = PR.product_no
+			LEFT JOIN 
+				(SELECT parts_no, parts_status, parts_name FROM parts) PA 
+				ON RI.item_status = 0 
+				AND RI.item_no = PA.parts_no
+		)
+		WHERE item_type = #{item_type} 
+		AND item_no = #{item_no}
+	</select>
 	
 	<select id="getInventoryCurrent" resultType="java.util.Map" statementType="CALLABLE">
 		SELECT 
@@ -163,6 +184,30 @@
 		AND gi.item_status = io.item_status
 		GROUP BY gi.item_type
 		UNION ALL 
+		SELECT '여유' AS label, MAX(item_occupy) AS value FROM inventory_occupy
+		WHERE item_status = 999
+		GROUP BY '여유'
+    </select>
+	
+	<select id="getInventoryCurrentParts" resultType="java.util.Map" statementType="CALLABLE">
+		SELECT c.context AS label, SUM(cnt * io.item_occupy) AS value FROM (
+		    SELECT parts_status AS item_status, cnt FROM (
+		        SELECT * FROM TABLE(calc_real_inventory_all()) i
+		        LEFT JOIN parts pa
+		        ON i.item_no = pa.parts_no
+		        AND i.item_status = 0
+		        LEFT JOIN product pr
+		        ON i.item_no = pr.product_no
+		        AND i.item_status = 1
+		        WHERE item_status = 0
+		    )
+		) gi 
+		LEFT JOIN common c
+		    ON (c.big_status = 900 AND gi.item_status = c.middle_status)
+		LEFT JOIN inventory_occupy io
+		    ON io.item_type = 0 AND gi.item_status = io.item_status
+		GROUP BY c.context
+		UNION ALL
 		SELECT '여유' AS label, MAX(item_occupy) AS value FROM inventory_occupy
 		WHERE item_status = 999
 		GROUP BY '여유'

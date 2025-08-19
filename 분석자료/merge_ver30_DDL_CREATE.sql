@@ -1365,13 +1365,14 @@ ALTER TABLE emp_image
 -- DROP TRIGGER TRIGGER_SALES_INVENHIS;
 -- DROP TRIGGER TRIGGER_PURCHASE_INVENHIS;
 /
--- inventory 트리거
 CREATE OR REPLACE TRIGGER TRIGGER_SALES_INVENHIS
 AFTER INSERT OR UPDATE OR DELETE ON sales_item -- 수주, 제품 판매
 FOR EACH ROW
 BEGIN
-    -- 제품을 부품으로 변환
     DECLARE
+        -- 수주 상태
+        v_status NUMBER;
+        -- 제품을 부품으로 변환
         CURSOR cur_trans IS
             SELECT parts_no, cnt
             FROM product_bom
@@ -1686,6 +1687,106 @@ BEGIN
         EXIT WHEN cur_real_inventory%NOTFOUND;
         
         PIPE ROW(type_calc_real_inventory_all(v_item_status, v_item_no, v_inventory_cnt + v_purchase_cnt - v_sales_cnt + v_in_cnt - v_out_cnt));
+    END LOOP;
+
+    RETURN;
+END;
+/
+-- 가용재고 계산(포맷은 실재고 계산과 동일)
+create or replace FUNCTION calc_able_inventory_all
+RETURN table_calc_real_inventory_all PIPELINED -- PIPELINED : 한 행씩 순차적으로 반환할 수 있게 해주는 함수로 지정
+IS
+    -- 속성변수
+    v_inven_status NUMBER; -- 부품/제품 구분
+    v_item_no NUMBER; -- 재고번호
+    v_item_status VARCHAR2(255); -- 재고분류
+    v_name VARCHAR2(255); -- 재고명
+    v_total_cnt NUMBER; -- 총 수량
+    v_inventory_cnt NUMBER; -- 기말 수량
+    v_purchase_cnt NUMBER; -- 구매 수량
+    v_sales_cnt NUMBER; -- 판매 수량
+    v_salesvirtual_cnt NUMBER; -- 판매 예정 수량
+    v_in_cnt NUMBER; -- 조정+ 수량
+    v_out_cnt NUMBER; -- 조정- 수량
+    
+    -- 현 재고 실수량 가져오기
+    CURSOR cur_real_inventory IS
+        SELECT 
+            M.item_status,
+            M.item_no, 
+            AVG(M.cnt) AS inventory_cnt, 
+            NVL(SUM(P.cnt),0) AS purchase_cnt, 
+            NVL(SUM(S.cnt),0) AS sales_cnt, 
+            NVL(SUM(SV.cnt), 0) AS salesvirtual_cnt, 
+            NVL(SUM(II.cnt),0) AS item_in, 
+            NVL(SUM(IO.cnt),0) AS item_out
+        FROM 
+            (SELECT item_status, item_no, cnt
+            FROM month_inventory
+            WHERE yearmonth = (SELECT MAX(yearmonth) FROM month_inventory) -- 최근 년월
+            AND startend_status = 1 -- 기말재고
+            ) M 
+            -- 수주
+            LEFT JOIN
+            (SELECT 1 AS item_status, product_no AS item_no, SUM(sales_item_cnt) AS cnt FROM sales_item 
+            WHERE sales_no IN ( 
+                SELECT sales_no FROM sales_order WHERE out_status IN (2/*완료*/)
+                )
+            GROUP BY product_no
+            ) S 
+            ON M.item_status = S.item_status
+            AND M.item_no = S.item_no 
+            -- 수주 예정(가용재고 계산용)
+            LEFT JOIN 
+            (SELECT 0 AS item_status, pb.parts_no AS item_no, SUM(pb.cnt * si.sales_item_cnt) AS cnt FROM product_bom pb
+            JOIN sales_item si ON pb.product_no = si.product_no AND pb.product_version = si.product_version
+            WHERE si.sales_no IN (
+                SELECT sales_no FROM sales_order WHERE out_status IN (1/*완료*/)
+            )
+            GROUP BY pb.parts_no
+            ) SV
+            ON M.item_status = SV.item_status
+            AND M.item_no = SV.item_no 
+            -- 발주
+            LEFT JOIN 
+            (SELECT 0 AS item_status, parts_no AS item_no, SUM(purchase_item_cnt) AS cnt FROM purchase_item 
+            WHERE purchase_no IN (
+                SELECT purchase_no FROM purchase_order WHERE in_status IN (1/*승인*/, 2/*완료*/)
+                )
+            GROUP BY parts_no
+            ) P 
+            ON M.item_status = P.item_status
+            AND M.item_no = P.item_no
+            -- 조정(+)
+            LEFT JOIN 
+            (SELECT item_status, item_no, SUM(item_cnt) AS cnt FROM inventory_adjust 
+            WHERE item_close_status IN (1/*승인*/, 2/*완료*/)
+            AND inout_status = 0/*IN*/
+            GROUP BY item_status, item_no
+            ) II 
+            ON M.item_status = II.item_status
+            AND M.item_no = II.item_no
+            -- 조정(-)
+            LEFT JOIN 
+            (SELECT item_status, item_no, SUM(item_cnt) AS cnt FROM inventory_adjust 
+            WHERE item_close_status IN (1/*승인*/, 2/*완료*/)
+            AND inout_status = 1/*OUT*/
+            GROUP BY item_status, item_no
+            ) IO 
+            ON M.item_status = IO.item_status
+            AND M.item_no = IO.item_no
+        GROUP BY M.item_status, M.item_no;
+
+BEGIN
+    OPEN cur_real_inventory;
+
+    LOOP
+        FETCH cur_real_inventory INTO v_item_status, v_item_no, v_inventory_cnt, v_purchase_cnt, v_sales_cnt, v_salesvirtual_cnt, v_in_cnt, v_out_cnt;
+        
+        -- 없으면 LOOP 종료
+        EXIT WHEN cur_real_inventory%NOTFOUND;
+        
+        PIPE ROW(type_calc_real_inventory_all(v_item_status, v_item_no, v_inventory_cnt + v_purchase_cnt - v_sales_cnt - v_salesvirtual_cnt + v_in_cnt - v_out_cnt));
     END LOOP;
 
     RETURN;

@@ -23,7 +23,7 @@ function fetchWeather(lat, lon) {
 
     var currentUrl = "https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon +
                      "&appid=" + apiKey + "&units=metric&lang=kr";
-     console.log("현재 날씨 API 호출:", currentUrl);
+	// console.log("현재 날씨 API 호출:", currentUrl);
 
     fetch(currentUrl)
         .then(res => {
