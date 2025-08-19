@@ -89,17 +89,36 @@ body {
 									<div class="col-md-4 mb-12">
 										<div class="image-box">
 											<c:choose>
-												<c:when test="${empty productDTO.filename}">
-													<img
-														src="${pageContext.request.contextPath}/upload/default.jpg"
-														alt="기본이미지">
-												</c:when>
-												<c:otherwise>
-													<img
-														src="${pageContext.request.contextPath}/upload/s_${productDTO.filename}"
-														alt="부품이미지">
-												</c:otherwise>
+											    <c:when test="${empty productDTO.filename}">
+											        <!-- 파일명이 없으면 기본 이미지 -->
+											        <img id="productImage" src="${pageContext.request.contextPath}/upload/default.jpg" alt="기본이미지">
+											    </c:when>
+											    <c:otherwise>
+											        <!-- 파일명이 있으면 먼저 부품 이미지로 시도 -->
+											        <img id="productImage" src="${pageContext.request.contextPath}/upload/s_${productDTO.filename}" alt="제품이미지">
+											    </c:otherwise>
 											</c:choose>
+											
+											<script>
+											    const img = document.getElementById('productImage');
+											
+											    // 이미지 로딩 실패 시 기본 이미지로
+											    img.onerror = function() {
+											        this.src = "${pageContext.request.contextPath}/upload/default.jpg";
+											    };
+											
+											    // 파일 크기 체크 (이미지가 있더라도 0이면 기본 이미지)
+											    fetch(img.src, { method: 'HEAD' })
+											        .then(response => {
+											            const size = response.headers.get('Content-Length');
+											            if (!size || parseInt(size) === 0) {
+											                img.src = "${pageContext.request.contextPath}/upload/default.jpg";
+											            }
+											        })
+											        .catch(() => {
+											            img.src = "${pageContext.request.contextPath}/upload/default.jpg";
+											        });
+											</script>
 										</div>
 									</div>
 

@@ -73,8 +73,8 @@ const myChart = new Chart(ctx, {
                 label: '거래처 실적',
                 data: data,
                 backgroundColor: data.map((_, i) => i < 5 ? 
-                    'rgba(255,150,150,0.8)' : // 앞 5개는 연한 빨강 (판매처)
-                    'rgba(150,150,255,0.8)'   // 뒤 5개는 연한 파랑 (구매처)
+               		'rgba(255, 99, 132, 1)' : // 앞 5개는 연한 빨강 (판매처)
+                   	'rgba(75, 192, 192, 0.8)'   // 뒤 5개는 연한 파랑 (구매처)
                 )
             }
         ]
@@ -95,12 +95,50 @@ const myChart = new Chart(ctx, {
             },
             legend: {
                 display: true,
-                position: 'top'
+                position: 'top',
+                labels: {
+                    generateLabels: function(chart) {
+                        // 커스텀 범례 생성
+                        return [
+                            {
+                                text: '판매처',
+                                fillStyle: 'rgba(255, 99, 132, 0.8)',
+                                strokeStyle: 'rgba(255, 99, 132, 1)',
+                                lineWidth: 1,
+                                hidden: false
+                            },
+                            {
+                                text: '구매처',
+                                fillStyle: 'rgba(75, 192, 192, 0.8)',
+                                strokeStyle: 'rgba(75, 192, 192, 1)',
+                                lineWidth: 1,
+                                hidden: false
+                            }
+                        ];
+                    }
+                },
+                onClick: function(e, legendItem, legend) {
+                    // 범례 클릭 시 필터링 처리
+                    const index = legendItem.index;
+                    const chart = legend.chart;
+                    
+                    chart.data.datasets.forEach(dataset => {
+                        // 모든 데이터 포인트에 대해 처리
+                        const meta = chart.getDatasetMeta(0);
+                        
+                        for (let i = 0; i < meta.data.length; i++) {
+                            const isVisible = (index === 0 && i < 5) || (index === 1 && i >= 5);
+                            meta.data[i].hidden = !isVisible;
+                        }
+                    });
+                    
+                    chart.update();
+                }
             },
             unitPlugin: {
                 text: '단위: 만원',
-                font: '14px Arial',
-                color: 'gray'
+                font: '12px Arial',
+                color: '#666'
             }
         }
     },
