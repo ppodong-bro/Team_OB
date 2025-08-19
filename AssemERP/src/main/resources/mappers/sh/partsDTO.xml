@@ -17,7 +17,7 @@
 						(SELECT *
 						 FROM parts
 						 WHERE del_status = 0
-						 ORDER BY parts_no) a
+						 ORDER BY parts_no desc) a
 		)
 		WHERE rn BETWEEN #{start} and #{end}
 		
@@ -81,7 +81,7 @@
 		        AND TRUNC(in_date) &lt;= #{endDate}
 		      </if>
 		    </where>
-		    ORDER BY parts_no
+		    ORDER BY parts_no desc
 		  ) a
 		  WHERE ROWNUM &lt;= #{end}   
 		)

@@ -4,7 +4,7 @@
 
 	<select id="shProductBomCreate" parameterType="ProductBomDTO"
 		resultType="int">
-		INSERT INTO product_bom
+		INSERT INTO product_bom (product_no, parts_no, cnt, product_version)
 		VALUES
 		(product_seq.CURRVAL,#{parts_no},#{cnt},1)
 

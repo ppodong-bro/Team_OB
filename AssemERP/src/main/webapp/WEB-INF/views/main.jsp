@@ -159,6 +159,13 @@ function openyearsPerformDetail() {
     "width=1000,height=1000,scrollbars=yes,resizable=yes"
   );
 }
+function openClientPerformDetail() {
+	  window.open(
+	    "perform/clientPerform", // 팝업에 띄울 페이지
+	    "팝업창",
+	    "width=1000,height=1000,scrollbars=yes,resizable=yes"
+	  );
+	}
 </script>
 </head>
 <body>
@@ -189,7 +196,7 @@ function openyearsPerformDetail() {
 						<jsp:include page="/WEB-INF/views/dg/doughnutChart.jsp" />
 					</div>
 					<!-- 거래처실적 -->
-					<div class="item item-4">
+					<div class="item item-4" onclick="openClientPerformDetail()">
 						<canvas id="clientChart"></canvas>
 						<jsp:include page="/WEB-INF/views/sh/clientChart.jsp" />
 					</div>

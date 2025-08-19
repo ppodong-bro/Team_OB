@@ -255,7 +255,7 @@ body {
 													value="${bom.cnt}" min="1" required /></td>
 
 												<!-- 삭제 버튼 -->
-												<td>
+												<td class="text-center">
 													<button type="button" class="btn btn-danger"
 														onclick="handleRowDelete(this)">삭제</button>
 												</td>
@@ -384,6 +384,7 @@ document.getElementById("addRowBtn").addEventListener("click", function () {
     delBtn.className = "btn btn-danger";
     delBtn.innerText = "삭제";
     delBtn.onclick = () => handleRowDelete(delBtn);
+    delCell.style.textAlign = "center"; // 셀 안에서 버튼을 중앙 정렬
     delCell.appendChild(delBtn);
 
     // 행에 각 셀 append
