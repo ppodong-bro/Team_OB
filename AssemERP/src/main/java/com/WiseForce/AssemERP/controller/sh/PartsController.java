@@ -1,7 +1,9 @@
 package com.WiseForce.AssemERP.controller.sh;
 
+import java.io.File;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -33,6 +35,7 @@ public class PartsController {
 	private final CustomFileUtil fileUtil;
 	private final EmpService empService;
 	private final InventoryService inventoryService;
+
 
 	@GetMapping("partsList")
 	public String partsListPageStart(PartsDTO partsDTO, Model model) {
@@ -121,6 +124,9 @@ public class PartsController {
 		// 부품 기본정보 가져오기
 		PartsDTO partsDTO = partsService.findbyID(parts_no);
 
+		System.out.println("partsDTO.getFilename() => "+partsDTO.getFilename());
+		
+		
 		// Emp 총원가져오기
 		EmpDTO dto = new EmpDTO();
 		int empTotalCount = empService.getTotalCount(dto);

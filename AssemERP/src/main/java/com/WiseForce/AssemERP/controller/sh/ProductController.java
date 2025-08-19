@@ -1,7 +1,9 @@
 package com.WiseForce.AssemERP.controller.sh;
 
+import java.io.File;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -38,6 +40,7 @@ public class ProductController {
 	private final EmpService empService;
 	private final InventoryService inventoryService;
 	
+
 	@GetMapping("productList")
 	public String productListPage(ProductDTO productDTO, Model model) {
 		// Del_status가 0인 부품총량 가져오기
@@ -121,7 +124,7 @@ public class ProductController {
 		// PK값을 이용한 제품정보 가져오기
 		ProductDTO productDTO = productService.getfindById(product_no);
 		List<ProductBomDTO> productBomDTOs = productService.getBomInfo(product_no);
-
+		
 		// Emp 총원가져오기
 		EmpDTO dto = new EmpDTO();
 		int empTotalCount = empService.getTotalCount(dto);
@@ -206,7 +209,7 @@ public class ProductController {
 		ProductDTO productDTO = productService.getfindById(product_no);
 		List<ProductBomDTO> productBomDTOs = productService.getBomInfo(product_no);
 		
-
+		
 		// 부품의 Type, No로 실재고 가져오기 
 		InventoryInfoDTO inventoryInfoDTOFrom = InventoryInfoDTO.builder()
 				.item_type(1)
