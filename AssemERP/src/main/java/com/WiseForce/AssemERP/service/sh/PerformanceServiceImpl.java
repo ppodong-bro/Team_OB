@@ -35,12 +35,21 @@ public class PerformanceServiceImpl implements PerformanceService {
 
 	@Override
 	public List<Integer> getClientTotalCost() {
-		List<ClientPerformanceDTO> clientPerformanceDTOs = performanceDao.getClientPerform();
-		// DB값 없을경우 리턴
-		if(clientPerformanceDTOs == null) return null;
-		// 클라이언트 이름추출 
+		// 판매거래처 실적가져오기
+		List<ClientPerformanceDTO> salesclientPerformanceDTOs = performanceDao.getSalesClientPerform();
+		// 구매거래처 실적가져오기
+		List<ClientPerformanceDTO> purchaseclientPerformanceDTOs = performanceDao.getPurchaseClientPerform();
+		
+		// 판매+구매 통합
+		List<ClientPerformanceDTO> result = new ArrayList<>();
+		result.addAll(salesclientPerformanceDTOs);
+		result.addAll(purchaseclientPerformanceDTOs);
+		
+		
+  
+		// 거래처 총거래액추출
 		List<Integer> totalcost = new ArrayList<>();
-		for (ClientPerformanceDTO row : clientPerformanceDTOs) {
+		for (ClientPerformanceDTO row : result) {
 		    totalcost.add(row.getTotalcost());
 		}
 		return totalcost;
@@ -48,17 +57,26 @@ public class PerformanceServiceImpl implements PerformanceService {
 
 	@Override
 	public List<String> getClientName() {
-		List<ClientPerformanceDTO> clientPerformanceDTOs = performanceDao.getClientPerform();
-		// DB값 없을경우 리턴
-		if(clientPerformanceDTOs == null) return null;
-		// 클라이언트 총거래액추출
+		// 판매거래처 실적가져오기
+		List<ClientPerformanceDTO> salesclientPerformanceDTOs = performanceDao.getSalesClientPerform();
+		// 구매거래처 실적가져오기
+		List<ClientPerformanceDTO> purchaseclientPerformanceDTOs = performanceDao.getPurchaseClientPerform();
+		
+		// 판매+구매 통합
+		List<ClientPerformanceDTO> result = new ArrayList<>();
+		result.addAll(salesclientPerformanceDTOs);
+		result.addAll(purchaseclientPerformanceDTOs);
+		
+		// 거래처 이름추출
 		List<String> client_name = new ArrayList<>();
-		for (ClientPerformanceDTO row : clientPerformanceDTOs) {
+		for (ClientPerformanceDTO row : result) {
 			client_name.add(row.getClient_name());
 		}
 		return client_name;
 	}
 
+	
+	
 	@Override
 	public List<YearsPerformDTO> searchProductById(int id) {
 		
@@ -69,6 +87,30 @@ public class PerformanceServiceImpl implements PerformanceService {
 	public List<YearsPerformDTO> searchPartsById(int id) {
 		
 		return performanceDao.searchPartsById(id);
+	}
+
+	@Override
+	public List<ClientPerformanceDTO> getSalesClient(String keyword) {
+		
+		return performanceDao.getSalesClient(keyword);
+	}
+
+	@Override
+	public List<ClientPerformanceDTO> getPurchaseClient(String keyword) {
+		
+		return performanceDao.getPurchaseClient(keyword);
+	}
+
+	@Override
+	public List<ClientPerformanceDTO> getSalesClinetData(int id) {
+		// TODO Auto-generated method stub
+		return performanceDao.getSalesClientData(id);
+	}
+
+	@Override
+	public List<ClientPerformanceDTO> getPurchaseClinetData(int id) {
+		// TODO Auto-generated method stub
+		return performanceDao.getPurchaseClientData(id);
 	}
 
 	

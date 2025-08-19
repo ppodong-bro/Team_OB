@@ -51,7 +51,7 @@
         
         <input type="text" id="searchInput" 
                style="flex: 1; height: 50px; box-sizing: border-box; font-size: 20px;"
-               placeholder="품목이름을 검색해주세요" autocomplete="off">
+               placeholder="거래처이름을 검색해주세요" autocomplete="off">
                
                
         <!-- 검색목록 -->
@@ -74,15 +74,15 @@ $(document).ready(function(){
         
         // 첫 번째 AJAX 호출
         $.ajax({
-            url: "${pageContext.request.contextPath}/perform/searchItem",
+            url: "${pageContext.request.contextPath}/perform/searchClient",
             method: "GET",
             data: { keyword: query },
             success: function(data){
                 let resultHtml = "";
                 if(data.length > 0){
-                    data.forEach(function(item){
-                        resultHtml += "<div class='resultItem' data-id='"+item.id+"' data-name='"+item.name+"' data-status='"+item.status+"'>"
-                                   + item.status + " [품목번호 : "+item.id+"] " + item.name
+                    data.forEach(function(client){
+                        resultHtml += "<div class='resultClient' data-id='"+client.id+"' data-name='"+client.name+"' data-status='"+client.status+"'>"
+                                   + client.status + " [거래처번호 : "+client.id+"] " + client.name
                                    + "</div>";
                     });
                 } else {
@@ -99,29 +99,29 @@ $(document).ready(function(){
     });
 
     // 결과 클릭 이벤트 - 별도로 분리
-    $(document).on("click", ".resultItem", function(){
-        let itemId = $(this).data("id");
-        let itemName = $(this).data("name");
-        let itemType = $(this).data("status");
+    $(document).on("click", ".resultClient", function(){
+        let clientId = $(this).data("id");
+        let clientName = $(this).data("name");
+        let clientType = $(this).data("status");
     
-        console.log("선택된 ID:", itemId);
-        console.log("선택된 Type:", itemType);
+        console.log("선택된 ID:", clientId);
+        console.log("선택된 Type:", clientType);
         
-        $("#searchInput").val(itemName);
+        $("#searchInput").val(clientName);
         $("#searchResults").empty();
 
         // 두 번째 AJAX 호출
         $.ajax({
-            url: "${pageContext.request.contextPath}/perform/getitemPerform",
+            url: "${pageContext.request.contextPath}/perform/getClientPerform",
             method: "GET",
             data: { 
-                id: itemId,
-                type: itemType
+                id: clientId,
+                type: clientType
             },
             success: function(stats){
                 console.log("서버 응답 확인:", stats);
                 // 그래프 렌더링 함수 호출 (구현 필요)
-                renderChart(itemName, stats);
+                renderChart(clientName, stats);
             },
             error: function(xhr, status, error) {
                 console.error("AJAX 요청 실패:", status, error);
@@ -130,12 +130,10 @@ $(document).ready(function(){
         });
     });
 });
-
-// 방향키 이벤트
 let selectedIndex = -1; // 현재 선택된 인덱스
 
 $("#searchInput").on("keydown", function(e){
-    let results = $("#searchResults div.resultItem");
+    let results = $("#searchResults div.resultClient");
     if(results.length === 0) return;
 
     if(e.key === "ArrowDown"){ // ↓
@@ -159,47 +157,51 @@ $("#searchInput").on("keydown", function(e){
     }
 });
 
-//검색 입력 시 highlight 초기화
+// 검색 입력 시 highlight 초기화
 $("#searchInput").on("input", function(){
     selectedIndex = -1;
 });
 
 
-function renderChart(itemName, stats) {
+function renderChart(clientName, stats) {
     // monthLabel 배열 추출
     const labels = stats.map(s => s.monthLabel);
+	
+    // clientData 배열 추출
+    const data = stats.map(s => s.clientData);
+    
+    // clientType 배열 추출
+    const type = stats.map(s => s.type)
 
-    // itemData 배열 추출
-    const data = stats.map(s => s.itemData);
+     // type에 따라 색상 지정 (0 → 빨강, 1 → 파랑)
+    const colors = type.map(t => t === 0 ? 'rgba(255, 99, 132, 0.7)' : 'rgba(54, 162, 235, 0.7)');
+    
+    console.log("labels :", labels);
+    console.log("data :", data);
+    console.log("type :", type);
+    console.log("colors :", colors);
 
-    const color = stats.map(s => s.borderColor);
+    
     // 기존 차트가 있으면 삭제 후 새로 생성 (중복 방지)
     if (window.myChart) {
         window.myChart.destroy();
     }
-    console.log("서버 응답:", stats);
-    
-    console.log("타입:", typeof stats);
-    
-    console.log("isArray?", Array.isArray(stats));
-    
-    console.log("서버 응답:", stats, typeof stats, Array.isArray(stats));
-    
-    console.log("칼라 : ", color[0]);
-    
+       
     const ctx = document.createElement("canvas");
     document.getElementById("chartArea").innerHTML = ""; // 초기화
     document.getElementById("chartArea").appendChild(ctx);
 
     window.myChart = new Chart(ctx, {
-        type: 'line',
+        type: 'bar',
         data: {
             labels: labels,
             datasets: [{
-                label: itemName,
+                label: clientName,
                 data: data,
                 fill: false,
-                borderColor: color[0]
+                backgroundColor: colors,  // 막대별 색상 적용
+                borderColor: colors.map(c => c.replace('0.7', '1')), // 테두리는 불투명하게
+                borderWidth: 1
             }]
         },
         options: {
@@ -207,7 +209,7 @@ function renderChart(itemName, stats) {
             plugins: {
                 title: {
                     display: true,
-                    text: itemName + " 월별 실적"
+                    text: clientName + " 월별 거래실적"
                 }
             },
             scales: {

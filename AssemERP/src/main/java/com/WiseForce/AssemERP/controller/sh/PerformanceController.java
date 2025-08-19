@@ -12,9 +12,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.WiseForce.AssemERP.dto.km.ClientDto;
+import com.WiseForce.AssemERP.dto.sh.ClientPerformanceDTO;
 import com.WiseForce.AssemERP.dto.sh.PartsDTO;
 import com.WiseForce.AssemERP.dto.sh.ProductDTO;
 import com.WiseForce.AssemERP.dto.sh.YearsPerformDTO;
+import com.WiseForce.AssemERP.service.km.ClientService;
 import com.WiseForce.AssemERP.service.sh.PartsService;
 import com.WiseForce.AssemERP.service.sh.PerformanceService;
 import com.WiseForce.AssemERP.service.sh.ProductService;
@@ -29,6 +32,7 @@ public class PerformanceController {
 	private final PerformanceService performanceService;
 	private final ProductService productService;
 	private final PartsService partsService;
+	private final ClientService clientService;
 	
 	@GetMapping("yearsPerform")
 	public String yearsPerform(){
@@ -102,6 +106,90 @@ public class PerformanceController {
 		else {
 			System.out.println("결과 없음");
 		}
+		return null;
+	}
+	
+	@GetMapping("clientPerform")
+	public String clientPerform(){
+		
+		return "sh/clientChartDetail";
+	}
+	
+	
+	@GetMapping("/searchClient")
+	@ResponseBody
+	public List<Map<String, Object>> searchClient(@RequestParam(name = "keyword")String keyword){
+		
+		// DB조회
+		List<Map<String, Object>> result = new ArrayList<>();
+		
+		// 판매회사 리스트
+		List<ClientPerformanceDTO> salesClient = performanceService.getSalesClient(keyword);
+		for(ClientPerformanceDTO i : salesClient) {
+			Map<String, Object> map = new HashMap<>();
+			map.put("id", i.getClient_no());
+			map.put("name", i.getClient_name());
+			map.put("status", "[판매처]");
+			result.add(map);
+		}
+		
+		// 구매회사 리스트
+		List<ClientPerformanceDTO> purChaseClient = performanceService.getPurchaseClient(keyword);
+		for(ClientPerformanceDTO i : purChaseClient) {
+			Map<String, Object> map = new HashMap<>();
+			map.put("id", i.getClient_no());
+			map.put("name", i.getClient_name());
+			map.put("status", "[구매처]");
+			result.add(map);
+		}
+		return result;
+	}
+	
+
+	@GetMapping("/getClientPerform")
+	@ResponseBody
+	public List<Map<String, Object>> getClientPerform(@RequestParam("id") int id, @RequestParam("type") String type){
+		System.out.println("id => "+id);
+		System.out.println("status => "+type);
+		
+		// 거래처번호롤 거래처 정보 가져오기
+		ClientDto clientDto = new ClientDto();
+		clientDto.setClient_No(id);
+		clientDto = clientService.detailClient(clientDto);
+		System.out.println("clientDto => "+clientDto);
+		
+		List<Map<String, Object>> result = new ArrayList<>();
+		
+		// 구매처 or 판매처 필터링
+		if("[판매처]".equals(type)) {
+			List<ClientPerformanceDTO> salesPerform = performanceService.getSalesClinetData(id);
+			for(ClientPerformanceDTO i : salesPerform) {
+				Map<String, Object> map = new HashMap<>();
+				map.put("monthLabel", i.getEach_month());
+				map.put("clientData" , i.getTotalcost());
+				map.put("clientName", clientDto.getClient_Name());
+				map.put("type", clientDto.getClient_Gubun());
+				result.add(map);
+			}
+			return result;
+		}
+		
+		if("[구매처]".equals(type)) {
+			List<ClientPerformanceDTO> purchasePerform = performanceService.getPurchaseClinetData(id);
+			for(ClientPerformanceDTO i : purchasePerform) {
+				Map<String, Object> map = new HashMap<>();
+				map.put("monthLabel", i.getEach_month());
+				map.put("clientData" , i.getTotalcost());
+				map.put("clientName", clientDto.getClient_Name());
+				map.put("type", clientDto.getClient_Gubun());
+				result.add(map);
+			}
+			return result;
+		}
+		else {
+			System.out.println("결과 없음");
+		}
+		
 		return null;
 	}
 }

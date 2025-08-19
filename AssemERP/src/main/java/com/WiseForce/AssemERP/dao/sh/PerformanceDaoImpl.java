@@ -57,17 +57,31 @@ public class PerformanceDaoImpl implements PerformanceDao {
 	}
 
 	@Override
-	public List<ClientPerformanceDTO> getClientPerform() {
+	public List<ClientPerformanceDTO> getSalesClientPerform() {
 		List<ClientPerformanceDTO> clientPerformanceDTOs = null;
 		
 		try {
-			clientPerformanceDTOs = session.selectList("com.WiseForce.AssemERP.sh.PerformanceMapper.shClientPerform");
-			System.out.println("PerformenceDaoImpl getClientPerform clientPerformanceDTOs =>"+clientPerformanceDTOs);
+			clientPerformanceDTOs = session.selectList("com.WiseForce.AssemERP.sh.PerformanceMapper.shSalesClientPerform");
+			System.out.println("PerformenceDaoImpl getSalesClientPerform clientPerformanceDTOs =>"+clientPerformanceDTOs);
 		} catch (Exception e) {
-			System.out.println("PerformenceDaoImpl getClientPerform Exception => "+e.getMessage()); 
+			System.out.println("PerformenceDaoImpl getSalesClientPerform Exception => "+e.getMessage()); 
 		}
 		return clientPerformanceDTOs;
 	}
+	
+	@Override
+	public List<ClientPerformanceDTO> getPurchaseClientPerform() {
+		List<ClientPerformanceDTO> clientPerformanceDTOs = null;
+		
+		try {
+			clientPerformanceDTOs = session.selectList("com.WiseForce.AssemERP.sh.PerformanceMapper.shPurchaseClientPerform");
+			System.out.println("PerformenceDaoImpl getPurchaseClientPerform clientPerformanceDTOs =>"+clientPerformanceDTOs);
+		} catch (Exception e) {
+			System.out.println("PerformenceDaoImpl getPurchaseClientPerform Exception => "+e.getMessage()); 
+		}
+		return clientPerformanceDTOs;
+	}
+	
 
 	@Override
 	public List<YearsPerformDTO> searchProductById(int id) {
@@ -99,6 +113,65 @@ public class PerformanceDaoImpl implements PerformanceDao {
 		
 		return result;
 	}
+
+	@Override
+	public List<ClientPerformanceDTO> getSalesClient(String keyword) {
+		List<ClientPerformanceDTO> result = null;
+		
+		try {
+			result = session.selectList("com.WiseForce.AssemERP.sh.PerformanceMapper.shGetSalesClient",keyword);
+			System.out.println("PerformenceDaoImpl getSalesClient result => "+result);
+		} catch (Exception e) {
+			System.out.println("PerformenceDaoImpl getSalesClient Exception => "+e.getMessage()); 
+		}
+				
+		
+		return result;
+	}
+
+	@Override
+	public List<ClientPerformanceDTO> getPurchaseClient(String keyword) {
+		List<ClientPerformanceDTO> result = null;
+		
+		try {
+			result = session.selectList("com.WiseForce.AssemERP.sh.PerformanceMapper.shGetPurchaseClient",keyword);
+			System.out.println("PerformenceDaoImpl getPurchaseClient result => "+result);
+		} catch (Exception e) {
+			System.out.println("PerformenceDaoImpl getPurchaseClient Exception => "+e.getMessage()); 
+		}
+		
+		
+		return result;
+	}
+
+	@Override
+	public List<ClientPerformanceDTO> getSalesClientData(int id) {
+		List<ClientPerformanceDTO> result = null;
+		
+		try {
+			result = session.selectList("com.WiseForce.AssemERP.sh.PerformanceMapper.shGetSalesClientData", id);
+			System.out.println("PerformenceDaoImpl getSalesClientData result => "+result);
+		} catch (Exception e) {
+			System.out.println("PerformenceDaoImpl getSalesClientData Exception => "+e.getMessage()); 
+		}
+		return result;
+	}
+
+	@Override
+	public List<ClientPerformanceDTO> getPurchaseClientData(int id) {
+		List<ClientPerformanceDTO> result = null;
+		
+		try {
+			result = session.selectList("com.WiseForce.AssemERP.sh.PerformanceMapper.shGetPurchaseClientData", id);
+			System.out.println("PerformenceDaoImpl getPurchaseClientData result => "+result);
+		} catch (Exception e) {
+			System.out.println("PerformenceDaoImpl getPurchaseClientData Exception => "+e.getMessage()); 
+		}
+		return result;
+	}
+
+
+	
 
 	
 }

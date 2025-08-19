@@ -23,39 +23,6 @@ const unitPlugin = {
 		  }
 };
 
-const labels = JSON.parse('${barlabels}');
-const data = JSON.parse('${bardata}');
-
-//onsole.log('barlabels raw:', '${barlabels}');
-//console.log('bardata raw:', '${bardata}');
-
-// ctx 선언 위치 꼭 여기!
-const ctx = document.getElementById('clientChart').getContext('2d');
-
-
-//최고/최저 색상 (최저: 빨강, 최고: 연한 초록)
-const startColor = [255, 100, 0];     // Red (RGB) - 최저값
-const endColor   = [144, 238, 144]; // LightGreen (RGB) - 최고값
-
-
-// 최대/최소값 구하기
-const maxValue = Math.max(...data);
-const minValue = Math.min(...data);
-
-// 값에 따른 색상 보간 함수
-function interpolateColor(start, end, factor) {
-    return start.map((startVal, i) =>
-        Math.round(startVal + factor * (end[i] - startVal))
-    );
-}
-
-
-//데이터별 색상 배열 생성
-const colors = data.map(value => {
- const ratio = (value - minValue) / (maxValue - minValue || 1); // 0~1 사이
- const [r, g, b] = interpolateColor(startColor, endColor, ratio);
- return "rgb("+[r]+","+[g]+","+[b]+")";
-});
 
 //막대 그림자 플러그인
 const shadowPlugin = {
@@ -88,19 +55,35 @@ const shadowPlugin = {
 };
 
 
+const labels = JSON.parse('${barlabels}');
+const data = JSON.parse('${bardata}');
+
+// 앞 5개 판매처, 뒤 5개 구매처
+const salesData = data.map((v, i) => i < 5 ? v : 0);
+const purchaseData = data.map((v, i) => i >= 5 ? v : 0);
+
+const ctx = document.getElementById('clientChart').getContext('2d');
+
 const myChart = new Chart(ctx, {
     type: 'bar',
     data: {
         labels: labels,
-        datasets: [{
-            label: '거래총액',
-            data: data,
-            backgroundColor: colors
-        }]
+        datasets: [
+            {
+                label: '판매처',
+                data: salesData,
+                backgroundColor: 'rgba(255,150,150,0.8)' // 연한 빨강
+            },
+            {
+                label: '구매처',
+                data: purchaseData,
+                backgroundColor: 'rgba(150,150,255,0.8)' // 연한 파랑
+            }
+        ]
     },
     options: {
         responsive: true,
-    	maintainAspectRatio: false,
+        maintainAspectRatio: false,
         scales: {
             x: { grid: { display: false } },
             y: { beginAtZero: true, grid: { display: false } }
@@ -113,8 +96,9 @@ const myChart = new Chart(ctx, {
                 padding: { top: 10, bottom: 10 }
             },
             legend: {
-	            display : false
-	        },
+                display: true,
+                position: 'top'
+            },
             unitPlugin: {
                 text: '단위: 만원',
                 font: '14px Arial',

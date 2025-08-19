@@ -13,11 +13,21 @@ public interface PerformanceDao {
 
 	List<BigDecimal> getSaleData();
 
-	List<ClientPerformanceDTO> getClientPerform();
+	List<ClientPerformanceDTO> getSalesClientPerform();
+	
+	List<ClientPerformanceDTO> getPurchaseClientPerform();
 
 	List<YearsPerformDTO> searchProductById(int id);
 
 	List<YearsPerformDTO> searchPartsById(int id);
+
+	List<ClientPerformanceDTO> getSalesClient(String keyword);
+
+	List<ClientPerformanceDTO> getPurchaseClient(String keyword);
+
+	List<ClientPerformanceDTO> getSalesClientData(int id);
+
+	List<ClientPerformanceDTO> getPurchaseClientData(int id);
 
 
 
