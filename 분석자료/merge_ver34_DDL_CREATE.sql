@@ -898,7 +898,7 @@ COMMENT ON COLUMN inventory_close.emp_no IS '마감처리담당자';
 CREATE TABLE inventory_occupy (
     item_type NUMBER(7) NOT NULL,
     item_status NUMBER(7) NOT NULL,
-    item_occupy NUMBER(7,4) NOT NULL
+    item_occupy NUMBER(21,9) NOT NULL
 );
 
 CREATE UNIQUE INDEX PK_inventory_occupy
