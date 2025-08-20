@@ -11,6 +11,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>발주 등록</title>
+<style>
+body {
+	background-color: #f8f9fa;
+}
+
+.card-header {
+	background-color: #0d6efd;
+	color: white;
+}
+
+.required-field::after {
+	content: " *";
+	color: red;
+}
+</style>
 
 <!-- 오늘 날짜 (납기 min) -->
 <jsp:useBean id="now" class="java.util.Date" />
@@ -43,11 +58,20 @@ keyframes blink { 0%{
 	background: #fff3cd;
 }
 100
+
+
 %
 {
 background
+
+
 :
-transparent;
+
+
+transparent
+;
+
+
 }
 }
 </style>
@@ -280,7 +304,7 @@ transparent;
 						<div
 							class="card-header d-flex justify-content-between align-items-center">
 							<a href="${pageContext.request.contextPath}/purchase/list"
-								class="btn btn-outline-dark btn-sm"> <i
+								class="btn btn-outline-light btn-sm"> <i
 								class="bi bi-list-ul me-1"></i> 목록
 							</a>
 							<h4 class="card-title mb-0">
@@ -303,6 +327,14 @@ transparent;
 								<section class="info-card" aria-label="발주 및 거래처 정보">
 									<div class="info-card-title">발주 / 거래처 정보</div>
 									<div class="row g-3">
+										<!-- 발주 제목: 한 줄 전체 사용 -->
+										<div class="col-12">
+											<label class="form-label">발주 제목 <span
+												class="text-danger">*</span></label> <input type="text"
+												id="purchaseTitleInput" name="purchase_Title"
+												class="form-control form-control-sm" required
+												placeholder="예: 2025-08 CPU 쿨러 발주 (요청서 #A-231)" />
+										</div>
 										<div class="col-md-4">
 											<label class="form-label">거래처 이름 <span
 												class="text-danger">*</span></label>
@@ -323,8 +355,8 @@ transparent;
 										<div class="col-md-4">
 											<label class="form-label">이메일</label>
 											<div class="input-group input-group-sm">
-												<span class="input-group-text">@</span> <input type="email"
-													id="clientEmailInput" class="form-control" readonly />
+												<input type="email" id="clientEmailInput"
+													class="form-control" readonly />
 											</div>
 										</div>
 										<div class="col-md-4">
@@ -357,8 +389,10 @@ transparent;
 									<div
 										class="info-card-title d-flex justify-content-between align-items-center">
 										<span>부품 목록</span>
-										<button type="button" id="add-item-btn"
-											class="btn btn-sm btn-outline-secondary">항목 추가</button>
+										<button type="button" class="btn btn-primary"
+											id="add-item-btn">
+											<i class="bi bi-plus-lg"></i>부품 추가
+										</button>
 									</div>
 
 									<div class="table-responsive"

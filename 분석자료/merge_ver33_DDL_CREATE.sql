@@ -527,6 +527,7 @@ CREATE TABLE SALES_ORDER (
 	sales_date DATE, /* 납기완료일 */
 	out_status NUMBER(1), /* 출고상태 */
 	del_status NUMBER(1), /* 삭제구분 */
+    sales_title VARCHAR2(200), /* 수주제목 */ 
     complete_date DATE, /* 완료일시 */
     modify_date DATE, /* 수정일시 */
 	in_date DATE /* 등록일시 */
@@ -558,6 +559,8 @@ COMMENT ON COLUMN SALES_ORDER.out_status IS '출고상태';
 
 COMMENT ON COLUMN SALES_ORDER.del_status IS '삭제구분';
 
+COMMENT ON COLUMN SALES_ORDER.sales_title IS '수주제목';
+
 COMMENT ON COLUMN SALES_ORDER.complete_Date IS '완료일시';
 
 COMMENT ON COLUMN SALES_ORDER.modify_date IS '수정일시';
@@ -572,6 +575,7 @@ CREATE TABLE PURCHASE_ORDER (
 	purchase_date DATE, /* 납기완료일 */
 	in_status NUMBER(1), /* 입고상태 */
 	del_status NUMBER(1), /* 삭제구분 */
+    purchase_title VARCHAR2(200), /* 발주제목 */
     complete_date DATE, /* 완료일시 */
     modify_date DATE, /* 수정일시 */
 	in_date DATE /* 등록일시 */
@@ -602,6 +606,8 @@ COMMENT ON COLUMN PURCHASE_ORDER.purchase_date IS '납기완료일';
 COMMENT ON COLUMN PURCHASE_ORDER.in_status IS '입고상태';
 
 COMMENT ON COLUMN PURCHASE_ORDER.del_status IS '삭제구분';
+
+COMMENT ON COLUMN PURCHASE_ORDER.purchase_title IS '발주제목';
 
 COMMENT ON COLUMN PURCHASE_ORDER.complete_date IS '완료일시';
 
@@ -898,7 +904,7 @@ COMMENT ON COLUMN inventory_close.emp_no IS '마감처리담당자';
 CREATE TABLE inventory_occupy (
     item_type NUMBER(7) NOT NULL,
     item_status NUMBER(7) NOT NULL,
-    item_occupy NUMBER(21,9) NOT NULL
+    item_occupy NUMBER(7,4) NOT NULL
 );
 
 CREATE UNIQUE INDEX PK_inventory_occupy

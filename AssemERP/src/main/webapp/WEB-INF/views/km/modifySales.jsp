@@ -13,19 +13,39 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>수주 수정</title>
 
-<%-- <jsp:useBean id="now" class="java.util.Date" />
-<c:set var="DAY" value="${24*60*60*1000}" />
+<style>
+body {
+	background-color: #f8f9fa;
+}
 
-<!-- now - 3일짜리 Date 객체 만들기 -->
-<jsp:useBean id="d3ago" class="java.util.Date" />
-<jsp:setProperty name="d3ago" property="time" value="${now.time - (3 * DAY)}" />
+.card-header {
+	background-color: #198754;
+	color: white;
+} /* Green theme for editing */
+.required-field::after {
+	content: " *";
+	color: red;
+}
 
-<!-- 여기서는 Date를 넘기므로 OK -->
-<fmt:formatDate value="${d3ago}"
-                pattern="yyyy-MM-dd"
-                var="todayStr"
-                timeZone="Asia/Seoul" /> --%>
-                
+.image-box {
+	width: auto; /* 원하는 가로 크기 */
+	height: 300px; /* 원하는 세로 크기 */
+	overflow: hidden;
+}
+
+.image-box img {
+	width: 100%;
+	height: 100%;
+	display: block; /* 여백 제거 */
+}
+
+.parent-container {
+	display: flex;
+	flex-direction: column;
+	gap: 30px; /* 항목들 사이 간격을 균일하게 12px 설정 */
+}
+</style>
+
 <!-- 오늘 날짜 문자열 (납기 min 값에서 사용) -->
 <jsp:useBean id="now" class="java.util.Date" />
 <fmt:formatDate value="${now}" pattern="yyyy-MM-dd" var="todayStr"
@@ -325,7 +345,7 @@
 						<!-- 카드 헤더 (상세 페이지 톤과 동일) -->
 						<div
 							class="card-header d-flex justify-content-between align-items-center">
-							<a href="/sales/list" class="btn btn-outline-dark btn-sm"> <i
+							<a href="/sales/list" class="btn btn-outline-light btn-sm"> <i
 								class="bi bi-list-ul me-1"></i> 목록
 							</a>
 							<h4 class="card-title mb-0">
@@ -349,16 +369,24 @@
 									<div id="order-create-title" class="info-card-title">수주 /
 										거래처 정보</div>
 									<div class="row g-3">
-
+										<!-- 발주 제목: 한 줄 전체 사용 -->
+										<div class="col-12">
+											<label class="form-label">수주 제목 <span
+												class="text-danger">*</span></label> <input type="text"
+												id="salesTitleInput" name="sales_Title"
+												value="${sales_OrderDto.sales_Title}"
+												class="form-control form-control-sm" required
+												placeholder="예: 2025-08 CPU 쿨러 발주 (요청서 #A-231)" />
+										</div>
 										<!-- 거래처 이름 (팝업 조회) -->
+
 										<div class="col-md-4">
 											<label class="form-label">거래처 이름 <span
 												class="text-danger">*</span></label>
 											<div class="input-group input-group-sm">
 												<input type="hidden" id="clientNoInput"
 													name="clientDto.client_No"
-													value="${sales_OrderDto.clientDto.client_No}" />
-													<input
+													value="${sales_OrderDto.clientDto.client_No}" /> <input
 													type="text" id="clientNameInput"
 													class="form-control form-control-sm"
 													name="clientDto.client_Name"
@@ -381,9 +409,8 @@
 										<div class="col-md-4">
 											<label class="form-label">이메일</label>
 											<div class="input-group input-group-sm">
-												<span class="input-group-text">@</span> <input type="email"
-													id="clientEmailInput" name="clientDto.client_Email"
-													class="form-control"
+												<input type="email" id="clientEmailInput"
+													name="clientDto.client_Email" class="form-control"
 													value="${sales_OrderDto.clientDto.client_Email}" readonly />
 											</div>
 										</div>
@@ -432,8 +459,12 @@
 									<div id="product-list-title"
 										class="info-card-title d-flex justify-content-between align-items-center">
 										<span>제품 목록</span>
-										<button type="button" id="add-item-btn"
-											class="btn btn-sm btn-outline-secondary">항목 추가</button>
+										<!-- 	<button type="button" id="add-item-btn"
+											class="btn btn-sm btn-outline-secondary">항목 추가</button> -->
+										<button type="button" class="btn btn-primary"
+											id="add-item-btn">
+											<i class="bi bi-plus-lg"></i>제품 추가
+										</button>
 									</div>
 
 									<div class="table-responsive"
@@ -494,7 +525,7 @@
 																		<i class="bi bi-trash"></i> 삭제
 																	</button>
 																</td>
-																
+
 															</tr>
 														</c:forEach>
 													</c:when>
@@ -561,7 +592,7 @@
 										class="btn btn-outline-secondary btn-sm px-4">취소</a>
 									<button type="submit" class="btn btn-primary btn-sm px-4">저장</button>
 								</div> --%>
-									<div class="row mt-4 g-2">
+								<div class="row mt-4 g-2">
 									<!-- 취소: 링크 -->
 									<div class="col-md-4 d-grid">
 										<a href="<c:url value='/sales/list'/>"
