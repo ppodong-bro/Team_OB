@@ -97,9 +97,11 @@
 								</div>
 
 								<!-- 검색 버튼 -->
-								<div class="col-auto">
-									<button type="submit" class="btn btn-primary btn-sm">검색</button>
-								</div>
+									<div class="col-auto">
+										<button type="submit" class="btn btn-secondary btn-sm text-nowrap">
+											<i class="bi bi-search"></i> 검색
+										</button>
+									</div>
 							</form>
 
 							<!-- List 테이블 시작 -->
@@ -110,7 +112,7 @@
 											<th style="width: 5%;" class="text-center">#</th>
 											<th style="width: 7%;" class="text-center">발주번호</th>
 											<th style="width: 10%;" class="text-center">거래처명</th>
-											<th style="width: 23%;" class="text-center">부품명</th>
+											<th style="width: 23%;" class="text-center">제목</th>
 											<th style="width: 6%;" class="text-center">요청수량</th>
 											<th style="width: 6%;" class="text-center">입고수량</th>
 											<th style="width: 7%;" class="text-center">총액</th>
@@ -141,10 +143,14 @@
 															value="${fn:length(order.purchase_Item) - 1}" />
 
 														<!-- 부품명 -->
-														<td><c:out value="${first.partsDTO.parts_name}" /> <c:if
+													<%-- 	<td><c:out value="${first.partsDTO.parts_name}" /> <c:if
 																test="${othersCount > 0}">
 													 &nbsp;외 ${othersCount}종
-													</c:if></td>
+													</c:if></td> --%>
+															<td class="name text-truncate"
+															title="<c:out value='${order.purchase_Title != null ? order.purchase_Title : "-"}'/>"><c:out
+																value="${order.purchase_Title != null ? order.purchase_Title : '-'}" />
+														</td>
 
 														<!-- 요청수량 (총합) -->
 														<td class="text-center"><c:out

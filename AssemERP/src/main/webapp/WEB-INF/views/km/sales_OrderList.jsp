@@ -43,7 +43,8 @@
 							<h4 class="card-title mb-0">
 								<i class="bi bi-list-ul"></i> 수주 목록
 							</h4>
-							<a href="/sales/createStart" class="btn btn-primary" onclick="return confirm('수주를 등록 하시겠습니까?');"><i
+							<a href="/sales/createStart" class="btn btn-primary"
+								onclick="return confirm('수주를 등록 하시겠습니까?');"><i
 								class="bi bi-plus-lg"></i>등록</a>
 						</div>
 						<div class="card-body">
@@ -102,7 +103,10 @@
 
 								<!-- 검색 버튼 -->
 								<div class="col-auto">
-									<button type="submit" class="btn btn-primary btn-sm">검색</button>
+									<button type="submit"
+										class="btn btn-secondary btn-sm text-nowrap">
+										<i class="bi bi-search"></i> 검색
+									</button>
 								</div>
 							</form>
 
@@ -114,7 +118,7 @@
 											<th style="width: 5%;" class="text-center">#</th>
 											<th style="width: 7%;" class="text-center">수주번호</th>
 											<th style="width: 10%;" class="text-center">거래처명</th>
-											<th style="width: 23%;" class="text-center">제품명</th>
+											<th style="width: 23%;" class="text-center">제목</th>
 											<th style="width: 6%;" class="text-center">요청수량</th>
 											<th style="width: 6%;" class="text-center">출고수량</th>
 											<th style="width: 7%;" class="text-center">총액</th>
@@ -156,10 +160,15 @@
 															value="${fn:length(order.sales_Item) - 1}" />
 
 														<!-- 제품명 -->
-														<td><c:out value="${first.productDto.product_name}" />
+														<%-- 		<td><c:out value="${first.productDto.product_name}" />
 															<c:if test="${othersCount > 0}">
 													 &nbsp;외 ${othersCount}종
-													</c:if></td>
+													</c:if></td> --%>
+
+														<td class="name text-truncate"
+															title="<c:out value='${order.sales_Title != null ? order.sales_Title : "-"}'/>"><c:out
+																value="${order.sales_Title != null ? order.sales_Title : '-'}" />
+														</td>
 
 														<!-- 요청수량 (총합) -->
 														<td class="text-center"><c:out

@@ -10,6 +10,7 @@
 		<result column="PURCHASE_DATE" property="purchase_Date" />
 		<result column="IN_STATUS" property="in_Status" />
 		<result column="DEL_STATUS" property="del_Status" />
+		<result column="PURCHASE_TITLE" property="purchase_Title"/>
 		<result column="COMPLETE_DATE" property="complete_Date" />
 		<result column="IN_DATE" property="in_Date" />
 
@@ -42,12 +43,13 @@
 	</resultMap>
 
 	<resultMap type="Purchase_OrderDto" id="detailPurchaseMap">
-		<id column="PURCHASE_NO" property="purchase_No" />
-		<result column="PURCHASE_DATE" property="purchase_Date"/>
-		<result column="COMPLETE_DATE" property="complete_Date" />
-		<result column="IN_STATUS"	   property="in_Status"/>
-		<result column="MODIFY_DATE"   property="modify_Date"/>
-		<result column="IN_DATE" property="in_Date" />
+		<id column="PURCHASE_NO" 		property="purchase_No" />
+		<result column="PURCHASE_DATE"  property="purchase_Date"/>
+		<result column="COMPLETE_DATE"  property="complete_Date" />
+		<result column="IN_STATUS"	    property="in_Status"/>
+		<result	column="PURCHASE_TITLE" property="purchase_Title"/>
+		<result column="MODIFY_DATE"    property="modify_Date"/>
+		<result column="IN_DATE" 		property="in_Date" />
 
 		<association javaType="ClientDto" property="clientDto">
 			<id column="CLIENT_NO" property="client_No" />
@@ -109,7 +111,7 @@
 
 	<select id="listPurchaseOrder"
 		parameterType="Purchase_OrderSearchDto" resultMap="purchase_OrderMap">
-		SELECT P.PURCHASE_NO, P.PURCHASE_DATE, P.IN_STATUS, P.DEL_STATUS
+		SELECT P.PURCHASE_NO, P.PURCHASE_DATE, P.IN_STATUS, P.DEL_STATUS, P.PURCHASE_TITLE
 			 , P.COMPLETE_DATE, P.IN_DATE
 		     , H.CLIENT_NO, H.CLIENT_NAME, E.EMP_NO, E.EMP_NAME
 		     , I.PARTS_NO, I.PURCHASE_ITEM_CNT, I.PURCHASE_ITEM_INCNT
@@ -148,7 +150,7 @@
 	</select>
 
 	<select id="detailPurchase" parameterType="int" resultMap="detailPurchaseMap">
-		SELECT P.PURCHASE_NO, P.PURCHASE_DATE, P.COMPLETE_DATE, P.IN_DATE, P.IN_STATUS, P.MODIFY_DATE
+		SELECT P.PURCHASE_NO, P.PURCHASE_DATE, P.COMPLETE_DATE, P.IN_DATE, P.IN_STATUS, P.PURCHASE_TITLE, P.MODIFY_DATE
 			 , H.CLIENT_NO, H.CLIENT_NAME, H.CLIENT_ADDRESS, H.CLIENT_EMAIL
              , H.CLIENT_TEL, H.CLIENT_MAN, E.EMP_NO, E.EMP_NAME
              , I.PURCHASE_ITEM_CNT, I.PURCHASE_ITEM_INCNT, I.PURCHASE_ITEM_COST
@@ -178,8 +180,8 @@
 			SELECT PURCHASE_SEQ.NEXTVAL
 			FROM   DUAL
 		</selectKey>
-		INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, DEL_STATUS, IN_DATE) 
-		VALUES (#{purchase_No}, #{clientDto.client_No}, #{empDTO.empNo}, #{purchase_Date, jdbcType=DATE}, 0, 0, SYSDATE)
+		INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, DEL_STATUS, PURCHASE_TITLE, IN_DATE) 
+		VALUES (#{purchase_No}, #{clientDto.client_No}, #{empDTO.empNo}, #{purchase_Date, jdbcType=DATE}, 0, 0, #{purchase_Title}, SYSDATE)
 	</insert>
 	
 	<insert id="createPurchaseItem" parameterType="purchase_OrderDto">
@@ -202,6 +204,7 @@
 		UPDATE PURCHASE_ORDER 
 		SET CLIENT_NO 	  = #{clientDto.client_No},
 		    EMP_NO    	  =  #{empDTO.empNo},
+		    PURCHASE_TITLE = #{purchase_Title},
 		    PURCHASE_DATE = #{purchase_Date, jdbcType=DATE},
 		    MODIFY_DATE = SYSDATE
 		WHERE  PURCHASE_NO = #{purchase_No}

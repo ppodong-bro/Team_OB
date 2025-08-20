@@ -14,6 +14,39 @@
 <!-- 반응형 대응: 모바일 등에서 제대로 보이게 하는 뷰포트 설정 -->
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>수주 상세</title>
+<style>
+body {
+	background-color: #f8f9fa;
+}
+
+.card-header {
+	background-color: #C0C0C0;
+	color: white;
+}
+
+.required-field::after {
+	content: " *";
+	color: red;
+}
+
+.image-box {
+	width: auto; /* 원하는 가로 크기 */
+	height: 300px; /* 원하는 세로 크기 */
+	overflow: hidden;
+}
+
+.image-box img {
+	width: 100%;
+	height: 100%;
+	display: block; /* 여백 제거 */
+}
+
+.parent-container {
+	display: flex;
+	flex-direction: column;
+	gap: 15px; /* 항목들 사이 간격을 균일하게 12px 설정 */
+}
+</style>
 </head>
 <body>
 	<div id="layout">
@@ -53,7 +86,7 @@
 							<%------------------------------------------------------------------------------
 				                		1-1. 목록 버튼 스타일
 				                 	------------------------------------------------------------------------------%>
-							<a href="/sales/list" class="btn btn-outline-dark btn-sm"> <i
+							<a href="/sales/list" class="btn btn-outline-light btn-sm"> <i
 								class="bi bi-list-ul me-1"></i> 목록
 							</a>
 							<%------------------------------------------------------------------------------
@@ -71,6 +104,13 @@
 								<div id="order-info-title" class="info-card-title">수주 /
 									거래처 정보</div>
 								<div class="info-grid">
+									<!-- 발주 제목: 상단 전체 폭 -->
+									<div class="field" style="grid-column: 1/-1;">
+										<div class="field-label">수주 제목</div>
+										<div class="field-box">
+											<span>${empty sales_OrderDto.sales_Title ? '-' : sales_OrderDto.sales_Title}</span>
+										</div>
+									</div>
 									<!-- 수주 번호 -->
 									<div class="field">
 										<div class="field-label">수주 번호</div>
@@ -99,7 +139,7 @@
 									<div class="field">
 										<div class="field-label">이메일</div>
 										<div class="field-box">
-											<span class="small-addon">@</span> <span>${sales_OrderDto.clientDto.client_Email}</span>
+											<span>${sales_OrderDto.clientDto.client_Email}</span>
 										</div>
 									</div>
 
@@ -190,7 +230,8 @@
 												<c:when test="${not empty sales_OrderDto.sales_Item}">
 													<c:forEach var="item" items="${sales_OrderDto.sales_Item}">
 														<tr>
-															<td class= "name text-truncate" title="<c:out value='${item.productDto != null ? item.productDto.product_name : "-"}'/>"><c:out
+															<td class="name text-truncate"
+																title="<c:out value='${item.productDto != null ? item.productDto.product_name : "-"}'/>"><c:out
 																	value="${item.productDto != null ? item.productDto.product_name : '-'}" />
 															</td>
 															<td class="numeric"><c:out

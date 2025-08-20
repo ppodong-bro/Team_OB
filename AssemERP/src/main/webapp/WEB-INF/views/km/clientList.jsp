@@ -7,7 +7,7 @@
 <head>
 <!-- 공통 CSS -->
 <jsp:include page="/common.jsp" />
-<!-- <link href="/css/list.css" rel="stylesheet"> -->
+<link href="/css/list.css" rel="stylesheet">
 <meta charset="UTF-8">
 <title>Insert title here</title>
 </head>
@@ -88,9 +88,11 @@
 								</div>
 
 								<!-- 검색 버튼 -->
-								<div class="col-auto">
-									<button type="submit" class="btn btn-primary btn-sm">검색</button>
-								</div>
+										<div class="col-auto">
+										<button type="submit" class="btn btn-secondary btn-sm text-nowrap">
+											<i class="bi bi-search"></i> 검색
+										</button>
+									</div>
 							</form>
 
 
