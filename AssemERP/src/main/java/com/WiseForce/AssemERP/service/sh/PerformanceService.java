@@ -29,5 +29,11 @@ public interface PerformanceService {
 
 	List<ClientPerformanceDTO> getPurchaseClinetData(int id);
 
+	List<YearsPerformDTO> getInitYearsperform(int product_no);
+
+	int getMostProductOfYears();
+
+	int getMostClientOfYears();
+
 
 }

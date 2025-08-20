@@ -73,7 +73,7 @@ const myChart = new Chart(ctx, {
                 label: '거래처 실적',
                 data: data,
                 backgroundColor: data.map((_, i) => i < 5 ? 
-               		'rgba(255, 99, 132, 1)' : // 앞 5개는 연한 빨강 (판매처)
+               		'rgba(255, 99, 132, 0.8)' : // 앞 5개는 연한 빨강 (판매처)
                    	'rgba(75, 192, 192, 0.8)'   // 뒤 5개는 연한 파랑 (구매처)
                 )
             }
@@ -90,7 +90,7 @@ const myChart = new Chart(ctx, {
             title: {
                 display: true,
                 text: '거래처실적',
-                font: { size: 18 },
+                font: { size: 20 },
                 padding: { top: 10, bottom: 10 }
             },
             legend: {
@@ -102,19 +102,25 @@ const myChart = new Chart(ctx, {
                         return [
                             {
                                 text: '판매처',
-                                fillStyle: 'rgba(255, 99, 132, 0.8)',
+                                fillStyle: 'rgba(255, 99, 132, 0.6)',
                                 strokeStyle: 'rgba(255, 99, 132, 1)',
                                 lineWidth: 1,
                                 hidden: false
                             },
                             {
                                 text: '구매처',
-                                fillStyle: 'rgba(75, 192, 192, 0.8)',
+                                fillStyle: 'rgba(75, 192, 192, 0.6)',
                                 strokeStyle: 'rgba(75, 192, 192, 1)',
                                 lineWidth: 1,
                                 hidden: false
                             }
                         ];
+                    },
+                    font: {
+                        family: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+                        size: 12,
+                        style: 'normal',
+                        weight: '300'
                     }
                 },
                 onClick: function(e, legendItem, legend) {
@@ -135,13 +141,9 @@ const myChart = new Chart(ctx, {
                     chart.update();
                 }
             },
-            unitPlugin: {
-                text: '단위: 만원',
-                font: '12px Arial',
-                color: '#666'
-            }
+            
         }
     },
-    plugins: [shadowPlugin, unitPlugin]
+    plugins: [shadowPlugin]
 });
 </script>

@@ -72,7 +72,8 @@ body {
 							<%------------------------------------------------------------------------------
                 						1-2. 타이틀 중앙 정렬 스타일
                  					------------------------------------------------------------------------------%>
-							<h4 class="card-title mb-0">부품 상세</h4>
+							<h4 class="card-title mb-0">
+							<i class="bi bi-pencil-square me-2"></i> 부품 상세</h4>
 							<%-- 타이틀의 정확한 중앙 정렬을 위한 빈 공간 --%>
 							<div style="width: 90px;"></div>
 						</div>
@@ -189,7 +190,7 @@ body {
 										<!-- 부품설명 -->
 										<div class="input-group">
 											<span class="input-group-text autospace"
-												style="width: 100px; display: flex; justify-content: center;">제품설명</span>
+												style="width: 100px; display: flex; justify-content: center;">부품설명</span>
 											<textarea class="form-control form-control-sm" rows="8"
 												id="partsContext" name="parts_context" readonly="readonly"
 												placeholder="설명란에 정보를 입력해주세요">${partsDTO.parts_context }</textarea>

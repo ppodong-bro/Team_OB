@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.WiseForce.AssemERP.domain.sh.Product;
 import com.WiseForce.AssemERP.dto.km.ClientDto;
 import com.WiseForce.AssemERP.dto.sh.ClientPerformanceDTO;
 import com.WiseForce.AssemERP.dto.sh.PartsDTO;
@@ -67,7 +68,7 @@ public class PerformanceController {
 	    return result;
 	}
 	
-	@GetMapping("/getitemPerform")
+	@GetMapping("/getItemPerform")
 	@ResponseBody
 	public List<Map<String, Object>> getitemPerform(@RequestParam(name = "id") int id, @RequestParam(name = "type") String type) {
 		System.out.println("id => "+id);
@@ -191,5 +192,60 @@ public class PerformanceController {
 		}
 		
 		return null;
+	}
+	
+	
+	@GetMapping("/itemInitialData")
+	@ResponseBody
+	public List<Map<String, Object>> itemInitialData(){
+		
+		List<Map<String, Object>> result = new ArrayList<>();
+		
+		int product_no = performanceService.getMostProductOfYears();
+		
+		ProductDTO productDTO = productService.getfindById(product_no);
+		
+		List<YearsPerformDTO> productPerfrom = performanceService.getInitYearsperform(product_no);
+		for(YearsPerformDTO i : productPerfrom) {
+			Map<String, Object> map = new HashMap<>();
+			map.put("monthLabel", i.getEach_month());
+			map.put("itemData", i.getItem_totalCost());
+			map.put("itemName", productDTO.getProduct_name());
+			result.add(map);
+		}
+		
+		
+		System.out.println("result => "+result);
+		
+		return result;
+	}
+	
+	
+	@GetMapping("/clientInitialData")
+	@ResponseBody
+	public List<Map<String, Object>> clientInitialData(){
+		
+		List<Map<String, Object>> result = new ArrayList<>();
+		
+		int client_no = performanceService.getMostClientOfYears();
+		
+		// 거래처번호롤 거래처 정보 가져오기
+		ClientDto clientDto = new ClientDto();
+		clientDto.setClient_No(client_no);
+		clientDto = clientService.detailClient(clientDto);
+		System.out.println("clientDto => "+clientDto);
+		
+		
+		List<ClientPerformanceDTO> salesPerform = performanceService.getSalesClinetData(client_no);
+		for(ClientPerformanceDTO i : salesPerform) {
+			Map<String, Object> map = new HashMap<>();
+			map.put("monthLabel", i.getEach_month());
+			map.put("clientData" , i.getTotalcost());
+			map.put("clientName", clientDto.getClient_Name());
+			map.put("type", clientDto.getClient_Gubun());
+			result.add(map);
+		
+		}
+		return result;
 	}
 }
