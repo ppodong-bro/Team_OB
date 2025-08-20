@@ -606,8 +606,9 @@ COMMIT;
  **************************************************/
 -- 재고 점유 비율은 각 m³
 -- 각각 포장된 상태 기준
--- 20FT 컨테이너(가장 작은 컨테이너) 기준 33.2m³
-INSERT INTO INVENTORY_OCCUPY VALUES (0/*부품*/, 999/*용량*/, 33.2);
+-- 중소기업 물류센터 기준 창고 용량 500~5000
+-- 추후 INSERT 될 부품 데이터 용량 약 850
+INSERT INTO INVENTORY_OCCUPY VALUES (0/*부품*/, 999/*용량*/, 1500.0);
 INSERT INTO INVENTORY_OCCUPY VALUES (0/*부품*/, 0/*메인보드*/, 0.012);
 INSERT INTO INVENTORY_OCCUPY VALUES (0/*부품*/, 1/*CPU*/, 0.001);
 INSERT INTO INVENTORY_OCCUPY VALUES (0/*부품*/, 2/*GPU*/, 0.02);
@@ -617,7 +618,7 @@ INSERT INTO INVENTORY_OCCUPY VALUES (0/*부품*/, 5/*HDD*/, 0.005);
 INSERT INTO INVENTORY_OCCUPY VALUES (0/*부품*/, 6/*SSD*/, 0.001);
 INSERT INTO INVENTORY_OCCUPY VALUES (0/*부품*/, 7/*CASE*/, 0.075);
 INSERT INTO INVENTORY_OCCUPY VALUES (0/*부품*/, 8/*COLLER*/, 0.01);
-INSERT INTO INVENTORY_OCCUPY VALUES (1/*제품*/, 999/*용량*/, 33.2);
+INSERT INTO INVENTORY_OCCUPY VALUES (1/*제품*/, 999/*용량*/, 1500.0);
 INSERT INTO INVENTORY_OCCUPY VALUES (1/*제품*/, 0/*데스크탑*/, 0.075);
 INSERT INTO INVENTORY_OCCUPY VALUES (1/*제품*/, 1/*노트북*/, 0.003);
 INSERT INTO INVENTORY_OCCUPY VALUES (1/*제품*/, 2/*워크스테이션*/, 0.12);
@@ -1196,6 +1197,7 @@ VALUES (4140, 910, 1003, TO_DATE('2025-07-08', 'YYYY-MM-DD'), 2, '요기파츠 - Cla
 
 
 COMMIT;
+
 
 /************************************************** 
  *  발주부품 : PURCHASE_ITEM
