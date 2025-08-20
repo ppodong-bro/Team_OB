@@ -46,7 +46,66 @@ body {
 	flex-direction: column;
 	gap: 15px; /* 항목들 사이 간격을 균일하게 12px 설정 */
 }
+
+/* 기본은 스크롤 없음(수평은 table-responsive가 처리), 세로만 제어 */
+.product-table-wrap { overflow-y: hidden; }
+
+/* 헤더 고정 */
+.product-table thead th {
+  position: sticky; top: 0; z-index: 2;
+  background: var(--bs-light, #f8f9fa);
+}
+
+/* 작은 화면 가로 스크롤 보장 */
+.product-table { min-width: 720px; }
+@media (max-width: 768px) { .product-table { min-width: 640px; } }
+
 </style>
+<script>
+(function () {
+  function apply7RowScroll() {
+    const wrap  = document.getElementById('productTableWrap');
+    if (!wrap) return;
+    const table = wrap.querySelector('.product-table');
+    if (!table) return;
+
+    const thead = table.tHead;
+    const tbody = table.tBodies[0];
+    if (!tbody) return;
+
+    const rows = Array.from(tbody.rows).filter(r => r.offsetParent !== null);
+
+    // 초기화: 기본은 스크롤 없음
+    wrap.style.maxHeight = '';
+    wrap.style.overflowY = 'hidden';
+
+    if (rows.length <= 7) return; // 7행 이하면 스크롤 X
+
+    // 7행 높이 + 헤더 높이만큼 컨테이너 고정 → 넘치면 스크롤
+    const headH = thead ? thead.getBoundingClientRect().height : 0;
+    let bodyH = 0;
+    for (let i = 0; i < 7 && i < rows.length; i++) {
+      bodyH += rows[i].getBoundingClientRect().height;
+    }
+    const buffer = 2; // 보더 여유
+    wrap.style.maxHeight = Math.ceil(headH + bodyH + buffer) + 'px';
+    wrap.style.overflowY = 'auto';
+  }
+
+  // 최초/리사이즈 시 반영
+  let raf = null;
+  function onResize() {
+    if (raf) cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(apply7RowScroll);
+  }
+  window.addEventListener('load', apply7RowScroll);
+  window.addEventListener('resize', onResize);
+
+  // 동적 행 변경 시 호출할 수 있게 공개
+  window.refreshProductTableScroll = apply7RowScroll;
+})();
+</script>
+
 </head>
 <body>
 	<div id="layout">
@@ -202,8 +261,7 @@ body {
 							<section aria-labelledby="product-list-title"
 								class="info-card mt-4" aria-label="부품 목록">
 								<div id="product-list-title" class="info-card-title">부품 목록</div>
-								<div class="table-responsive"
-									style="max-height: 360px; overflow: auto;">
+							<div id="productTableWrap" class="table-responsive product-table-wrap">
 									<table
 										class="table table-sm table-bordered align-middle mb-0 product-table">
 										<caption class="visually-hidden">발주한 부품 목록과 입고/요청 기준
@@ -277,84 +335,6 @@ body {
 									</table>
 								</div>
 							</section>
-
-							<%-- 	<div class="text-end mt-4 d-flex justify-content-end gap-2">
-
-								<!-- 승인/완료 버튼 분기 -->
-								<!-- out_Status 가 0 이면 승인 -->
-								<!-- out_Status 가 1 이면 완료 -->
-								<c:choose>
-									<c:when test="${Purchase_OrderDto.in_Status == 0}">
-										<form
-											action="${pageContext.request.contextPath}/purchase/modifyStatus"
-											method="post" style="display: inline;">
-											<input type="hidden" name="purchase_No"
-												value="${Purchase_OrderDto.purchase_No}" />
-											<button type="submit" class="btn btn-success btn-sm px-4"
-												onclick="return confirm('발주를 승인 하시겠습니까?');">승인</button>
-										</form>
-										<a
-											href="${pageContext.request.contextPath}/purchase/modifyStart?purchase_No=${Purchase_OrderDto.purchase_No}"
-											class="btn btn-outline-primary btn-sm px-4"
-											onclick="return confirm('발주를 수정 하시겠습니까?');">수정</a>
-										<form
-											action="${pageContext.request.contextPath}/purchase/delete"
-											method="post" style="display: inline;">
-											<input type="hidden" name="purchase_No"
-												value="${Purchase_OrderDto.purchase_No}" />
-											<button type="submit" class="btn btn-danger btn-sm px-4"
-												onclick="return confirm('발주 취소 하시겠습니까?');">발주 취소</button>
-										</form>
-									</c:when>
-									<c:when test="${Purchase_OrderDto.in_Status == 1}">
-										<form
-											action="${pageContext.request.contextPath}/purchase/modifyStatus"
-											method="post" style="display: inline;">
-											<input type="hidden" name="purchase_No"
-												value="${Purchase_OrderDto.purchase_No}" />
-											<button type="submit" class="btn btn-primary btn-sm px-4"
-												onclick="return confirm('발주를 완료 하시겠습니까?');">완료</button>
-										</form>
-										<form
-											action="${pageContext.request.contextPath}/purchase/accessModify"
-											method="post" style="display: inline;">
-											<input type="hidden" name="purchase_No"
-												value="${Purchase_OrderDto.purchase_No}" />
-											<button type="submit" class="btn btn-warning btn-sm px-4"
-												onclick="return confirm('정말 재발주 요청하시겠습니까?');">재발주
-												요청</button>
-										</form>
-										<form
-											action="${pageContext.request.contextPath}/purchase/returnStatus"
-											method="post" style="display: inline;">
-											<input type="hidden" name="purchase_No"
-												value="${Purchase_OrderDto.purchase_No}" />
-											<button type="submit" class="btn btn-danger btn-sm px-4"
-												onclick="return confirm('발주를 승인 취소 하시겠습니까?');">승인
-												취소</button>
-										</form>
-										<form
-											action="${pageContext.request.contextPath}/purchase/delete"
-											method="post" style="display: inline;">
-											<input type="hidden" name="purchase_No"
-												value="${Purchase_OrderDto.purchase_No}" />
-											<button type="submit" class="btn btn-danger btn-sm px-4"
-												onclick="return confirm('발주 취소 하시겠습니까?');">발주 취소</button>
-										</form>
-									</c:when>
-									<c:when test="${Purchase_OrderDto.in_Status == 2}">
-										<form
-											action="${pageContext.request.contextPath}/purchase/returnStatus"
-											method="post" style="display: inline;">
-											<input type="hidden" name="purchase_No"
-												value="${Purchase_OrderDto.purchase_No}" />
-											<button type="submit" class="btn btn-danger btn-sm px-4"
-												onclick="return confirm('발주를 완료 취소 하시겠습니까?');">완료
-												취소</button>
-										</form>
-									</c:when>
-								</c:choose>
-							</div> --%>
 							<div class="mt-4">
 								<div class="row g-2">
 									<c:choose>

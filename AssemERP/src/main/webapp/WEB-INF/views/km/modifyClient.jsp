@@ -211,7 +211,7 @@ body {
 		// 직원 팝업 오픈
 		function openEmpPopup() {
 			window.open('<c:url value="/client/empPopup"/>?empName=',
-					'empPopup', 'width=700,height=600,scrollbars=yes');
+					'empPopup', 'width= 1800,height=600,scrollbars=yes');
 		}
 		// 팝업 콜백: 직원 세팅
 		function fillEmp(empNo, empName) {
