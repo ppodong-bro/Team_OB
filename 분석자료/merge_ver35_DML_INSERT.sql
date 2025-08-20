@@ -60,10 +60,10 @@ INSERT INTO common VALUES (600, 0, '부품');
 INSERT INTO common VALUES (600, 1, '제품');
 
 INSERT INTO common VALUES (700, 999, '마감 구분');
-INSERT INTO common VALUES (700, 0, '마감시작');
+--INSERT INTO common VALUES (700, 0, '마감시작');
 INSERT INTO common VALUES (700, 1, '마감완료');
 INSERT INTO common VALUES (700, 2, '월마감완료');
-INSERT INTO common VALUES (700, 3, '마감취소');
+--INSERT INTO common VALUES (700, 3, '마감취소');
 
 INSERT INTO common VALUES (800, 999, '제품 분류');
 INSERT INTO common VALUES (800, 0, '데스크탑');

@@ -1398,8 +1398,8 @@ AFTER INSERT OR UPDATE OR DELETE ON sales_item -- 수주, 제품 판매
 FOR EACH ROW
 BEGIN
     DECLARE
-        -- 수주 상태
-        v_status NUMBER;
+        -- 납기일
+        v_date DATE;
         -- 제품을 부품으로 변환
         CURSOR cur_trans IS
             SELECT parts_no, cnt
@@ -1408,23 +1408,31 @@ BEGIN
             AND product_version = :NEW.product_version;
     BEGIN
         IF INSERTING THEN
+            SELECT complete_date 
+            INTO v_date
+            FROM sales_order
+            WHERE sales_no = :NEW.sales_no;
             DBMS_OUTPUT.PUT_LINE('sales_item INSERT 발생' || :NEW.product_no);
             -- 재고 변동 없으면 처리하지 않음
             IF :NEW.sales_item_outcnt != 0 THEN
                 -- 재고 조정 테이블에 부품 생산-
                 FOR rec IN cur_trans LOOP
                     INSERT INTO inventory_adjust (inventory_adjust_no, adjust_status, item_status, item_no, inout_status, item_cnt, inout_date, item_close_status) 
-                    VALUES (inventory_adjust_seq.nextval, 4/*제조*/, 0/*부품*/, rec.parts_no, 1/*OUT*/, rec.cnt * :NEW.sales_item_outcnt, sysdate, 2/*완료*/);
+                    VALUES (inventory_adjust_seq.nextval, 4/*제조*/, 0/*부품*/, rec.parts_no, 1/*OUT*/, rec.cnt * :NEW.sales_item_outcnt, v_date, 2/*완료*/);
                 END LOOP;
                 -- 재고 조정 테이블에 제품 생산+
                 INSERT INTO inventory_adjust (inventory_adjust_no, adjust_status, item_status, item_no, inout_status, item_cnt, inout_date, item_close_status) 
-                VALUES (inventory_adjust_seq.nextval, 4/*제조*/, 1/*제품*/, :NEW.product_no, 0/*IN*/, :NEW.sales_item_outcnt, sysdate, 2/*완료*/);
+                VALUES (inventory_adjust_seq.nextval, 4/*제조*/, 1/*제품*/, :NEW.product_no, 0/*IN*/, :NEW.sales_item_outcnt, v_date, 2/*완료*/);
                 
                 -- 제품을 수주 기록
                 INSERT INTO inventory (inventory_his_no, order_status, order_no, item_status, item_no, inout_status, item_cnt, item_totalcnt, inout_date, item_quality) 
-                VALUES (inventory_seq.nextval, 0/*수주*/, :NEW.sales_no, 1/*제품*/, :NEW.product_no, 1/*OUT*/, :NEW.sales_item_outcnt, null, sysdate, 0/*품질*/);
+                VALUES (inventory_seq.nextval, 0/*수주*/, :NEW.sales_no, 1/*제품*/, :NEW.product_no, 1/*OUT*/, :NEW.sales_item_outcnt, null, v_date, 0/*품질*/);
             END IF;
         ELSIF UPDATING THEN
+            SELECT complete_date 
+            INTO v_date
+            FROM sales_order
+            WHERE sales_no = :NEW.sales_no;
             DBMS_OUTPUT.PUT_LINE('sales_item UPDATE 발생' || :OLD.product_no || :OLD.sales_item_outcnt);
             DBMS_OUTPUT.PUT_LINE('sales_item UPDATE 발생' || :OLD.product_no || :NEW.sales_item_outcnt);
                 -- 증가 : OUT 처리(정상)
@@ -1432,45 +1440,49 @@ BEGIN
                 -- 재고 조정 테이블에 부품 생산-
                 FOR rec IN cur_trans LOOP
                     INSERT INTO inventory_adjust (inventory_adjust_no, adjust_status, item_status, item_no, inout_status, item_cnt, inout_date, item_close_status) 
-                    VALUES (inventory_adjust_seq.nextval, 4/*제조*/, 0/*부품*/, rec.parts_no, 1/*OUT*/, rec.cnt * (:NEW.sales_item_outcnt - :OLD.sales_item_outcnt), sysdate, 2/*완료*/);
+                    VALUES (inventory_adjust_seq.nextval, 4/*제조*/, 0/*부품*/, rec.parts_no, 1/*OUT*/, rec.cnt * (:NEW.sales_item_outcnt - :OLD.sales_item_outcnt), v_date, 2/*완료*/);
                 END LOOP;
                 -- 재고 조정 테이블에 제품 생산+
                 INSERT INTO inventory_adjust (inventory_adjust_no, adjust_status, item_status, item_no, inout_status, item_cnt, inout_date, item_close_status) 
-                VALUES (inventory_adjust_seq.nextval, 4/*제조*/, 1/*제품*/, :NEW.product_no, 0/*IN*/, :NEW.sales_item_outcnt - :OLD.sales_item_outcnt, sysdate, 2/*완료*/);
+                VALUES (inventory_adjust_seq.nextval, 4/*제조*/, 1/*제품*/, :NEW.product_no, 0/*IN*/, :NEW.sales_item_outcnt - :OLD.sales_item_outcnt, v_date, 2/*완료*/);
                 
                 -- 제품을 수주 기록
                 INSERT INTO inventory (inventory_his_no, order_status, order_no, item_status, item_no, inout_status, item_cnt, item_totalcnt, inout_date, item_quality) 
-                VALUES (inventory_seq.nextval, 0/*수주*/, :NEW.sales_no, 1/*제품*/, :NEW.product_no, 1/*OUT*/, :NEW.sales_item_outcnt - :OLD.sales_item_outcnt, null, sysdate, 0/*품질*/);
+                VALUES (inventory_seq.nextval, 0/*수주*/, :NEW.sales_no, 1/*제품*/, :NEW.product_no, 1/*OUT*/, :NEW.sales_item_outcnt - :OLD.sales_item_outcnt, null, v_date, 0/*품질*/);
             -- 감소 : IN 처리(리콜)
             ELSIF :NEW.sales_item_outcnt < :OLD.sales_item_outcnt THEN
                 -- 제품을 리콜 기록
                 INSERT INTO inventory (inventory_his_no, order_status, order_no, item_status, item_no, inout_status, item_cnt, item_totalcnt, inout_date, item_quality) 
-                VALUES (inventory_seq.nextval, 2/*수주취소*/, :NEW.sales_no, 1/*제품*/, :NEW.product_no, 0/*IN*/, :OLD.sales_item_outcnt - :NEW.sales_item_outcnt, null, sysdate, 0/*품질*/);
+                VALUES (inventory_seq.nextval, 2/*수주취소*/, :NEW.sales_no, 1/*제품*/, :NEW.product_no, 0/*IN*/, :OLD.sales_item_outcnt - :NEW.sales_item_outcnt, null, v_date, 0/*품질*/);
                 
                 -- 재고 조정 테이블에 제품 분해-
                 INSERT INTO inventory_adjust (inventory_adjust_no, adjust_status, item_status, item_no, inout_status, item_cnt, inout_date, item_close_status) 
-                VALUES (inventory_adjust_seq.nextval, 5/*분해*/, 1/*제품*/, :NEW.product_no, 1/*OUT*/, :OLD.sales_item_outcnt - :NEW.sales_item_outcnt, sysdate, 2/*완료*/);
+                VALUES (inventory_adjust_seq.nextval, 5/*분해*/, 1/*제품*/, :NEW.product_no, 1/*OUT*/, :OLD.sales_item_outcnt - :NEW.sales_item_outcnt, v_date, 2/*완료*/);
                 -- 재고 조정 테이블에 부품 분해+
                 FOR rec IN cur_trans LOOP
                     INSERT INTO inventory_adjust (inventory_adjust_no, adjust_status, item_status, item_no, inout_status, item_cnt, inout_date, item_close_status) 
-                    VALUES (inventory_adjust_seq.nextval, 5/*분해*/, 0/*부품*/, rec.parts_no, 0/*IN*/, rec.cnt * (:OLD.sales_item_outcnt - :NEW.sales_item_outcnt), sysdate, 2/*완료*/);
+                    VALUES (inventory_adjust_seq.nextval, 5/*분해*/, 0/*부품*/, rec.parts_no, 0/*IN*/, rec.cnt * (:OLD.sales_item_outcnt - :NEW.sales_item_outcnt), v_date, 2/*완료*/);
                 END LOOP;
             END IF;
         ELSIF DELETING THEN
+            SELECT complete_date 
+            INTO v_date
+            FROM sales_order
+            WHERE sales_no = :OLD.sales_no;
             -- 수주, 제품 판매를 취소했으므로 다시 IN
             DBMS_OUTPUT.PUT_LINE('sales_item DELETE 발생' || :OLD.product_no);
             IF :OLD.sales_item_outcnt != 0 THEN
                 -- 제품을 전량 리콜 기록
                 INSERT INTO inventory (inventory_his_no, order_status, order_no, item_status, item_no, inout_status, item_cnt, item_totalcnt, inout_date, item_quality) 
-                VALUES (inventory_seq.nextval, 2/*수주취소*/, :OLD.sales_no, 1/*제품*/, :OLD.product_no, 0/*IN*/, :OLD.sales_item_outcnt, null, sysdate, 0/*품질*/);
+                VALUES (inventory_seq.nextval, 2/*수주취소*/, :OLD.sales_no, 1/*제품*/, :OLD.product_no, 0/*IN*/, :OLD.sales_item_outcnt, null, v_date, 0/*품질*/);
                 
                 -- 재고 조정 테이블에 제품 분해-
                 INSERT INTO inventory_adjust (inventory_adjust_no, adjust_status, item_status, item_no, inout_status, item_cnt, inout_date, item_close_status) 
-                VALUES (inventory_adjust_seq.nextval, 5/*분해*/, 1/*제품*/, :OLD.product_no, 1/*OUT*/, :OLD.sales_item_outcnt, sysdate, 2/*완료*/);
+                VALUES (inventory_adjust_seq.nextval, 5/*분해*/, 1/*제품*/, :OLD.product_no, 1/*OUT*/, :OLD.sales_item_outcnt, v_date, 2/*완료*/);
                 -- 재고 조정 테이블에 부품 분해+
                 FOR rec IN cur_trans LOOP
                     INSERT INTO inventory_adjust (inventory_adjust_no, adjust_status, item_status, item_no, inout_status, item_cnt, inout_date, item_close_status) 
-                    VALUES (inventory_adjust_seq.nextval, 5/*분해*/, 0/*부품*/, rec.parts_no, 0/*IN*/, rec.cnt * :OLD.sales_item_outcnt, sysdate, 2/*완료*/);
+                    VALUES (inventory_adjust_seq.nextval, 5/*분해*/, 0/*부품*/, rec.parts_no, 0/*IN*/, rec.cnt * :OLD.sales_item_outcnt, v_date, 2/*완료*/);
                 END LOOP;
             END IF;
         END IF;
@@ -1481,34 +1493,51 @@ CREATE OR REPLACE TRIGGER TRIGGER_PURCHASE_INVENHIS
 AFTER INSERT OR UPDATE OR DELETE ON purchase_item -- 발주, 부품 구매
 FOR EACH ROW
 BEGIN
-    IF INSERTING THEN
-        DBMS_OUTPUT.PUT_LINE('purchase_item INSERT 발생' || :NEW.parts_no);
-        -- 재고 변동 없으면 처리하지 않음
-        IF :NEW.purchase_item_incnt != 0 THEN
-            INSERT INTO inventory (inventory_his_no, order_status, order_no, item_status, item_no, inout_status, item_cnt, item_totalcnt, inout_date, item_quality) 
-            VALUES (inventory_seq.nextval, 1/*발주*/, :NEW.purchase_no, 0/*부품*/, :NEW.parts_no, 0/*IN*/, :NEW.purchase_item_incnt, null, sysdate, 0/*품질*/);
+    DECLARE
+        -- 납기일
+        v_date DATE;
+    BEGIN
+        IF INSERTING THEN
+            SELECT complete_date 
+            INTO v_date
+            FROM purchase_order
+            WHERE purchase_no = :NEW.purchase_no;
+            DBMS_OUTPUT.PUT_LINE('purchase_item INSERT 발생' || :NEW.parts_no);
+            -- 재고 변동 없으면 처리하지 않음
+            IF :NEW.purchase_item_incnt != 0 THEN
+                INSERT INTO inventory (inventory_his_no, order_status, order_no, item_status, item_no, inout_status, item_cnt, item_totalcnt, inout_date, item_quality) 
+                VALUES (inventory_seq.nextval, 1/*발주*/, :NEW.purchase_no, 0/*부품*/, :NEW.parts_no, 0/*IN*/, :NEW.purchase_item_incnt, null, v_date, 0/*품질*/);
+            END IF;
+        ELSIF UPDATING THEN
+            SELECT complete_date 
+            INTO v_date
+            FROM purchase_order
+            WHERE purchase_no = :NEW.purchase_no;
+            DBMS_OUTPUT.PUT_LINE('purchase_item UPDATE 발생' || :OLD.parts_no || :OLD.purchase_item_incnt);
+            DBMS_OUTPUT.PUT_LINE('purchase_item UPDATE 발생' || :OLD.parts_no || :NEW.purchase_item_incnt);
+            IF :NEW.purchase_item_incnt > :OLD.purchase_item_incnt THEN
+                -- 증가: IN 처리
+                INSERT INTO inventory (inventory_his_no, order_status, order_no, item_status, item_no, inout_status, item_cnt, item_totalcnt, inout_date, item_quality) 
+                VALUES (inventory_seq.nextval, 1/*발주*/, :NEW.purchase_no, 0/*부품*/, :NEW.parts_no, 0/*IN*/, :NEW.purchase_item_incnt - :OLD.purchase_item_incnt, null, v_date, 0/*품질*/);
+            ELSIF :NEW.purchase_item_incnt < :OLD.purchase_item_incnt THEN
+                -- 감소: OUT 처리
+                INSERT INTO inventory (inventory_his_no, order_status, order_no, item_status, item_no, inout_status, item_cnt, item_totalcnt, inout_date, item_quality) 
+                VALUES (inventory_seq.nextval, 1/*발주*/, :NEW.purchase_no, 0/*부품*/, :NEW.parts_no, 1/*OUT*/, :OLD.purchase_item_incnt - :NEW.purchase_item_incnt, null, v_date, 0/*품질*/);
+            END IF;
+        ELSIF DELETING THEN
+            SELECT complete_date 
+            INTO v_date
+            FROM purchase_order
+            WHERE purchase_no = :OLD.purchase_no;
+            -- 발주, 부품 판매를 취소했으므로 다시 OUT
+            DBMS_OUTPUT.PUT_LINE('purchase_item DELETE 발생' || :OLD.parts_no);
+            IF :OLD.purchase_item_incnt != 0 THEN
+                -- 이전 부품,부품번호의 incnt만큼 OUT
+                INSERT INTO inventory (inventory_his_no, order_status, order_no, item_status, item_no, inout_status, item_cnt, item_totalcnt, inout_date, item_quality) 
+                VALUES (inventory_seq.nextval, 1/*발주*/, :OLD.purchase_no, 0/*부품*/, :OLD.parts_no, 1/*OUT*/, :OLD.purchase_item_incnt, null, v_date, 0/*품질*/);
+            END IF;
         END IF;
-    ELSIF UPDATING THEN
-        DBMS_OUTPUT.PUT_LINE('purchase_item UPDATE 발생' || :OLD.parts_no || :OLD.purchase_item_incnt);
-        DBMS_OUTPUT.PUT_LINE('purchase_item UPDATE 발생' || :OLD.parts_no || :NEW.purchase_item_incnt);
-        IF :NEW.purchase_item_incnt > :OLD.purchase_item_incnt THEN
-            -- 증가: IN 처리
-            INSERT INTO inventory (inventory_his_no, order_status, order_no, item_status, item_no, inout_status, item_cnt, item_totalcnt, inout_date, item_quality) 
-            VALUES (inventory_seq.nextval, 1/*발주*/, :NEW.purchase_no, 0/*부품*/, :NEW.parts_no, 0/*IN*/, :NEW.purchase_item_incnt - :OLD.purchase_item_incnt, null, sysdate, 0/*품질*/);
-        ELSIF :NEW.purchase_item_incnt < :OLD.purchase_item_incnt THEN
-            -- 감소: OUT 처리
-            INSERT INTO inventory (inventory_his_no, order_status, order_no, item_status, item_no, inout_status, item_cnt, item_totalcnt, inout_date, item_quality) 
-            VALUES (inventory_seq.nextval, 1/*발주*/, :NEW.purchase_no, 0/*부품*/, :NEW.parts_no, 1/*OUT*/, :OLD.purchase_item_incnt - :NEW.purchase_item_incnt, null, sysdate, 0/*품질*/);
-        END IF;
-    ELSIF DELETING THEN
-        -- 발주, 부품 판매를 취소했으므로 다시 OUT
-        DBMS_OUTPUT.PUT_LINE('purchase_item DELETE 발생' || :OLD.parts_no);
-        IF :OLD.purchase_item_incnt != 0 THEN
-            -- 이전 부품,부품번호의 incnt만큼 OUT
-            INSERT INTO inventory (inventory_his_no, order_status, order_no, item_status, item_no, inout_status, item_cnt, item_totalcnt, inout_date, item_quality) 
-            VALUES (inventory_seq.nextval, 1/*발주*/, :OLD.purchase_no, 0/*부품*/, :OLD.parts_no, 1/*OUT*/, :OLD.purchase_item_incnt, null, sysdate, 0/*품질*/);
-        END IF;
-    END IF;
+    END;
 END;
 /
 CREATE OR REPLACE TRIGGER TRIGGER_ADJUST_INVENHIS
@@ -1516,7 +1545,7 @@ AFTER INSERT ON inventory_adjust -- 조정, 생산, 분해 INSERT
 FOR EACH ROW
 BEGIN
     INSERT INTO inventory (inventory_his_no, order_status, order_no, item_status, item_no, inout_status, item_cnt, item_totalcnt, inout_date, item_quality) 
-    VALUES (inventory_seq.nextval, :NEW.adjust_status, :NEW.inventory_adjust_no, :NEW.item_status, :NEW.item_no, :NEW.inout_status, :NEW.item_cnt, null, sysdate, 0/*품질*/);
+    VALUES (inventory_seq.nextval, :NEW.adjust_status, :NEW.inventory_adjust_no, :NEW.item_status, :NEW.item_no, :NEW.inout_status, :NEW.item_cnt, null, :NEW.inout_date, 0/*품질*/);
 END;
 /
 CREATE OR REPLACE TRIGGER TRIGGER_CREATE_PRODUCT
