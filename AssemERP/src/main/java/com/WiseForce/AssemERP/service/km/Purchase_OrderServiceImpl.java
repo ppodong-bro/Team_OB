@@ -144,6 +144,10 @@ public class Purchase_OrderServiceImpl implements Purchase_OrderService {
 
 	@Override
 	public String modifyPurchase(Purchase_OrderDto purchase_OrderDto) {
+		int purchase_No = purchase_OrderDto.getPurchase_No();
+		List<Purchase_ItemDto> purchaseItem = purchase_OrderDao.getPurchaseItem(purchase_No);
+		purchase_OrderDao.deletePurchaseItem(purchaseItem);
+		
 		int result = purchase_OrderDao.modifyPurchase(purchase_OrderDto);
 		
 		if(result == 1) {

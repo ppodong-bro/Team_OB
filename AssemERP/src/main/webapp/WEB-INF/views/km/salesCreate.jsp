@@ -26,6 +26,85 @@ body {
 	content: " *";
 	color: red;
 }
+
+/* 가로 스크롤(부트스트랩 역할 유지) */
+#items-wrap {
+	overflow-x: auto;
+}
+
+/* 기본은 세로 스크롤 숨김 */
+#items-scroll {
+	position: relative;
+	overflow-y: hidden;
+	scrollbar-gutter: stable both-edges; /* 스크롤 영역 흔들림 방지(선택) */
+	overscroll-behavior: contain; /* 바깥 스크롤 전파 방지(선택) */
+}
+
+/* 임계 행수 초과 시에만 세로 스크롤 */
+#items-scroll.table-scroll {
+	overflow-y: auto;
+}
+
+/* sticky header/footer도 #items-scroll 기준으로 동작 */
+#items-scroll.table-scroll thead th {
+	position: sticky;
+	top: 0;
+	z-index: 2;
+	background: var(--bs-table-bg, #fff);
+}
+
+#items-scroll.table-scroll tfoot td {
+	position: sticky;
+	bottom: 0;
+	z-index: 1;
+	background: var(--bs-body-bg, #fff);
+	box-shadow: 0 -1px 0 var(--bs-table-border-color, #dee2e6);
+}
+
+/* 전역 height:100%류 무력화 (#items-scroll 제외) */
+#items-scroll .table, #items-scroll thead, #items-scroll tbody,
+	#items-scroll tfoot {
+	height: auto !important;
+}
+
+/* ✅ 전역 스크롤바 테마가 thumb 길이를 고정해둔 경우 해제 */
+#items-scroll::-webkit-scrollbar {
+	width: 10px;
+	height: auto !important;
+}
+
+#items-scroll::-webkit-scrollbar-thumb {
+	min-height: 0 !important;
+	height: auto !important;
+}
+
+#items-scroll {
+	scrollbar-width: auto;
+} /* Firefox: thin/auto 중 취향 */
+#items-scroll::-webkit-scrollbar-track {
+	background: rgba(0, 0, 0, .06) !important;
+}
+
+#items-scroll::-webkit-scrollbar-thumb {
+	background: rgba(0, 0, 0, .35) !important;
+	border-radius: 6px;
+}
+/* 1) sticky 헤더 위쪽 보더 강제 */
+#items-scroll.table-scroll thead th {
+	border-top: 1px solid var(--bs-table-border-color, #dee2e6) !important;
+}
+
+/* 2) 스크롤 컨테이너 최상단에 1px 라인(헤더 위쪽 라인 보정) */
+#items-scroll.table-scroll::before {
+	content: "";
+	position: sticky;
+	top: 0;
+	display: block;
+	height: 1px;
+	background: var(--bs-table-border-color, #dee2e6);
+	z-index: 3; /* th(z-index:2)보다 위 */
+	pointer-events: none;
+}
 </style>
 
 <!-- 오늘 날짜 문자열 (납기 min 값에서 사용) -->
@@ -39,7 +118,7 @@ body {
     window.open(
       '${pageContext.request.contextPath}/client/popup?client_Gubun=${client_Gubun}&client_Name=',
       'clientPopup',
-      'width=600,height=500,scrollbars=yes'
+      'width=1800,height=500,scrollbars=yes'
     );
   }
   function setClientInfo(client_No, client_Name, client_Address, client_Email, client_Tel, client_Man, empNo, empName) {
@@ -74,7 +153,7 @@ body {
     window.open(
       '${pageContext.request.contextPath}/sales/productPopup?product_Name=',
       'productPopup',
-      'width=700,height=560,scrollbars=yes'
+      'width=1800,height=560,scrollbars=yes'
     );
   }
 
@@ -217,6 +296,67 @@ body {
 
     recalcTotal();
   });
+  
+  // 반응형 테이블 (행 수 기준으로 스크롤 토글)
+  document.addEventListener('DOMContentLoaded', function(){
+    const wrap     = document.getElementById('items-wrap');   // 가로 스크롤용
+    const scroller = document.getElementById('items-scroll'); // 세로 스크롤 전용
+    const table    = document.getElementById('items-table');
+    const tbody    = document.getElementById('items-tbody');
+    if (!wrap || !scroller || !table || !tbody) return;
+
+    const SCROLL_ROWS = parseInt(wrap.dataset.scrollRows || '6', 10);
+
+    function heightForRows(n){
+      const thead = table.tHead;
+      const tfoot = table.tFoot;
+
+      // 앞 n개 행의 실제 높이 합산 (정확)
+      const rows = Array.from(tbody.rows);
+      const rowsH = rows.slice(0, n).reduce((sum, r) => sum + r.getBoundingClientRect().height, 0);
+
+      const headH = thead ? thead.getBoundingClientRect().height : 0;
+      const footH = tfoot ? tfoot.getBoundingClientRect().height : 0;
+
+      return Math.ceil(headH + footH + rowsH + 2);
+    }
+
+    function updateScroll(){
+      const rowCount = tbody.rows.length;
+      const on = rowCount > SCROLL_ROWS;
+
+      scroller.classList.toggle('table-scroll', on);
+
+      if (on) {
+        const h = heightForRows(SCROLL_ROWS);
+        scroller.style.height = '';           // 고정 height 제거
+        scroller.style.maxHeight = h + 'px';  // 정확한 viewport 높이
+
+        // 혹시 전역 충돌로 오버플로우가 안 생기면 1px 보정
+        if (scroller.scrollHeight <= scroller.clientHeight) {
+          scroller.style.maxHeight = (h - 1) + 'px';
+        }
+      } else {
+        scroller.style.height = '';
+        scroller.style.maxHeight = '';
+      }
+    }
+
+    // 행 추가/삭제/창 리사이즈에 반응
+    const mo = new MutationObserver(updateScroll);
+    mo.observe(tbody, { childList: true });
+
+    window.addEventListener('resize', updateScroll);
+    document.getElementById('add-item-btn')?.addEventListener('click', () => {
+      requestAnimationFrame(updateScroll);
+    });
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('.remove-item-btn')) requestAnimationFrame(updateScroll);
+    });
+
+    updateScroll();
+    window.addEventListener('load', updateScroll);
+  });
 </script>
 
 </head>
@@ -349,11 +489,12 @@ body {
 										</button>
 									</div>
 
-									<div class="table-responsive"
-										style="max-height: 360px; overflow: auto;">
-										<table
-											class="table table-sm table-bordered align-middle mb-0 product-table"
-											id="items-table">
+									<div class="table-responsive" id="items-wrap"
+										data-scroll-rows="6">
+										<div id="items-scroll">
+											<table
+												class="table table-sm table-bordered align-middle mb-0 product-table"
+												id="items-table">
 											<caption class="visually-hidden">등록할 제품 목록</caption>
 											<thead class="table-light">
 												<tr>
@@ -415,6 +556,7 @@ body {
 												</tr>
 											</tfoot>
 										</table>
+										</div>
 									</div>
 								</section>
 

@@ -7,10 +7,32 @@
   <meta charset="UTF-8">
   <title>거래처 선택</title>
   <jsp:include page="/common.jsp"/>
-  <style>
-    body{padding:12px}
-    .table-sm td, .table-sm th{padding:.35rem .5rem;}
-  </style>
+<style>
+body {
+	padding: 12px
+}
+
+.table-sm td, .table-sm th {
+	padding: .35rem .5rem;
+}
+
+/* 세로선만 표시 (Bootstrap 5 기준) */ .table.table-vert-only>:not(caption)>*>*
+	{
+	border-left: 1px solid var(--bs-table-border-color);
+	border-right: 1px solid var(--bs-table-border-color);
+	border-top: 0; /* 가로선 제거 */
+	border-bottom: 0; /* 가로선 제거 */
+}
+
+.table thead th {
+	border-bottom-width: 2px !important;
+}
+/* 바깥쪽 좌우 테두리(선택) */
+.table.table-vert-only {
+	border-left: 1px solid var(--bs-table-border-color);
+	border-right: 1px solid var(--bs-table-border-color);
+}
+</style>
 </head>
 <body>
   <h6 class="mb-3">거래처 선택</h6>
@@ -26,27 +48,27 @@
     </div>
   </form>
 
-  <table class="table table-sm table-hover align-middle">
+  	<table class="table table-sm table-hover align-middle table-bordered">
     <thead class="table-light">
       <tr>
-        <th>거래처명</th>
-        <th>주소</th>
-        <th>이메일</th>
-        <th>거래처 담당자</th>
-        <th>전화</th>
-        <th>담당사원(사번)</th>
-        <th style="width:90px" class="text-center">선택</th>
+        <th style="width: 12%;"class="text-center">거래처명</th>
+        <th style="width: 35%;" class="text-center">주소</th>
+        <th style="width: 20%;" class="text-center">이메일</th>
+        <th style="width: 8%;"class="text-center">거래처 담당자</th>
+        <th style="width: 10%;"class="text-center">전화</th>
+        <th style="width: 10%;"class="text-center">담당사원(사번)</th>
+        <th style="width: 5%;" class="text-center">선택</th>
       </tr>
     </thead>
     <tbody>
       <c:forEach var="c" items="${clientList}">
         <tr>
-          <td>${fn:escapeXml(c.client_Name)}</td>
-          <td>${fn:escapeXml(c.client_Address)}</td>
-          <td>${fn:escapeXml(c.client_Email)}</td>
-          <td>${fn:escapeXml(c.client_Man)}</td>
-          <td>${fn:escapeXml(c.client_Tel)}</td>
-          <td>
+          <td class="text-center">${fn:escapeXml(c.client_Name)}</td>
+          <td class = "text-center">${fn:escapeXml(c.client_Address)}</td>
+          <td class = "text-center">${fn:escapeXml(c.client_Email)}</td>
+          <td class="text-center">${fn:escapeXml(c.client_Man)}</td>
+          <td class="text-center">${fn:escapeXml(c.client_Tel)}</td>
+          <td class="text-center">
             <c:choose>
               <c:when test="${not empty c.empDTO}">
                 ${fn:escapeXml(c.empDTO.empName)} (${c.empDTO.empNo})

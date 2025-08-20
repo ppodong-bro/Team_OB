@@ -39,6 +39,8 @@ public interface Purchase_OrderDao {
 
 	int 					deletePurchase(int purchase_No);
 
+	void 					deletePurchaseItem(List<Purchase_ItemDto> purchaseItem);
+
 
 
 }
