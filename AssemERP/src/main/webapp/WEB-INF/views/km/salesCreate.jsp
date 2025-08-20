@@ -12,6 +12,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>수주 등록</title>
+<style>
+body {
+	background-color: #f8f9fa;
+}
+
+.card-header {
+	background-color: #0d6efd;
+	color: white;
+}
+
+.required-field::after {
+	content: " *";
+	color: red;
+}
+</style>
 
 <!-- 오늘 날짜 문자열 (납기 min 값에서 사용) -->
 <jsp:useBean id="now" class="java.util.Date" />
@@ -229,7 +244,7 @@
 						<!-- 카드 헤더 (상세 페이지 톤과 동일) -->
 						<div
 							class="card-header d-flex justify-content-between align-items-center">
-							<a href="/sales/list" class="btn btn-outline-dark btn-sm"> <i
+							<a href="/sales/list" class="btn btn-outline-light btn-sm"> <i
 								class="bi bi-list-ul me-1"></i> 목록
 							</a>
 							<h4 class="card-title mb-0">
@@ -247,6 +262,14 @@
 									<div id="order-create-title" class="info-card-title">수주 /
 										거래처 정보</div>
 									<div class="row g-3">
+										<!-- 발주 제목: 한 줄 전체 사용 -->
+										<div class="col-12">
+											<label class="form-label">수주 제목 <span
+												class="text-danger">*</span></label> <input type="text"
+												id="salesTitleInput" name="sales_Title"
+												class="form-control form-control-sm" required
+												placeholder="예: 2025-08 CPU 쿨러 발주 (요청서 #A-231)" />
+										</div>
 										<!-- 거래처 이름 (팝업 조회) -->
 										<div class="col-md-4">
 											<label class="form-label">거래처 이름 <span
@@ -274,7 +297,7 @@
 										<div class="col-md-4">
 											<label class="form-label">이메일</label>
 											<div class="input-group input-group-sm">
-												<span class="input-group-text">@</span> <input type="email"
+												 <input type="email"
 													id="clientEmailInput" class="form-control" readonly />
 											</div>
 										</div>
@@ -321,8 +344,9 @@
 									<div id="product-list-title"
 										class="info-card-title d-flex justify-content-between align-items-center">
 										<span>제품 목록</span>
-										<button type="button" id="add-item-btn"
-											class="btn btn-sm btn-outline-secondary">항목 추가</button>
+										<button type="button" class="btn btn-primary" id="add-item-btn">
+											<i class="bi bi-plus-lg"></i>제품 추가
+										</button>
 									</div>
 
 									<div class="table-responsive"

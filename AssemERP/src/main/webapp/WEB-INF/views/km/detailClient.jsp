@@ -12,6 +12,38 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>거래처 상세</title>
+<style>
+body {
+	background-color: #f8f9fa;
+}
+
+.card-header {
+	background-color: #C0C0C0;
+	color: white;
+}
+
+.required-field::after {
+	content: " *";
+	color: red;
+}
+
+.image-box {
+	width: auto; /* 원하는 가로 크기 */
+	height: 300px; /* 원하는 세로 크기 */
+	overflow: hidden;
+}
+
+.image-box img {
+	width: 100%;
+	height: 100%;
+	display: block; /* 여백 제거 */
+}
+.parent-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* 항목들 사이 간격을 균일하게 12px 설정 */
+}
+</style>
 </head>
 <body>
 	<div id="layout">
@@ -39,7 +71,7 @@
 						<div
 							class="card-header d-flex justify-content-between align-items-center">
 							<a href="<c:url value='/client/list'/>"
-								class="btn btn-outline-dark btn-sm"> <i
+								class="btn btn-outline-light btn-sm"> <i
 								class="bi bi-list-ul me-1"></i> 목록
 							</a>
 							<h4 class="card-title mb-0">
@@ -99,7 +131,7 @@
 									<div class="field">
 										<div class="field-label">이메일</div>
 										<div class="field-box">
-											<span class="small-addon">@</span> <span><c:out
+											 <span><c:out
 													value="${clientDto.client_Email}" /></span>
 										</div>
 									</div>

@@ -14,6 +14,7 @@
 		<result column="SALES_DATE" property="sales_Date" />
 		<result column="OUT_STATUS" property="out_Status" />
 		<result column="DEL_STATUS" property="del_Status" />
+		<result	column="SALES_TITLE" property="sales_Title"/>
 		<result	column="COMPLETE_DATE" property="complete_Date"/>
 		<result column="MODIFY_DATE"	property="modify_Date"/>
 		<result column="IN_DATE" 	property="in_Date" />
@@ -66,6 +67,7 @@
 	
 	<resultMap type="Sales_OrderDto" id="clientNoAndCloseDate">
 		<id column="SALES_NO" property="sales_No"/>
+		<result	column="SALES_TITLE" property="sales_Title"/>
 		<result column="COMPLETE_DATE" property="complete_Date"/>
 		
 		<association property="clientDto" javaType="ClientDto">
@@ -116,7 +118,7 @@
 	<select id="listSales" parameterType="Sales_OrderSearchDto"
 		resultMap="sales_OrderMap">
   	<![CDATA[
-    	SELECT S.SALES_NO, S.SALES_DATE, S.OUT_STATUS, S.DEL_STATUS
+    	SELECT S.SALES_NO, S.SALES_DATE, S.OUT_STATUS, S.DEL_STATUS, S.SALES_TITLE
          	 , S.IN_DATE, H.CLIENT_NO, H.CLIENT_NAME, H.CLIENT_TEL
          	 , E.EMP_NO, E.EMP_NAME
          	 , I.PRODUCT_NO, I.SALES_ITEM_CNT, I.SALES_ITEM_OUTCNT
@@ -163,7 +165,7 @@
 	</select>
 	
 	<select id="detailSales" parameterType="int" resultMap="sales_OrderMap">
-		SELECT S.SALES_NO, S.SALES_DATE, S.OUT_STATUS, S.DEL_STATUS, S.COMPLETE_DATE, S.MODIFY_DATE
+		SELECT S.SALES_NO, S.SALES_DATE, S.OUT_STATUS, S.DEL_STATUS, S.SALES_TITLE, S.COMPLETE_DATE, S.MODIFY_DATE
          	 , S.IN_DATE, H.CLIENT_NO, H.CLIENT_NAME, H.CLIENT_EMAIL
          	 , H.CLIENT_MAN, H.CLIENT_ADDRESS, H.CLIENT_TEL
          	 , E.EMP_NO, E.EMP_NAME
@@ -212,8 +214,8 @@
 			FROM   DUAL
 		</selectKey>
 			
-		INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, DEL_STATUS, IN_DATE) VALUES
-		(#{sales_No}, #{clientDto.client_No}, #{empDTO.empNo}, #{sales_Date, jdbcType=DATE}, 0, 0, SYSDATE )
+		INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, DEL_STATUS, SALES_TITLE, IN_DATE) VALUES
+		(#{sales_No}, #{clientDto.client_No}, #{empDTO.empNo}, #{sales_Date, jdbcType=DATE}, 0, 0, #{sales_Title}, SYSDATE )
 	</insert>
 		
 	<insert id="createSales_Item" parameterType="sales_OrderDto">
@@ -242,6 +244,9 @@
 		</if>
 		<if test="del_Status != null">
 			DEL_STATUS = #{del_Status},
+		</if>
+		<if test="sales_Title != null">
+			SALES_TITLE = #{sales_Title},
 		</if>
 			MODIFY_DATE = SYSDATE
 		</set>
