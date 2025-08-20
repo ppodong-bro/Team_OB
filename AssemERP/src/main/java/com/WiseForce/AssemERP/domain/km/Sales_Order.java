@@ -60,6 +60,7 @@ public class Sales_Order {
 	private LocalDate 		sales_date;
 	private int	  			out_status;
 	private int   			del_status;
+	private String		    sales_title;
 	private LocalDateTime   complete_date;
 	private LocalDateTime   modify_date;
 	private LocalDateTime 	in_date;

@@ -22,6 +22,7 @@ public class Purchase_OrderDto {
 	private LocalDate 		purchase_Date;
 	private int		  		in_Status;
 	private int		  		del_Status;
+	private String			purchase_Title;
 	private LocalDateTime   complete_Date;
 	private LocalDateTime   modify_Date;
 	private LocalDateTime	in_Date;
