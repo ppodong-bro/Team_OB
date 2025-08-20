@@ -25,6 +25,36 @@ const sectorLabelPlugin = {
 	}
 };
 
+
+//도넛 그림자 플러그인
+const doughnutShadowPlugin = {
+    id: 'doughnutShadow',
+    beforeDraw(chart) {
+        const ctx = chart.ctx;
+        const meta = chart.getDatasetMeta(0);
+
+        ctx.save();
+
+        meta.data.forEach((arc) => {
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.4)'; // 그림자 색상
+            ctx.shadowBlur = 10;                    // 그림자 번짐
+            ctx.shadowOffsetX = 4;                  // X축 오프셋
+            ctx.shadowOffsetY = 4;                  // Y축 오프셋
+
+            arc.draw(ctx); // 섹터 다시 그리기
+
+            // 그림자 초기화
+            ctx.shadowColor = 'transparent';
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
+        });
+
+        ctx.restore();
+    }
+};
+
+
 const doughnutCombinedData = JSON.parse('${inventoryCurrent}');
 
 // 이제 이 데이터를 차트에 맞게 분리
@@ -83,7 +113,7 @@ const doughnutChart = new Chart(ctx4, {
 			title: {
 				display: true,
 				text: '재고현황',
-				font: {size: 18 },
+				font: {size: 20 },
 				padding: {top: 10, bottom: 20 }
 			},
 			legend: {
@@ -111,6 +141,6 @@ const doughnutChart = new Chart(ctx4, {
     		}
 		},
 	},
-	plugins: [ChartDataLabels]
+	plugins: [ChartDataLabels, doughnutShadowPlugin]
 });
 </script>

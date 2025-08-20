@@ -63,6 +63,35 @@
         <!-- 여기에 그래프 출력 -->
     </div>
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("DOMContentLoaded 이벤트 발생!"); // 이 메시지가 찍히는지 확인
+
+    fetch("${pageContext.request.contextPath}/perform/clientInitialData")
+        .then(response => {
+            console.log("Fetch 응답 도착! 응답 상태:", response.status, response.ok); // 응답 상태 확인
+            if (!response.ok) {
+                // 응답이 성공(2xx)이 아닐 경우, 응답 본문을 읽어서 에러 메시지를 얻어내는 것이 좋습니다.
+                return response.text().then(text => { // 응답 텍스트를 읽어서 에러로 던짐
+                    throw new Error('네트워크 응답 오류: ' + response.status + ' ' + response.statusText + ' - ' + text);
+                });
+            }
+            return response.json(); // JSON으로 파싱 시도
+        })
+        .then(stats => {
+            console.log("초기 데이터 로드 완료:", stats); // stats 값이 드디어 찍히는가!
+            // 여기서 데이터 처리 및 차트 렌더링 등 작업
+            if(stats.length > 0) {
+                renderChart(stats[0].clientName, stats);
+            }
+        })
+        .catch(error => {
+            console.error("초기 데이터 로드 실패:", error); // 어떤 오류가 발생했는지 확인
+        });
+});
+
+
+
+
 $(document).ready(function(){
     // 검색 입력 이벤트
     $("#searchInput").on("input", function(){

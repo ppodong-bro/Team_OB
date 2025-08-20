@@ -16,5 +16,4 @@ public class YearsPerformDTO {
 	private int item_totalCost;
 	private String each_month;
 	
-	
 }

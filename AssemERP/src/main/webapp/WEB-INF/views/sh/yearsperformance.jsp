@@ -43,15 +43,17 @@ const yearsPerformChart = new Chart(ctx3, {
                 label: '매출액',
                 data: yearsperformSaledata,
                 fill: true,
-                borderColor: 'rgba(255, 99, 132, 1)',  
-                backgroundColor: 'rgba(75, 192, 192, 0)'
+                borderColor: 'rgba(255, 99, 132, 0.8)',  
+                backgroundColor: 'rgba(75, 192, 192, 0)',
+                borderWidth: 4  // 데이터셋 선 두께 조절
             },
             {
                 label: '매입액',  // 새로운 데이터셋의 이름
                 data: yearsperformPurchasedata,  // 이미 있는 매입 데이터 변수 사용
                 fill: true,
-                borderColor: 'rgba(75, 192, 192, 1)',	// 다른 색상 사용
-                backgroundColor: 'rgba(255, 99, 132, 0)'
+                borderColor: 'rgba(75, 192, 192, 0.8)',	// 다른 색상 사용
+                backgroundColor: 'rgba(255, 99, 132, 0)',
+                borderWidth: 4  // 데이터셋 선 두께 조절
             }
         ]
     },
@@ -61,7 +63,7 @@ const yearsPerformChart = new Chart(ctx3, {
     	            display: true,
     	            text: '거래실적',
     	            font: {
-    	                size: 18
+    	                size: 20
     	            },
     	            padding: {
     	                top: 10,
@@ -74,7 +76,13 @@ const yearsPerformChart = new Chart(ctx3, {
     	            	usePointStyle: true,     	            	
     	                pointStyle: 'line',
     	                boxWidth: 20,
-    	                padding: 15
+    	                padding: 15,
+    	                font: {
+    	                    size: 12,  // 원하는 폰트 크기
+    	                    family: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",  // 폰트 패밀리
+    	                    style: 'normal',  // 'normal', 'italic', 'oblique'
+    	                    weight: 'normal'  // 'normal', 'bold', 'bolder', 'lighter'
+    	                }
     	            }
     	        }
     	 },

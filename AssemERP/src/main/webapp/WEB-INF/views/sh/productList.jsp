@@ -29,7 +29,8 @@
 					<div class="card shadow-sm">
 						<div
 							class="card-header d-flex justify-content-between align-items-center">
-							<h4 class="card-title mb-0">제품목록</h4>
+							<h4 class="card-title mb-0">
+							<i class="bi bi-list-ul"></i> 제품목록</h4>
 							<a href="/product/create" class="btn btn-primary"><i class="bi bi-plus-lg"></i> 등록</a>
 						</div>
 						<div class="card-body">
