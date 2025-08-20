@@ -43,7 +43,7 @@ body {
 							start-50 : 50%위치에서 시작하도록
 							translate-middle-x : 객체의 x중심이 가운데에 위치하도록 -->
 							<h4 class="card-title mb-0 position-absolute start-50 translate-middle-x">
-								<i class="bi bi-pencil-square me-2"></i>재고 수정
+								<i class="bi bi-pencil-square me-2"></i>재고 조정
 							</h4>
 						</div>
 						<div class="card-body p-4">
@@ -93,7 +93,7 @@ body {
 										</div>
 									</div>
 									<div class="col-md-6 mb-3">
-										<label for="item_type" class="form-label">수정 수량</label>
+										<label for="item_type" class="form-label">조정 수량</label>
 										<div class="input-group">
 											<span class="input-group-text"><i class="bi bi-pencil-square"></i></span> <input type="text" class="form-control" id="item_adjustcnt"
 												name="item_adjustcnt" value="${inventory.cnt }">
@@ -110,7 +110,7 @@ body {
 								<div class="row mt-4 g-2">
 									<div class="d-grid">
 										<button type="submit" class="btn btn-success">
-											<i class="bi bi-check-lg me-2"></i>재고 수정
+											<i class="bi bi-check-lg me-2"></i>재고 조정
 										</button>
 									</div>
 								</div>
