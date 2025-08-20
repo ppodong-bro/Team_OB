@@ -42,13 +42,19 @@
   	  cal.style.width = "100%";
   	  cal.style.height = "100%";
   	  cal.style.maxWidth = "none";
+  	  cal.style.backgroundColor = "transparent"; // 투명
+		cal.style.borderRadius = "10px";
   	  
   	  // 내부 컨테이너 조정
   	  const monthsElement = cal.querySelector('.flatpickr-months');
-  	  if (monthsElement) monthsElement.style.width = "100%";
+  	  if (monthsElement) {
+  		  monthsElement.style.width = "100%";
+  	  }
   	  
   	  const weekdaysElement = cal.querySelector('.flatpickr-weekdays');
-  	  if (weekdaysElement) weekdaysElement.style.width = "100%";
+  	  if (weekdaysElement) {
+  		  weekdaysElement.style.width = "100%";
+  	  }
   	  
   	  const rContainer = cal.querySelector('.flatpickr-rContainer');
   	  if (rContainer) {

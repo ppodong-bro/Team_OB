@@ -72,11 +72,12 @@
 	color: black;
 	box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.1);
 	padding: 10px;
+    border-radius: 10px;
 }
 
 .dashboard .item-1 {
 	grid-area: one;
-	background-color: #F0F0F0;
+	background: linear-gradient(to bottom, #D3DEEC, #f1f4f8); // 그라데이션
 	display: flex;
 	justify-content: center; /* 수평 방향 가운데 정렬 */
 	align-items: center;
@@ -88,26 +89,23 @@
 
 .dashboard .item-2 {
 	grid-area: two;
-	background-color: #F0F0F0;
+	background: linear-gradient(to bottom, #e1e8f0, #f1f4f8); // 그라데이션
 }
 
 .dashboard .item-3 {
 	grid-area: three;
-	background-color: #F0F0F0;
+	background: linear-gradient(to bottom, #e1e8f0, #f1f4f8); // 그라데이션
 }
 
 .dashboard .item-4 {
 	grid-area: four;
-	background-color: #F0F0F0;
+	background: linear-gradient(to bottom, #e1e8f0, #f1f4f8); // 그라데이션
 }
 
 .dashboard .item-5 {
 	grid-area: five;
-	background-color: #F0F0F0;
+    background: linear-gradient(to bottom, #D3DEEC, #f1f4f8); // 그라데이션
  	height: 100%; /* 혹시 부모도 높이 제한이 있다면 채우기 */
- 	
-    background: rgba(255,255,255,0.2);
-    border-radius: 10px;
     text-align: center;
     padding: 0px;
 }
@@ -117,14 +115,12 @@
     height: 100%;
     display: flex;
     flex-direction: column; /* 세로 배치 */
-    border-radius: 15px;
-    color: white;
+    color: black;
     font-family: Arial, sans-serif;
-    background: linear-gradient(to bottom, #4facfe, #00f2fe);
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     box-sizing: border-box;
     padding: 10px 20px;
-    
+    border-radius: 10px;
 }
 
 .weather-header {
@@ -207,7 +203,7 @@ function openClientPerformDetail() {
 							<div class="weather-header">
 								<div id="location">위치 불러오는 중...</div>
 								<button
-									style="background: none; border: none; color: white; cursor: pointer;"
+									style="background: none; border: none; cursor: pointer;"
 									onclick="loadWeather()">⟳</button>
 							</div>
 							<div class="weather-main" id="current-weather">
