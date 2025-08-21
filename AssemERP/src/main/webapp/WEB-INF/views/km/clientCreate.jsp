@@ -188,7 +188,7 @@ body {
 		// 팝업 열기
 		function openEmpPopup() {
 			window.open('<c:url value="/client/empPopup"/>?empName=',
-					'empPopup', 'width=700,height=600,scrollbars=yes');
+					'empPopup', 'width=1800,height=600,scrollbars=yes');
 		}
 		// 팝업에서 호출하는 콜백
 		function fillEmp(empNo, empName) {

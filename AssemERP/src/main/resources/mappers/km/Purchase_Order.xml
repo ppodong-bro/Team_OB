@@ -188,7 +188,7 @@
 
 		INSERT INTO PURCHASE_ITEM (PURCHASE_NO, PARTS_NO, PURCHASE_ITEM_CNT, PURCHASE_ITEM_INCNT, PURCHASE_ITEM_COST)
 		<foreach collection="purchase_Item" item="item" separator="UNION ALL">
-		SELECT #{purchase_No}, #{item.partsDTO.parts_no}, #{item.purchase_Item_Cnt}, #{item.purchase_Item_InCnt}, #{item.purchase_Item_Cost}
+		SELECT #{purchase_No}, #{item.partsDTO.parts_no}, #{item.purchase_Item_Cnt}, 0, #{item.purchase_Item_Cost}
 		FROM   DUAL
 		</foreach>
 	
@@ -210,15 +210,12 @@
 		WHERE  PURCHASE_NO = #{purchase_No}
 	</update>
 	
-	<delete id="deletePurchaseItem" parameterType="Purchase_OrderDto">
-	  DELETE FROM PURCHASE_ITEM
-	  WHERE PURCHASE_NO = #{purchase_No}
-	  <if test="purchase_Item != null and purchase_Item.size() > 0">
-	    AND PARTS_NO IN
-	    <foreach collection="purchase_Item" item="item" open="(" separator="," close=")">
-	      #{item.partsDTO.parts_no}
-	    </foreach>
-	  </if>
+	<delete id="deletePurchaseItem" parameterType="java.util.List">
+	 BEGIN
+	  <foreach collection="list" item="item">
+	 DELETE FROM PURCHASE_ITEM WHERE PURCHASE_NO = #{item.purchase_No} AND PARTS_NO = #{item.parts_no};
+	 </foreach>
+	 END;
 	</delete>
 	
 	<select id="getInStatus" parameterType="int" resultType="int">

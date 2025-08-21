@@ -62,9 +62,11 @@ public class Purchase_OrderDaoImpl implements Purchase_OrderDao {
 	@Override
 	public int modifyPurchase(Purchase_OrderDto purchase_OrderDto) {
 		System.out.println("modifyPurchase-> purchase_OrderDto -> "+ purchase_OrderDto);
-//		List<Purchase_ItemDto> purchaseItem = purchase_OrderDto.getPurchase_Item();
-//		System.out.println("purchaseItem"+purchaseItem);
-		session.delete("deletePurchaseItem", purchase_OrderDto);
+		/*
+		 * List<Purchase_ItemDto> purchaseItem = purchase_OrderDto.getPurchase_Item();
+		 * System.out.println("purchaseItem"+purchaseItem);
+		 */
+	
 		int result = session.update("modifyPurchase",purchase_OrderDto);
 		session.update("createPurchaseItem",purchase_OrderDto);
 		
@@ -130,6 +132,12 @@ public class Purchase_OrderDaoImpl implements Purchase_OrderDao {
 	public int deletePurchase(int purchase_No) {
 		int result = session.update("deletePurchase", purchase_No);
 		return result;
+	}
+
+	@Override
+	public void deletePurchaseItem(List<Purchase_ItemDto> purchaseItem) {
+		session.delete("deletePurchaseItem", purchaseItem);
+		
 	}
 
 }
