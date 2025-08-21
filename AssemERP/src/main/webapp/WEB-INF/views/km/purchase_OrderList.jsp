@@ -109,17 +109,16 @@
 								<table class="table table-bordered align-middle ">
 									<thead class="table-light">
 										<tr>
-											<th style="width: 5%;" class="text-center">#</th>
-											<th style="width: 7%;" class="text-center">발주번호</th>
-											<th style="width: 10%;" class="text-center">거래처명</th>
-											<th style="width: 23%;" class="text-center">제목</th>
-											<th style="width: 6%;" class="text-center">요청수량</th>
-											<th style="width: 6%;" class="text-center">입고수량</th>
-											<th style="width: 7%;" class="text-center">총액</th>
-											<th style="width: 10%;" class="text-center">납기완료일</th>
-											<th style="width: 6%;" class="text-center">입고상태</th>
-											<th style="width: 8%;" class="text-center">담당자</th>
-											<th style="width: 10%;" class="text-center">등록일</th>
+											<th style="width: 7%;" class="text-center">발주 번호</th>
+											<th style="width: 10%;" class="text-center">발주 거래처명</th>
+											<th style="width: 22%;" class="text-center">발주 제목</th>
+											<th style="width: 8%;" class="text-center">발주 요청수량</th>
+											<th style="width: 8%;" class="text-center">발주 입고수량</th>
+											<th style="width: 7%;" class="text-center">발주 총액</th>
+											<th style="width: 10%;" class="text-center">발주 납기완료일</th>
+											<th style="width: 8%;" class="text-center">발주 입고상태</th>
+											<th style="width: 8%;" class="text-center">발주 담당자</th>
+											<th style="width: 10%;" class="text-center">발주 등록일</th>
 											<th style="width: 8%;" class="text-center">수정</th>
 										</tr>
 									</thead>
@@ -127,14 +126,12 @@
 										<c:forEach var="order" items="${listPurchase}" varStatus="st">
 											<tr style="cursor: pointer;"
 												onclick="location.href='<c:url value='/purchase/detail?purchase_No=${order.purchase_No}'/>'">
-												<!-- 순번 -->
-												<td class="text-center">${st.index + 1}</td>
 
 												<!-- 발주번호 (detail 링크) -->
 												<td class="text-center">${order.purchase_No}</td>
 
 												<!-- client → clientName -->
-												<td>${order.clientDto.client_Name}</td>
+												<td class="text-center"> ${order.clientDto.client_Name}</td>
 
 												<c:choose>
 													<c:when test="${not empty order.purchase_Item}">
