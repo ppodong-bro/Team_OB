@@ -286,13 +286,13 @@
                     <caption class="visually-hidden">수주한 제품 목록과 출고/요청 기준 금액</caption>
                     <thead class="table-light">
                       <tr>
-                        <th style ="width: 40%;" class="text-center" scope="col">제품명</th>
-                        <th style ="width: 10%;" scope="col" class="numeric text-center">요청수량</th>
-                        <th style ="width: 10%;" scope="col" class="numeric text-center">출고수량</th>
-                        <th style ="width: 10%;" scope="col" class="numeric text-center">출고대기</th>
-                        <th style ="width: 10%;" scope="col" class="numeric text-center">제품 단가</th>
-                        <th style ="width: 10%;" scope="col" class="numeric text-center">출고 기준 총액</th>
-                        <th style ="width: 10%;" scope="col" class="numeric text-center">요청 기준 총액</th>
+                        <th style ="width: 40%;" class="text-center" scope="col">수주 제품명</th>
+                        <th style ="width: 10%;" scope="col" class="numeric text-center">수주 요청수량</th>
+                        <th style ="width: 10%;" scope="col" class="numeric text-center">수주 출고수량</th>
+                        <th style ="width: 10%;" scope="col" class="numeric text-center">수주 출고대기</th>
+                        <th style ="width: 10%;" scope="col" class="numeric text-center">수주 제품 단가</th>
+                        <th style ="width: 10%;" scope="col" class="numeric text-center">수주 출고 기준 총액</th>
+                        <th style ="width: 10%;" scope="col" class="numeric text-center">수주 요청 기준 총액</th>
                       </tr>
                     </thead>
                     <tbody>
