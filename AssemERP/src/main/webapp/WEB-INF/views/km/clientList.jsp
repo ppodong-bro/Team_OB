@@ -102,9 +102,9 @@
 									<thead class="table-light">
 										<tr>
 											<th style="width: 5%;" class="text-center">#</th>
-											<th style="width: 5%;" class="text-center">거래처번호</th>
+											<th style="width: 8%;" class="text-center">거래처번호</th>
 											<th style="width: 12%;" class="text-center">거래처명</th>
-											<th style="width: 8%;" class="text-center">유형</th>
+											<th style="width: 5%;" class="text-center">유형</th>
 											<th style="width: 20%;" class="text-center">주소</th>
 											<th style="width: 15%;" class="text-center">이메일</th>
 											<th style="width: 7%;" class="text-center">거래처 담당자</th>

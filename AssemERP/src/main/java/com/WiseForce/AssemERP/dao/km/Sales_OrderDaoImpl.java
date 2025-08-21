@@ -71,8 +71,10 @@ public class Sales_OrderDaoImpl implements Sales_OrderDao {
 	public int modifySales(Sales_OrderDto sales_OrderDto, List<Sales_ItemDto> salesItemList) {
 		System.out.println("salesItemList->" + salesItemList);
 		
-		session.delete("deleteToUpdate", salesItemList);
+		int result1 = session.delete("deleteToUpdate", salesItemList);
+		System.out.println("resultDelete+++"+result1);
 		int result = session.update("modifySales", sales_OrderDto);
+		System.out.println("reuslt+++"+result);
 	    session.insert("createSales_Item", sales_OrderDto);
 		
 	    return result;

@@ -130,7 +130,7 @@
 			  LEFT JOIN PARTS PA ON I.PARTS_NO = PA.PARTS_NO
 		<where>
 			<if test="client_Name != null and client_Name.trim() != ''">
-				AND C.CLIENT_NAME LIKE '%' || #{client_Name} || '%'
+				AND H.CLIENT_NAME LIKE '%' || #{client_Name} || '%'
 			</if>
 			<if test="empName != null and empName.trim() != ''">
 				AND E.EMP_NAME LIKE '%' || #{empName} || '%'
