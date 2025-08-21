@@ -27,7 +27,7 @@
     /* 기본은 세로 스크롤 숨김 */
     #items-scroll{
       position:relative; overflow-y:hidden;
-      scrollbar-gutter:stable both-edges; overscroll-behavior:contain;
+      scrollbar-gutter:stable both-edges; overscroll-behavior:contain; padding-bottom: 1px;
     }
 
     /* 임계 행수 초과 시에만 세로 스크롤 */
