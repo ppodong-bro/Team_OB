@@ -37,49 +37,24 @@
     #items-scroll.table-scroll::before{ content:""; position:sticky; top:0; display:block; height:1px; background:var(--bs-table-border-color,#dee2e6); z-index:3; pointer-events:none; }
     
     /* ====================== 합계행(총계) & 헤더/바닥선 보정 ====================== */
-
-	/* 헤더 하단 보더 두께를 2px로: 기준선 통일 */
-	.product-table thead > tr > * {
-	  border-bottom-width: 2px;
-	}
-	
-	/* 합계 행 위쪽 보더를 헤더와 동일하게(2px) */
-	.product-table tfoot .total-row > * {
-	  border-top: 2px solid var(--bs-table-border-color, #dee2e6) !important;
-	}
-	
-	/* 마지막 데이터 행 하단 보더 제거: 합계 위 보더와 이중선 방지 */
-	.product-table tbody tr:last-child > * {
-	  border-bottom: 0 !important;
-	}
-	
-	/* 스크롤러 기준 sticky: 합계를 하단에 고정 + 얇은 상단 경계/그림자 */
-	#items-scroll.table-scroll tfoot .total-row > * {
-	  position: sticky;
-	  bottom: 0;
-	  z-index: 3; /* thead(2)보다 위 */
-	  background: var(--bs-body-bg, #fff); /* sticky 겹침시 배경 비침 방지 */
-	  box-shadow:
-	    0 -1px 0 var(--bs-table-border-color, #dee2e6),   /* 위쪽 얇은 라인 */
-	    0 -6px 12px rgba(0,0,0,.04);                      /* 은은한 음영 */
-	}
-	
-	/* ====================== "텍스트만" 은은하게 강조(음영) ====================== */
-	
-	/* 합계 행 전체 텍스트에 미세 음영 + 약한 굵기 */
-	.product-table tfoot .total-row > * {
-	  font-weight: 600;
-	  text-shadow: 0.5px 0.5px 0 rgba(0,0,0,.18); /* blur 0: 번짐 없이 또렷 */
-	}
-	
-	/* 첫 칸 "합계" 라벨만 살짝 더 입체감(하이라이트+그림자) */
-	.product-table tfoot .total-row td:first-child {
-	  letter-spacing: .2px;
-	  text-shadow:
-	    0.7px 0.7px 0 rgba(0,0,0,.22),        /* 아래/오른쪽 얇은 그림자 */
-	   -0.5px -0.5px 0 rgba(255,255,255,.35); /* 위/왼쪽 얇은 하이라이트 */
-	}
-	    
+    .product-table thead > tr > * { border-bottom-width: 2px; }
+    .product-table tfoot .total-row > * {
+      border-top: 2px solid var(--bs-table-border-color, #dee2e6) !important;
+    }
+    .product-table tbody tr:last-child > * { border-bottom: 0 !important; }
+    #items-scroll.table-scroll tfoot .total-row > * {
+      position: sticky;
+      bottom: 0;
+      z-index: 3;
+      background: var(--bs-body-bg, #fff);
+      box-shadow: 0 -1px 0 var(--bs-table-border-color, #dee2e6),
+                  0 -6px 12px rgba(0,0,0,.04);
+    }
+    .product-table tfoot .total-row > * { font-weight: 600; text-shadow: 0.5px 0.5px 0 rgba(0,0,0,.18); }
+    .product-table tfoot .total-row td:first-child {
+      letter-spacing: .2px;
+      text-shadow: 0.7px 0.7px 0 rgba(0,0,0,.22), -0.5px -0.5px 0 rgba(255,255,255,.35);
+    }
   </style>
 
   <!-- 오늘 날짜 문자열 (납기 min 값에서 사용) -->
@@ -87,6 +62,27 @@
   <fmt:formatDate value="${now}" pattern="yyyy-MM-dd" var="todayStr" timeZone="Asia/Seoul" />
 
   <script>
+    /* ====================== 에러 헬퍼 ====================== */
+    function showError(el, msg) {
+      if (!el) return;
+      el.setCustomValidity(msg);
+      el.classList.add('is-invalid');
+      const fb = el.closest('.col-12, .col-md-4, td')?.querySelector('.invalid-feedback')
+                || el.parentElement.querySelector('.invalid-feedback');
+      if (fb) { fb.textContent = msg; fb.classList.add('d-block'); }
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.focus();
+      el.reportValidity?.();
+    }
+    function clearError(el) {
+      if (!el) return;
+      el.setCustomValidity('');
+      el.classList.remove('is-invalid');
+      const fb = el.closest('.col-12, .col-md-4, td')?.querySelector('.invalid-feedback')
+                || el.parentElement.querySelector('.invalid-feedback');
+      if (fb) { fb.textContent = ''; fb.classList.remove('d-block'); }
+    }
+    
     /* ====================== 전역 상태 ====================== */
     // 이미 선택된 제품번호 보관(제품 중복 방지 — 버전 무시)
     const selectedProducts = new Set();
@@ -114,6 +110,8 @@
       document.getElementById('clientManInput').value     = client_Man;
       if (empNo)   document.getElementById('empNoInput').value   = empNo;
       if (empName) document.getElementById('empNameInput').value = empName;
+
+      clearError(document.getElementById('clientNameInput')); // 선택 시 에러 해제
       window.close();
     }
 
@@ -153,7 +151,7 @@
       if (prevNo) selectedProducts.delete(prevNo);
 
       if (targetProductInput)         targetProductInput.value        = pno;
-      if (targetProductNameInput)     targetProductNameInput.value    = product_name;
+      if (targetProductNameInput)     { targetProductNameInput.value    = product_name; clearError(targetProductNameInput); }
       if (targetProductVersionInput)  targetProductVersionInput.value = product_version;
       if (currentRow)                 currentRow.dataset.productNo    = pno;
 
@@ -266,6 +264,7 @@
               '<input type="text" class="form-control form-control-sm productNameInput" readonly tabindex="-1" style="background:#f6f6f6;" />' +
               '<button type="button" class="btn btn-outline-secondary" onclick="openProductPopup(this)">조회</button>' +
             '</div>' +
+            '<div class="invalid-feedback">제품(버전) 선택이 필요합니다.</div>' + // ★ 추가
           '</td>' +
           '<td class="numeric">' +
             '<input type="number" min="0" name="sales_Item['+idx+'].sales_Item_Cnt" class="form-control form-control-sm qty-input" required />' +
@@ -298,75 +297,99 @@
 
       // 제출 전 검증 + 재인덱싱 + 누락 필드 보강
       form?.addEventListener('submit', function(e){
-        // 거래처 선택
+        // 1) 거래처 먼저 1회 검증
         const clientNoEl   = document.getElementById('clientNoInput');
         const clientNameEl = document.getElementById('clientNameInput');
         if (!clientNoEl.value.trim()) {
-          clientNameEl.setCustomValidity('거래처를 선택하세요.');
-          clientNameEl.reportValidity();
-          e.preventDefault(); return;
-        } else clientNameEl.setCustomValidity('');
+          e.preventDefault();
+          showError(clientNameEl, '거래처를 선택하세요.');
+          return;
+        } else {
+          clearError(clientNameEl);
+        }
 
-        // 납기일 유효성
+        // 2) 납기일 유효성
         const dateEl    = document.getElementById('salesDate');
         const dateError = document.getElementById('dateError');
         if (!dateEl.value) {
-          dateEl.setCustomValidity('납기 완료일을 선택하세요.');
-          dateEl.reportValidity();
-          e.preventDefault(); return;
+          e.preventDefault();
+          showError(dateEl, '납기 완료일을 선택하세요.');
+          if (dateError) dateError.textContent = '납기 완료일을 선택하세요.';
+          return;
         } else {
           const picked = new Date(dateEl.value);
           const today  = new Date('${todayStr}');
           if (picked < today) {
-            dateEl.setCustomValidity('납기 완료일은 오늘 이후만 가능합니다.');
-            dateEl.reportValidity();
+            e.preventDefault();
+            showError(dateEl, '납기 완료일은 오늘 이후만 가능합니다.');
             if (dateError) dateError.textContent = '오늘 이후 날짜로 선택해주세요.';
-            e.preventDefault(); return;
+            return;
           } else {
-            dateEl.setCustomValidity('');
+            clearError(dateEl);
             if (dateError) dateError.textContent = '';
           }
         }
 
-        // 최소 1행
+        // 3) 최소 1행
         const rows = document.querySelectorAll('#items-tbody tr');
         if (rows.length === 0) {
+          e.preventDefault();
           alert('제품 항목을 최소 1개 이상 추가하세요.');
-          e.preventDefault(); return;
+          return;
         }
 
-        // 재인덱싱 먼저
+        // 4) 재인덱싱 먼저
         reindexRows();
 
-        // name에 빈 인덱스([]) 남아있으면 막기
-        const bad = Array.from(form.querySelectorAll('[name^="sales_Item["]')).filter(el => /\[\]/.test(el.name));
+        // 5) name에 빈 인덱스([]) 남아있으면 막기
+        const formElts = form.querySelectorAll('[name^="sales_Item["]');
+        const bad = Array.from(formElts).filter(el => /\[\]/.test(el.name));
         if (bad.length) {
+          e.preventDefault();
           console.warn('잘못된 name들:', bad.map(e => e.name));
           alert('일시적 오류가 발생했습니다. 다시 저장을 시도해주세요.');
-          e.preventDefault(); return;
+          return;
         }
 
-        // 각 행 검증 + OUTCNT=0 주입
-        rows.forEach(function(row, i){
+        // 6) 각 행 검증 + OUTCNT=0 주입 (for문으로 최초 에러에서 중단)
+        for (let i = 0; i < rows.length; i++) {
+          const row    = rows[i];
           const noEl   = row.querySelector('.productNoInput');
           const verEl  = row.querySelector('.productVersionInput');
-          const nameEl = row.querySelector('.productNameInput');
+          const nameEl = row.querySelector('.productNameInput'); // 보이는 필드
           const qtyEl  = row.querySelector('.qty-input');
           const costEl = row.querySelector('.cost-input');
 
+          // 제품/버전
           if (!noEl?.value || !verEl?.value) {
-            if (nameEl) { nameEl.setCustomValidity('제품(버전) 선택이 필요합니다.'); nameEl.reportValidity(); }
-            e.preventDefault(); return;
-          } else if (nameEl) nameEl.setCustomValidity('');
+            e.preventDefault();
+            showError(nameEl, '제품(버전) 선택이 필요합니다.');
+            return;
+          } else {
+            clearError(nameEl);
+          }
 
-          const qty  = Number(qtyEl?.value);
+          // 수량
+          const qty = Number(qtyEl?.value);
+          if (!Number.isFinite(qty) || qty <= 0) {
+            e.preventDefault();
+            showError(qtyEl, '요청 수량을 1 이상 입력하세요.');
+            return;
+          } else {
+            clearError(qtyEl);
+          }
+
+          // 단가
           const cost = Number(costEl?.value);
-          if (!qty || qty <= 0) { qtyEl.setCustomValidity('요청 수량을 1 이상 입력하세요.'); qtyEl.reportValidity(); e.preventDefault(); return; }
-          else qtyEl.setCustomValidity('');
-          if (cost < 0) { costEl.setCustomValidity('단가는 0 이상이어야 합니다.'); costEl.reportValidity(); e.preventDefault(); return; }
-          else costEl.setCustomValidity('');
+          if (!Number.isFinite(cost) || cost < 0) {
+            e.preventDefault();
+            showError(costEl, '단가는 0 이상이어야 합니다.');
+            return;
+          } else {
+            clearError(costEl);
+          }
 
-          // SALES_ITEM_OUTCNT 기본값(0) 없으면 추가
+          // OUTCNT 기본값(0) 없으면 추가
           const sel = 'input[name="sales_Item['+i+'].sales_Item_OutCnt"]';
           if (!row.querySelector(sel)) {
             const hidden = document.createElement('input');
@@ -375,7 +398,8 @@
             hidden.value = '0';
             row.appendChild(hidden);
           }
-        });
+        }
+        // 통과 시 submit 진행
       });
 
       // 초기 합계
@@ -412,7 +436,7 @@
                   <div id="order-create-title" class="info-card-title">수주 / 거래처 정보</div>
                   <div class="row g-3">
                     <div class="col-12">
-                      <label class="form-label">수주 제목 <span class="text-danger">*</span></label>
+                      <label class="form-label">제목 <span class="text-danger">*</span></label>
                       <input type="text" id="salesTitleInput" name="sales_Title"
                              class="form-control form-control-sm" required
                              placeholder="예: 2025-08 CPU 쿨러 발주 (요청서 #A-231)" />
@@ -425,6 +449,7 @@
                         <input type="text" id="clientNameInput" class="form-control form-control-sm" readonly required placeholder="조회 버튼으로 선택" />
                         <button type="button" class="btn btn-outline-secondary" onclick="openClientPopup()">조회</button>
                       </div>
+                      <div class="invalid-feedback" id="clientNameFeedback">거래처를 선택하세요.</div>
                     </div>
 
                     <div class="col-md-4">
@@ -478,11 +503,11 @@
                         <caption class="visually-hidden">등록할 제품 목록</caption>
                         <thead class="table-light">
                           <tr>
-                            <th style ="width: 45%;" class="text-center" scope="col">수주 제품명</th>
-                            <th style ="width: 15%;" scope="col" class="numeric text-center">수주 요청수량</th>
-                            <th style ="width: 15%;" scope="col" class="numeric text-center">수주 제품 단가</th>
-                            <th style ="width: 15%;" scope="col" class="numeric text-center">수주 요청 총액</th>
-                            <th style="width:  10%;" scope="col" class="text-center">삭제</th>
+                            <th style="width:45%;" class="text-center" scope="col">제품명</th>
+                            <th style="width:15%;" scope="col" class="numeric text-center">요청수량</th>
+                            <th style="width:15%;" scope="col" class="numeric text-center">제품 단가</th>
+                            <th style="width:15%;" scope="col" class="numeric text-center">요청 총액</th>
+                            <th style="width:10%;"  scope="col" class="text-center">삭제</th>
                           </tr>
                         </thead>
                         <tbody id="items-tbody">
@@ -495,6 +520,7 @@
                                 <input type="text" class="form-control form-control-sm productNameInput" readonly tabindex="-1" style="background:#f6f6f6;" />
                                 <button type="button" class="btn btn-outline-secondary" onclick="openProductPopup(this)">조회</button>
                               </div>
+                              <div class="invalid-feedback">제품(버전) 선택이 필요합니다.</div>
                             </td>
                             <td class="numeric">
                               <input type="number" min="0" name="sales_Item[0].sales_Item_Cnt" class="form-control form-control-sm qty-input" required />
@@ -552,4 +578,4 @@
   </div>
 </body>
 </html>
- 
+  

@@ -182,7 +182,7 @@
                 <div class="info-grid">
                   <!-- 수주 제목 -->
                   <div class="field" style="grid-column: 1/-1;">
-                    <div class="field-label">수주 제목</div>
+                    <div class="field-label">제목</div>
                     <div class="field-box">
                       <span>${empty sales_OrderDto.sales_Title ? '-' : sales_OrderDto.sales_Title}</span>
                     </div>
@@ -286,13 +286,13 @@
                     <caption class="visually-hidden">수주한 제품 목록과 출고/요청 기준 금액</caption>
                     <thead class="table-light">
                       <tr>
-                        <th style ="width: 40%;" class="text-center" scope="col">수주 제품명</th>
-                        <th style ="width: 10%;" scope="col" class="numeric text-center">수주 요청수량</th>
-                        <th style ="width: 10%;" scope="col" class="numeric text-center">수주 출고수량</th>
-                        <th style ="width: 10%;" scope="col" class="numeric text-center">수주 출고대기</th>
-                        <th style ="width: 10%;" scope="col" class="numeric text-center">수주 제품 단가</th>
-                        <th style ="width: 10%;" scope="col" class="numeric text-center">수주 출고 기준 총액</th>
-                        <th style ="width: 10%;" scope="col" class="numeric text-center">수주 요청 기준 총액</th>
+                        <th style ="width: 40%;" class="text-center" scope="col">제품명</th>
+                        <th style ="width: 10%;" scope="col" class="numeric text-center">요청 수량</th>
+                        <th style ="width: 10%;" scope="col" class="numeric text-center">출고 수량</th>
+                        <th style ="width: 10%;" scope="col" class="numeric text-center">출고 대기</th>
+                        <th style ="width: 10%;" scope="col" class="numeric text-center">제품 단가</th>
+                        <th style ="width: 10%;" scope="col" class="numeric text-center">출고 기준 총액</th>
+                        <th style ="width: 10%;" scope="col" class="numeric text-center">요청 기준 총액</th>
                       </tr>
                     </thead>
                     <tbody>

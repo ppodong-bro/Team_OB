@@ -66,8 +66,7 @@ body {
 												담당 직원 <span class="text-danger">*</span>
 											</div>
 
-											<div class="input-group input-group-sm"
-												style="max-width: 460px;">
+											<div class="input-group input-group-sm">
 												<!-- 서버로 제출되는 값 -->
 												<input type="hidden" id="empNo" name="empDTO.empNo" required />
 												<!-- 표시용 -->

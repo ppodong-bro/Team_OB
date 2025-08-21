@@ -432,7 +432,7 @@
                   <div class="row g-3">
                     <!-- 발주 제목 -->
                     <div class="col-12">
-                      <label class="form-label">발주 제목 <span class="text-danger">*</span></label>
+                      <label class="form-label">제목 <span class="text-danger">*</span></label>
                       <input type="text" id="purchaseTitleInput" name="purchase_Title"
                              value="${purchase_OrderDto.purchase_Title}"
                              class="form-control form-control-sm" required
@@ -515,10 +515,10 @@
                         <caption class="visually-hidden">수정할 부품 목록</caption>
                         <thead class="table-light">
                           <tr>
-                            <th style ="width: 45%;" class="text-center" scope="col">발주 부품명</th>
-                            <th style ="width: 15%;" scope="col" class="numeric text-center">발주 요청수량</th>
-                            <th style ="width: 15%;" scope="col" class="numeric text-center">발주 부품 단가</th>
-                            <th style ="width: 15%;" scope="col" class="numeric text-center">발주 요청 총액</th>
+                            <th style ="width: 45%;" class="text-center" scope="col">부품명</th>
+                            <th style ="width: 15%;" scope="col" class="numeric text-center">요청 수량</th>
+                            <th style ="width: 15%;" scope="col" class="numeric text-center">부품 단가</th>
+                            <th style ="width: 15%;" scope="col" class="numeric text-center">요청 총액</th>
                             <th style ="width: 10%;" class="text-center" style="width:7%;" scope="col">삭제</th>
                           </tr>
                         </thead>

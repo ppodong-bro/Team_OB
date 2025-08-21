@@ -109,16 +109,16 @@
 								<table class="table table-bordered align-middle ">
 									<thead class="table-light">
 										<tr>
-											<th style="width: 7%;" class="text-center">발주 번호</th>
-											<th style="width: 10%;" class="text-center">발주 거래처명</th>
-											<th style="width: 22%;" class="text-center">발주 제목</th>
-											<th style="width: 8%;" class="text-center">발주 요청수량</th>
-											<th style="width: 8%;" class="text-center">발주 입고수량</th>
-											<th style="width: 7%;" class="text-center">발주 총액</th>
-											<th style="width: 10%;" class="text-center">발주 납기완료일</th>
-											<th style="width: 8%;" class="text-center">발주 입고상태</th>
-											<th style="width: 8%;" class="text-center">발주 담당자</th>
-											<th style="width: 10%;" class="text-center">발주 등록일</th>
+											<th style="width: 7%;" class="text-center">번호</th>
+											<th style="width: 10%;" class="text-center">거래처명</th>
+											<th style="width: 22%;" class="text-center">제목</th>
+											<th style="width: 8%;" class="text-center">요청수량</th>
+											<th style="width: 8%;" class="text-center">입고수량</th>
+											<th style="width: 7%;" class="text-center">총액</th>
+											<th style="width: 10%;" class="text-center">납기완료일</th>
+											<th style="width: 8%;" class="text-center">입고상태</th>
+											<th style="width: 8%;" class="text-center">담당자</th>
+											<th style="width: 10%;" class="text-center">등록일</th>
 											<th style="width: 8%;" class="text-center">수정</th>
 										</tr>
 									</thead>
