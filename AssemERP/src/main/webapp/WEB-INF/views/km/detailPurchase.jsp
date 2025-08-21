@@ -263,13 +263,13 @@
                     <caption class="visually-hidden">발주한 부품 목록과 입고/요청 기준 금액</caption>
                     <thead class="table-light">
                       <tr>
-                        <th style ="width: 40%;" class="text-center" scope="col">부품명</th>
-                        <th style ="width: 10%;" scope="col" class="numeric text-center">요청수량</th>
-                        <th style ="width: 10%;" scope="col" class="numeric text-center">입고수량</th>
-                        <th style ="width: 10%;" scope="col" class="numeric text-center">입고대기</th>
-                        <th style ="width: 10%;" scope="col" class="numeric text-center">부품 단가</th>
-                        <th style ="width: 10%;" scope="col" class="numeric text-center">입고 기준 총액</th>
-                        <th style ="width: 10%;" scope="col" class="numeric text-center">요청 기준 총액</th>
+                        <th style ="width: 40%;" class="text-center" scope="col">발주 부품명</th>
+                        <th style ="width: 10%;" scope="col" class="numeric text-center">발주 요청수량</th>
+                        <th style ="width: 10%;" scope="col" class="numeric text-center">발주 입고수량</th>
+                        <th style ="width: 10%;" scope="col" class="numeric text-center">발주 입고대기</th>
+                        <th style ="width: 10%;" scope="col" class="numeric text-center">발주 부품 단가</th>
+                        <th style ="width: 10%;" scope="col" class="numeric text-center">발주 입고 기준 총액</th>
+                        <th style ="width: 10%;" scope="col" class="numeric text-center">발주 요청 기준 총액</th>
                       </tr>
                     </thead>
                     <tbody>

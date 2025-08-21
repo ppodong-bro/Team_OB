@@ -561,10 +561,10 @@
                         <caption class="visually-hidden">수정할 제품 목록</caption>
                         <thead class="table-light">
                           <tr>
-                            <th style ="width: 45%;" class="text-center" scope="col">제품명</th>
-                            <th style ="width: 15%;" scope="col" class="numeric text-center">요청수량</th>
-                            <th style ="width: 15%;" scope="col" class="numeric text-center">제품 단가</th>
-                            <th style ="width: 15%;" scope="col" class="numeric text-center">요청 총액</th>
+                            <th style ="width: 45%;" class="text-center" scope="col">수주 제품명</th>
+                            <th style ="width: 15%;" scope="col" class="numeric text-center">수주 요청수량</th>
+                            <th style ="width: 15%;" scope="col" class="numeric text-center">수주 제품 단가</th>
+                            <th style ="width: 15%;" scope="col" class="numeric text-center">수주 요청 총액</th>
                             <th style ="width: 10%;" class="text-center" style="width:7%;" scope="col">삭제</th>
                           </tr>
                         </thead>
