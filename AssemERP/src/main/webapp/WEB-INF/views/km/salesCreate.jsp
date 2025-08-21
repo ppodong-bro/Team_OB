@@ -478,11 +478,11 @@
                         <caption class="visually-hidden">등록할 제품 목록</caption>
                         <thead class="table-light">
                           <tr>
-                            <th class="text-center" scope="col">제품명</th>
-                            <th scope="col" class="numeric text-center">요청수량</th>
-                            <th scope="col" class="numeric text-center">제품 단가</th>
-                            <th scope="col" class="numeric text-center">요청 총액</th>
-                            <th style="width:7%;" scope="col" class="text-center">삭제</th>
+                            <th style ="width: 45%;" class="text-center" scope="col">제품명</th>
+                            <th style ="width: 15%;" scope="col" class="numeric text-center">요청수량</th>
+                            <th style ="width: 15%;" scope="col" class="numeric text-center">제품 단가</th>
+                            <th style ="width: 15%;" scope="col" class="numeric text-center">요청 총액</th>
+                            <th style="width:  10%;" scope="col" class="text-center">삭제</th>
                           </tr>
                         </thead>
                         <tbody id="items-tbody">
@@ -511,7 +511,7 @@
                           </tr>
                         </tbody>
                         <tfoot>
-                          <tr class="total-row">
+                          <tr class="total-row table-light">
                             <td class="text-center">합계</td>
                             <td class="numeric"><span id="sum-req">0</span></td>
                             <td></td>

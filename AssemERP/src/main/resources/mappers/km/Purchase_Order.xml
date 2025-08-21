@@ -109,7 +109,7 @@
 		</where>
 	</select>
 
-	<select id="listPurchaseOrder"
+<!-- 	<select id="listPurchaseOrder"
 		parameterType="Purchase_OrderSearchDto" resultMap="purchase_OrderMap">
 		SELECT P.PURCHASE_NO, P.PURCHASE_DATE, P.IN_STATUS, P.DEL_STATUS, P.PURCHASE_TITLE
 			 , P.COMPLETE_DATE, P.IN_DATE
@@ -147,6 +147,55 @@
 				AND RN <![CDATA[>=]]>#{start} AND RN <![CDATA[<=]]>#{end}
 		</where>
 		ORDER BY P.PURCHASE_NO DESC
+	</select> -->
+	
+		<select id="listPurchaseOrder"
+		parameterType="Purchase_OrderSearchDto" resultMap="purchase_OrderMap">
+		SELECT P.PURCHASE_NO, P.PURCHASE_DATE, P.IN_STATUS, P.DEL_STATUS, P.PURCHASE_TITLE
+			 , P.COMPLETE_DATE, P.IN_DATE
+		     , H.CLIENT_NO, H.CLIENT_NAME, E.EMP_NO, E.EMP_NAME
+		     , I.PARTS_NO, I.PURCHASE_ITEM_CNT, I.PURCHASE_ITEM_INCNT, I.PURCHASE_ITEM_COST
+		     , PA.PARTS_NAME
+		FROM (SELECT RN, PURCHASE_NO
+			  FROM (SELECT ROWNUM RN, A.PURCHASE_NO
+				  	FROM (SELECT DISTINCT P.PURCHASE_NO
+						  FROM PURCHASE_ORDER P LEFT JOIN CLIENT_HIS H ON P.CLIENT_NO = H.CLIENT_NO AND COALESCE(P.MODIFY_DATE, P.IN_DATE)
+													     		    	  							  BETWEEN H.START_DATE AND H.END_DATE
+											    LEFT JOIN EMP E ON P.EMP_NO = E.EMP_NO
+						  WHERE P.DEL_STATUS = 0
+							
+						<if test="client_Name != null and client_Name.trim() != ''">
+						  AND H.CLIENT_NAME LIKE '%' || #{client_Name} || '%'
+						</if>
+						<if test="empName != null and empName.trim() != ''">
+						  AND E.EMP_NAME LIKE '%' || #{empName} || '%'
+						</if>
+						<if test="in_Status != null">
+						  AND P.IN_STATUS = #{in_Status}
+						</if>
+						<if test="purchase_Date_Start != null">
+						  AND P.PURCHASE_DATE <![CDATA[>=]]>#{purchase_Date_Start}
+						</if>
+						<if test="purchase_Date_End != null">
+						  AND P.PURCHASE_DATE <![CDATA[<=]]>#{purchase_Date_End}
+						</if>	
+						  ORDER BY P.PURCHASE_NO DESC
+						  ) A
+						  
+				  WHERE ROWNUM <![CDATA[ <= ]]> #{end}
+				  
+				  )
+			  
+	 	WHERE RN <![CDATA[ >= ]]> #{start}
+	 	
+	 ) PAGE  JOIN PURCHASE_ORDER P ON P.PURCHASE_NO = PAGE.PURCHASE_NO
+			 LEFT JOIN CLIENT_HIS H ON P.CLIENT_NO = H.CLIENT_NO AND COALESCE(P.MODIFY_DATE, P.IN_DATE)
+												     		    	   BETWEEN H.START_DATE AND H.END_DATE
+			 LEFT JOIN EMP E ON P.EMP_NO = E.EMP_NO
+			 LEFT JOIN PURCHASE_ITEM I ON P.PURCHASE_NO = I.PURCHASE_NO
+			 LEFT JOIN PARTS PA ON I.PARTS_NO = PA.PARTS_NO
+	
+	ORDER BY PAGE.RN
 	</select>
 
 	<select id="detailPurchase" parameterType="int" resultMap="detailPurchaseMap">

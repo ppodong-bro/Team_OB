@@ -683,11 +683,11 @@ transparent
 												id="items-table">
 												<thead class="table-light">
 													<tr>
-														<th class="text-center">부품명</th>
-														<th class="numeric text-center">요청수량</th>
-														<th class="numeric text-center">부품 단가</th>
-														<th class="numeric text-center">요청 총액</th>
-														<th style="width: 7%;" class="text-center">삭제</th>
+														<th style ="width: 45%;" class="text-center">부품명</th>
+														<th style ="width: 15%;" class="numeric text-center">요청수량</th>
+														<th style ="width: 15%;" class="numeric text-center">부품 단가</th>
+														<th style ="width: 15%;" class="numeric text-center">요청 총액</th>
+														<th style ="width: 10%;" class="text-center">삭제</th>
 													</tr>
 												</thead>
 												<tbody id="items-tbody">
@@ -724,7 +724,7 @@ transparent
 													</tr>
 												</tbody>
 												<tfoot>
-													<tr class="total-row">
+													<tr class="total-row table-light">
 														<td class="text-center">합계</td>
 														<td class="numeric"><span id="sum-req">0</span></td>
 														<td></td>
