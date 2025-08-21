@@ -22,8 +22,8 @@ public interface InventoryService {
 	// 재고 조정
 	boolean adjustRealInventoryById(InventoryInfoDTO inventoryInfoDTO);
 	
-	// 재고 입출고 이력 목록 조회
-	int getInventoryHistoryCnt(InventoryDTO inventoryDTO);// 재고 입출고 이력 목록 수 조회
+	// 입출고 이력 목록 조회
+	int getInventoryHistoryCnt(InventoryDTO inventoryDTO);// 입출고 이력 목록 수 조회
 	List<InventoryDTO> getInventoryHistory(InventoryDTO inventoryDTO);
 	
 	// 월마감 이력 목록 조회
