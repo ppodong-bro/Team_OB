@@ -60,7 +60,7 @@ public class ProductDaoImpl implements ProductDao {
 
 		try {
 			productDTOs = session.selectList("shProductSearchList", productDTO);
-			System.out.println("ProductDaoImpl findSearchList productDTOs => "+productDTOs.size());
+			System.out.println("ProductDaoImpl findSearchList productDTOs => "+productDTOs);
 		} catch (Exception e) {
 			System.out.println("ProductDaoImpl findSearchList Exception => "+e.getMessage());
 

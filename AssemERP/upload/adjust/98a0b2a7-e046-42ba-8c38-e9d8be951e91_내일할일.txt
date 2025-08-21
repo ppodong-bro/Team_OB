@@ -1,0 +1,9 @@
+SELECT so.sales_no, so.client_no, total
+FROM sales_order so
+LEFT JOIN
+(SELECT SUM(sales_item_outcnt*sales_item_cost) AS total, sales_no
+FROM sales_item
+GROUP BY sales_no) si
+ON so.sales_no = si.sales_no
+WHERE so.del_status = 0
+ORDER BY client_no
