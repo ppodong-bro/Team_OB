@@ -90,7 +90,7 @@ public class InventoryRepositoryImpl implements InventoryRepository {
 				+			whereItemStatus + " "
 				+			whereItemName + " "
 				+ 			wherInoutDate + " " 
-				+ "        	ORDER BY inventory_his_no DESC "
+				+ "        	ORDER BY inout_date DESC, inventory_his_no DESC "
 				+ "    ) i0 "
 				+ ") "
 				+ "WHERE rn BETWEEN :start AND :end";

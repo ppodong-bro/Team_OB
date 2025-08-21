@@ -113,6 +113,25 @@ public class PerformanceServiceImpl implements PerformanceService {
 		return performanceDao.getPurchaseClientData(id);
 	}
 
+	@Override
+	public List<YearsPerformDTO> getInitYearsperform(int product_no) {
+		// TODO Auto-generated method stub
+		return performanceDao.getInitYearsperform(product_no);
+	}
+
+	
+	@Override
+	public int getMostProductOfYears() {
+		// TODO Auto-generated method stub
+		return performanceDao.getMostProductOfYears();
+	}
+
+	@Override
+	public int getMostClientOfYears() {
+		
+		return performanceDao.getMostClientOfYears();
+	}
+
 	
 	
 }

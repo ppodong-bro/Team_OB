@@ -112,24 +112,28 @@ public class InventoryServiceImpl implements InventoryService {
 		String uuid = null;
 		// 첨부파일 존재 확인
 		if(!inventoryInfoDTO.getFiles().isEmpty()) {
-			// UUID 생성
-			uuid = UUID.randomUUID().toString();
-			
 			// 파일들 모두 복사
 			for(MultipartFile file : inventoryInfoDTO.getFiles()) {
-				// 첨부파일 복사
-				String filePath = fileUtil.saveFile(file, "adjust", uuid);
-				
-				// 테스트용 파일
-				Files files = Files.builder()
-						.files_path(filePath)
-						.files_folder("adjust")
-						.filesNo(uuid)
-						.files_name(file.getOriginalFilename())
-						.build();
+				if(!file.isEmpty()) {
+					// uuid 생성
+					if(uuid == null) {
+						uuid = UUID.randomUUID().toString();
+					}
+					
+					// 첨부파일 복사
+					String filePath = fileUtil.saveFile(file, "adjust", uuid);
+					
+					// 테스트용 파일
+					Files files = Files.builder()
+							.files_path(filePath)
+							.files_folder("adjust")
+							.filesNo(uuid)
+							.files_name(file.getOriginalFilename())
+							.build();
 
-				// 첨부파일 DB저장
-				filesRepository.save(files);
+					// 첨부파일 DB저장
+					filesRepository.save(files);
+				}
 			}
 		}
 		
@@ -142,7 +146,7 @@ public class InventoryServiceImpl implements InventoryService {
 				.item_cnt(Math.abs(currCnt - nextCnt))
 				.inout_date(LocalDateTime.now())
 				.item_close_status(2/*완료*/)
-				.files_no(uuid)
+				.filesNo(uuid)
 				.build();
 
 		// 재고 조정 Entity 저장
@@ -212,6 +216,32 @@ public class InventoryServiceImpl implements InventoryService {
 	@Override
 	public List<Map<String, Object>> getInventoryCurrent() {
 		List<Map<String, Object>> inventoryCurrnetList = inventoryDao.getInventoryCurrent();
+		
+		System.out.println(inventoryCurrnetList);
+		// 여유 용량 계산 : 여유로 나타낸 용량은 전체 용량이다.
+		// 전체(여유)를 제외한 나머지 용량을 모두 뺀다.
+		// 전체(여유)를 더한다.
+		double ableOccupy = 0.0;
+		for(Map<String, Object> map : inventoryCurrnetList) {
+			if(!map.get("LABEL").equals("여유")) {
+				// Object -> double
+				ableOccupy -= ((Number) map.get("VALUE")).doubleValue();
+			}
+			else {
+				ableOccupy += ((Number) map.get("VALUE")).doubleValue();
+			}
+		}
+		// 계산한 여유 용량을 덮어씌운다.
+		for(Map<String, Object> map : inventoryCurrnetList) {
+			if(map.get("LABEL").equals("여유")) {
+				map.put("VALUE", ableOccupy);
+				break;
+			}
+		}
+//		// 람다(stream) 에서는 final값을 써야 한다고 하네요...?
+//		inventoryCurrnetList.stream()
+//			.filter(map -> "여유".equals(map.get("LABEL")))
+//		    .forEach(map -> map.put("VALUE", ableOccupy));
 		
 		return inventoryCurrnetList;
 	}

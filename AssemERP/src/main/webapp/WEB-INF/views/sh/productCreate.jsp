@@ -124,7 +124,7 @@ body {
 								</div>
 
 								<!-- 부품설명 -->
-								<div class="col-md-6 mb-3">
+								<div class="col-md-12 mb-6">
 									<label for="productContext" class="form-label">제품설명</label>
 									<textarea class="form-control form-control-sm" rows="5"
 										id="productContext" name="product_context"
@@ -279,10 +279,18 @@ document.getElementById("addRowBtn").addEventListener("click", function () {
     // 삭제 버튼
     const delCell = document.createElement("td");
     const delBtn = document.createElement("button");
+   	const icon = document.createElement("i")
+   	
+   	icon.className = "bi bi-trash"; 
+   	
     delBtn.type = "button";
-    delBtn.className = "btn btn-danger";
-    delBtn.innerText = "삭제";
+    delBtn.className = "btn btn-sm btn-outline-danger remove-item-btn";
     delBtn.onclick = () => handleRowDelete(delBtn);
+    
+    delBtn.appendChild(icon);
+    delBtn.append(" 삭제"); // 아이콘 뒤에 텍스트
+    
+    delCell.style.textAlign = "center"; // 셀 안에서 버튼을 중앙 정렬
     delCell.appendChild(delBtn);
 
     // 행에 각 셀 append

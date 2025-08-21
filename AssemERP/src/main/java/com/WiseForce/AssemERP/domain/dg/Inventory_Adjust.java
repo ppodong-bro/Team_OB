@@ -1,6 +1,8 @@
 package com.WiseForce.AssemERP.domain.dg;
 
 import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,7 +30,8 @@ public class Inventory_Adjust {
 	private int item_no; // 제품/부품번호
 	private int inout_status; // 입/출고 구분
 	private int item_cnt; // 변동 수량
-	private String files_no;
+	@Column(nullable = true)
+	private String filesNo;
 	private LocalDateTime inout_date; // 입/출고일시
 	private int item_close_status; // 마감 구분
 }

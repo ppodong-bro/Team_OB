@@ -127,7 +127,7 @@
 	        FROM sales_order
 	        WHERE del_status = 0) so ON TRUNC(so.in_date, 'MM') = m.month_date
 		LEFT JOIN
-    		(SELECT sales_no, SUM(sales_item_outcnt*sales_item_cost) as totalCost
+    		(SELECT sales_no, SUM(sales_item_cnt*sales_item_cost) as totalCost
      		FROM sales_item
      		WHERE product_no = #{value}
      		GROUP BY sales_no) si
@@ -152,7 +152,7 @@
         	FROM purchase_order
         	WHERE del_status = 0) po ON TRUNC(po.in_date, 'MM') = m.month_date
 		LEFT JOIN
-		(SELECT purchase_no, SUM(purchase_item_incnt*purchase_item_cost) as totalCost
+		(SELECT purchase_no, SUM(purchase_item_cnt*purchase_item_cost) as totalCost
 		FROM purchase_item
 		WHERE parts_no = #{value}
 		GROUP BY purchase_no) pi
@@ -224,5 +224,46 @@
         GROUP BY m.month_date
 		ORDER BY m.month_date
 		]]>
+	</select>
+	
+	
+	<select id="shGetMostProductOfYears" resultType="int" >
+		<![CDATA[
+		SELECT product_no FROM (
+            SELECT product_no, SUM(sales_item_cnt * sales_item_cost) AS totalcost FROM (
+                 (SELECT * FROM sales_item
+                 ) si
+                 LEFT JOIN 
+                 (SELECT sales_no FROM sales_order 
+                 WHERE in_date >= ADD_MONTHS(sysdate, -6)
+                 ) so
+                 ON si.sales_no = so.sales_no
+             )
+             GROUP BY product_no
+             ORDER BY totalcost DESC
+        )
+        WHERE rownum = 1
+		]]>
+	</select>
+	
+	
+	<select id="shGetMostClientOfYears" resultType="int">
+		<![CDATA[
+		SELECT Client_no FROM (
+            SELECT Client_no, SUM(sales_item_cnt * sales_item_cost) AS totalcost 
+            FROM(
+                (SELECT sales_no, client_no
+                 FROM sales_order 
+                 WHERE in_date >= ADD_MONTHS(sysdate, -6)
+                 ) so    
+                 LEFT JOIN (
+                    SELECT * FROM sales_item) si 
+                ON si.sales_no = so.sales_no
+                ) 
+            GROUP BY Client_no  
+            ORDER BY totalcost DESC
+         )
+        WHERE rownum = 1
+        ]]>
 	</select>
 </mapper>

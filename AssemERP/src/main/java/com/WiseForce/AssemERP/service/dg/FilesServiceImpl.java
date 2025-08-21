@@ -32,7 +32,7 @@ public class FilesServiceImpl implements FilesService {
 		// adjust_id로 file_no를 가져온다.
 		Optional<Inventory_Adjust> inventoryAdjustOpt = adjustRepository.findById(adjust_id);
 		inventoryAdjustOpt.ifPresent(adjust -> {
-			List<Files> files = filesRepository.findByFilesNo(adjust.getFiles_no());
+			List<Files> files = filesRepository.findByFilesNo(adjust.getFilesNo());
 
 			System.out.println(files);
 			
