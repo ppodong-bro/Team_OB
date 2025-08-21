@@ -89,7 +89,7 @@ public class InventoryController {
 		LocalDate localDate_end = inventoryDTO.getEndDate() != null ? inventoryDTO.getEndDate() : LocalDate.now();
 		inventoryDTO.setEndDate(localDate_end);
 				
-		// 재고 입출고 이력의 수 조회
+		// 입출고 이력의 수 조회
 		int totalCount = inventoryService.getInventoryHistoryCnt(inventoryDTO);
 
 		// 전체 개수와 요청한 현재 페이지를 토대로 start와 end를 설정한다.

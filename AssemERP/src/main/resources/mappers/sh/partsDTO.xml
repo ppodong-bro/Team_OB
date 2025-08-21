@@ -44,7 +44,7 @@
 		        AND parts_status = #{parts_status}
 		      </if>
 		      <if test="parts_name != null and parts_name != ''">
-		        AND parts_name LIKE '%' || #{parts_name} || '%'
+		        AND LOWER(parts_name) LIKE LOWER('%' || #{parts_name} || '%')
 		      </if>
 		      <if test="startDate != null">
 		        AND TRUNC(in_date) &gt;= #{startDate}
@@ -72,7 +72,7 @@
 		        AND parts_status = #{parts_status}
 		      </if>
 		      <if test="parts_name != null and parts_name != ''">
-		        AND parts_name LIKE '%' || #{parts_name} || '%'
+		        AND LOWER(parts_name) LIKE LOWER('%' || #{parts_name} || '%')
 		      </if>
 		      <if test="startDate != null">
 		        AND TRUNC(in_date) &gt;= #{startDate}

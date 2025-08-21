@@ -36,7 +36,7 @@
 		        AND product_status = #{product_status}
 		      </if>
 		      <if test="product_name != null and product_name != ''">
-		        AND product_name LIKE '%' || #{product_name} || '%'
+		        AND LOWER(product_name) LIKE LOWER('%' || #{product_name} || '%')
 		      </if>
 		      <if test="startDate != null">
 		        AND TRUNC(in_date) &gt;= #{startDate}
@@ -64,7 +64,7 @@
 		        AND product_status = #{product_status}
 		      </if>
 		      <if test="product_name != null and product_name != ''">
-		        AND product_name LIKE '%' || #{product_name} || '%'
+		        AND LOWER(product_name) LIKE LOWER('%' || #{product_name} || '%')
 		      </if>
 		      <if test="startDate != null">
 		        AND TRUNC(in_date) &gt;= #{startDate}

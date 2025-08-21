@@ -53,7 +53,7 @@ function searchPeriod(element) {
 	// from, to를 설정
 	document.getElementById("yearmonth_start_text").value = fromyymm;
 	document.getElementById("yearmonth_end_text").value = toyymm;
-	// 검색버튼을 눌러준다.
+	// 하고 검색버튼을 눌러준다.
 	document.getElementById("search").click();
 }
 

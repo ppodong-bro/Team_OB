@@ -155,21 +155,21 @@ public class InventoryServiceImpl implements InventoryService {
 		return true;
 	}
 
-	// 재고 입출고 이력 목록 수 조회
+	// 입출고 이력 목록 수 조회
 	@Override
 	public int getInventoryHistoryCnt(InventoryDTO inventoryDTO) {
-		// 조회전 : 재고 입출고 이력의 총 수량 계산하는 프로시저 실행
+		// 조회전 : 입출고 이력의 총 수량 계산하는 프로시저 실행
 		inventoryRepository.execProcedureClacInventoryTot();
 		
-		// 재고 입출고 이력 목록 수 조회
+		// 입출고 이력 목록 수 조회
 		int inventories = inventoryRepository.getInventoryHistoryCnt(inventoryDTO);
 		
 		return inventories;
 	}
-	// 재고 입출고 이력 목록 조회
+	// 입출고 이력 목록 조회
 	@Override
 	public List<InventoryDTO> getInventoryHistory(InventoryDTO inventoryDTO) {
-		// 재고 입출고 이력 목록 조회
+		// 입출고 이력 목록 조회
 		List<InventoryDTO> inventoryDTOs = inventoryRepository.getInventoryHistory(inventoryDTO);
 		
 		return inventoryDTOs;
