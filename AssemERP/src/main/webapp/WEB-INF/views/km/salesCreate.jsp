@@ -20,7 +20,7 @@
     /* 가로 스크롤(부트스트랩 역할 유지) */
     #items-wrap { overflow-x:auto; }
     /* 기본은 세로 스크롤 숨김 */
-    #items-scroll { position:relative; overflow-y:hidden; scrollbar-gutter:stable both-edges; overscroll-behavior:contain; }
+    #items-scroll { position:relative; overflow-y:hidden; scrollbar-gutter:stable both-edges; overscroll-behavior:contain; padding-bottom: 1px; }
     /* 임계 행수 초과 시에만 세로 스크롤 */
     #items-scroll.table-scroll { overflow-y:auto; }
     /* sticky header/footer도 #items-scroll 기준으로 동작 */
