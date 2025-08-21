@@ -88,8 +88,7 @@ body {
 												담당 직원 <span class="text-danger">*</span>
 											</div>
 
-											<div class="input-group input-group-sm"
-												style="max-width: 460px;">
+											<div class="input-group input-group-sm">
 												<input type="hidden" id="empNo" name="empDTO.empNo"
 													value="${clientDto.empDTO.empNo}" required /> <input
 													type="text" id="empName"

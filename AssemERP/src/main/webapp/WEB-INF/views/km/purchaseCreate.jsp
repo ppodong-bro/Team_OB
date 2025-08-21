@@ -1,200 +1,100 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<jsp:include page="/common.jsp" />
-<link rel="stylesheet" href="<c:url value='/css/list.css' />" />
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>발주 등록</title>
+  <jsp:include page="/common.jsp" />
+  <link rel="stylesheet" href="<c:url value='/css/list.css' />" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>발주 등록</title>
 
-<style>
-body {
-	background: #f8f9fa;
-}
+  <style>
+    body { background:#f8f9fa; }
+    .card-header { background:#0d6efd; color:#fff; }
+    .required-field::after { content:" *"; color:red; }
+    .numeric { text-align:right; }
 
-.card-header {
-	background: #0d6efd;
-	color: #fff;
-}
+    .info-card { border:1px solid #eee; border-radius:10px; padding:16px; margin-bottom:16px; }
+    .info-card-title { font-weight:600; margin-bottom:12px; }
 
-.required-field::after {
-	content: " *";
-	color: red;
-}
+    .table-warning { animation:blink 1s ease-in-out 1; }
+    @keyframes blink {
+      0% { background:#fff3cd; }
+      100% { background:transparent; }
+    }
 
-.numeric {
-	text-align: right;
-}
+    /* 가로 스크롤(부트스트랩 역할 유지) */
+    #items-wrap { overflow-x:auto; }
+    /* 기본은 세로 스크롤 숨김 */
+    #items-scroll { position:relative; overflow-y:hidden; scrollbar-gutter:stable both-edges; overscroll-behavior:contain; }
+    /* 임계 행수 초과 시에만 세로 스크롤 */
+    #items-scroll.table-scroll { overflow-y:auto; }
+    /* sticky header/footer */
+    #items-scroll.table-scroll thead th { position:sticky; top:0; z-index:2; background:var(--bs-table-bg,#fff); }
+    #items-scroll.table-scroll tfoot td { position:sticky; bottom:0; z-index:1; background:var(--bs-body-bg,#fff); box-shadow:0 -1px 0 var(--bs-table-border-color,#dee2e6); }
 
-.info-card {
-	border: 1px solid #eee;
-	border-radius: 10px;
-	padding: 16px;
-	margin-bottom: 16px;
-}
+    #items-scroll .table, #items-scroll thead, #items-scroll tbody, #items-scroll tfoot { height:auto !important; }
+    /* 스크롤바 */
+    #items-scroll::-webkit-scrollbar{ width:10px; height:auto !important; }
+    #items-scroll::-webkit-scrollbar-thumb{ min-height:0 !important; height:auto !important; background:rgba(0,0,0,.35) !important; border-radius:6px; }
+    #items-scroll{ scrollbar-width:auto; }
+    #items-scroll::-webkit-scrollbar-track{ background:rgba(0,0,0,.06) !important; }
+    /* 헤더 위쪽 보더 + 보정라인 */
+    #items-scroll.table-scroll thead th{ border-top:1px solid var(--bs-table-border-color,#dee2e6) !important; }
+    #items-scroll.table-scroll::before{ content:""; position:sticky; top:0; display:block; height:1px; background:var(--bs-table-border-color,#dee2e6); z-index:3; pointer-events:none; }
 
-.info-card-title {
-	font-weight: 600;
-	margin-bottom: 12px;
-}
+    /* ====================== 합계행(총계) & 헤더/바닥선 보정 ====================== */
+    .product-table thead>tr>* { border-bottom-width:2px; }
+    .product-table tfoot .total-row>* { border-top:2px solid var(--bs-table-border-color,#dee2e6) !important; }
+    .product-table tbody tr:last-child>* { border-bottom:0 !important; }
+    #items-scroll.table-scroll tfoot .total-row>* {
+      position:sticky; bottom:0; z-index:3;
+      background:var(--bs-body-bg,#fff);
+      box-shadow:0 -1px 0 var(--bs-table-border-color,#dee2e6), 0 -6px 12px rgba(0,0,0,.04);
+    }
 
-.table-warning {
-	animation: blink 1s ease-in-out 1;
-}
+    /* ====================== "텍스트만" 은은하게 강조(음영) ====================== */
+    .product-table tfoot .total-row>* { font-weight:600; text-shadow:0.5px 0.5px 0 rgba(0,0,0,.18); }
+    .product-table tfoot .total-row td:first-child {
+      letter-spacing:.2px;
+      text-shadow:0.7px 0.7px 0 rgba(0,0,0,.22), -0.5px -0.5px 0 rgba(255,255,255,.35);
+    }
+  </style>
 
-@
-keyframes blink { 0%{
-	background: #fff3cd;
-}
+  <!-- 오늘 날짜 (납기 min) -->
+  <jsp:useBean id="now" class="java.util.Date" />
+  <fmt:formatDate value="${now}" pattern="yyyy-MM-dd" var="todayStr" timeZone="Asia/Seoul" />
 
-100
-
-
-%
-{
-background
-
-
-:
-
-
-transparent
-;
-
-
-}
-}
-
-/* 가로 스크롤(부트스트랩 역할 유지) */
-#items-wrap {
-	overflow-x: auto;
-}
-/* 기본은 세로 스크롤 숨김 */
-#items-scroll {
-	position: relative;
-	overflow-y: hidden;
-	scrollbar-gutter: stable both-edges;
-	overscroll-behavior: contain;
-}
-/* 임계 행수 초과 시에만 세로 스크롤 */
-#items-scroll.table-scroll {
-	overflow-y: auto;
-}
-/* sticky header/footer */
-#items-scroll.table-scroll thead th {
-	position: sticky;
-	top: 0;
-	z-index: 2;
-	background: var(--bs-table-bg, #fff);
-}
-
-#items-scroll.table-scroll tfoot td {
-	position: sticky;
-	bottom: 0;
-	z-index: 1;
-	background: var(--bs-body-bg, #fff);
-	box-shadow: 0 -1px 0 var(--bs-table-border-color, #dee2e6);
-}
-
-#items-scroll .table, #items-scroll thead, #items-scroll tbody,
-	#items-scroll tfoot {
-	height: auto !important;
-}
-/* 스크롤바 */
-#items-scroll::-webkit-scrollbar {
-	width: 10px;
-	height: auto !important;
-}
-
-#items-scroll::-webkit-scrollbar-thumb {
-	min-height: 0 !important;
-	height: auto !important;
-	background: rgba(0, 0, 0, .35) !important;
-	border-radius: 6px;
-}
-
-#items-scroll {
-	scrollbar-width: auto;
-}
-
-#items-scroll::-webkit-scrollbar-track {
-	background: rgba(0, 0, 0, .06) !important;
-}
-/* 헤더 위쪽 보더 + 보정라인 */
-#items-scroll.table-scroll thead th {
-	border-top: 1px solid var(--bs-table-border-color, #dee2e6) !important;
-}
-
-#items-scroll.table-scroll::before {
-	content: "";
-	position: sticky;
-	top: 0;
-	display: block;
-	height: 1px;
-	background: var(--bs-table-border-color, #dee2e6);
-	z-index: 3;
-	pointer-events: none;
-}
-/* ====================== 합계행(총계) & 헤더/바닥선 보정 ====================== */
-
-/* 헤더 하단 보더 두께를 2px로: 기준선 통일 */
-.product-table thead>tr>* {
-	border-bottom-width: 2px;
-}
-
-/* 합계 행 위쪽 보더를 헤더와 동일하게(2px) */
-.product-table tfoot .total-row>* {
-	border-top: 2px solid var(--bs-table-border-color, #dee2e6) !important;
-}
-
-/* 마지막 데이터 행 하단 보더 제거: 합계 위 보더와 이중선 방지 */
-.product-table tbody tr:last-child>* {
-	border-bottom: 0 !important;
-}
-
-/* 스크롤러 기준 sticky: 합계를 하단에 고정 + 얇은 상단 경계/그림자 */
-#items-scroll.table-scroll tfoot .total-row>* {
-	position: sticky;
-	bottom: 0;
-	z-index: 3; /* thead(2)보다 위 */
-	background: var(--bs-body-bg, #fff); /* sticky 겹침시 배경 비침 방지 */
-	box-shadow: 0 -1px 0 var(--bs-table-border-color, #dee2e6),
-		/* 위쪽 얇은 라인 */
-    0 -6px 12px rgba(0, 0, 0, .04); /* 은은한 음영 */
-}
-
-/* ====================== "텍스트만" 은은하게 강조(음영) ====================== */
-
-/* 합계 행 전체 텍스트에 미세 음영 + 약한 굵기 */
-.product-table tfoot .total-row>* {
-	font-weight: 600;
-	text-shadow: 0.5px 0.5px 0 rgba(0, 0, 0, .18); /* blur 0: 번짐 없이 또렷 */
-}
-
-/* 첫 칸 "합계" 라벨만 살짝 더 입체감(하이라이트+그림자) */
-.product-table tfoot .total-row td:first-child {
-	letter-spacing: .2px;
-	text-shadow: 0.7px 0.7px 0 rgba(0, 0, 0, .22), /* 아래/오른쪽 얇은 그림자 */
-   -0.5px -0.5px 0 rgba(255, 255, 255, .35); /* 위/왼쪽 얇은 하이라이트 */
-}
-</style>
-
-<!-- 오늘 날짜 (납기 min) -->
-<jsp:useBean id="now" class="java.util.Date" />
-<fmt:formatDate value="${now}" pattern="yyyy-MM-dd" var="todayStr"
-	timeZone="Asia/Seoul" />
-
-<!-- 서버에서 온 프리필 JSON(부족분) 안전 주입 -->
-<script id="prefillShortagesJson" type="application/json">
+  <!-- 서버에서 온 프리필 JSON(부족분) 안전 주입 -->
+  <script id="prefillShortagesJson" type="application/json">
     <c:out value="${prefillShortagesJson}" escapeXml="false"/>
   </script>
 
-<script>
+  <script>
+    /* ================= 공통 에러 헬퍼 ================= */
+    function showError(el, msg) {
+      if (!el) return;
+      el.setCustomValidity?.(msg);
+      el.classList.add('is-invalid');
+      const fb = el.closest('.col-12, .col-md-4, td')?.querySelector('.invalid-feedback')
+                || el.parentElement.querySelector('.invalid-feedback');
+      if (fb) { fb.textContent = msg; fb.classList.add('d-block'); }
+      el.scrollIntoView?.({ behavior:'smooth', block:'center' });
+      el.focus?.();
+      el.reportValidity?.();
+    }
+    function clearError(el) {
+      if (!el) return;
+      el.setCustomValidity?.('');
+      el.classList.remove('is-invalid');
+      const fb = el.closest('.col-12, .col-md-4, td')?.querySelector('.invalid-feedback')
+                || el.parentElement.querySelector('.invalid-feedback');
+      if (fb) { fb.textContent = ''; fb.classList.remove('d-block'); }
+    }
+
     /* ================= 거래처 팝업 ================= */
     function openClientPopup() {
       window.open(
@@ -212,6 +112,8 @@ transparent
       document.getElementById('clientManInput').value     = client_Man || '';
       if (empNo)   document.getElementById('empNoInput').value   = empNo;
       if (empName) document.getElementById('empNameInput').value = empName;
+
+      clearError(document.getElementById('clientNameInput')); // 선택 시 에러 해제
       window.close();
     }
 
@@ -251,7 +153,7 @@ transparent
       if (prevNo) selectedParts.delete(prevNo);
 
       if (targetPartsInput)     targetPartsInput.value     = pno;
-      if (targetPartsNameInput) targetPartsNameInput.value = parts_name || '';
+      if (targetPartsNameInput) { targetPartsNameInput.value = parts_name || ''; clearError(targetPartsNameInput); }
       if (currentRow)           currentRow.dataset.partsNo = pno;
 
       selectedParts.add(pno);
@@ -361,6 +263,7 @@ transparent
               '<input type="text" class="form-control form-control-sm partsNameInput" readonly tabindex="-1" style="background:#f6f6f6;" />' +
               '<button type="button" class="btn btn-outline-secondary" onclick="openPartsPopup(this)">조회</button>' +
             '</div>' +
+            '<div class="invalid-feedback">부품 선택이 필요합니다.</div>' + // ★ 추가
           '</td>' +
           '<td class="numeric">' +
             '<input type="number" min="0" name="purchase_Item['+idx+'].purchase_Item_Cnt" class="form-control form-control-sm qty-input" required />' +
@@ -418,6 +321,7 @@ transparent
                 '<input type="text" class="form-control form-control-sm partsNameInput" readonly tabindex="-1" style="background:#f6f6f6;" />' +
                 '<button type="button" class="btn btn-outline-secondary" onclick="openPartsPopup(this)">조회</button>' +
               '</div>' +
+              '<div class="invalid-feedback">부품 선택이 필요합니다.</div>' + // ★ 추가
             '</td>' +
             '<td class="numeric">' +
               '<input type="number" min="0" name="purchase_Item['+idx+'].purchase_Item_Cnt" class="form-control form-control-sm qty-input" required />' +
@@ -445,6 +349,7 @@ transparent
           if (partsNo) {
             selectedParts.add(String(partsNo));
             row.dataset.partsNo = String(partsNo);
+            clearError(row.querySelector('.partsNameInput'));
           }
         });
 
@@ -455,78 +360,102 @@ transparent
 
       // 제출 전 유효성 검사 + 재인덱싱 + 빈 인덱스 차단
       form?.addEventListener('submit', function(e){
-        // 거래처 선택
+        // 1) 거래처 검증 (1회)
         const clientNoEl   = document.getElementById('clientNoInput');
         const clientNameEl = document.getElementById('clientNameInput');
         if (!clientNoEl.value.trim()) {
-          clientNameEl.setCustomValidity('거래처를 선택하세요.');
-          clientNameEl.reportValidity();
-          e.preventDefault(); return;
-        } else clientNameEl.setCustomValidity('');
+          e.preventDefault();
+          showError(clientNameEl, '거래처를 선택하세요.');
+          return;
+        } else {
+          clearError(clientNameEl);
+        }
 
-        // 납기일 유효성
+        // 2) 납기일 검증
         const dateEl = document.getElementById('purchaseDate');
         const dateError = document.getElementById('dateError');
         if (!dateEl.value) {
-          dateEl.setCustomValidity('납기 완료일을 선택하세요.');
-          dateEl.reportValidity();
-          e.preventDefault(); return;
+          e.preventDefault();
+          showError(dateEl, '납기 완료일을 선택하세요.');
+          if (dateError) dateError.textContent = '납기 완료일을 선택하세요.';
+          return;
         } else {
           const picked = new Date(dateEl.value);
           const today  = new Date('${todayStr}');
           if (picked < today) {
-            dateEl.setCustomValidity('납기 완료일은 오늘 이후만 가능합니다.');
-            dateEl.reportValidity();
+            e.preventDefault();
+            showError(dateEl, '납기 완료일은 오늘 이후만 가능합니다.');
             if (dateError) dateError.textContent = '오늘 이후 날짜로 선택해주세요.';
-            e.preventDefault(); return;
+            return;
           } else {
-            dateEl.setCustomValidity('');
+            clearError(dateEl);
             if (dateError) dateError.textContent = '';
           }
         }
 
+        // 3) 최소 1행
         const rows = document.querySelectorAll('#items-tbody tr');
         if (rows.length === 0) {
+          e.preventDefault();
           alert('부품 항목을 최소 1개 이상 추가하세요.');
-          e.preventDefault(); return;
+          return;
         }
 
-        // 재인덱싱
+        // 4) 재인덱싱
         reindexRows();
 
-        // name에 빈 인덱스([]) 남아있으면 차단
+        // 5) name에 빈 인덱스([]) 남아있으면 차단
         const bad = Array.from(form.querySelectorAll('[name^="purchase_Item["]')).filter(el => /\[\]/.test(el.name));
         if (bad.length) {
+          e.preventDefault();
           console.warn('잘못된 name들:', bad.map(e => e.name));
           alert('일시적 오류가 발생했습니다. 다시 저장을 시도해주세요.');
-          e.preventDefault(); return;
+          return;
         }
 
-        // 각 행 검증
+        // 6) 각 행 검증 (최초 에러에서 중단)
         for (const row of rows) {
           const noEl   = row.querySelector('.partsNoInput');
           const nameEl = row.querySelector('.partsNameInput');
           const qtyEl  = row.querySelector('.qty-input');
           const costEl = row.querySelector('.cost-input');
 
+          // 부품 선택
           if (!noEl?.value) {
-            if (nameEl) { nameEl.setCustomValidity('부품 선택이 필요합니다.'); nameEl.reportValidity(); }
-            e.preventDefault(); return;
-          } else if (nameEl) nameEl.setCustomValidity('');
+            e.preventDefault();
+            showError(nameEl, '부품 선택이 필요합니다.');
+            return;
+          } else {
+            clearError(nameEl);
+          }
 
-          const qty  = Number(qtyEl?.value);
+          // 수량
+          const qty = Number(qtyEl?.value);
+          if (!Number.isFinite(qty) || qty <= 0) {
+            e.preventDefault();
+            showError(qtyEl, '요청 수량을 1 이상 입력하세요.');
+            return;
+          } else {
+            clearError(qtyEl);
+          }
+
+          // 단가
           const cost = Number(costEl?.value);
-          if (!qty || qty <= 0) { qtyEl.setCustomValidity('요청 수량을 1 이상 입력하세요.'); qtyEl.reportValidity(); e.preventDefault(); return; }
-          else qtyEl.setCustomValidity('');
-          if (cost < 0) { costEl.setCustomValidity('단가는 0 이상이어야 합니다.'); costEl.reportValidity(); e.preventDefault(); return; }
-          else costEl.setCustomValidity('');
+          if (!Number.isFinite(cost) || cost < 0) {
+            e.preventDefault();
+            showError(costEl, '단가는 0 이상이어야 합니다.');
+            return;
+          } else {
+            clearError(costEl);
+          }
         }
+        // 통과 시 submit 진행
       });
 
       recalcTotal();
     });
 
-    // 반응형 테이블 (행 수 기준으로 스크롤 토글)
+    // (보조) 행 수 기준 스크롤 토글: 추가/삭제 직후 갱신
     document.addEventListener('DOMContentLoaded', function(){
       const wrap     = document.getElementById('items-wrap');
       const scroller = document.getElementById('items-scroll');
@@ -573,199 +502,169 @@ transparent
   </script>
 </head>
 <body>
-	<div id="layout">
-		<div id="side"><jsp:include page="/side.jsp" /></div>
-		<div id="main-area">
-			<jsp:include page="/header.jsp" />
+  <div id="layout">
+    <div id="side"><jsp:include page="/side.jsp" /></div>
+    <div id="main-area">
+      <jsp:include page="/header.jsp" />
 
-			<div id="contents">
-				<div class="container-fluid px-4">
-					<div class="card shadow-sm">
-						<div
-							class="card-header d-flex justify-content-between align-items-center">
-							<a href="${pageContext.request.contextPath}/purchase/list"
-								class="btn btn-outline-light btn-sm"> <i
-								class="bi bi-list-ul me-1"></i> 목록
-							</a>
-							<h4 class="card-title mb-0">
-								<i class="bi bi-pencil-square me-2"></i>발주 등록
-							</h4>
-							<div style="width: 90px;"></div>
-						</div>
+      <div id="contents">
+        <div class="container-fluid px-4">
+          <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <a href="${pageContext.request.contextPath}/purchase/list" class="btn btn-outline-light btn-sm">
+                <i class="bi bi-list-ul me-1"></i> 목록
+              </a>
+              <h4 class="card-title mb-0"><i class="bi bi-pencil-square me-2"></i>발주 등록</h4>
+              <div style="width:90px;"></div>
+            </div>
 
-						<div class="card-body p-4">
-							<form id="purchaseForm"
-								action="${pageContext.request.contextPath}/purchase/create"
-								method="post" style="display: inline;">
-								<!-- 발주 / 거래처 -->
-								<section class="info-card" aria-label="발주 및 거래처 정보">
-									<div class="info-card-title">발주 / 거래처 정보</div>
-									<div class="row g-3">
-										<div class="col-12">
-											<label class="form-label">발주 제목 <span
-												class="text-danger">*</span></label> <input type="text"
-												id="purchaseTitleInput" name="purchase_Title"
-												class="form-control form-control-sm" required
-												placeholder="예: 2025-08 CPU 쿨러 발주 (요청서 #A-231)" />
-										</div>
+            <div class="card-body p-4">
+              <form id="purchaseForm" action="${pageContext.request.contextPath}/purchase/create" method="post" style="display:inline;">
+                <!-- 발주 / 거래처 -->
+                <section class="info-card" aria-label="발주 및 거래처 정보">
+                  <div class="info-card-title">발주 / 거래처 정보</div>
+                  <div class="row g-3">
+                    <div class="col-12">
+                      <label class="form-label">제목 <span class="text-danger">*</span></label>
+                      <input type="text" id="purchaseTitleInput" name="purchase_Title"
+                             class="form-control form-control-sm" required
+                             placeholder="예: 2025-08 CPU 쿨러 발주 (요청서 #A-231)" />
+                    </div>
 
-										<div class="col-md-4">
-											<label class="form-label">거래처 이름 <span
-												class="text-danger">*</span></label>
-											<div class="input-group input-group-sm">
-												<input type="hidden" id="clientNoInput"
-													name="clientDto.client_No" required /> <input type="text"
-													id="clientNameInput" class="form-control form-control-sm"
-													readonly required placeholder="조회 버튼으로 선택" />
-												<button type="button" class="btn btn-outline-secondary"
-													onclick="openClientPopup()">조회</button>
-											</div>
-										</div>
+                    <div class="col-md-4">
+                      <label class="form-label">거래처 이름 <span class="text-danger">*</span></label>
+                      <div class="input-group input-group-sm">
+                        <input type="hidden" id="clientNoInput" name="clientDto.client_No" required />
+                        <input type="text" id="clientNameInput" class="form-control form-control-sm" readonly required placeholder="조회 버튼으로 선택" />
+                        <button type="button" class="btn btn-outline-secondary" onclick="openClientPopup()">조회</button>
+                      </div>
+                      <!-- 거래처 미선택 메시지 -->
+                      <div class="invalid-feedback" id="clientNameFeedback">거래처를 선택하세요.</div>
+                    </div>
 
-										<div class="col-md-4">
-											<label class="form-label">주소</label> <input type="text"
-												id="clientAddressInput" class="form-control form-control-sm"
-												readonly />
-										</div>
+                    <div class="col-md-4">
+                      <label class="form-label">주소</label>
+                      <input type="text" id="clientAddressInput" class="form-control form-control-sm" readonly />
+                    </div>
 
-										<div class="col-md-4">
-											<label class="form-label">이메일</label>
-											<div class="input-group input-group-sm">
-												<input type="email" id="clientEmailInput"
-													class="form-control" readonly />
-											</div>
-										</div>
+                    <div class="col-md-4">
+                      <label class="form-label">이메일</label>
+                      <div class="input-group input-group-sm">
+                        <input type="email" id="clientEmailInput" class="form-control" readonly />
+                      </div>
+                    </div>
 
-										<div class="col-md-4">
-											<label class="form-label">거래처 전화번호</label> <input type="text"
-												id="clientTelInput" class="form-control form-control-sm"
-												readonly />
-										</div>
+                    <div class="col-md-4">
+                      <label class="form-label">거래처 전화번호</label>
+                      <input type="text" id="clientTelInput" class="form-control form-control-sm" readonly />
+                    </div>
 
-										<div class="col-md-4">
-											<label class="form-label">거래처 담당자</label> <input type="text"
-												id="clientManInput" class="form-control form-control-sm"
-												readonly />
-										</div>
+                    <div class="col-md-4">
+                      <label class="form-label">거래처 담당자</label>
+                      <input type="text" id="clientManInput" class="form-control form-control-sm" readonly />
+                    </div>
 
-										<div class="col-md-4">
-											<label class="form-label">담당자 이름</label> <input type="hidden"
-												id="empNoInput" name="empDTO.empNo" /> <input type="text"
-												id="empNameInput" class="form-control form-control-sm"
-												readonly />
-										</div>
+                    <div class="col-md-4">
+                      <label class="form-label">담당자 이름</label>
+                      <input type="hidden" id="empNoInput" name="empDTO.empNo" />
+                      <input type="text" id="empNameInput" class="form-control form-control-sm" readonly />
+                    </div>
 
-										<div class="col-md-4">
-											<label class="form-label">납기 완료일</label> <input type="date"
-												id="purchaseDate" class="form-control form-control-sm"
-												name="purchase_Date" min="${todayStr}" required />
-											<div id="dateError" class="form-text" style="color: #dc3545;"></div>
-										</div>
-									</div>
-								</section>
+                    <div class="col-md-4">
+                      <label class="form-label">납기 완료일</label>
+                      <input type="date" id="purchaseDate" class="form-control form-control-sm" name="purchase_Date" min="${todayStr}" required />
+                      <div id="dateError" class="form-text" style="color:#dc3545;"></div>
+                    </div>
+                  </div>
+                </section>
 
-								<!-- 부품 목록 -->
-								<section class="info-card mt-4" aria-label="부품 목록">
-									<div
-										class="info-card-title d-flex justify-content-between align-items-center">
-										<span>부품 목록</span>
-										<button type="button" class="btn btn-primary"
-											id="add-item-btn">
-											<i class="bi bi-plus-lg"></i>부품 추가
-										</button>
-									</div>
+                <!-- 부품 목록 -->
+                <section class="info-card mt-4" aria-label="부품 목록">
+                  <div class="info-card-title d-flex justify-content-between align-items-center">
+                    <span>부품 목록</span>
+                    <button type="button" class="btn btn-primary" id="add-item-btn">
+                      <i class="bi bi-plus-lg"></i>부품 추가
+                    </button>
+                  </div>
 
-									<div class="table-responsive" id="items-wrap"
-										data-scroll-rows="6">
-										<div id="items-scroll">
-											<table
-												class="table table-sm table-bordered align-middle mb-0 product-table"
-												id="items-table">
-												<thead class="table-light">
-													<tr>
-														<th style ="width: 45%;" class="text-center">발주 부품명</th>
-														<th style ="width: 15%;" class="numeric text-center">발주 요청수량</th>
-														<th style ="width: 15%;" class="numeric text-center">발주 부품 단가</th>
-														<th style ="width: 15%;" class="numeric text-center">발주 요청 총액</th>
-														<th style ="width: 10%;" class="text-center">삭제</th>
-													</tr>
-												</thead>
-												<tbody id="items-tbody">
-													<!-- 초기 1행 -->
-													<tr>
-														<td>
-															<div class="input-group input-group-sm">
-																<input type="hidden" class="partsNoInput"
-																	name="purchase_Item[0].partsDTO.parts_no" required />
-																<input type="text"
-																	class="form-control form-control-sm partsNameInput"
-																	readonly tabindex="-1" style="background: #f6f6f6;" />
-																<button type="button" class="btn btn-outline-secondary"
-																	onclick="openPartsPopup(this)">조회</button>
-															</div>
-														</td>
-														<td class="numeric"><input type="number" min="0"
-															name="purchase_Item[0].purchase_Item_Cnt"
-															class="form-control form-control-sm qty-input" required />
-														</td>
-														<td class="numeric"><input type="number" step="0.01"
-															min="0" name="purchase_Item[0].purchase_Item_Cost"
-															class="form-control form-control-sm cost-input" required />
-														</td>
-														<td class="numeric"><input type="text"
-															class="form-control form-control-plaintext form-control-sm tot-cost"
-															readonly /></td>
-														<td class="text-center">
-															<button type="button"
-																class="btn btn-sm btn-outline-danger remove-item-btn">
-																<i class="bi bi-trash"></i> 삭제
-															</button>
-														</td>
-													</tr>
-												</tbody>
-												<tfoot>
-													<tr class="total-row table-light">
-														<td class="text-center">합계</td>
-														<td class="numeric"><span id="sum-req">0</span></td>
-														<td></td>
-														<td class="numeric"><span id="sum-cost">0</span></td>
-														<td></td>
-													</tr>
-												</tfoot>
-											</table>
-										</div>
-									</div>
-								</section>
+                  <div class="table-responsive" id="items-wrap" data-scroll-rows="6">
+                    <div id="items-scroll">
+                      <table class="table table-sm table-bordered align-middle mb-0 product-table" id="items-table">
+                        <thead class="table-light">
+                          <tr>
+                            <th style="width:45%;" class="text-center">부품명</th>
+                            <th style="width:15%;" class="numeric text-center">요청 수량</th>
+                            <th style="width:15%;" class="numeric text-center">부품 단가</th>
+                            <th style="width:15%;" class="numeric text-center">요청 총액</th>
+                            <th style="width:10%;" class="text-center">삭제</th>
+                          </tr>
+                        </thead>
+                        <tbody id="items-tbody">
+                          <!-- 초기 1행 -->
+                          <tr>
+                            <td>
+                              <div class="input-group input-group-sm">
+                                <input type="hidden" class="partsNoInput" name="purchase_Item[0].partsDTO.parts_no" required />
+                                <input type="text" class="form-control form-control-sm partsNameInput" readonly tabindex="-1" style="background:#f6f6f6;" />
+                                <button type="button" class="btn btn-outline-secondary" onclick="openPartsPopup(this)">조회</button>
+                              </div>
+                              <!-- 부품 미선택 메시지 -->
+                              <div class="invalid-feedback">부품 선택이 필요합니다.</div>
+                            </td>
+                            <td class="numeric">
+                              <input type="number" min="0" name="purchase_Item[0].purchase_Item_Cnt" class="form-control form-control-sm qty-input" required />
+                            </td>
+                            <td class="numeric">
+                              <input type="number" step="0.01" min="0" name="purchase_Item[0].purchase_Item_Cost" class="form-control form-control-sm cost-input" required />
+                            </td>
+                            <td class="numeric">
+                              <input type="text" class="form-control form-control-plaintext form-control-sm tot-cost" readonly />
+                            </td>
+                            <td class="text-center">
+                              <button type="button" class="btn btn-sm btn-outline-danger remove-item-btn">
+                                <i class="bi bi-trash"></i> 삭제
+                              </button>
+                            </td>
+                          </tr>
+                        </tbody>
+                        <tfoot>
+                          <tr class="total-row table-light">
+                            <td class="text-center">합계</td>
+                            <td class="numeric"><span id="sum-req">0</span></td>
+                            <td></td>
+                            <td class="numeric"><span id="sum-cost">0</span></td>
+                            <td></td>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                  </div>
+                </section>
 
-								<div class="row mt-4 g-2">
-									<div class="col-md-4 d-grid">
-										<a href="<c:url value='/purchase/list'/>"
-											class="btn btn-outline-secondary btn-sm px-4" role="button">
-											<i class="bi bi-x-circle me-2"></i>취소
-										</a>
-									</div>
-									<div class="col-md-8 d-grid">
-										<button type="submit" id="modifyBtn"
-											class="btn btn-primary btn-sm px-4">
-											<i class="bi bi-check-lg me-2"></i>등록
-										</button>
-									</div>
-								</div>
-							</form>
-						</div>
+                <div class="row mt-4 g-2">
+                  <div class="col-md-4 d-grid">
+                    <a href="<c:url value='/purchase/list'/>" class="btn btn-outline-secondary btn-sm px-4" role="button">
+                      <i class="bi bi-x-circle me-2"></i>취소
+                    </a>
+                  </div>
+                  <div class="col-md-8 d-grid">
+                    <button type="submit" id="modifyBtn" class="btn btn-primary btn-sm px-4">
+                      <i class="bi bi-check-lg me-2"></i>등록
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
 
-					</div>
-				</div>
-			</div>
+          </div>
+        </div>
+      </div>
 
-			<jsp:include page="/foot.jsp" />
-		</div>
-	</div>
+      <jsp:include page="/foot.jsp" />
+    </div>
+  </div>
 
-	<!-- 부트스트랩 JS -->
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- 부트스트랩 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
-
