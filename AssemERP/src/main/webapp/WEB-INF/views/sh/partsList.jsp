@@ -124,7 +124,7 @@
 											<tr style="cursor: pointer;"
 												onclick="location.href='<c:url value='/parts/partsDetail/${partsDTO.parts_no}'/>'">
 												<td style="text-align: center;">${partsDTO.parts_no}</td>
-												<td>${partsDTO.parts_name}</td>
+												<td style="text-align: left;">${partsDTO.parts_name}</td>
 												<td style="text-align: center;">${partsDTO.parts_statusName}</td>
 												<td style="text-align: center;">${partsDTO.manufacture}</td>
 												<td style="text-align: center;">${partsDTO.emp_name}</td>

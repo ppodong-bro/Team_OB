@@ -118,6 +118,8 @@ public class ProductServiceImpl implements ProductService {
 		// 제품분류번호에 맞는 제품분류명 가져오기
 		for (ProductDTO dto : productDTOs) {
 			dto.setProduct_statusName(productStatus_IntToString(dto.getProduct_status()));
+			// 사원번호에 맞는 사원이름 가져오기
+			dto.setEmp_name(empRepository.getEmpNameFromEmpNo(dto.getEmp_no()));
 		}
 
 		return productDTOs;
