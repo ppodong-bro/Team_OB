@@ -37,7 +37,7 @@
 			    AND item_status_no = #{item_status_select}
 			</if>
 			<if test="item_name_text != null and item_name_text != ''">
-			    AND item_name LIKE '%' || #{item_name_text} || '%'
+			    AND LOWER(item_name) LIKE LOWER('%' || #{item_name_text} || '%')
 			</if>
 		</where>
 	</select>
@@ -81,7 +81,7 @@
 					    AND item_status_no = #{item_status_select}
 					</if>
 					<if test="item_name_text != null and item_name_text != ''">
-					    AND item_name LIKE '%' || #{item_name_text} || '%'
+					    AND LOWER(item_name) LIKE LOWER('%' || #{item_name_text} || '%')
 					</if>
 				</where>
 				ORDER BY item_no
