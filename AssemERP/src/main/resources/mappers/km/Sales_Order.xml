@@ -141,7 +141,7 @@
 		<where>
 
 			<if test="client_Name != null and client_Name.trim() != ''">
-				AND C.CLIENT_NAME LIKE '%' || #{client_Name} || '%'
+				AND H.CLIENT_NAME LIKE '%' || #{client_Name} || '%'
 			</if>
 			<if test="empName != null and empName.trim() != ''">
 				AND E.EMP_NAME LIKE '%' || #{empName} || '%'
@@ -222,11 +222,28 @@
 	
 		INSERT INTO SALES_ITEM (SALES_NO, PRODUCT_NO, PRODUCT_VERSION, SALES_ITEM_CNT, SALES_ITEM_OUTCNT, SALES_ITEM_COST)
 		<foreach collection="sales_Item" item="item" separator="UNION ALL">
-			SELECT #{sales_No}, #{item.product_No}, #{item.product_Version}, #{item.sales_Item_Cnt}, #{item.sales_Item_OutCnt}, #{item.sales_Item_Cost}
+			SELECT #{sales_No}, #{item.product_No}, #{item.product_Version}, #{item.sales_Item_Cnt}, 0, #{item.sales_Item_Cost}
 			FROM DUAL
 		</foreach>
 		
 	</insert>
+	
+<!-- 	<insert id="createSales_Item" parameterType="sales_OrderDto">
+  INSERT ALL
+  <foreach collection="sales_Item" item="item">
+    INTO SALES_ITEM (
+      SALES_NO, PRODUCT_NO, PRODUCT_VERSION, SALES_ITEM_CNT, SALES_ITEM_OUTCNT, SALES_ITEM_COST
+    ) VALUES (
+      #{sales_No,               jdbcType=NUMERIC},
+      #{item.product_No,        jdbcType=NUMERIC},
+      #{item.product_Version,   jdbcType=VARCHAR},
+      #{item.sales_Item_Cnt,    jdbcType=NUMERIC},
+      #{item.sales_Item_OutCnt, jdbcType=NUMERIC},
+      #{item.sales_Item_Cost,   jdbcType=NUMERIC}
+    )
+  </foreach>
+  SELECT 1 FROM DUAL
+</insert> -->
 	
 	<update id="modifySales" parameterType="Sales_OrderDto">
 	
