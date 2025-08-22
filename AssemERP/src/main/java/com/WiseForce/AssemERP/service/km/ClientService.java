@@ -28,4 +28,6 @@ public interface ClientService {
 
 	List<EmpDTO> 		listEmp(String empName);
 
+	String 				deptName();
+
 }

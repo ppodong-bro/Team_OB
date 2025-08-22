@@ -13,39 +13,36 @@
   <title>발주 상세</title>
 
   <style>
-    body { background-color:#f8f9fa; }
-    .card-header { background-color:#C0C0C0; color:white; }
+    body { background-color: #f8f9fa; }
 
-    /* 정보 카드 */
-    .info-card { border:1px solid #eee; border-radius:10px; padding:16px; margin-bottom:16px; }
-    .info-card-title { font-weight:600; margin-bottom:12px; }
-    .info-grid {
-      display:grid; grid-template-columns:repeat(3, 1fr); gap:12px;
-    }
-    @media (max-width: 992px){ .info-grid{ grid-template-columns:repeat(2, 1fr);} }
-    @media (max-width: 576px){ .info-grid{ grid-template-columns:1fr; } }
-    .field-label { font-weight:600; color:#6c757d; margin-bottom:4px; }
-    .field-box {
-      background:#fff; border:1px solid #e9ecef; border-radius:8px;
-      padding:8px 10px; min-height:38px; display:flex; align-items:center;
+    .card-header {
+      background-color: #C0C0C0;
+      color: white;
     }
 
-    /* 숫자 정렬 */
-    .numeric { text-align:right; }
+    .required-field::after { content: " *"; color: red; }
 
-    /* 표: 작은 화면 가로 스크롤 보장 */
-    .product-table { min-width:720px; }
-    @media (max-width: 768px){ .product-table{ min-width:640px; } }
+    .image-box { width: auto; height: 300px; overflow: hidden; }
+    .image-box img { width: 100%; height: 100%; display: block; }
 
-    /* 표 래퍼: 기본 세로 스크롤 없음, 7행 초과 시 자동 세로 스크롤 */
-    .product-table-wrap { overflow-y:hidden; }
+    .parent-container { display: flex; flex-direction: column; gap: 15px; }
 
-    /* 헤더 고정 */
+    /* 숫자 정렬용 공용 클래스 */
+    .numeric { text-align: right; }
+
+    /* 상세 테이블: 작은 화면 가로 스크롤 보장 + 헤더 sticky + 행수 기반 세로 스크롤 */
+    .product-table { min-width: 720px; }
+    @media (max-width: 768px) { .product-table { min-width: 640px; } }
+
     .product-table thead th {
-      position:sticky; top:0; z-index:2; background:var(--bs-light, #f8f9fa);
+      position: sticky; top: 0; z-index: 2;
+      background: var(--bs-light, #f8f9fa);
+    }
+
+    /* 세로 스크롤은 JS가 상황에 따라 토글. 기본은 숨김 */
+    .product-table-wrap { overflow-y: hidden; 
     }
     
-    	
 	/* 헤더 하단 보더(기준) – 혹시 모를 테마 차이를 맞추기 위함 */
 	.product-table thead > tr > * {
 	  border-bottom-width: 2px;
@@ -72,19 +69,19 @@
 	}
 	
 	
-	/* 합계 행의 모든 글자에 아주 살짝 드롭 섀도우 */
-	.product-table tfoot .total-row > * {
-	  font-weight: 600;                          /* 굵기는 미세 강조 */
-	  text-shadow: 0.5px 0.5px 0 rgba(0,0,0,.18); /* 번짐 없는 미세 음영 */
-	}
-	
-	/* "합계" 라벨(첫 칸)만 살짝 더 입체감: 위쪽 하이라이트 + 아래쪽 음영 */
-	.product-table tfoot .total-row td:first-child {
-	  letter-spacing: .2px;
-	  text-shadow:
-	    0.7px 0.7px 0 rgba(0,0,0,.22),            /* 아래/오른쪽 얇은 그림자 */
-	   -0.5px -0.5px 0 rgba(255,255,255,.35);     /* 위/왼쪽 얇은 하이라이트 */
-	}
+/* 합계 행의 모든 글자에 아주 살짝 드롭 섀도우 */
+.product-table tfoot .total-row > * {
+  font-weight: 600;                          /* 굵기는 미세 강조 */
+  text-shadow: 0.5px 0.5px 0 rgba(0,0,0,.18); /* 번짐 없는 미세 음영 */
+}
+
+/* "합계" 라벨(첫 칸)만 살짝 더 입체감: 위쪽 하이라이트 + 아래쪽 음영 */
+.product-table tfoot .total-row td:first-child {
+  letter-spacing: .2px;
+  text-shadow:
+    0.7px 0.7px 0 rgba(0,0,0,.22),            /* 아래/오른쪽 얇은 그림자 */
+   -0.5px -0.5px 0 rgba(255,255,255,.35);     /* 위/왼쪽 얇은 하이라이트 */
+}
   </style>
 
   <script>
@@ -184,7 +181,7 @@
                   </div>
 
                   <div class="field">
-                    <div class="field-label">거래처 이름</div>
+                    <div class="field-label">거래처명</div>
                     <div class="field-box">
                       <c:out value="${Purchase_OrderDto.clientDto.client_Name}" default="-" />
                     </div>
@@ -219,26 +216,34 @@
                   </div>
 
                   <div class="field">
-                    <div class="field-label">담당자 이름</div>
+                    <div class="field-label">영업 담당자</div>
                     <div class="field-box">
                       <c:out value="${Purchase_OrderDto.empDTO.empName}" default="-" />
                     </div>
                   </div>
+                  
+                
+                  <div class="field">
+                    <div class="field-label">납기 완료일</div>
+                     <div class="field-box">
+                        <c:out value="${fn:substring(Purchase_OrderDto.purchase_Date,0,10)}" default="-" />
+                     </div>
+                  </div>
 
-                  <!-- 완료 일자: 존재할 때만 -->
+                  <!-- 완료일: 존재할 때만 -->
                   <c:if test="${not empty Purchase_OrderDto.complete_Date}">
                     <div class="field">
-                      <div class="field-label">완료 일자</div>
+                      <div class="field-label">완료일</div>
                       <div class="field-box">
                         <c:out value="${fn:substring(Purchase_OrderDto.complete_Date,0,10)}" default="-" />
                       </div>
                     </div>
                   </c:if>
 
-                  <!-- 최근 수정 일자: 존재할 때만 -->
+                  <!-- 최근 수정일: 존재할 때만 -->
                   <c:if test="${not empty Purchase_OrderDto.modify_Date}">
                     <div class="field">
-                      <div class="field-label">최근 수정 일자</div>
+                      <div class="field-label">최근 수정일</div>
                       <div class="field-box">
                         <c:out value="${fn:substring(Purchase_OrderDto.modify_Date,0,10)}" default="-" />
                       </div>
@@ -246,7 +251,7 @@
                   </c:if>
 
                   <div class="field">
-                    <div class="field-label">등록 일자</div>
+                    <div class="field-label">등록일</div>
                     <div class="field-box">
                       <c:out value="${fn:substring(Purchase_OrderDto.in_Date,0,10)}" default="-" />
                     </div>

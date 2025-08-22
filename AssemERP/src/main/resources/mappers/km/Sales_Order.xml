@@ -384,7 +384,5 @@
 	    </foreach>
 	  GROUP BY i.item_no
 	</select>
-	
-
 
 </mapper>

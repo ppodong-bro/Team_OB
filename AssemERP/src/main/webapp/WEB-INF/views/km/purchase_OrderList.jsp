@@ -58,7 +58,7 @@
 								<!-- 유형 -->
 								<div class="col-auto">
 									<div class="input-group input-group-sm">
-										<span class="input-group-text">입고상태</span> <select
+										<span class="input-group-text">입고 상태</span> <select
 											name="in_Status" class="form-select">
 											<option value="">전체</option>
 											<option value="0"
@@ -76,8 +76,8 @@
 								<!-- 담당자 -->
 								<div class="col-auto">
 									<div class="input-group input-group-sm">
-										<span class="input-group-text">담당자명</span> <input type="text"
-											name="empName" class="form-control" placeholder="담당자 검색"
+										<span class="input-group-text">영업 담당자</span> <input type="text"
+											name="empName" class="form-control" placeholder="영업 담당자 검색"
 											value="${Purchase_OrderSearchDto.empName}">
 									</div>
 								</div>
@@ -85,7 +85,7 @@
 								<!-- 납기완료일 범위 -->
 								<div class="col-auto">
 									<div class="input-group input-group-sm">
-										<span class="input-group-text">납기완료일</span> <input type="date"
+										<span class="input-group-text">납기 완료일</span> <input type="date"
 											name="purchase_Date_Start" class="form-control"
 											placeholder="시작일"
 											value="${Purchase_OrderSearchDto.purchase_Date_Start}" /> <span
@@ -112,12 +112,12 @@
 											<th style="width: 7%;" class="text-center">번호</th>
 											<th style="width: 10%;" class="text-center">거래처명</th>
 											<th style="width: 22%;" class="text-center">제목</th>
-											<th style="width: 8%;" class="text-center">요청수량</th>
-											<th style="width: 8%;" class="text-center">입고수량</th>
+											<th style="width: 8%;" class="text-center">요청 수량</th>
+											<th style="width: 8%;" class="text-center">입고 수량</th>
 											<th style="width: 7%;" class="text-center">총액</th>
-											<th style="width: 10%;" class="text-center">납기완료일</th>
-											<th style="width: 8%;" class="text-center">입고상태</th>
-											<th style="width: 8%;" class="text-center">담당자</th>
+											<th style="width: 10%;" class="text-center">납기 완료일</th>
+											<th style="width: 8%;" class="text-center">입고 상태</th>
+											<th style="width: 8%;" class="text-center">영업 담당자</th>
 											<th style="width: 10%;" class="text-center">등록일</th>
 											<th style="width: 8%;" class="text-center">수정</th>
 										</tr>

@@ -85,7 +85,7 @@ body {
 										<!-- 담당 직원 -->
 										<div class="field">
 											<div class="field-label">
-												담당 직원 <span class="text-danger">*</span>
+												영업 담당자 <span class="text-danger">*</span>
 											</div>
 
 											<div class="input-group input-group-sm">
@@ -167,13 +167,6 @@ body {
 									</div>
 								</section>
 
-								<!-- 액션 버튼 -->
-								<%-- <div class="text-end mt-4 d-flex justify-content-end gap-2">
-									<a href="<c:url value='/client/list'/>"
-										class="btn btn-outline-secondary btn-sm px-4">취소</a>
-									<button type="submit" class="btn btn-primary btn-sm px-4">수정</button>
-								</div>
-								 --%>
 								<!-- 디자인은 아래(그리드+큰 버튼), 기능은 위(취소 링크 / 수정 submit) -->
 								<div class="row mt-4 g-2">
 									<!-- 취소: 링크 -->

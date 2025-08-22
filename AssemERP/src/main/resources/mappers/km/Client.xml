@@ -265,5 +265,10 @@
 	ORDER BY EMP_NO
 	</select>
 	
+	<select id="getDeptName" resultType = "String">
+		SELECT DEPT_NAME
+		FROM   DEPT
+		WHERE  DEPT_CODE = 3001
+	</select>
  
 </mapper>

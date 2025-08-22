@@ -3,6 +3,7 @@ package com.WiseForce.AssemERP.controller.km;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -135,7 +136,9 @@ public class ClientController {
 	@GetMapping("empPopup")
 	public String empPopup(@RequestParam("empName") String empName, Model model) {
 		List<EmpDTO> listEmp = clientService.listEmp(empName);
+		String deptName = clientService.deptName();
 		model.addAttribute("empList", listEmp);
+		model.addAttribute("DeptName", deptName);
 		return "km/empPop";
 	}
 

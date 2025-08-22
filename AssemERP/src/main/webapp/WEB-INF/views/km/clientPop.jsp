@@ -56,7 +56,7 @@ body {
         <th style="width: 20%;" class="text-center">이메일</th>
         <th style="width: 8%;"class="text-center">거래처 담당자</th>
         <th style="width: 10%;"class="text-center">전화</th>
-        <th style="width: 10%;"class="text-center">담당사원(사번)</th>
+        <th style="width: 10%;"class="text-center">영업 담당자(사번)</th>
         <th style="width: 5%;" class="text-center">선택</th>
       </tr>
     </thead>
