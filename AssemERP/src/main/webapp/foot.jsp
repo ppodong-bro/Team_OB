@@ -6,15 +6,17 @@
 		<div>
 		<span class="footer-icon">🏢</span> <span>회사명: AssemERP | 사업자등록번호: 123-45-67890</span>
 		</div>
-			 <span>대표자: 정수빈 | 주소: 서울특별시 강남구 샘플로 123</span>
+			 <span id="ceo"></span>
+			 <span> | </span>
+			 <span id="representative"></span>
 		</div>
 	</div>
 	<div>
 		<div class="footer-item">
-			<span class="footer-icon">📞</span> <span>국내문의: 박지성 | 02-1234-5678 | cs@company.com</span>
+			<span class="footer-icon">📞</span> <span id="domesticBusiness"></span>
 		</div>
 		<div class="footer-item">
-			<span class="footer-icon">🌎</span> <span>해외문의: 강은지 | +82-2-9876-5432 | global@company.com</span>
+			<span class="footer-icon">🌎</span> <span id="seaoverBusiness"></span>
 		</div>
 	</div>
 	<div>

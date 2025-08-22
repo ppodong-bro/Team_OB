@@ -33,7 +33,7 @@
 							class="card-header d-flex justify-content-between align-items-center">
 							<h4 class="card-title mb-0">
 							<i class="bi bi-list-ul"></i> 부품목록</h4>
-							<a href="/parts/create" class="btn btn-primary"><i
+							<a href="${pageContext.request.contextPath}/parts/create" class="btn btn-primary"><i
 								class="bi bi-plus-lg"></i> 등록</a>
 						</div>
 
@@ -131,7 +131,7 @@
 												<td style="text-align: center;">${partsDTO.in_date}</td>
 												<td class="text-center">
 													<button type="button"
-														onclick="event.stopPropagation(); location.href='/parts/partsModify/${partsDTO.parts_no}'"
+														onclick="event.stopPropagation(); location.href='${pageContext.request.contextPath}/parts/partsModify/${partsDTO.parts_no}'"
 														class="btn btn-sm btn-outline-success">
 														<i class="bi bi-pencil-square"></i> 수정
 													</button>
@@ -237,7 +237,7 @@
 													class="bi bi-chevron-double-right"></i></a></li>
 										</c:otherwise>
 									</c:choose>
-								</ul>
+								</ul> 
 							</nav>
 						</div>
 					</div>

@@ -66,7 +66,7 @@ body {
 							<%------------------------------------------------------------------------------
                 						1-1. 목록 버튼 스타일
                  					------------------------------------------------------------------------------%>
-							<a href="/product/productList"
+							<a href="${pageContext.request.contextPath}/product/productList"
 								class="btn btn-outline-light btn-sm"> <i
 								class="bi bi-list-ul me-1"></i> 목록
 							</a>
@@ -80,7 +80,7 @@ body {
 							<div style="width: 90px;"></div>
 						</div>
 						<div class="card-body p-4">
-							<form action="/product/productUpdate" method="post"
+							<form action="${pageContext.request.contextPath}/product/productUpdate" method="post"
 								class="needs-validation" enctype="multipart/form-data"
 								novalidate>
 								<input type="hidden" name="product_no"
@@ -113,7 +113,7 @@ body {
 											
 											    // 이미지 로딩 실패 시 기본 이미지로
 											    img.onerror = function() {
-											        this.src = "${pageContext.request.contextPath}/upload/default.jpg";
+											        this.src = ${pageContext.request.contextPath}+"/upload/default.jpg";
 											    };
 											
 											    // 파일 크기 체크 (이미지가 있더라도 0이면 기본 이미지)
@@ -121,11 +121,11 @@ body {
 											        .then(response => {
 											            const size = response.headers.get('Content-Length');
 											            if (!size || parseInt(size) === 0) {
-											                img.src = "${pageContext.request.contextPath}/upload/default.jpg";
+											                img.src = ${pageContext.request.contextPath}+"/upload/default.jpg";
 											            }
 											        })
 											        .catch(() => {
-											            img.src = "${pageContext.request.contextPath}/upload/default.jpg";
+											            img.src = ${pageContext.request.contextPath}+"/upload/default.jpg";
 											        });
 											</script>
 												<!-- X 삭제 버튼 -->
@@ -149,7 +149,7 @@ body {
 													style="width: 100px; display: flex; justify-content: center;">제품명</span>
 												<input type="text" class="form-control form-control-sm"
 													id="productName" name="product_name"
-													value="${productDTO.product_name }" required>
+													value="${productDTO.product_name }" readonly="readonly" required>
 												<div class="invalid-feedback">제품명을 입력해주세요.</div>
 											</div>
 
@@ -316,7 +316,7 @@ body {
 							<%------------------------------------------------------------------------------
 				                   		5. 삭제 처리를 위한 별도 form
 				                  	------------------------------------------------------------------------------%>
-							<form id="deleteForm" action="/product/productDeletePro"
+							<form id="deleteForm" action="${pageContext.request.contextPath}/product/productDeletePro"
 								method="post" class="d-none">
 								<input type="hidden" name="${_csrf.parameterName}"
 									value="${_csrf.token}" /> <input type="hidden"
@@ -356,6 +356,8 @@ document.getElementById("addRowBtn").addEventListener("click", function () {
     const tableBody = document.getElementById("bomTableBody");
     const newRow = document.createElement("tr");
 	
+    const contextPath = "${pageContext.request.contextPath}";
+    
     // 부품구분
     const typeCell = document.createElement("td");
     const typeSelect = document.createElement("select");
@@ -364,39 +366,22 @@ document.getElementById("addRowBtn").addEventListener("click", function () {
     typeSelect.appendChild(new Option("선택", ""));
     typeCell.appendChild(typeSelect);
 
-    fetch("/common/900")
+    fetch(contextPath+"/common/900")
         .then(res => res.json())
         .then(types => {
             types.forEach(type => {
                 const option = new Option(type.context, type.middle_status);
                 typeSelect.appendChild(option);
+                
+                console.log("option :", option);
+                console.log("type.middle_status :", type.middle_status);
+                
+                
             });
         })
         .catch(err => console.error("부품 구분 로드 실패:", err));
 
-    // 부품명
-    const partCell = document.createElement("td");
-    const partSelect = document.createElement("select");
-    partSelect.className = "form-select";
-    partSelect.required = true;
-    partSelect.appendChild(new Option("선택", ""));
-    partCell.appendChild(partSelect);
-
-    typeSelect.addEventListener("change", function () {
-        const selectedValue = this.value;
-        partSelect.innerHTML = "";
-        partSelect.appendChild(new Option("선택", ""));
-        if (selectedValue && !isNaN(parseInt(selectedValue, 10))) {
-            fetch("/product/getPartsByStatus/" + selectedValue)
-                .then(res => res.json())
-                .then(parts => {
-                    parts.forEach(part => {
-                        partSelect.appendChild(new Option(part.parts_name, part.parts_no));
-                    });
-                })
-                .catch(err => console.error("부품명 로드 실패:", err));
-        }
-    });
+   
 
     // 수량
     const cntCell = document.createElement("td");
@@ -435,6 +420,41 @@ document.getElementById("addRowBtn").addEventListener("click", function () {
     tableBody.appendChild(newRow);
     reindexBOMRows();
 });
+// 부품명
+const partCell = document.createElement("td");
+const partSelect = document.createElement("select");
+partSelect.className = "form-select";
+partSelect.required = true;
+partSelect.appendChild(new Option("선택", ""));
+partCell.appendChild(partSelect);
+
+document.getElementById("bomTableBody").addEventListener("change", function(e) {
+    if (e.target && e.target.tagName === "SELECT" && e.target.name.includes("parts_status")) {
+        const typeSelect = e.target;
+        const row = typeSelect.closest("tr");
+        const partSelect = row.querySelector("select[name*='parts_no']");
+
+        console.log("e.target:", e.target);
+        console.log("tagName:", e.target.tagName);
+        console.log("name:", e.target.name);
+        	
+        partSelect.innerHTML = "";
+        partSelect.appendChild(new Option("선택", ""));
+
+        if (typeSelect.value && !isNaN(parseInt(typeSelect.value, 10))) {
+            fetch(contextPath + "/product/getPartsByStatus/" + typeSelect.value)
+                .then(res => res.json())
+                .then(parts => {
+                    parts.forEach(part => {
+                        partSelect.appendChild(new Option(part.parts_name, part.parts_no));
+                    });
+                })
+                .catch(err => console.error("부품명 로드 실패:", err));
+        }
+    }
+});
+`
+
 // name 인덱스 재정렬
 function reindexBOMRows() {
     const rows = document.querySelectorAll("#bomTableBody tr");
@@ -514,10 +534,11 @@ document.querySelector("form").addEventListener("submit", function (e) {
         e.preventDefault();
     }
 });
+	const contextPath = "${pageContext.request.contextPath}";
 	// 파일삭제 버튼
     function deleteFile(prdouctNo) {
         if (confirm('파일을 삭제하시겠습니까?')) {
-            fetch('${pageContext.request.contextPath}/product/deleteFile/' + prdouctNo, {
+            fetch(contextPath+'/product/deleteFile/' + prdouctNo, {
                 method: 'DELETE'
             }).then(response => {
                 if (response.ok) {

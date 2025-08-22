@@ -65,7 +65,7 @@ body {
 							<%------------------------------------------------------------------------------
                 						1-1. 목록 버튼 스타일
                  					------------------------------------------------------------------------------%>
-							<a href="/parts/partsList"
+							<a href="${pageContext.request.contextPath}/parts/partsList"
 								class="btn btn-outline-light btn-sm"> <i
 								class="bi bi-list-ul me-1"></i> 목록
 							</a>
@@ -219,13 +219,13 @@ body {
 							<%------------------------------------------------------------------------------
 				                   		5. 삭제 처리를 위한 별도 form
 				                  	------------------------------------------------------------------------------%>
-							<form id="deleteForm" action="/parts/partsDeletePro"
+							<form id="deleteForm" action="${pageContext.request.contextPath}/parts/partsDeletePro"
 								method="post" class="d-none">
 								<input type="hidden" name="${_csrf.parameterName}"
 									value="${_csrf.token}" /> <input type="hidden"
 									name="parts_no" value="${partsDTO.parts_no}">
 							</form>
-							<form id="modfyForm" action="/parts/partsModify/${partsDTO.parts_no }" method="get">
+							<form id="modfyForm" action="${pageContext.request.contextPath}/parts/partsModify/${partsDTO.parts_no }" method="get">
 								
 							</form>
 						</div>
@@ -252,12 +252,11 @@ body {
             }
         });
     }
- // 수정버튼 링크
+     // 수정버튼 링크
 	const moditfyBtn = document.getElementById('moditfyBtn');
 	if (moditfyBtn) {
 	    moditfyBtn.addEventListener('click', function() {
-	        // form 제출 대신 직접 URL로 이동
-	        window.location.href = '/parts/partsModify/${partsDTO.parts_no}';
+	    	document.getElementById('modfyForm').submit();
 	    });
 	}
 </script>
