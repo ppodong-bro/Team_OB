@@ -120,6 +120,12 @@ public class ClientDaoImpl implements ClientDao {
 		return listEmp;
 	}
 
+	@Override
+	public String deptName() {
+		String deptName = session.selectOne("getDeptName");
+		return deptName;
+	}
+
 
 
 }

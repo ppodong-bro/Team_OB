@@ -583,7 +583,7 @@
                     </div>
 
                     <div class="col-md-4">
-                      <label class="form-label">거래처 이름 <span class="text-danger">*</span></label>
+                      <label class="form-label">거래처명 <span class="text-danger">*</span></label>
                       <div class="input-group input-group-sm">
                         <input type="hidden" id="clientNoInput" name="clientDto.client_No" required />
                         <input type="text" id="clientNameInput" class="form-control form-control-sm" readonly required placeholder="조회 버튼으로 선택" />
@@ -616,7 +616,7 @@
                     </div>
 
                     <div class="col-md-4">
-                      <label class="form-label">담당자 이름</label>
+                      <label class="form-label">영업 담당자</label>
                       <input type="hidden" id="empNoInput" name="empDTO.empNo" />
                       <input type="text" id="empNameInput" class="form-control form-control-sm" readonly />
                     </div>

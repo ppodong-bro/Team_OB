@@ -97,7 +97,7 @@ body {
 
 									<!-- 담당자 이름(내부) -->
 									<div class="field">
-										<div class="field-label">담당자 이름</div>
+										<div class="field-label">영업 담당자</div>
 										<div class="field-box">
 											<span><c:out value="${clientDto.empDTO.empName}" /></span>
 										</div>
@@ -152,10 +152,10 @@ body {
 										</div>
 									</div>
 
-									<!-- 최근 수정 일자 (있을 때만) -->
+									<!-- 최근 수정일 (있을 때만) -->
 									<c:if test="${not empty clientDto.modify_Date}">
 										<div class="field">
-											<div class="field-label">최근 수정 일자</div>
+											<div class="field-label">최근 수정일</div>
 											<div class="field-box">
 												<!-- LocalDateTime 문자열/타입 모두 대응: 문자열이면 substring, 타입이면 컨트롤러에서 String으로 넘겨주는 걸 권장 -->
 												<span>${fn:substring(clientDto.modify_Date, 0, 10)}</span>
@@ -163,9 +163,9 @@ body {
 										</div>
 									</c:if>
 
-									<!-- 등록 일자 -->
+									<!-- 등록일 -->
 									<div class="field">
-										<div class="field-label">등록 일자</div>
+										<div class="field-label">등록일</div>
 										<div class="field-box">
 											<span>${fn:substring(clientDto.in_Date, 0, 10)}</span>
 										</div>

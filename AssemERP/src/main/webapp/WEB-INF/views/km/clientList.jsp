@@ -59,7 +59,7 @@
 								<!-- 유형 -->
 								<div class="col-auto">
 									<div class="input-group input-group-sm">
-										<span class="input-group-text">유형</span> <select
+										<span class="input-group-text">거래처 유형</span> <select
 											name="client_Gubun" class="form-select">
 											<option value="">전체</option>
 											<option value="0"
@@ -75,7 +75,7 @@
 								<!-- 담당자 -->
 								<div class="col-auto">
 									<div class="input-group input-group-sm">
-										<span class="input-group-text">담당자</span> <input type="text"
+										<span class="input-group-text">거래처 담당자</span> <input type="text"
 											name="client_Man" class="form-control" placeholder="담당자 검색"
 											value="${clientSearchDto.client_Man}">
 									</div>

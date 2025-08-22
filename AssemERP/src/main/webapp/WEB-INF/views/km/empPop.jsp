@@ -50,9 +50,9 @@ body {
 		<thead class="table-light">
 			<tr>
 				<th style="width: 110px" class="text-center">사원번호</th>
-				<th class="text-center">이름</th>
+				<th class="text-center">사원명</th>
 				<th class="text-center">이메일</th>
-				<th class="text-center">부서코드</th>
+				<th class="text-center">부서명</th>
 				<th class="text-center">권한</th>
 				<th style="width: 90px" class="text-center">선택</th>
 			</tr>
@@ -63,7 +63,7 @@ body {
 					<td class="text-center">${e.empNo}</td>
 					<td class="text-center">${fn:escapeXml(e.empName)}</td>
 					<td class="text-center">${fn:escapeXml(e.email)}</td>
-					<td class="text-center">${fn:escapeXml(e.deptCode)}</td>
+					<td class="text-center">${fn:escapeXml(DeptName)}</td>
 					<td class="text-center">${fn:escapeXml(e.rolesStatus)}</td>
 					<td class="text-center">
 						<button type="button" class="btn btn-primary btn-sm selectBtn"

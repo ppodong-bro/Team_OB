@@ -500,7 +500,7 @@
                     </div>
 
                     <div class="col-md-4">
-                      <label class="form-label">거래처 이름 <span class="text-danger">*</span></label>
+                      <label class="form-label">거래처명<span class="text-danger">*</span></label>
                       <div class="input-group input-group-sm has-validation">
                         <input type="hidden" id="clientNoInput"  name="clientDto.client_No"  value="${sales_OrderDto.clientDto.client_No}" />
                         <input type="text"   id="clientNameInput" name="clientDto.client_Name"
@@ -539,7 +539,7 @@
                     </div>
 
                     <div class="col-md-4">
-                      <label class="form-label">담당자 이름</label>
+                      <label class="form-label">영업 담당자</label>
                       <input type="hidden" id="empNoInput" name="empDTO.empNo" value="${sales_OrderDto.empDTO.empNo}" />
                       <input type="text"   id="empNameInput" name="empDTO.empName"
                              class="form-control form-control-sm" value="${sales_OrderDto.empDTO.empName}" readonly />

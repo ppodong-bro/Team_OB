@@ -135,5 +135,11 @@ public class ClientServiceImpl implements ClientService {
 		List<EmpDTO> listEmp = clientDao.listEmp(empName);
 		return listEmp;
 	}
+
+	@Override
+	public String deptName() {
+		String deptName = clientDao.deptName();
+		return deptName;
+	}
 	
 }

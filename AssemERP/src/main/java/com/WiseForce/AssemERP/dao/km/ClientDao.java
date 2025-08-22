@@ -38,6 +38,8 @@ public interface ClientDao {
 	void 			returnPerform(Client_PerformDto client_PerformDto);
 
 	List<EmpDTO> 	listEmp(String empName);
+
+	String 			deptName();
 		
 }
 

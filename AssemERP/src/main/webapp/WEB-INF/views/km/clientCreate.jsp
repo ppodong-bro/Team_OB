@@ -127,7 +127,7 @@
                   <div class="info-grid"><!-- ✅ 2열 그리드 유지 -->
                     <!-- 담당 직원 -->
                     <div class="field">
-                      <div class="field-label">담당 직원 <span class="text-danger">*</span></div>
+                      <div class="field-label">영업 담당자<span class="text-danger">*</span></div>
                       <div class="input-group input-group-sm">
                         <!-- 서버 제출용 -->
                         <input type="hidden" id="empNo" name="empDTO.empNo" required />
@@ -136,7 +136,7 @@
                         <button type="button" class="btn btn-outline-secondary" onclick="openEmpPopup()">조회</button>
                       </div>
                       <!-- ↳ 아래 메시지 표시 위치 -->
-                      <div class="invalid-feedback">담당 직원을 선택하세요.</div>
+                      <div class="invalid-feedback">담당자를 선택하세요.</div>
                     </div>
 
                     <!-- 거래처명 -->

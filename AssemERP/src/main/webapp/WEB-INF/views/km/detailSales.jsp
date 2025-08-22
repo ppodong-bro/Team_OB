@@ -83,9 +83,7 @@
   text-shadow:
     0.7px 0.7px 0 rgba(0,0,0,.22),            /* 아래/오른쪽 얇은 그림자 */
    -0.5px -0.5px 0 rgba(255,255,255,.35);     /* 위/왼쪽 얇은 하이라이트 */
-}
-	
-	
+}	
   </style>
 
   <script>
@@ -198,7 +196,7 @@
 
                   <!-- 거래처 이름 -->
                   <div class="field">
-                    <div class="field-label">거래처 이름</div>
+                    <div class="field-label">거래처명</div>
                     <div class="field-box">
                       <span>${sales_OrderDto.clientDto.client_Name}</span>
                     </div>
@@ -238,35 +236,42 @@
 
                   <!-- 내부 담당자 이름 -->
                   <div class="field">
-                    <div class="field-label">담당자 이름</div>
+                    <div class="field-label">영업 담당자</div>
                     <div class="field-box">
                       <span>${sales_OrderDto.empDTO.empName}</span>
                     </div>
                   </div>
+                  
+                  <div class="field">
+                    <div class="field-label">납기 완료일</div>
+                     <div class="field-box">
+                        <c:out value="${fn:substring(sales_OrderDto.sales_Date,0,10)}" default="-" />
+                     </div>
+                  </div>
 
-                  <!-- 완료 일자 -->
+                  <!-- 완료일 -->
                   <c:if test="${not empty sales_OrderDto.complete_Date}">
                     <div class="field">
-                      <div class="field-label">완료 일자</div>
+                      <div class="field-label">완료일</div>
                       <div class="field-box">
                         <span>${fn:substring(sales_OrderDto.complete_Date, 0, 10)}</span>
                       </div>
                     </div>
                   </c:if>
 
-                  <!-- 최근 수정 일자 -->
+                  <!-- 최근 수정일 -->
                   <c:if test="${not empty sales_OrderDto.modify_Date}">
                     <div class="field">
-                      <div class="field-label">최근 수정 일자</div>
+                      <div class="field-label">최근 수정일</div>
                       <div class="field-box">
                         <span>${fn:substring(sales_OrderDto.modify_Date, 0, 10)}</span>
                       </div>
                     </div>
                   </c:if>
 
-                  <!-- 등록 일자 -->
+                  <!-- 등록일 -->
                   <div class="field">
-                    <div class="field-label">등록 일자</div>
+                    <div class="field-label">등록일</div>
                     <div class="field-box">
                       <span>${fn:substring(sales_OrderDto.in_Date, 0, 10)}</span>
                     </div>
