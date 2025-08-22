@@ -92,6 +92,7 @@
 		SELECT *
 		FROM PARTS
 		WHERE PARTS_STATUS = #{parts_status}
+		AND del_status = 0
 		
 	</select>
 	

@@ -66,7 +66,7 @@ body {
 							<%------------------------------------------------------------------------------
                 						1-1. 목록 버튼 스타일
                  					------------------------------------------------------------------------------%>
-							<a href="/product/productList"
+							<a href="${pageContext.request.contextPath}/product/productList"
 								class="btn btn-outline-light btn-sm"> <i
 								class="bi bi-list-ul me-1"></i> 목록
 							</a>
@@ -79,7 +79,7 @@ body {
 							<div style="width: 90px;"></div>
 						</div>
 						<div class="card-body p-4">
-							<form action="/product/productUpdate" method="post"
+							<form action="${pageContext.request.contextPath}/product/productUpdate" method="post"
 								class="needs-validation" enctype="multipart/form-data"
 								novalidate>
 
@@ -105,7 +105,7 @@ body {
 											
 											    // 이미지 로딩 실패 시 기본 이미지로
 											    img.onerror = function() {
-											        this.src = "${pageContext.request.contextPath}/upload/default.jpg";
+											        this.src = ${pageContext.request.contextPath}+"/upload/default.jpg";
 											    };
 											
 											    // 파일 크기 체크 (이미지가 있더라도 0이면 기본 이미지)
@@ -113,11 +113,11 @@ body {
 											        .then(response => {
 											            const size = response.headers.get('Content-Length');
 											            if (!size || parseInt(size) === 0) {
-											                img.src = "${pageContext.request.contextPath}/upload/default.jpg";
+											                img.src = ${pageContext.request.contextPath}+"/upload/default.jpg";
 											            }
 											        })
 											        .catch(() => {
-											            img.src = "${pageContext.request.contextPath}/upload/default.jpg";
+											            img.src = ${pageContext.request.contextPath}+"/upload/default.jpg";
 											        });
 											</script>
 										</div>
@@ -258,14 +258,14 @@ body {
 								<%------------------------------------------------------------------------------
 				                   		5. 삭제 처리를 위한 별도 form
 				                  	------------------------------------------------------------------------------%>
-								<form id="deleteForm" action="/product/productDeletePro"
+								<form id="deleteForm" action="${pageContext.request.contextPath}/product/productDeletePro"
 									method="post" class="d-none">
 									<input type="hidden" name="${_csrf.parameterName}"
 										value="${_csrf.token}" /> <input type="hidden"
 										name="product_no" value="${productDTO.product_no}">
 								</form>
 								<form id="modifyForm"
-									action="/product/productModify/${productDTO.product_no}"
+									action="${pageContext.request.contextPath}/product/productModify/${productDTO.product_no}"
 									method="get">
 									<!-- 파라미터 필요 없음 -->
 								</form>
@@ -294,14 +294,15 @@ body {
 				}
 			});
 		}
-
+		
+		// JSP 변수를 JavaScript 변수로 저장
+		const contextPath = "${pageContext.request.contextPath}";
+		
 		// 수정버튼 링크
 		const moditfyBtn = document.getElementById('moditfyBtn');
 		if (moditfyBtn) {
 		    moditfyBtn.addEventListener('click', function() {
-		        // form 제출 대신 직접 URL로 이동
-		        window.location.href = '/product/productModify/${productDTO.product_no}';
-		    });
+		    	document.getElementById('modifyForm').submit();
 		}
 	</script>
 </body>

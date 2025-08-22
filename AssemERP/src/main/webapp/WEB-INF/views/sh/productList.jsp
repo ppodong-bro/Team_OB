@@ -31,7 +31,7 @@
 							class="card-header d-flex justify-content-between align-items-center">
 							<h4 class="card-title mb-0">
 							<i class="bi bi-list-ul"></i> 제품목록</h4>
-							<a href="/product/create" class="btn btn-primary"><i class="bi bi-plus-lg"></i> 등록</a>
+							<a href="${pageContext.request.contextPath}/product/create" class="btn btn-primary"><i class="bi bi-plus-lg"></i> 등록</a>
 						</div>
 						<div class="card-body">
 							<form method="get" action="searchProductList"
@@ -114,7 +114,7 @@
 												<td style="text-align: center;">${productDTO.in_date}</td>
 												<td class="text-center">
 													<button type="button"
-														onclick="event.stopPropagation(); location.href='/product/productModify/${productDTO.product_no}'"
+														onclick="event.stopPropagation(); location.href='${pageContext.request.contextPath}/product/productModify/${productDTO.product_no}'"
 														class="btn btn-sm btn-outline-success">
 														<i class="bi bi-pencil-square"></i> 수정
 													</button>
