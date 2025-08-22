@@ -118,6 +118,21 @@ public class Purchase_OrderController {
 		}
 	}
 	
+	@GetMapping("/detailPageModifyStart")
+	public String detailPageModifyStart(@RequestParam("purchase_No")int purchase_No, Model model, RedirectAttributes ra) {
+		try {
+			purchase_OrderService.checkClose();
+			Purchase_OrderDto purchase_OrderDto = purchase_OrderService.detailPurchase(purchase_No);
+			model.addAttribute("purchase_OrderDto", purchase_OrderDto);
+			model.addAttribute("client_Gubun", 0);
+			return "km/modifyPurchase";
+		
+		} catch(IllegalArgumentException e) {
+			ra.addFlashAttribute("error", e.getMessage());
+			return "redirect:/purchase/detail?purchase_No="+purchase_No;
+		}
+	}
+	
 	@PostMapping("/modify")
 	public String modifyPurchase(Purchase_OrderDto purchase_OrderDto, RedirectAttributes ra) {
 			
