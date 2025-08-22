@@ -23,9 +23,9 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @SequenceGenerator(
-		name 		 	= "purchase_seq",
-		sequenceName 	= "purchase_seq_gen",
-		initialValue 	= 4111,
+		name 		 	= "purchase_seq_gen",
+		sequenceName 	= "purchase_seq",
+		initialValue 	= 4001,
 		allocationSize 	= 1
 		)
 public class Purchase_Order {
@@ -47,6 +47,7 @@ public class Purchase_Order {
 	private LocalDate 		purchase_date;
 	private int		  		in_status;
 	private int		  		del_status;
+	private String			purchase_title;
 	private LocalDateTime   complete_date;
 	private LocalDateTime   modify_date;
 	private LocalDateTime	in_date;

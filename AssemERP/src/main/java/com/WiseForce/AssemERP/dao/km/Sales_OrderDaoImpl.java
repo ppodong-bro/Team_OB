@@ -59,28 +59,32 @@ public class Sales_OrderDaoImpl implements Sales_OrderDao {
 	}
 
 	@Override
-	public void createSales(Sales_OrderDto sales_OrderDto) {
+	public int createSales(Sales_OrderDto sales_OrderDto) {
 
 		session.insert("createSales", sales_OrderDto);
-		session.insert("createSales_Item", sales_OrderDto);
-
+		int result = session.insert("createSales_Item", sales_OrderDto);
+		
+		return result;
 	}
 
 	@Override
-	public void modifySales(Sales_OrderDto sales_OrderDto, List<Sales_ItemDto> salesItemList) {
+	public int modifySales(Sales_OrderDto sales_OrderDto, List<Sales_ItemDto> salesItemList) {
 		System.out.println("salesItemList->" + salesItemList);
 		
-		session.delete("deleteToUpdate", salesItemList);
-		session.update("modifySales", sales_OrderDto);
-		session.insert("createSales_Item", sales_OrderDto);
-	
-
+		int result1 = session.delete("deleteToUpdate", salesItemList);
+		System.out.println("resultDelete+++"+result1);
+		int result = session.update("modifySales", sales_OrderDto);
+		System.out.println("reuslt+++"+result);
+	    session.insert("createSales_Item", sales_OrderDto);
+		
+	    return result;
 	}
 
 	@Override
-	public void deleteSales(Sales_OrderDto sales_OrderDto) {
+	public int deleteSales(Sales_OrderDto sales_OrderDto) {
 		System.out.println("Sales_OrderDaoImpl deleteSales sales_OrderDto-->" + sales_OrderDto);
-		session.update("deleteSales", sales_OrderDto);
+		int result = session.update("deleteSales", sales_OrderDto);
+		return result;
 
 	}
 
@@ -111,11 +115,13 @@ public class Sales_OrderDaoImpl implements Sales_OrderDao {
 	}
 
 	@Override
-	public void completeStatus(int sales_No, int status, List<Sales_ItemDto> salesItemList) {
+	public int completeStatus(int sales_No, int status, List<Sales_ItemDto> salesItemList) {
 		Map<String, Object> salesStatus = Map.of("sales_No", sales_No, "out_Status", status);
 		int result = session.update("completeStatus", salesStatus);
 		System.out.println("result----------------->"+result);
 		session.update("modifyComplete", salesItemList);
+		
+		return result;
 		
 	}
 
@@ -142,8 +148,8 @@ public class Sales_OrderDaoImpl implements Sales_OrderDao {
 	@Override
 	public int returnComplete(Integer out_Status, int sales_No, List<Sales_ItemDto> listSalesItem) {
 		Map<String, Object> sales_OrderMap = Map.of("out_Status", out_Status, "sales_No", sales_No);
-		session.update("returnComplete", sales_OrderMap);
-		int result = session.update("returnSalesItem", listSalesItem);
+		int result =session.update("returnComplete", sales_OrderMap);
+		session.update("returnSalesItem", listSalesItem);
 		return result;
 	}
 

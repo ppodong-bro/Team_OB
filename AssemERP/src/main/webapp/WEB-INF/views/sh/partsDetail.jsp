@@ -72,7 +72,8 @@ body {
 							<%------------------------------------------------------------------------------
                 						1-2. 타이틀 중앙 정렬 스타일
                  					------------------------------------------------------------------------------%>
-							<h4 class="card-title mb-0">부품 상세</h4>
+							<h4 class="card-title mb-0">
+							<i class="bi bi-pencil-square me-2"></i> 부품 상세</h4>
 							<%-- 타이틀의 정확한 중앙 정렬을 위한 빈 공간 --%>
 							<div style="width: 90px;"></div>
 						</div>
@@ -88,17 +89,36 @@ body {
 									<div class="col-md-4 mb-12">
 										<div class="image-box">
 											<c:choose>
-												<c:when test="${empty partsDTO.filename}">
-													<img
-														src="${pageContext.request.contextPath}/upload/default.jpg"
-														alt="기본이미지">
-												</c:when>
-												<c:otherwise>
-													<img
-														src="${pageContext.request.contextPath}/upload/s_${partsDTO.filename}"
-														alt="부품이미지">
-												</c:otherwise>
+											    <c:when test="${empty partsDTO.filename}">
+											        <!-- 파일명이 없으면 기본 이미지 -->
+											        <img id="partImage" src="${pageContext.request.contextPath}/upload/default.jpg" alt="기본이미지">
+											    </c:when>
+											    <c:otherwise>
+											        <!-- 파일명이 있으면 먼저 부품 이미지로 시도 -->
+											        <img id="partImage" src="${pageContext.request.contextPath}/upload/s_${partsDTO.filename}" alt="부품이미지">
+											    </c:otherwise>
 											</c:choose>
+											
+											<script>
+											    const img = document.getElementById('partImage');
+											
+											    // 이미지 로딩 실패 시 기본 이미지로
+											    img.onerror = function() {
+											        this.src = "${pageContext.request.contextPath}/upload/default.jpg";
+											    };
+											
+											    // 파일 크기 체크 (이미지가 있더라도 0이면 기본 이미지)
+											    fetch(img.src, { method: 'HEAD' })
+											        .then(response => {
+											            const size = response.headers.get('Content-Length');
+											            if (!size || parseInt(size) === 0) {
+											                img.src = "${pageContext.request.contextPath}/upload/default.jpg";
+											            }
+											        })
+											        .catch(() => {
+											            img.src = "${pageContext.request.contextPath}/upload/default.jpg";
+											        });
+											</script>
 										</div>
 									</div>
 
@@ -170,7 +190,7 @@ body {
 										<!-- 부품설명 -->
 										<div class="input-group">
 											<span class="input-group-text autospace"
-												style="width: 100px; display: flex; justify-content: center;">제품설명</span>
+												style="width: 100px; display: flex; justify-content: center;">부품설명</span>
 											<textarea class="form-control form-control-sm" rows="8"
 												id="partsContext" name="parts_context" readonly="readonly"
 												placeholder="설명란에 정보를 입력해주세요">${partsDTO.parts_context }</textarea>

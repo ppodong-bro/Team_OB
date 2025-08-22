@@ -31,7 +31,8 @@
 					<div class="card shadow-sm">
 						<div
 							class="card-header d-flex justify-content-between align-items-center">
-							<h4 class="card-title mb-0">부품목록</h4>
+							<h4 class="card-title mb-0">
+							<i class="bi bi-list-ul"></i> 부품목록</h4>
 							<a href="/parts/create" class="btn btn-primary"><i
 								class="bi bi-plus-lg"></i> 등록</a>
 						</div>
@@ -123,7 +124,7 @@
 											<tr style="cursor: pointer;"
 												onclick="location.href='<c:url value='/parts/partsDetail/${partsDTO.parts_no}'/>'">
 												<td style="text-align: center;">${partsDTO.parts_no}</td>
-												<td>${partsDTO.parts_name}</td>
+												<td style="text-align: left;">${partsDTO.parts_name}</td>
 												<td style="text-align: center;">${partsDTO.parts_statusName}</td>
 												<td style="text-align: center;">${partsDTO.manufacture}</td>
 												<td style="text-align: center;">${partsDTO.emp_name}</td>

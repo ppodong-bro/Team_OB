@@ -23,49 +23,6 @@ const unitPlugin = {
 		  }
 };
 
-const labels = JSON.parse('${barlabels}');
-const data = JSON.parse('${bardata}');
-
-console.log('barlabels raw:', '${barlabels}');
-console.log('bardata raw:', '${bardata}');
-
-try {
-    const labels = JSON.parse('<c:out value="${barlabels}" escapeXml="false"/>');
-    const data = JSON.parse('<c:out value="${bardata}" escapeXml="false"/>');
-    console.log('labels parsed:', labels);
-    console.log('data parsed:', data);
-
-    // 차트 생성 코드 여기에 이어서 작성
-} catch(e) {
-    console.error('JSON parse error:', e);
-}
-// ctx 선언 위치 꼭 여기!
-const ctx = document.getElementById('clientChart').getContext('2d');
-
-
-//최고/최저 색상 (최저: 빨강, 최고: 연한 초록)
-const startColor = [255, 100, 0];     // Red (RGB) - 최저값
-const endColor   = [144, 238, 144]; // LightGreen (RGB) - 최고값
-
-
-// 최대/최소값 구하기
-const maxValue = Math.max(...data);
-const minValue = Math.min(...data);
-
-// 값에 따른 색상 보간 함수
-function interpolateColor(start, end, factor) {
-    return start.map((startVal, i) =>
-        Math.round(startVal + factor * (end[i] - startVal))
-    );
-}
-
-
-//데이터별 색상 배열 생성
-const colors = data.map(value => {
- const ratio = (value - minValue) / (maxValue - minValue || 1); // 0~1 사이
- const [r, g, b] = interpolateColor(startColor, endColor, ratio);
- return "rgb("+[r]+","+[g]+","+[b]+")";
-});
 
 //막대 그림자 플러그인
 const shadowPlugin = {
@@ -98,19 +55,33 @@ const shadowPlugin = {
 };
 
 
+const labels = JSON.parse('${barlabels}');
+const data = JSON.parse('${bardata}');
+
+// 앞 5개 판매처, 뒤 5개 구매처
+const salesData = data.map((v, i) => i < 5 ? v : 0);
+const purchaseData = data.map((v, i) => i >= 5 ? v : 0);
+
+const ctx = document.getElementById('clientChart').getContext('2d');
+
 const myChart = new Chart(ctx, {
     type: 'bar',
     data: {
         labels: labels,
-        datasets: [{
-            label: '거래총액',
-            data: data,
-            backgroundColor: colors
-        }]
+        datasets: [
+            {
+                label: '거래처 실적',
+                data: data,
+                backgroundColor: data.map((_, i) => i < 5 ? 
+               		'rgba(255, 99, 132, 0.8)' : // 앞 5개는 연한 빨강 (판매처)
+                   	'rgba(75, 192, 192, 0.8)'   // 뒤 5개는 연한 파랑 (구매처)
+                )
+            }
+        ]
     },
     options: {
         responsive: true,
-    	maintainAspectRatio: false,
+        maintainAspectRatio: false,
         scales: {
             x: { grid: { display: false } },
             y: { beginAtZero: true, grid: { display: false } }
@@ -119,19 +90,60 @@ const myChart = new Chart(ctx, {
             title: {
                 display: true,
                 text: '거래처실적',
-                font: { size: 18 },
+                font: { size: 20 },
                 padding: { top: 10, bottom: 10 }
             },
             legend: {
-	            display : false
-	        },
-            unitPlugin: {
-                text: '단위: 만원',
-                font: '14px Arial',
-                color: 'gray'
-            }
+                display: true,
+                position: 'top',
+                labels: {
+                    generateLabels: function(chart) {
+                        // 커스텀 범례 생성
+                        return [
+                            {
+                                text: '판매처',
+                                fillStyle: 'rgba(255, 99, 132, 0.6)',
+                                strokeStyle: 'rgba(255, 99, 132, 1)',
+                                lineWidth: 1,
+                                hidden: false
+                            },
+                            {
+                                text: '구매처',
+                                fillStyle: 'rgba(75, 192, 192, 0.6)',
+                                strokeStyle: 'rgba(75, 192, 192, 1)',
+                                lineWidth: 1,
+                                hidden: false
+                            }
+                        ];
+                    },
+                    font: {
+                        family: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+                        size: 12,
+                        style: 'normal',
+                        weight: '300'
+                    }
+                },
+                onClick: function(e, legendItem, legend) {
+                    // 범례 클릭 시 필터링 처리
+                    const index = legendItem.index;
+                    const chart = legend.chart;
+                    
+                    chart.data.datasets.forEach(dataset => {
+                        // 모든 데이터 포인트에 대해 처리
+                        const meta = chart.getDatasetMeta(0);
+                        
+                        for (let i = 0; i < meta.data.length; i++) {
+                            const isVisible = (index === 0 && i < 5) || (index === 1 && i >= 5);
+                            meta.data[i].hidden = !isVisible;
+                        }
+                    });
+                    
+                    chart.update();
+                }
+            },
+            
         }
     },
-    plugins: [shadowPlugin, unitPlugin]
+    plugins: [shadowPlugin]
 });
 </script>

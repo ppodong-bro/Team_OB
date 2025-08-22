@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -20,6 +21,12 @@
 			<jsp:include page="/header.jsp" />
 
 			<!-- 이곳에 자신의 코드를 작성하세요 -->
+			<c:if test="${not empty error}">
+				<div class="alert alert-danger">${error}</div>
+			</c:if>
+			<c:if test="${not empty success}">
+				<div class="alert alert-success">${success}</div>
+			</c:if>
 			<div id="contents">
 
 				<div class="container-fluid px-4">
@@ -29,7 +36,8 @@
 							<h4 class="card-title mb-0">
 								<i class="bi bi-list-ul"></i> 거래처 목록
 							</h4>
-							<a href="/client/createStart" class="btn btn-primary"><i
+							<a href="/client/createStart" class="btn btn-primary"
+								onclick="return confirm('거래처를 등록 하시겠습니까?');"><i
 								class="bi bi-plus-lg"></i>등록</a>
 						</div>
 						<div class="card-body">
@@ -44,7 +52,7 @@
 									<div class="input-group input-group-sm">
 										<span class="input-group-text">거래처명</span> <input type="text"
 											name="client_Name" class="form-control" placeholder="거래처명 검색"
-											value="${ClientSearchDto.client_Name}">
+											value="${clientSearchDto.client_Name}">
 									</div>
 								</div>
 
@@ -55,70 +63,69 @@
 											name="client_Gubun" class="form-select">
 											<option value="">전체</option>
 											<option value="0"
-												${ClientSearchDto.client_Gubun == 0 ? 'selected' : ''}>구매처</option>
+												${clientSearchDto.client_Gubun == 0 ? 'selected' : ''}>구매처</option>
 											<option value="1"
-												${ClientSearchDto.client_Gubun == 1 ? 'selected' : ''}>판매처</option>
+												${clientSearchDto.client_Gubun == 1 ? 'selected' : ''}>판매처</option>
 										</select>
 									</div>
 								</div>
 
-								<!-- 주소 -->
-								<%-- 		<div class="col-auto">
-					<div class="input-group input-group-sm">
-						<span class="input-group-text">주소</span> <input type="text"
-							name="client_Address" class="form-control" placeholder="주소 검색"
-							value="${searchDto.client_Address}">
-					</div>
-				</div> --%>
+
 
 								<!-- 담당자 -->
 								<div class="col-auto">
 									<div class="input-group input-group-sm">
 										<span class="input-group-text">담당자</span> <input type="text"
 											name="client_Man" class="form-control" placeholder="담당자 검색"
-											value="${ClientSearchDto.client_Man}">
+											value="${clientSearchDto.client_Man}">
 									</div>
 								</div>
 
 								<!-- 검색 버튼 -->
 								<div class="col-auto">
-									<button type="submit" class="btn btn-primary btn-sm">검색</button>
+									<button type="submit"
+										class="btn btn-secondary btn-sm text-nowrap">
+										<i class="bi bi-search"></i> 검색
+									</button>
 								</div>
 							</form>
 
 
 							<!-- List 테이블 시작 -->
 							<div class="table-responsive">
-								<table class="table table-bordered align-middle list-table">
-									<thead class="table-light">
+								<table class="table table-bordered align-middle">
+									<thead class="table-light text-center">
 										<tr>
-											<th class="text-center">#</th>
-											<th class="text-center">거래처번호</th>
-											<th class="text-center">거래처명</th>
-											<th class="text-center">유형</th>
-											<th class="text-center">주소</th>
-											<th class="text-center">이메일</th>
-											<th class="text-center">거래처 담당자</th>
-											<th class="text-center">수정</th>
+											<th style="width: 8%;">거래처번호</th>
+											<th style="width: 17%;">거래처명</th>
+											<th style="width: 5%;">유형</th>
+											<th style="width: 27%;">주소</th>
+											<th style="width: 15%;">이메일</th>
+											<th style="width: 10%;">거래처 담당자</th>
+											<th style="width: 10%;">등록일</th>
+											<th style="width: 8%;">수정</th>
 										</tr>
 									</thead>
 									<tbody>
 										<c:forEach var="client" items="${clientList}" varStatus="st">
 											<tr style="cursor: pointer;"
 												onclick="location.href='<c:url value='/client/detail?client_No=${client.client_No}'/>'">
-												<td class="text-center">${st.index + 1}</td>
 												<td class="text-center">${client.client_No}</td>
 												<td>${client.client_Name}</td>
 												<td class="text-center">${client.context}</td>
-												<td>${client.client_Address}</td>
+												<td class="text-start">${client.client_Address}</td>
 												<td>${client.client_Email}</td>
 												<td class="text-center">${client.client_Man}</td>
+												<td class="text-center">${fn:substring(client.in_Date, 0, 10)}</td>
 												<!-- 수정 버튼 -->
-												<td class="text-center"><a
-													href="/client/modifyStart?client_No=${client.client_No}"
-													class="btn btn-sm btn-outline-success"> <i
+												<td class="text-center" onclick="event.stopPropagation()">
+													<a
+													href="<c:url value='/client/modifyStart?client_No=${client.client_No}'/>"
+													class="btn btn-sm btn-outline-success"
+													onclick="return confirm('거래처를 수정 하시겠습니까?');"> <i
 														class="bi bi-pencil-square"></i> 수정
-												</a></td>
+												</a>
+												</td>
 												<%-- 													<form
 														action="${pageContext.request.contextPath}/client/delete"
 														method="post" style="display: inline;"
@@ -134,7 +141,7 @@
 										<!-- 조회 결과 없을 때 -->
 										<c:if test="${empty clientList}">
 											<tr>
-												<td colspan="9" class="text-center">조회된 데이터가 없습니다.</td>
+												<td colspan="10" class="text-center">조회된 데이터가 없습니다.</td>
 											</tr>
 										</c:if>
 									</tbody>

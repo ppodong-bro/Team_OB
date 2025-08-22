@@ -144,5 +144,12 @@ public class PartsServiceImpl implements PartsService {
 	}
 
 
+	@Override
+	public List<PartsDTO> searchByName(String keyword) {
+		// TODO Auto-generated method stub
+		return partsDao.searchByName(keyword);
+	}
+
+
 
 }

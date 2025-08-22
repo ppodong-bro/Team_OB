@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.WiseForce.AssemERP.sh.PerformenceMapper">
+<mapper namespace="com.WiseForce.AssemERP.sh.PerformanceMapper">
 	
 	<resultMap type="ClientPerformanceDTO" id="ClientPerformanceMap">
 		<result column="client_name" 	property="client_name"/>
@@ -10,7 +10,7 @@
 
 
 
-	<select id="shYearsPurchasePerformence" parameterType="int" resultType="java.math.BigDecimal">
+	<select id="shYearsPurchasePerformance" parameterType="int" resultType="java.math.BigDecimal">
 		<![CDATA[
 		SELECT NVL(t.total_amount, 0) AS total_amount
 		FROM
@@ -33,7 +33,7 @@
 		]]>
 	</select>
 	
-	<select id="shYearsSalePerformence" parameterType="int" resultType="java.math.BigDecimal">
+	<select id="shYearsSalePerformance" parameterType="int" resultType="java.math.BigDecimal">
 		<![CDATA[
 		SELECT NVL(t.total_amount, 0) AS total_amount
 		FROM
@@ -57,33 +57,213 @@
 	</select>
 	
 	
-	<select id="shClientPerform" resultMap="ClientPerformanceMap">
+	<select id="shSalesClientPerform" resultMap="ClientPerformanceMap">
+		<![CDATA[
+		SELECT *
+		FROM (
+		    SELECT c.client_name,
+		           NVL(SUM(si.totalcost), 0) AS totalcost
+		    FROM client c
+		    JOIN sales_order so
+		      ON c.client_no = so.client_no
+		     AND so.del_status = 0
+		     AND so.in_date >= ADD_MONTHS(TRUNC(SYSDATE, 'MM'), -6)
+		    JOIN (
+		        SELECT sales_no,
+		               SUM(sales_item_cnt * sales_item_cost) AS totalcost
+		        FROM sales_item
+		        GROUP BY sales_no
+		    ) si ON so.sales_no = si.sales_no
+		    WHERE c.del_status = 0
+		      AND c.client_gubun = 1
+		    GROUP BY c.client_name
+		    ORDER BY totalcost DESC
+		)
+		WHERE ROWNUM <= 5
+	    ]]>
+	</select>
+	
+	
+	<select id="shPurchaseClientPerform" resultMap="ClientPerformanceMap">
 		<![CDATA[
 		SELECT client_name, totalcost
-		FROM(
-		    SELECT rownum rn, client_total_data.client_name, client_total_data.totalcost
-		    FROM (
-		        SELECT c.client_name, sales_order.totalcost
-		        FROM client c 
-		        LEFT JOIN (
-		            SELECT so.sales_no, so.client_no, si.totalcost
-		            FROM sales_order so 
-		            LEFT JOIN (
-		                SELECT sales_no, (sales_item_cnt*sales_item_cost) AS totalcost
-		                FROM sales_item
-		                ) si
-		            ON si.sales_no = so.sales_no
-		            WHERE so.del_status = 0
-		            AND so.in_date >= ADD_MONTHS(TRUNC(SYSDATE, 'MM'), -6)
-		            ) sales_order
-		        ON c.client_no = sales_order.client_no
-		        where c.del_status = 0
-		        AND c.client_gubun = 1
-		        AND totalcost is not null
-		        ) client_total_data
-		    where rownum <= 10
-		    ORDER BY client_total_data.totalcost DESC    
-		    )
+		FROM (
+		    SELECT c.client_name,
+		           NVL(SUM(pi.totalcost), 0) AS totalcost
+		    FROM client c
+		    JOIN purchase_order po
+		      ON c.client_no = po.client_no
+		     AND po.del_status = 0
+		     AND po.in_date >= ADD_MONTHS(TRUNC(SYSDATE, 'MM'), -6)
+		    JOIN (
+		        SELECT purchase_no,
+		               SUM(purchase_item_cnt * purchase_item_cost) AS totalcost
+		        FROM purchase_item
+		        GROUP BY purchase_no
+		    ) pi ON po.purchase_no = pi.purchase_no
+		    WHERE c.del_status = 0
+		      AND c.client_gubun = 0
+		    GROUP BY c.client_name
+		    ORDER BY totalcost DESC
+		)
+		WHERE ROWNUM <= 5
 	    ]]>
+	
+	</select>
+	
+	
+	<select id="shProductPerform" parameterType="int" resultType="YearsPerformDTO">
+		<![CDATA[
+		WITH months AS (
+    		SELECT ADD_MONTHS(TRUNC(SYSDATE, 'MM'), -6 + LEVEL - 1) AS month_date
+    		FROM DUAL
+    		CONNECT BY LEVEL <= 7
+		)
+		SELECT TO_CHAR(m.month_date, 'YYYY-MM') AS each_month,
+       	NVL(SUM(si.totalCost), 0) AS item_totalCost
+		FROM months m
+		LEFT JOIN 
+			(SELECT *
+	        FROM sales_order
+	        WHERE del_status = 0) so ON TRUNC(so.in_date, 'MM') = m.month_date
+		LEFT JOIN
+    		(SELECT sales_no, SUM(sales_item_cnt*sales_item_cost) as totalCost
+     		FROM sales_item
+     		WHERE product_no = #{value}
+     		GROUP BY sales_no) si
+		ON so.sales_no = si.sales_no
+		GROUP BY m.month_date
+		ORDER BY m.month_date
+		]]>
+	</select>
+	
+	<select id="shPartsPerform" parameterType="int" resultType="YearsPerformDTO">
+		<![CDATA[
+		WITH months AS (
+		SELECT ADD_MONTHS(TRUNC(SYSDATE, 'MM'), -6 + LEVEL - 1) AS month_date
+		FROM DUAL
+		CONNECT BY LEVEL <= 7
+		)
+		SELECT TO_CHAR(m.month_date, 'YYYY-MM') AS each_month,
+		NVL(SUM(pi.totalCost), 0) AS item_totalCost
+		FROM months m
+		LEFT JOIN 
+			(SELECT *
+        	FROM purchase_order
+        	WHERE del_status = 0) po ON TRUNC(po.in_date, 'MM') = m.month_date
+		LEFT JOIN
+		(SELECT purchase_no, SUM(purchase_item_cnt*purchase_item_cost) as totalCost
+		FROM purchase_item
+		WHERE parts_no = #{value}
+		GROUP BY purchase_no) pi
+		ON po.purchase_no = pi.purchase_no
+		GROUP BY m.month_date
+		ORDER BY m.month_date
+	 ]]>
+	</select>
+	
+	<select id="shGetSalesClient" parameterType="String" resultType="ClientPerformanceDTO">
+		SELECT client_no, client_name
+		FROM client
+		WHERE del_status = 0
+		AND client_gubun = 1
+		AND LOWER(client_name) LIKE LOWER('%' || #{keyword} || '%')
+	</select>
+	
+	<select id="shGetPurchaseClient"  parameterType="String"  resultType="ClientPerformanceDTO">
+		SELECT client_no, client_name
+		FROM client
+		WHERE del_status = 0
+		AND client_gubun = 0
+		AND LOWER(client_name) LIKE LOWER('%' || #{keyword} || '%')
+	</select>
+	
+	<select id="shGetSalesClientData" parameterType="int" resultType="ClientPerformanceDTO">
+		<![CDATA[
+		WITH months AS (
+    		SELECT ADD_MONTHS(TRUNC(SYSDATE, 'MM'), -6 + LEVEL - 1) AS month_date
+    		FROM DUAL
+    		CONNECT BY LEVEL <= 7
+		)
+		SELECT TO_CHAR(m.month_date, 'YYYY-MM') AS each_month,
+       	NVL(SUM(si.totalCost), 0) AS totalCost
+		FROM months m
+        LEFT JOIN 
+			(SELECT *
+	        FROM sales_order
+            WHERE del_status = 0
+            AND Client_no = #{value}) so ON TRUNC(so.in_date, 'MM') = m.month_date
+		LEFT JOIN
+    		(SELECT sales_no, SUM(sales_item_cnt*sales_item_cost) as totalCost
+     		FROM sales_item
+     		GROUP BY sales_no) si ON so.sales_no = si.sales_no
+        GROUP BY m.month_date
+		ORDER BY m.month_date
+		]]>
+	</select>
+	
+	<select id="shGetPurchaseClientData" parameterType="int" resultType="ClientPerformanceDTO">
+		<![CDATA[
+		WITH months AS (
+    		SELECT ADD_MONTHS(TRUNC(SYSDATE, 'MM'), -6 + LEVEL - 1) AS month_date
+    		FROM DUAL
+    		CONNECT BY LEVEL <= 7
+		)
+		SELECT TO_CHAR(m.month_date, 'YYYY-MM') AS each_month,
+       	NVL(SUM(si.totalCost), 0) AS totalCost
+		FROM months m
+        LEFT JOIN 
+			(SELECT *
+	        FROM purchase_order
+            WHERE del_status = 0
+            AND Client_no = #{value}) so ON TRUNC(so.in_date, 'MM') = m.month_date
+		LEFT JOIN
+    		(SELECT purchase_no, SUM(purchase_item_cnt*purchase_item_cost) as totalCost
+     		FROM purchase_item
+     		GROUP BY purchase_no) si ON so.purchase_no = si.purchase_no
+        GROUP BY m.month_date
+		ORDER BY m.month_date
+		]]>
+	</select>
+	
+	
+	<select id="shGetMostProductOfYears" resultType="int" >
+		<![CDATA[
+		SELECT product_no FROM (
+            SELECT product_no, SUM(sales_item_cnt * sales_item_cost) AS totalcost FROM (
+                 (SELECT * FROM sales_item
+                 ) si
+                 LEFT JOIN 
+                 (SELECT sales_no FROM sales_order 
+                 WHERE in_date >= ADD_MONTHS(sysdate, -6)
+                 ) so
+                 ON si.sales_no = so.sales_no
+             )
+             GROUP BY product_no
+             ORDER BY totalcost DESC
+        )
+        WHERE rownum = 1
+		]]>
+	</select>
+	
+	
+	<select id="shGetMostClientOfYears" resultType="int">
+		<![CDATA[
+		SELECT Client_no FROM (
+            SELECT Client_no, SUM(sales_item_cnt * sales_item_cost) AS totalcost 
+            FROM(
+                (SELECT sales_no, client_no
+                 FROM sales_order 
+                 WHERE in_date >= ADD_MONTHS(sysdate, -6)
+                 ) so    
+                 LEFT JOIN (
+                    SELECT * FROM sales_item) si 
+                ON si.sales_no = so.sales_no
+                ) 
+            GROUP BY Client_no  
+            ORDER BY totalcost DESC
+         )
+        WHERE rownum = 1
+        ]]>
 	</select>
 </mapper>

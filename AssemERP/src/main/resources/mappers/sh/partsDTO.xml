@@ -17,7 +17,7 @@
 						(SELECT *
 						 FROM parts
 						 WHERE del_status = 0
-						 ORDER BY parts_no) a
+						 ORDER BY parts_no desc) a
 		)
 		WHERE rn BETWEEN #{start} and #{end}
 		
@@ -44,7 +44,7 @@
 		        AND parts_status = #{parts_status}
 		      </if>
 		      <if test="parts_name != null and parts_name != ''">
-		        AND parts_name LIKE '%' || #{parts_name} || '%'
+		        AND LOWER(parts_name) LIKE LOWER('%' || #{parts_name} || '%')
 		      </if>
 		      <if test="startDate != null">
 		        AND TRUNC(in_date) &gt;= #{startDate}
@@ -72,7 +72,7 @@
 		        AND parts_status = #{parts_status}
 		      </if>
 		      <if test="parts_name != null and parts_name != ''">
-		        AND parts_name LIKE '%' || #{parts_name} || '%'
+		        AND LOWER(parts_name) LIKE LOWER('%' || #{parts_name} || '%')
 		      </if>
 		      <if test="startDate != null">
 		        AND TRUNC(in_date) &gt;= #{startDate}
@@ -81,14 +81,14 @@
 		        AND TRUNC(in_date) &lt;= #{endDate}
 		      </if>
 		    </where>
-		    ORDER BY parts_no
+		    ORDER BY parts_no desc
 		  ) a
 		  WHERE ROWNUM &lt;= #{end}   
 		)
 		WHERE rn &gt;= #{start}       
 	</select>
 	
-	<select id="shfindPartsByStatus" parameterType="int" resultType="partsDTO">
+	<select id="shfindPartsByStatus" parameterType="int" resultType="PartsDTO">
 		SELECT *
 		FROM PARTS
 		WHERE PARTS_STATUS = #{parts_status}
@@ -105,6 +105,13 @@
 		SELECT parts_name
 		FROM parts
 		where parts_no = #{parts_no}	
+	</select>
+
+	<select id="shSearchByPartsName" parameterType="String" resultType="PartsDTO">
+		SELECT parts_no, parts_name
+		FROM parts
+		WHERE del_status = 0
+		AND LOWER(parts_name) LIKE LOWER('%' || #{keyword} || '%')
 	</select>
 
 </mapper>

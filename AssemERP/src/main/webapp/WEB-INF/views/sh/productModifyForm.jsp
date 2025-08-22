@@ -73,7 +73,9 @@ body {
 							<%------------------------------------------------------------------------------
                 						1-2. 타이틀 중앙 정렬 스타일
                  					------------------------------------------------------------------------------%>
-							<h4 class="card-title mb-0">제품 수정</h4>
+							<h4 class="card-title mb-0">
+								<i class="bi bi-pencil-square me-2"></i> 제품 수정
+							</h4>
 							<%-- 타이틀의 정확한 중앙 정렬을 위한 빈 공간 --%>
 							<div style="width: 90px;"></div>
 						</div>
@@ -93,21 +95,44 @@ body {
 											<div class="image-box">
 												<c:choose>
 													<c:when test="${empty productDTO.filename}">
-														<img
+														<!-- 파일명이 없으면 기본 이미지 -->
+														<img id="productImage"
 															src="${pageContext.request.contextPath}/upload/default.jpg"
 															alt="기본이미지">
 													</c:when>
 													<c:otherwise>
-														<img
+														<!-- 파일명이 있으면 먼저 부품 이미지로 시도 -->
+														<img id="productImage"
 															src="${pageContext.request.contextPath}/upload/s_${productDTO.filename}"
-															alt="부품이미지">
+															alt="제품이미지">
 													</c:otherwise>
 												</c:choose>
+
+												<script>
+											    const img = document.getElementById('productImage');
+											
+											    // 이미지 로딩 실패 시 기본 이미지로
+											    img.onerror = function() {
+											        this.src = "${pageContext.request.contextPath}/upload/default.jpg";
+											    };
+											
+											    // 파일 크기 체크 (이미지가 있더라도 0이면 기본 이미지)
+											    fetch(img.src, { method: 'HEAD' })
+											        .then(response => {
+											            const size = response.headers.get('Content-Length');
+											            if (!size || parseInt(size) === 0) {
+											                img.src = "${pageContext.request.contextPath}/upload/default.jpg";
+											            }
+											        })
+											        .catch(() => {
+											            img.src = "${pageContext.request.contextPath}/upload/default.jpg";
+											        });
+											</script>
 												<!-- X 삭제 버튼 -->
 												<c:if test="${!empty productDTO.filename}">
 													<i class="bi bi-x"
 														onclick="deleteFile(${productDTO.product_no})"
-														style="position: absolute; background-color: red; top: 0px; right: 0px; font-size: 30px; border: solid; border-width: 2px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; line-height: 40px;  border-radius: 2px;"></i>
+														style="position: absolute; background-color: red; top: 0px; right: 0px; font-size: 30px; border: solid; border-width: 2px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; line-height: 40px; border-radius: 2px;"></i>
 												</c:if>
 											</div>
 										</div>
@@ -175,13 +200,16 @@ body {
 								</div>
 
 
-								<!-- 부품설명 -->
+								<!-- 제품설명 -->
 								<div class="row">
 									<div class="col2-md-12 pt-5">
-										<textarea class="form-control form-control-sm" rows="5"
-											id="productContext" name="product_context"
-											placeholder="설명란에 정보를 입력해주세요">${productDTO.product_context }</textarea>
-
+										<div class="input-group">
+											<span class="input-group-text autospace"
+												style="width: 100px; display: flex; justify-content: center;">제품설명</span>
+											<textarea class="form-control form-control-sm" rows="5"
+												id="productContext" name="product_context"
+												placeholder="설명란에 정보를 입력해주세요">${productDTO.product_context }</textarea>
+										</div>	
 									</div>
 								</div>
 
@@ -255,9 +283,12 @@ body {
 													value="${bom.cnt}" min="1" required /></td>
 
 												<!-- 삭제 버튼 -->
-												<td>
-													<button type="button" class="btn btn-danger"
-														onclick="handleRowDelete(this)">삭제</button>
+												<td class="text-center">
+													<button type="button"
+														class="btn btn-sm btn-outline-danger remove-item-btn"
+														onclick="handleRowDelete(this)">
+														<i class="bi bi-trash"></i> 삭제
+													</button>
 												</td>
 											</tr>
 										</c:forEach>
@@ -380,12 +411,21 @@ document.getElementById("addRowBtn").addEventListener("click", function () {
     // 삭제 버튼
     const delCell = document.createElement("td");
     const delBtn = document.createElement("button");
+   	const icon = document.createElement("i")
+   	
+   	icon.className = "bi bi-trash"; 
+   	
     delBtn.type = "button";
-    delBtn.className = "btn btn-danger";
-    delBtn.innerText = "삭제";
+    delBtn.className = "btn btn-sm btn-outline-danger remove-item-btn";
     delBtn.onclick = () => handleRowDelete(delBtn);
+    
+    delBtn.appendChild(icon);
+    delBtn.append(" 삭제"); // 아이콘 뒤에 텍스트
+    
+    delCell.style.textAlign = "center"; // 셀 안에서 버튼을 중앙 정렬
     delCell.appendChild(delBtn);
-
+    
+    
     // 행에 각 셀 append
     newRow.appendChild(typeCell);
     newRow.appendChild(partCell);

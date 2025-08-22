@@ -14,6 +14,7 @@
 		<result column="SALES_DATE" property="sales_Date" />
 		<result column="OUT_STATUS" property="out_Status" />
 		<result column="DEL_STATUS" property="del_Status" />
+		<result	column="SALES_TITLE" property="sales_Title"/>
 		<result	column="COMPLETE_DATE" property="complete_Date"/>
 		<result column="MODIFY_DATE"	property="modify_Date"/>
 		<result column="IN_DATE" 	property="in_Date" />
@@ -48,14 +49,14 @@
 
 		<collection property="sales_Item" ofType="Sales_ItemDto">
 			<id column="SALES_NO" 				property="sales_No" />
-			<id column="PRODUCT_NO" 			property="product_No" />
+			<id column="I_PRODUCT_NO" 			property="product_No" />
 			<id column="PRODUCT_VERSION"		property="product_Version"/>
 			<result column="SALES_ITEM_CNT" 	property="sales_Item_Cnt" />
 			<result column="SALES_ITEM_OUTCNT"	property="sales_Item_OutCnt" />
 			<result column="SALES_ITEM_COST" 	property="sales_Item_Cost" />
 
 			<association property="productDto" javaType="ProductDTO">
-				<id column="PRODUCT_NO" 		property="product_no" />
+				<id column="P_PRODUCT_NO" 		property="product_no" />
 				<result column="PRODUCT_NAME" 	property="product_name" />
 				
 			</association>
@@ -66,6 +67,7 @@
 	
 	<resultMap type="Sales_OrderDto" id="clientNoAndCloseDate">
 		<id column="SALES_NO" property="sales_No"/>
+		<result	column="SALES_TITLE" property="sales_Title"/>
 		<result column="COMPLETE_DATE" property="complete_Date"/>
 		
 		<association property="clientDto" javaType="ClientDto">
@@ -113,61 +115,64 @@
 		)
 	</select>
 
-	<select id="listSales" parameterType="Sales_OrderSearchDto"
-		resultMap="sales_OrderMap">
-  	<![CDATA[
-    	SELECT S.SALES_NO, S.SALES_DATE, S.OUT_STATUS, S.DEL_STATUS
-         	 , S.IN_DATE, H.CLIENT_NO, H.CLIENT_NAME, H.CLIENT_TEL
-         	 , E.EMP_NO, E.EMP_NAME
-         	 , I.PRODUCT_NO, I.SALES_ITEM_CNT, I.SALES_ITEM_OUTCNT
-         	 , I.SALES_ITEM_COST, P.PRODUCT_NO, P.PRODUCT_NAME
-    	FROM (	SELECT ROWNUM RN , O.*
-			    FROM (SELECT *
-			    	  FROM   SALES_ORDER
-			      	  WHERE  DEL_STATUS = 0
-			      	  ORDER BY SALES_NO DESC
-			    	  ) O
-		      )S
-    	LEFT JOIN CLIENT  C ON S.CLIENT_NO = C.CLIENT_NO
-    	LEFT JOIN CLIENT_HIS H ON S.CLIENT_NO = H.CLIENT_NO AND COALESCE(S.MODIFY_DATE, S.IN_DATE)
-												     		    BETWEEN H.START_DATE AND H.END_DATE
-    	LEFT JOIN EMP     E ON S.EMP_NO    = E.EMP_NO
-    	LEFT JOIN SALES_ITEM I ON S.SALES_NO = I.SALES_NO
-    	LEFT JOIN PRODUCT P ON I.PRODUCT_NO = P.PRODUCT_NO
-  ]]>
-
-		<where>
-
-			<if test="client_Name != null and client_Name.trim() != ''">
-				AND C.CLIENT_NAME LIKE '%' || #{client_Name} || '%'
-			</if>
-			<if test="empName != null and empName.trim() != ''">
-				AND E.EMP_NAME LIKE '%' || #{empName} || '%'
-			</if>
-			<if test="out_Status != null">
-				AND S.OUT_STATUS = #{out_Status}
-			</if>
-			<if test="start != null and end != null">
-				AND RN <![CDATA[>=]]>
-				#{start} AND RN <![CDATA[<=]]>
-				#{end}
-			</if>
-			<if test="sales_Date_Start != null">
-				AND S.SALES_DATE <![CDATA[>=]]> #{sales_Date_Start}
-			</if>
-			<if test="sales_Date_End != null">
-				AND S.SALES_DATE<![CDATA[<=]]> #{sales_Date_End}
-			</if>
-		</where>
-		ORDER BY S.SALES_NO DESC
+	<select id="listSales" parameterType="Sales_OrderSearchDto" resultMap="sales_OrderMap">
+	  SELECT  S.SALES_NO, S.SALES_DATE, S.OUT_STATUS, S.DEL_STATUS, S.SALES_TITLE, S.IN_DATE,
+			  H.CLIENT_NO, H.CLIENT_NAME, H.CLIENT_TEL,
+			  E.EMP_NO, E.EMP_NAME,
+			  I.PRODUCT_NO AS I_PRODUCT_NO, I.SALES_ITEM_CNT, I.SALES_ITEM_OUTCNT, I.SALES_ITEM_COST,
+			  P.PRODUCT_NO AS P_PRODUCT_NO, P.PRODUCT_NAME
+	  FROM ( SELECT RN, SALES_NO
+			 FROM (
+			       SELECT ROWNUM RN, T.SALES_NO
+			       FROM (SELECT DISTINCT S.SALES_NO
+				         FROM SALES_ORDER S LEFT JOIN CLIENT_HIS H ON S.CLIENT_NO = H.CLIENT_NO AND COALESCE(S.MODIFY_DATE, S.IN_DATE)
+				      																                   BETWEEN H.START_DATE AND H.END_DATE
+				        				   LEFT JOIN EMP E ON S.EMP_NO = E.EMP_NO
+				         WHERE S.DEL_STATUS = 0
+	
+					    <if test="client_Name != null and client_Name.trim() != ''">
+					     AND H.CLIENT_NAME LIKE '%' || #{client_Name} || '%'
+					    </if>
+					    <if test="empName != null and empName.trim() != ''">
+					     AND E.EMP_NAME LIKE '%' || #{empName} || '%'
+					    </if>
+					    <if test="out_Status != null">
+					     AND S.OUT_STATUS = #{out_Status}
+					    </if>
+					    <if test="sales_Date_Start != null">
+					     AND S.SALES_DATE <![CDATA[>=]]> #{sales_Date_Start}
+					    </if>
+					    <if test="sales_Date_End != null">
+					     AND S.SALES_DATE <![CDATA[<=]]> #{sales_Date_End}
+					     </if>
+					     ORDER BY S.SALES_NO DESC
+				         ) T
+				       
+			       WHERE ROWNUM <![CDATA[ <= ]]> #{end} 
+			      
+			      )
+			      
+			WHERE RN <![CDATA[ >= ]]> #{start}
+	
+	) PAGE  JOIN SALES_ORDER S   ON S.SALES_NO   = PAGE.SALES_NO
+			LEFT JOIN CLIENT_HIS H  ON s.CLIENT_NO = H.CLIENT_NO  AND COALESCE(S.MODIFY_DATE, S.IN_DATE)
+			       													  BETWEEN H.START_DATE AND H.END_DATE 
+			LEFT JOIN EMP E        ON S.EMP_NO    = E.EMP_NO
+			LEFT JOIN SALES_ITEM i ON I.SALES_NO  = S.SALES_NO
+			LEFT JOIN PRODUCT P    ON P.PRODUCT_NO = I.PRODUCT_NO
+	ORDER BY PAGE.RN
+	
 	</select>
+
+	
+
 	
 	<select id="detailSales" parameterType="int" resultMap="sales_OrderMap">
-		SELECT S.SALES_NO, S.SALES_DATE, S.OUT_STATUS, S.DEL_STATUS, S.COMPLETE_DATE, S.MODIFY_DATE
+		SELECT S.SALES_NO, S.SALES_DATE, S.OUT_STATUS, S.DEL_STATUS, S.SALES_TITLE, S.COMPLETE_DATE, S.MODIFY_DATE
          	 , S.IN_DATE, H.CLIENT_NO, H.CLIENT_NAME, H.CLIENT_EMAIL
          	 , H.CLIENT_MAN, H.CLIENT_ADDRESS, H.CLIENT_TEL
          	 , E.EMP_NO, E.EMP_NAME
-         	 , I.PRODUCT_NO, I.PRODUCT_VERSION, I.SALES_ITEM_CNT, I.SALES_ITEM_OUTCNT
+         	 , I.PRODUCT_NO AS I_PRODUCT_NO, I.PRODUCT_VERSION, I.SALES_ITEM_CNT, I.SALES_ITEM_OUTCNT
          	 , I.SALES_ITEM_COST, P.PRODUCT_NAME
         FROM SALES_ORDER S LEFT JOIN CLIENT_HIS H ON S.CLIENT_NO = H.CLIENT_NO AND COALESCE(S.MODIFY_DATE, S.IN_DATE)
 												     							   BETWEEN H.START_DATE AND H.END_DATE
@@ -208,23 +213,40 @@
 		
 	<insert id="createSales" parameterType="Sales_OrderDto">
 		<selectKey keyProperty="sales_No" resultType="int" order="BEFORE">
-			SELECT SALES_SEQ_GEN.NEXTVAL
+			SELECT SALES_SEQ.NEXTVAL
 			FROM   DUAL
 		</selectKey>
 			
-		INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, DEL_STATUS, IN_DATE) VALUES
-		(#{sales_No}, #{clientDto.client_No}, #{empDTO.empNo}, #{sales_Date, jdbcType=DATE}, 0, 0, SYSDATE )
+		INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, DEL_STATUS, SALES_TITLE, IN_DATE) VALUES
+		(#{sales_No}, #{clientDto.client_No}, #{empDTO.empNo}, #{sales_Date, jdbcType=DATE}, 0, 0, #{sales_Title}, SYSDATE )
 	</insert>
 		
 	<insert id="createSales_Item" parameterType="sales_OrderDto">
 	
 		INSERT INTO SALES_ITEM (SALES_NO, PRODUCT_NO, PRODUCT_VERSION, SALES_ITEM_CNT, SALES_ITEM_OUTCNT, SALES_ITEM_COST)
 		<foreach collection="sales_Item" item="item" separator="UNION ALL">
-			SELECT #{sales_No}, #{item.product_No}, #{item.product_Version}, #{item.sales_Item_Cnt}, #{item.sales_Item_OutCnt}, #{item.sales_Item_Cost}
+			SELECT #{sales_No}, #{item.product_No}, #{item.product_Version}, #{item.sales_Item_Cnt}, 0, #{item.sales_Item_Cost}
 			FROM DUAL
 		</foreach>
 		
 	</insert>
+	
+<!-- 	<insert id="createSales_Item" parameterType="sales_OrderDto">
+  INSERT ALL
+  <foreach collection="sales_Item" item="item">
+    INTO SALES_ITEM (
+      SALES_NO, PRODUCT_NO, PRODUCT_VERSION, SALES_ITEM_CNT, SALES_ITEM_OUTCNT, SALES_ITEM_COST
+    ) VALUES (
+      #{sales_No,               jdbcType=NUMERIC},
+      #{item.product_No,        jdbcType=NUMERIC},
+      #{item.product_Version,   jdbcType=VARCHAR},
+      #{item.sales_Item_Cnt,    jdbcType=NUMERIC},
+      #{item.sales_Item_OutCnt, jdbcType=NUMERIC},
+      #{item.sales_Item_Cost,   jdbcType=NUMERIC}
+    )
+  </foreach>
+  SELECT 1 FROM DUAL
+</insert> -->
 	
 	<update id="modifySales" parameterType="Sales_OrderDto">
 	
@@ -242,6 +264,9 @@
 		</if>
 		<if test="del_Status != null">
 			DEL_STATUS = #{del_Status},
+		</if>
+		<if test="sales_Title != null">
+			SALES_TITLE = #{sales_Title},
 		</if>
 			MODIFY_DATE = SYSDATE
 		</set>
@@ -360,21 +385,6 @@
 	  GROUP BY i.item_no
 	</select>
 	
-<!-- <select id="findProductStocks" resultType="map">
-  SELECT
-    i.item_no        "product_no",
-    NVL(SUM(CASE
-              WHEN i.inout_status = 0 THEN i.item_cnt
-              WHEN i.inout_status = 1 THEN -i.item_cnt
-              ELSE 0
-            END), 0) "stock"
-  FROM INVENTORY i
-  WHERE i.item_status = 1
-    AND i.item_no IN
-    <foreach collection="productNos" item="no" open="(" separator="," close=")">
-      #{no}
-    </foreach>
-  GROUP BY i.item_no
-</select> -->
+
 
 </mapper>

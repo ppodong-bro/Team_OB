@@ -38,7 +38,7 @@
 							<h4 class="card-title mb-0">
 								<i class="bi bi-list-ul"></i> 발주 목록
 							</h4>
-							<a href="/purchase/createStart" class="btn btn-primary"><i
+							<a href="/purchase/createStart" class="btn btn-primary" onclick="return confirm('발주를 등록 하시겠습니까?');"><i
 								class="bi bi-plus-lg"></i>등록</a>
 						</div>
 						<div class="card-body">
@@ -97,9 +97,11 @@
 								</div>
 
 								<!-- 검색 버튼 -->
-								<div class="col-auto">
-									<button type="submit" class="btn btn-primary btn-sm">검색</button>
-								</div>
+									<div class="col-auto">
+										<button type="submit" class="btn btn-secondary btn-sm text-nowrap">
+											<i class="bi bi-search"></i> 검색
+										</button>
+									</div>
 							</form>
 
 							<!-- List 테이블 시작 -->
@@ -107,31 +109,29 @@
 								<table class="table table-bordered align-middle ">
 									<thead class="table-light">
 										<tr>
-											<th class="text-center">#</th>
-											<th class="text-center">발주번호</th>
-											<th class="text-center">거래처명</th>
-											<th class="text-center">부품명</th>
-											<th class="text-center">요청수량</th>
-											<th class="text-center">입고수량</th>
-											<th class="text-center">총액</th>
-											<th class="text-center">납기완료일</th>
-											<th class="text-center">입고상태</th>
-											<th class="text-center">담당자</th>
-											<th class="text-center">수정/삭제</th>
+											<th style="width: 7%;" class="text-center">번호</th>
+											<th style="width: 10%;" class="text-center">거래처명</th>
+											<th style="width: 22%;" class="text-center">제목</th>
+											<th style="width: 8%;" class="text-center">요청수량</th>
+											<th style="width: 8%;" class="text-center">입고수량</th>
+											<th style="width: 7%;" class="text-center">총액</th>
+											<th style="width: 10%;" class="text-center">납기완료일</th>
+											<th style="width: 8%;" class="text-center">입고상태</th>
+											<th style="width: 8%;" class="text-center">담당자</th>
+											<th style="width: 10%;" class="text-center">등록일</th>
+											<th style="width: 8%;" class="text-center">수정</th>
 										</tr>
 									</thead>
 									<tbody>
 										<c:forEach var="order" items="${listPurchase}" varStatus="st">
 											<tr style="cursor: pointer;"
 												onclick="location.href='<c:url value='/purchase/detail?purchase_No=${order.purchase_No}'/>'">
-												<!-- 순번 -->
-												<td class="text-center">${st.index + 1}</td>
 
 												<!-- 발주번호 (detail 링크) -->
 												<td class="text-center">${order.purchase_No}</td>
 
 												<!-- client → clientName -->
-												<td>${order.clientDto.client_Name}</td>
+												<td class="text-center"> ${order.clientDto.client_Name}</td>
 
 												<c:choose>
 													<c:when test="${not empty order.purchase_Item}">
@@ -140,10 +140,14 @@
 															value="${fn:length(order.purchase_Item) - 1}" />
 
 														<!-- 부품명 -->
-														<td><c:out value="${first.partsDTO.parts_name}" /> <c:if
+													<%-- 	<td><c:out value="${first.partsDTO.parts_name}" /> <c:if
 																test="${othersCount > 0}">
 													 &nbsp;외 ${othersCount}종
-													</c:if></td>
+													</c:if></td> --%>
+															<td class="name text-truncate"
+															title="<c:out value='${order.purchase_Title != null ? order.purchase_Title : "-"}'/>"><c:out
+																value="${order.purchase_Title != null ? order.purchase_Title : '-'}" />
+														</td>
 
 														<!-- 요청수량 (총합) -->
 														<td class="text-center"><c:out
@@ -166,7 +170,7 @@
 												</td>
 
 												<!-- 납기 완료일 -->
-												<td>${order.purchase_Date}</td>
+												<td class="text-center">${order.purchase_Date}</td>
 
 												<!-- 입고 상태 -->
 												<td class="text-center"><span class="status-text"
@@ -182,15 +186,18 @@
 												<!-- client → clientMan -->
 												<td class="text-center">${order.empDTO.empName}</td>
 
+												<td class="text-center">${fn:substring(order.in_Date, 0, 10)}</td>
+
 
 												<!-- 수정/삭제 버튼 -->
 												<c:choose>
 													<c:when
 														test="${order.in_Status == 0 or order.in_Status == 1}">
-														<td class="text-center">
-															<!-- 수정 버튼 --> <a
-															href="/purchase/modifyStart?purchase_No=${order.purchase_No}"
-															class="btn btn-sm btn-outline-success"> <i
+														<td class="text-center" onclick="event.stopPropagation()">
+															<a
+															href="<c:url value='/purchase/modifyStart?purchase_No=${order.purchase_No}'/>"
+															class="btn btn-sm btn-outline-success"
+															onclick="return confirm('발주를 수정 하시겠습니까?');"> <i
 																class="bi bi-pencil-square"></i> 수정
 														</a>
 														</td>
@@ -199,11 +206,13 @@
 												<c:choose>
 													<c:when
 														test="${order.in_Status == 2 or order.in_Status == 3}">
-														<td class="text-center"><a href="#"
+														<td class="text-center" onclick="event.stopPropagation()">
+															<a href="#"
 															class="btn btn-sm btn-outline-success disabled keep-look"
 															role="button" aria-disabled="true" tabindex="-1"> <i
 																class="bi bi-pencil-square"></i> 수정
-														</a></td>
+														</a>
+														</td>
 													</c:when>
 												</c:choose>
 											</tr>

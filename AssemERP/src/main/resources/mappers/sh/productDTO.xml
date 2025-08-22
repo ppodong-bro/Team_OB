@@ -17,7 +17,7 @@
 					(SELECT *
 					 FROM product
 					 WHERE del_status = 0
-					 ORDER BY product_no) a
+					 ORDER BY product_no desc) a
 			 )
 		WHERE rn BETWEEN #{start} and #{end}
 	</select>
@@ -36,7 +36,7 @@
 		        AND product_status = #{product_status}
 		      </if>
 		      <if test="product_name != null and product_name != ''">
-		        AND product_name LIKE '%' || #{product_name} || '%'
+		        AND LOWER(product_name) LIKE LOWER('%' || #{product_name} || '%')
 		      </if>
 		      <if test="startDate != null">
 		        AND TRUNC(in_date) &gt;= #{startDate}
@@ -64,7 +64,7 @@
 		        AND product_status = #{product_status}
 		      </if>
 		      <if test="product_name != null and product_name != ''">
-		        AND product_name LIKE '%' || #{product_name} || '%'
+		        AND LOWER(product_name) LIKE LOWER('%' || #{product_name} || '%')
 		      </if>
 		      <if test="startDate != null">
 		        AND TRUNC(in_date) &gt;= #{startDate}
@@ -73,7 +73,7 @@
 		        AND TRUNC(in_date) &lt;= #{endDate}
 		      </if>
 		    </where>
-		    ORDER BY product_no
+		    ORDER BY product_no desc
 		  ) a
 		  WHERE ROWNUM &lt;= #{end}   
 		)
@@ -106,6 +106,13 @@
 	    WHERE TRUNC(a.in_date) 
 	          BETWEEN TRUNC(ADD_MONTHS(SYSDATE, -1)) 
 	              AND TRUNC(SYSDATE)
+	</select>
+	
+	<select id="shSearchByProductName" parameterType="String" resultType="ProductDTO">
+		SELECT product_no, product_name
+		FROM product
+		WHERE del_status = 0
+		AND LOWER(product_name) LIKE LOWER('%' || #{keyword} || '%')
 	</select>
 	
 </mapper>

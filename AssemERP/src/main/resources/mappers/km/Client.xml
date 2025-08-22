@@ -129,7 +129,7 @@
 	
 	<insert id="createClient" parameterType="ClientDto">
 		<selectKey keyProperty="client_No" resultType="int" order="BEFORE">
-			SELECT CLIENT_SEQ_GEN.NEXTVAL
+			SELECT CLIENT_SEQ.NEXTVAL
 			FROM   DUAL
 		</selectKey>
 			INSERT INTO Client 
@@ -253,8 +253,8 @@
 	</delete>
 	
 	<select id="listEmpOfClient" parameterType="string" resultType="EmpDTO">
-	SELECT EMP_NO AS empNO, EMP_NAME AS empName
-	FROM   EMP
+	SELECT EMP_NO AS empNO, EMP_NAME AS empName, DEPT_CODE AS deptCode, ROLES_STATUS AS rolesStatus , EMAIL AS email
+	FROM   EMP 
 	<where>
 	DEL_STATUS = 0
 	AND    DEPT_CODE = 3001

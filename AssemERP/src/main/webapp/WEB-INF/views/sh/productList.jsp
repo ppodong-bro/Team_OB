@@ -29,7 +29,8 @@
 					<div class="card shadow-sm">
 						<div
 							class="card-header d-flex justify-content-between align-items-center">
-							<h4 class="card-title mb-0">제품목록</h4>
+							<h4 class="card-title mb-0">
+							<i class="bi bi-list-ul"></i> 제품목록</h4>
 							<a href="/product/create" class="btn btn-primary"><i class="bi bi-plus-lg"></i> 등록</a>
 						</div>
 						<div class="card-body">
@@ -107,7 +108,7 @@
 											<tr style="cursor: pointer;"
 												onclick="location.href='<c:url value='/product/productDetail/${productDTO.product_no}'/>'">
 												<td style="text-align: center;">${productDTO.product_no}</td>
-												<td>${productDTO.product_name}</td>
+												<td style="text-align: left;">${productDTO.product_name}</td>
 												<td style="text-align: center;">${productDTO.product_statusName}</td>
 												<td style="text-align: center;">${productDTO.emp_name}</td>
 												<td style="text-align: center;">${productDTO.in_date}</td>

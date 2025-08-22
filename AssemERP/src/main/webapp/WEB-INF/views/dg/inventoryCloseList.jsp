@@ -9,6 +9,54 @@
 <title>Assem ERP</title>
 </head>
 <script type="text/javascript">
+// 기간 선택 검색
+function searchPeriod(element) {
+	const period_id = element.id;
+	
+	// 현재 날짜를 가져온다.
+	const fromDate = new Date();
+	const toDate = new Date();
+	toDate.setMonth(toDate.getMonth() + 1);
+	
+	switch(period_id) {
+	case "3years":
+		fromDate.setYear(fromDate.getFullYear() - 3);
+		break;
+	case "1year":
+		fromDate.setYear(fromDate.getFullYear() - 1);
+		break;
+	case "6months":
+		fromDate.setMonth(fromDate.getMonth() - 6);
+		break;
+	case "1month":
+		fromDate.setMonth(fromDate.getMonth() - 1);
+		break;
+	default:// 그냥은 1개월
+		fromDate.setMonth(fromDate.getMonth() - 1);
+		break;
+	}
+
+	// from 년월을 가져온다.
+	var year = fromDate.getFullYear() % 100; // 뒷 두자리만 가져오기
+	var month = (fromDate.getMonth() + 1).toString().padStart(2, '0'); // 월은 0부	터 시작하므로 1을 더하고, 10보다 작으면 앞에 0 붙이기
+	// YYMM 형식으로 합치기
+	const fromyymm = year.toString() + month;
+	
+	// to 년월
+	year = toDate.getFullYear() % 100;
+	month = (toDate.getMonth() + 1).toString().padStart(2, '0');
+	// YYMM 형식으로 합치기
+	const toyymm = year.toString() + month;
+
+	// console.log(fromyymm + "-" + toyymm);
+	
+	// from, to를 설정
+	document.getElementById("yearmonth_start_text").value = fromyymm;
+	document.getElementById("yearmonth_end_text").value = toyymm;
+	// 하고 검색버튼을 눌러준다.
+	document.getElementById("search").click();
+}
+
 //현재시각 갱신하는 함수
 function updateCurrentTime() {
 	const now = new Date();
@@ -310,28 +358,34 @@ $(document).ready(function() {
 							<!-- 검색 폼 시작 -->
 							<form method="get" action="${pageContext.request.contextPath}/inventory/close" class="row gx-2 gy-1 align-items-center mb-4">
 								<div class="col d-flex flex-wrap justify-content-end align-items-center gap-2">
+									<div class="btn-group" role="group" aria-label="기간 선택">
+								        <button type="button" class="btn btn-light btn-sm text-nowrap border" id="3years" onclick="searchPeriod(this)">3년</button>
+								        <button type="button" class="btn btn-light btn-sm text-nowrap border" id="1year" onclick="searchPeriod(this)">1년</button>
+								        <button type="button" class="btn btn-light btn-sm text-nowrap border" id="6months" onclick="searchPeriod(this)">6개월</button>
+								        <button type="button" class="btn btn-light btn-sm text-nowrap border" id="1month" onclick="searchPeriod(this)">1개월</button>
+								    </div>
 									<!-- 년월 -->
 									<div class="col-auto d-flex gap-1">
 										<div class="input-group input-group-sm" style="width: auto;">
-											<span class="input-group-text">년월</span> <input type="text" name="yearmonth_start_text" class="form-control"
+											<span class="input-group-text">년월</span> <input type="text" id="yearmonth_start_text" name="yearmonth_start_text" class="form-control"
 												placeholder="${search.sample_yearmonth_start_text }" value="${search.yearmonth_start_text }" style="width: 50px"> <span
-												class="px-1">~</span> <input type="text" name="yearmonth_end_text" class="form-control" placeholder="${search.sample_yearmonth_end_text }"
+												class="px-1">~</span> <input type="text" id="yearmonth_end_text" name="yearmonth_end_text" class="form-control" placeholder="${search.sample_yearmonth_end_text }"
 												value="${search.yearmonth_end_text }" style="width: 50px">
 										</div>
 									</div>
 									<!-- 마감일 -->
-									<div class="col-auto d-flex gap-1">
+									<%-- <div class="col-auto d-flex gap-1">
 										<div class="input-group input-group-sm" style="width: auto;">
 											<span class="input-group-text">마감일</span> <input type="date" id="startDate" name="startDate" class="form-control form-control-sm"
 												value="${search.startDate }">
 											<span class="px-1">~</span> <input type="date" id="endDate" name="endDate" class="form-control form-control-sm" value="${search.endDate }">
 										</div>
-									</div>
+									</div> --%>
 									<!-- 마감 상태 -->
 									<div class="col-auto">
 										<div class="input-group input-group-sm">
 											<span class="input-group-text">마감 상태</span> <select id="close_status" name="close_status" class="form-select form-select-sm">
-												<option value="999">전체</option>
+												<option value="999">전체</optioㅋn>
 											</select>
 										</div>
 									</div>
@@ -344,7 +398,7 @@ $(document).ready(function() {
 									</div> --%>
 									<!-- 검색 버튼 -->
 									<div class="col-auto">
-										<button type="submit" class="btn btn-secondary btn-sm text-nowrap">
+										<button type="submit" class="btn btn-secondary btn-sm text-nowrap" id="search">
 											<i class="bi bi-search"></i> 검색
 										</button>
 									</div>

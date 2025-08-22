@@ -13,6 +13,8 @@ import lombok.ToString;
 @AllArgsConstructor
 public class ClientPerformanceDTO {
 
+	private int client_no;
 	private String client_name;
 	private Integer totalcost;
+	private String each_month;
 }

@@ -122,6 +122,18 @@ $(document).ready(function() {
 			</li>
 			<li class="mb-1">
 				<button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse"
+					data-bs-target="#client-collapse" aria-expanded="false">거래처</button>
+				<div class="collapse" id="client-collapse">
+					<ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+						<li><a href="${pageContext.request.contextPath}/client/list" class="link-body-emphasis d-inline-flex text-decoration-none rounded">거래처
+								관리</a></li>
+						<li><a href="${pageContext.request.contextPath}/client/createStart" class="link-body-emphasis d-inline-flex text-decoration-none rounded">거래처
+								등록</a></li>
+					</ul>
+				</div>
+			</li>
+			<li class="mb-1">
+				<button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse"
 					data-bs-target="#salespurchase-collapse" aria-expanded="false">수주/발주</button>
 				<div class="collapse" id="salespurchase-collapse">
 					<ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
@@ -132,25 +144,11 @@ $(document).ready(function() {
 			</li>
 			<li class="mb-1">
 				<button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse"
-					data-bs-target="#client-collapse" aria-expanded="false">거래처</button>
-				<div class="collapse" id="client-collapse">
-					<ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-						<li><a href="${pageContext.request.contextPath}/client/list" class="link-body-emphasis d-inline-flex text-decoration-none rounded">거래처
-								관리</a></li>
-						<li><a href="${pageContext.request.contextPath}/client/createStart" class="link-body-emphasis d-inline-flex text-decoration-none rounded">거래처
-								등록</a></li>
-
-					</ul>
-				</div>
-			</li>
-			<li class="mb-1">
-				<button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse"
 					data-bs-target="#inventory-collapse" aria-expanded="false">물류</button>
 				<div class="collapse" id="inventory-collapse">
 					<ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
 						<li><a href="${pageContext.request.contextPath}/inventory" class="link-body-emphasis d-inline-flex text-decoration-none rounded">재고 관리</a></li>
-						<li><a href="${pageContext.request.contextPath}/inventory/history" class="link-body-emphasis d-inline-flex text-decoration-none rounded">재고
-								입출고 이력</a></li>
+						<li><a href="${pageContext.request.contextPath}/inventory/history" class="link-body-emphasis d-inline-flex text-decoration-none rounded">입출고 이력</a></li>
 						<li><a href="${pageContext.request.contextPath}/inventory/close" class="link-body-emphasis d-inline-flex text-decoration-none rounded">월마감
 								이력</a></li>
 					</ul>
@@ -174,24 +172,30 @@ $(document).ready(function() {
 			src="${pageContext.request.contextPath}/img/Logo_mini.png" style="width: 50px; height: 50px; object-fit: fill;">
 		</a>
 		<ul class="list-unstyled ps-0">
-			<li class="mb-1"><a href="#" class="link-body-emphasis d-flex justify-content-center align-items-center text-decoration-none rounded"
+			<!-- 인사 -->
+			<li class="mb-1"><a href="${pageContext.request.contextPath}/emp/empListForm" class="link-body-emphasis d-flex justify-content-center align-items-center text-decoration-none rounded"
 				style="height: 32px"> <i class="bi bi-person" style="font-size: 24px"></i>
 			</a></li>
-			<li class="mb-1"><a href="#" class="link-body-emphasis d-flex justify-content-center align-items-center text-decoration-none rounded"
+			<!-- 부품/제품 -->
+			<li class="mb-1"><a href="${pageContext.request.contextPath}/parts/partsList" class="link-body-emphasis d-flex justify-content-center align-items-center text-decoration-none rounded"
 				style="height: 32px"> <i class="bi bi-cpu" style="font-size: 24px"></i>
 			</a></li>
-			<li class="mb-1"><a href="#" class="link-body-emphasis d-flex justify-content-center align-items-center text-decoration-none rounded"
-				style="height: 32px"> <i class="bi bi-file-earmark-text" style="font-size: 24px"></i>
-			</a></li>
-			<li class="mb-1"><a href="#" class="link-body-emphasis d-flex justify-content-center align-items-center text-decoration-none rounded"
+			<!-- 거래처 -->
+			<li class="mb-1"><a href="${pageContext.request.contextPath}/client/list" class="link-body-emphasis d-flex justify-content-center align-items-center text-decoration-none rounded"
 				style="height: 32px"> <i class="bi bi-building" style="font-size: 24px"></i>
 			</a></li>
+			<!-- 수주/발주 -->
+			<li class="mb-1"><a href="${pageContext.request.contextPath}/sales/list" class="link-body-emphasis d-flex justify-content-center align-items-center text-decoration-none rounded"
+				style="height: 32px"> <i class="bi bi-file-earmark-text" style="font-size: 24px"></i>
+			</a></li>
+			<!-- 물류 -->
 			<li class="mb-1"><a href="${pageContext.request.contextPath}/inventory"
 				class="link-body-emphasis d-flex justify-content-center align-items-center text-decoration-none rounded" style="height: 32px"> <i
 					class="bi bi-box-seam" style="font-size: 24px"></i>
 			</a></li>
+			<!-- 게시판 -->
 			<li class="border-top my-3"></li>
-			<li class="mb-1"><a href="#" class="link-body-emphasis d-flex justify-content-center align-items-center text-decoration-none rounded"
+			<li class="mb-1"><a href="${pageContext.request.contextPath}/inventory" class="link-body-emphasis d-flex justify-content-center align-items-center text-decoration-none rounded"
 				style="height: 32px"> <i class="bi bi-chat-left-text" style="font-size: 24px"></i>
 			</a></li>
 		</ul>

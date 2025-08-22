@@ -6,9 +6,42 @@
 <head>
 <meta charset="UTF-8" />
 <title>거래처 수정</title>
+
 <!-- 공통 CSS -->
 <jsp:include page="/common.jsp" />
 <link rel="stylesheet" href="<c:url value='/css/list.css'/>" />
+<style>
+body {
+	background-color: #f8f9fa;
+}
+
+.card-header {
+	background-color: #198754;
+	color: white;
+} /* Green theme for editing */
+.required-field::after {
+	content: " *";
+	color: red;
+}
+
+.image-box {
+	width: auto; /* 원하는 가로 크기 */
+	height: 300px; /* 원하는 세로 크기 */
+	overflow: hidden;
+}
+
+.image-box img {
+	width: 100%;
+	height: 100%;
+	display: block; /* 여백 제거 */
+}
+
+.parent-container {
+	display: flex;
+	flex-direction: column;
+	gap: 30px; /* 항목들 사이 간격을 균일하게 12px 설정 */
+}
+</style>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <body>
@@ -27,7 +60,7 @@
 						<div
 							class="card-header d-flex justify-content-between align-items-center">
 							<a href="<c:url value='/client/list'/>"
-								class="btn btn-outline-dark btn-sm"> <i
+								class="btn btn-outline-light btn-sm"> <i
 								class="bi bi-list-ul me-1"></i> 목록
 							</a>
 							<h4 class="card-title mb-0">
@@ -55,8 +88,7 @@
 												담당 직원 <span class="text-danger">*</span>
 											</div>
 
-											<div class="input-group input-group-sm"
-												style="max-width: 460px;">
+											<div class="input-group input-group-sm">
 												<input type="hidden" id="empNo" name="empDTO.empNo"
 													value="${clientDto.empDTO.empNo}" required /> <input
 													type="text" id="empName"
@@ -136,11 +168,31 @@
 								</section>
 
 								<!-- 액션 버튼 -->
-								<div class="text-end mt-4 d-flex justify-content-end gap-2">
+								<%-- <div class="text-end mt-4 d-flex justify-content-end gap-2">
 									<a href="<c:url value='/client/list'/>"
 										class="btn btn-outline-secondary btn-sm px-4">취소</a>
 									<button type="submit" class="btn btn-primary btn-sm px-4">수정</button>
 								</div>
+								 --%>
+								<!-- 디자인은 아래(그리드+큰 버튼), 기능은 위(취소 링크 / 수정 submit) -->
+								<div class="row mt-4 g-2">
+									<!-- 취소: 링크 -->
+									<div class="col-md-4 d-grid">
+										<a href="<c:url value='/client/list'/>"
+											class="btn btn-outline-secondary btn-sm px-4" role="button">
+											<i class="bi bi-x-circle me-2"></i>취소
+										</a>
+									</div>
+
+									<!-- 수정: 폼 제출 -->
+									<div class="col-md-8 d-grid">
+										<button type="submit" id="modifyBtn"
+											class="btn btn-primary btn-sm px-4">
+											<i class="bi bi-check-lg me-2"></i>수정
+										</button>
+									</div>
+								</div>
+
 							</form>
 						</div>
 					</div>
@@ -158,7 +210,7 @@
 		// 직원 팝업 오픈
 		function openEmpPopup() {
 			window.open('<c:url value="/client/empPopup"/>?empName=',
-					'empPopup', 'width=700,height=600,scrollbars=yes');
+					'empPopup', 'width= 1800,height=600,scrollbars=yes');
 		}
 		// 팝업 콜백: 직원 세팅
 		function fillEmp(empNo, empName) {

@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 public class InventoryRepositoryImpl implements InventoryRepository {
 	private final EntityManager entityManager;
 
-	// 재고 입출고 이력의 총 수량 계산하는 프로시저 실행
+	// 입출고 이력의 총 수량 계산하는 프로시저 실행
 	@Override
 	public void execProcedureClacInventoryTot() {
 		// 프로시저 실행
@@ -34,7 +34,7 @@ public class InventoryRepositoryImpl implements InventoryRepository {
 	}
 	
 	// JPA에서는 NVL와 COALESCE를 사용하지 말라고 한다...
-	// 재고 입출고 이력 목록 수 조회
+	// 입출고 이력 목록 수 조회
 	@Override
 	public int getInventoryHistoryCnt(InventoryDTO inventoryDTO) {
 		String totalCountSql = "SELECT COUNT(i) FROM Inventory i "
@@ -43,7 +43,7 @@ public class InventoryRepositoryImpl implements InventoryRepository {
 				+ "WHERE (:order_status = 999 OR i.order_status = :order_status) "
 				+ "AND (:order_no IS NULL OR i.order_no = :order_no) "
 				+ "AND (:item_status = 999 OR i.item_status = :item_status) "
-				+ "AND ((pa.parts_name IS NOT NULL AND pa.parts_name LIKE :item_no_text) OR (pr.product_name IS NOT NULL AND pr.product_name LIKE :item_no_text)) "
+				+ "AND ((pa.parts_name IS NOT NULL AND LOWER(pa.parts_name) LIKE LOWER(:item_no_text)) OR (pr.product_name IS NOT NULL AND LOWER(pr.product_name) LIKE LOWER(:item_no_text))) "
 				+ "AND (inout_date >= :start_date) "
 				+ "AND (inout_date <= :end_date) ";
 		TypedQuery<Long> totalCountQuery = entityManager.createQuery(totalCountSql, Long.class)
@@ -58,7 +58,7 @@ public class InventoryRepositoryImpl implements InventoryRepository {
 		return totalCountQuery.getSingleResult().intValue();
 	}
 	
-	// 재고 입출고 이력 목록 조회
+	// 입출고 이력 목록 조회
 	@Override
 	public List<InventoryDTO> getInventoryHistory(InventoryDTO inventoryDTO) {
 		// 거래 구분에 따라 검색
@@ -68,7 +68,7 @@ public class InventoryRepositoryImpl implements InventoryRepository {
 		// 재고 구분에 따라 검색
 		String whereItemStatus = (inventoryDTO.getItem_status_select() != 999) ? 
 				"AND i1.item_status = " + inventoryDTO.getItem_status_select() : "AND i1.item_status <> 999";
-		String whereItemName = "AND (NVL(pa.parts_name, '') LIKE :itemnotext OR NVL(pr.product_name, '') LIKE :itemnotext)";
+		String whereItemName = "AND (LOWER(NVL(pa.parts_name, '')) LIKE LOWER(:itemnotext) OR LOWER(NVL(pr.product_name, '')) LIKE LOWER(:itemnotext))";
 		// 입출고 일시에 따라 검색
 		String wherInoutDate = "AND i1.inout_date >= '" + inventoryDTO.getStartDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "' "
 				+ "AND i1.inout_date <= TO_DATE('" + inventoryDTO.getEndDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + " 23:59:59', 'YYYY-MM-DD HH24:MI:SS') ";
@@ -90,7 +90,7 @@ public class InventoryRepositoryImpl implements InventoryRepository {
 				+			whereItemStatus + " "
 				+			whereItemName + " "
 				+ 			wherInoutDate + " " 
-				+ "        	ORDER BY inventory_his_no DESC "
+				+ "        	ORDER BY inout_date DESC, inventory_his_no DESC "
 				+ "    ) i0 "
 				+ ") "
 				+ "WHERE rn BETWEEN :start AND :end";

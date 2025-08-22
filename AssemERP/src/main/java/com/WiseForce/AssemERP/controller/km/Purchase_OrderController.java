@@ -84,8 +84,15 @@ public class Purchase_OrderController {
 	}
 	
 	@PostMapping("/create")
-	public String createPurchase(Purchase_OrderDto purchase_OrderDto) {
-		purchase_OrderService.createPurchase(purchase_OrderDto);
+	public String createPurchase(Purchase_OrderDto purchase_OrderDto, RedirectAttributes ra) {
+		String result = purchase_OrderService.createPurchase(purchase_OrderDto);
+		
+		if(result == "발주 등록 성공") {
+			ra.addFlashAttribute("success", result);
+		} else if(result == "발주 등록 실패") {
+			ra.addFlashAttribute("error", result);
+		}
+		
 		return "redirect:/purchase/list";
 	}
 	
@@ -112,9 +119,17 @@ public class Purchase_OrderController {
 	}
 	
 	@PostMapping("/modify")
-	public String modifyPurchase(Purchase_OrderDto purchase_OrderDto) {
+	public String modifyPurchase(Purchase_OrderDto purchase_OrderDto, RedirectAttributes ra) {
+			
 			System.out.println("purchase_OrderDto---------------->"+purchase_OrderDto);
-			purchase_OrderService.modifyPurchase(purchase_OrderDto);
+			String result = purchase_OrderService.modifyPurchase(purchase_OrderDto);
+			
+			if(result == "발주 수정 성공") {
+				ra.addFlashAttribute("success", result);
+			} else if (result == "발주 수정 실패") {
+				ra.addFlashAttribute("error", result);
+			}
+			
 		return "redirect:/purchase/detail?purchase_No="+purchase_OrderDto.getPurchase_No();
 	}
 	
@@ -123,8 +138,20 @@ public class Purchase_OrderController {
 		try {
 			purchase_OrderService.checkClose();
 			System.out.println("purchase_No"+purchase_No);
-			purchase_OrderService.modifyStatus(purchase_No);
+			String result = purchase_OrderService.modifyStatus(purchase_No);
+			
+			if(result == "발주 승인 성공") {
+				ra.addFlashAttribute("success", result);
+			} else if(result == "발주 승인 실패") {
+				ra.addFlashAttribute("error", result);
+			} else if(result == "발주 완료 성공") {
+				ra.addFlashAttribute("success", result);
+			} else if(result == "발주 완료 실패") {
+				ra.addFlashAttribute("error", result);
+			}
+			
 		return "redirect:/purchase/detail?purchase_No="+purchase_No;
+		
 	} catch(IllegalArgumentException e)	{
 		ra.addFlashAttribute("error", e.getMessage());
 		return "redirect:/purchase/detail?purchase_No="+purchase_No;
@@ -136,7 +163,17 @@ public class Purchase_OrderController {
 	public String returnInStatus(@RequestParam("purchase_No") int purchase_No, RedirectAttributes ra) {
 		try {
 			purchase_OrderService.checkClose();
-			int result = purchase_OrderService.returnInStatus(purchase_No);
+			
+			String result = purchase_OrderService.returnInStatus(purchase_No);
+			if(result == "발주 완료 취소 성공") {
+				ra.addFlashAttribute("success", result);
+			} else if(result == "발주 완료 취소 실패") {
+				ra.addFlashAttribute("error", result);
+			} else if(result == "발주 승인 취소 성공") {
+				ra.addFlashAttribute("success", result);
+			} else if(result == "발주 승인 취소 실패") {
+				ra.addFlashAttribute("error", result);
+			}
 			
 			return "redirect:/purchase/detail?purchase_No="+purchase_No;
 		
@@ -152,7 +189,7 @@ public class Purchase_OrderController {
 	public String accessModify(@RequestParam("purchase_No") int purchase_No, RedirectAttributes ra) {
 		try {
 			purchase_OrderService.checkClose();
-			int result = purchase_OrderService.returnInStatus(purchase_No);
+			String result = purchase_OrderService.returnInStatus(purchase_No);
 			Purchase_OrderDto purchase_OrderDto = purchase_OrderService.detailPurchase(purchase_No);
 		
 		ra.addFlashAttribute("purchase_OrderDto", purchase_OrderDto);
@@ -168,7 +205,13 @@ public class Purchase_OrderController {
 	public String deletePurchase(@RequestParam("purchase_No") int purchase_No ,RedirectAttributes ra) {
 		try {
 			purchase_OrderService.checkClose();
-			int result = purchase_OrderService.deletePurchase(purchase_No);
+			
+			String result = purchase_OrderService.deletePurchase(purchase_No);
+			if(result == "발주 삭제 성공") {
+				ra.addFlashAttribute("success", result);
+			} else if (result == "발주 삭제 실패") {
+				ra.addFlashAttribute("error", result);
+			}
 			
 			return"redirect:/purchase/list";
 		} catch (IllegalArgumentException e) {

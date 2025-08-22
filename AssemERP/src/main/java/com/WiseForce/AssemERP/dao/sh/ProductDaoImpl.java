@@ -60,7 +60,7 @@ public class ProductDaoImpl implements ProductDao {
 
 		try {
 			productDTOs = session.selectList("shProductSearchList", productDTO);
-			System.out.println("ProductDaoImpl findSearchList productDTOs => "+productDTOs.size());
+			System.out.println("ProductDaoImpl findSearchList productDTOs => "+productDTOs);
 		} catch (Exception e) {
 			System.out.println("ProductDaoImpl findSearchList Exception => "+e.getMessage());
 
@@ -159,6 +159,21 @@ public class ProductDaoImpl implements ProductDao {
 		
 		
 		return tradeCnt;
+	}
+
+	@Override
+	public List<ProductDTO> searchByName(String keyword) {
+		List<ProductDTO> result = null;
+		System.out.println("ProductDaoImpl searchByName keyword =>"+keyword);
+		
+		try {
+			result = session.selectList("shSearchByProductName", keyword);
+			System.out.println("ProductDaoImpl searchByName result => "+result);
+		} catch (Exception e) {
+			System.out.println("ProductDaoImpl searchByName Exception =>"+e.getMessage());
+		}
+		
+		return result;
 	}
 
 	

@@ -2,6 +2,7 @@ package com.WiseForce.AssemERP.controller.km;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,13 +15,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.WiseForce.AssemERP.dto.dg.InventoryInfoDTO;
 import com.WiseForce.AssemERP.dto.km.ClientDto;
 import com.WiseForce.AssemERP.dto.km.PartsShortageDto;
 import com.WiseForce.AssemERP.dto.km.Sales_ItemDto;
 import com.WiseForce.AssemERP.dto.km.Sales_OrderDto;
 import com.WiseForce.AssemERP.dto.km.Sales_OrderSearchDto;
+import com.WiseForce.AssemERP.dto.sh.PartsDTO;
 import com.WiseForce.AssemERP.dto.sh.ProductDTO;
 import com.WiseForce.AssemERP.dto.sm.EmpDTO;
+import com.WiseForce.AssemERP.service.dg.InventoryService;
 import com.WiseForce.AssemERP.service.km.ClientService;
 import com.WiseForce.AssemERP.service.km.Sales_OrderService;
 import com.WiseForce.AssemERP.util.Paging;
@@ -33,6 +37,7 @@ import lombok.RequiredArgsConstructor;
 public class Sales_OrderController {
 	private final Sales_OrderService sales_OrderService;
 	private final ClientService clientService;
+	private final InventoryService inventoryService;
 
 	@GetMapping("/list")
 	public String listSales(Sales_OrderSearchDto sales_OrderSearchDto, Model model) {
@@ -53,23 +58,7 @@ public class Sales_OrderController {
 	public String detailSales(Sales_OrderDto sales_OrderDto1, Model model) {
 
 		Sales_OrderDto sales_OrderDto = sales_OrderService.detailSales(sales_OrderDto1);
-//		LocalDateTime modifyDate = sales_OrderDto.getModify_Date();
-//		LocalDateTime completeDate = sales_OrderDto.getComplete_Date();
-//		LocalDateTime inDate	   = sales_OrderDto.getIn_Date();
-//		
-//		System.out.println("completeDate"+completeDate);
-//		
-//		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm:ss");
-//		
-//		String modify = (modifyDate != null)?modifyDate.format(dateTimeFormatter):"";
-//		String in	  = inDate.format(dateTimeFormatter);
-//		String complete = (completeDate != null)?completeDate.format(dateTimeFormatter):"";
-		
-		
 		model.addAttribute("sales_OrderDto", sales_OrderDto);
-//		model.addAttribute("modify", modify);
-//		model.addAttribute("in", in);
-//		model.addAttribute("complete", complete);
 		
 		return "km/detailSales";
 	}
@@ -91,15 +80,45 @@ public class Sales_OrderController {
 		
 		System.out.println("createSales sales_OrderDto--->" + sales_OrderDto);
 		
-	    List<PartsShortageDto> shortages = sales_OrderService.shortages(sales_OrderDto);
-
-	    if (!shortages.isEmpty()) {
-	        ra.addFlashAttribute("shortages", shortages);
-	        ra.addFlashAttribute("pendingSalesOrder", sales_OrderDto);
-	        return "redirect:/sales/shortageConfirm";
-	    }
+//		// View용 부족한 부품의 DTO
+//		List<PartsShortageDto> shortages = new ArrayList<>();
+//		
+//		// 부족한 부품 정보 및 수량
+//		Map<PartsDTO, Integer> requirementsForSalesMap = inventoryService.getRequirementsForSales(sales_OrderDto.getSales_Item());
+//
+//		for(PartsDTO key : requirementsForSalesMap.keySet()) {
+//			// 실재고 조회를 위한 DTO
+//			InventoryInfoDTO inventoryInfoDTO = InventoryInfoDTO.builder().item_type(0/*부품*/).item_no(key.getParts_no()).build();
+//			// 필요한 부품의 가용재고
+//			int realCnt = inventoryService.getAbleInventoryById(inventoryInfoDTO).getCnt();
+//
+//			PartsShortageDto partsShortageDto = PartsShortageDto.builder()
+//					.parts_no(key.getParts_no()) // 부품번호
+//					.parts_name(key.getParts_name()) // 부품명
+//					.required_cnt(realCnt + requirementsForSalesMap.get(key)) // 필요 부품 수량
+//					.available_cnt(realCnt) // 보유 부품 수량
+//					.shortage_cnt(requirementsForSalesMap.get(key)) // 부족 부품 수량
+//					.build();
+//
+//			// View용 부족한 부품 리스트에 추가
+//			shortages.add(partsShortageDto);
+//		}
+//		
+//	    if (!shortages.isEmpty()) {
+//	        ra.addFlashAttribute("shortages", shortages);
+//	        ra.addFlashAttribute("pendingSalesOrder", sales_OrderDto);
+//	        return "redirect:/sales/shortageConfirm";
+//	    }
 	    
-	    sales_OrderService.createSales(sales_OrderDto);
+	    int result = sales_OrderService.createSales(sales_OrderDto);
+	    
+	    if(result == 1) {
+	    	String message = "수주 요청 완료";
+	    	ra.addFlashAttribute("createSuccess", message);
+	    } else if (result == 0) {
+	    	String message = "수주 요청 실패";
+	    	ra.addFlashAttribute("createFail", message);
+	    }
 
 		return "redirect:/sales/list";
 	}
@@ -158,11 +177,16 @@ public class Sales_OrderController {
 	}
 	
 	@PostMapping("/modify")
-	public String modify(Sales_OrderDto sales_OrderDto) {
+	public String modify(Sales_OrderDto sales_OrderDto, RedirectAttributes ra) {
 		sales_OrderService.closeCheck();
 		int sales_No = sales_OrderDto.getSales_No();
 		List<Sales_ItemDto> salesItemList = sales_OrderService.salesItemList(sales_No);
-		sales_OrderService.modifySales(sales_OrderDto, salesItemList);
+		String result = sales_OrderService.modifySales(sales_OrderDto, salesItemList);
+		if(result == "수주 수정 성공") {
+			ra.addFlashAttribute("success", result);
+		} else if (result == "수주 수정 실패") {
+			ra.addFlashAttribute("fail", result);
+		}
 
 		return "redirect:/sales/detail?sales_No=" + sales_OrderDto.getSales_No();
 	}
@@ -171,10 +195,57 @@ public class Sales_OrderController {
 	public String modifyStatus(Sales_OrderDto sales_OrderDto, RedirectAttributes ra) {
 		try {
 			
+			
+			
 			sales_OrderService.closeCheck();
+			
+			Sales_OrderDto sales_OrderDto1 = sales_OrderService.detailSales(sales_OrderDto);
+			System.out.println("sales_OrderDto1->>>>>>>>>."+sales_OrderDto1);
+			
+			if(sales_OrderDto1.getOut_Status() == 0) {
+				List<PartsShortageDto> shortages = new ArrayList<>();
+				
+				// 부족한 부품 정보 및 수량
+				Map<PartsDTO, Integer> requirementsForSalesMap = inventoryService.getRequirementsForSales(sales_OrderDto1.getSales_Item());
+
+				for(PartsDTO key : requirementsForSalesMap.keySet()) {
+					// 실재고 조회를 위한 DTO
+					InventoryInfoDTO inventoryInfoDTO = InventoryInfoDTO.builder().item_type(0/*부품*/).item_no(key.getParts_no()).build();
+					// 필요한 부품의 가용재고
+					int realCnt = inventoryService.getAbleInventoryById(inventoryInfoDTO).getCnt();
+
+					PartsShortageDto partsShortageDto = PartsShortageDto.builder()
+							.parts_no(key.getParts_no()) // 부품번호
+							.parts_name(key.getParts_name()) // 부품명
+							.required_cnt(realCnt + requirementsForSalesMap.get(key)) // 필요 부품 수량
+							.available_cnt(realCnt) // 보유 부품 수량
+							.shortage_cnt(requirementsForSalesMap.get(key)) // 부족 부품 수량
+							.build();
+
+					// View용 부족한 부품 리스트에 추가
+					shortages.add(partsShortageDto);
+				}
+				
+			    if (!shortages.isEmpty()) {
+			        ra.addFlashAttribute("shortages", shortages);
+			        ra.addFlashAttribute("pendingSalesOrder", sales_OrderDto1);
+			        return "redirect:/sales/shortageConfirm";
+			    }
+				
+			}
 			int sales_No = sales_OrderDto.getSales_No();
 			List<Sales_ItemDto> salesItemList = sales_OrderService.salesItemList(sales_No);
-			sales_OrderService.modifyStatus(sales_No, salesItemList);
+			String result = sales_OrderService.modifyStatus(sales_No, salesItemList);
+			if(result == "수주 승인 성공") {
+				ra.addFlashAttribute("success", result);
+			} else if (result == "수주 승인 실패") {
+				ra.addFlashAttribute("fail", result);
+			} else if (result == "수주 완료 성공") {
+				ra.addFlashAttribute("success", result);
+			} else if (result == "수주 완료 실패") {
+				ra.addFlashAttribute("fail", result);
+			}
+			
 			return "redirect:/sales/detail?sales_No=" + sales_OrderDto.getSales_No();
 			
 		} catch (IllegalArgumentException e) {
@@ -205,7 +276,13 @@ public class Sales_OrderController {
 		try {
 			sales_OrderService.closeCheck();
 			System.out.println("Sales_OrderController sales_OrderDto-->" + sales_OrderDto);
-			sales_OrderService.deleteSales(sales_OrderDto);
+			String result = sales_OrderService.deleteSales(sales_OrderDto);
+			
+			if(result == "수주 삭제 성공") {
+				ra.addFlashAttribute("success", result);
+			} else if (result == "수주 삭제 실패") {
+				ra.addFlashAttribute("fail", result);
+			}
 			return "redirect:/sales/list";
 		} catch (IllegalArgumentException e) {	
 			ra.addFlashAttribute("error", e.getMessage());
@@ -223,9 +300,29 @@ public class Sales_OrderController {
 	
 	@PostMapping("returnStatus")
 	public String returnOutStatus(@RequestParam("sales_No") int sales_No, RedirectAttributes ra) {
-		int result = sales_OrderService.returnStatus(sales_No);
-		ra.addFlashAttribute("result", result);
-		return "redirect:/sales/detail?sales_No="+sales_No;
+		try {
+			sales_OrderService.closeCheck();
+			
+			String result = sales_OrderService.returnStatus(sales_No);
+			
+			if(result == "수주 완료 취소 성공") {
+				ra.addFlashAttribute("success", result);
+			} else if (result == "수주 완료 취소 실패") {
+				ra.addFlashAttribute("fail", result);
+			} else if (result == "수주 승인 취소 성공") {
+				ra.addFlashAttribute("success", result);
+			} else if (result == "수주 승인 취소 실패") {
+				ra.addFlashAttribute("fail", result);
+			}
+			
+			return "redirect:/sales/detail?sales_No="+sales_No;
+		
+		} catch (IllegalArgumentException e){
+			ra.addFlashAttribute("error", e.getMessage());	
+			return "redirect:/sales/detail?sales_No="+sales_No;
+		}
+		
+		
 		
 	}
 

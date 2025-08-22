@@ -29,6 +29,12 @@
 			<c:if test="${not empty success}">
 				<div class="alert alert-success">${success}</div>
 			</c:if>
+			<c:if test="${not empty createSuccess}">
+				<div class="alert alert-success">${createSuccess}</div>createFail
+			</c:if>
+			<c:if test="${not empty createFail}">
+				<div class="alert alert-danger">${createFail}</div>
+			</c:if>
 			<div id="contents">
 				<div class="container-fluid px-4">
 					<div class="card shadow-sm">
@@ -37,7 +43,8 @@
 							<h4 class="card-title mb-0">
 								<i class="bi bi-list-ul"></i> 수주 목록
 							</h4>
-							<a href="/sales/createStart" class="btn btn-primary"><i
+							<a href="/sales/createStart" class="btn btn-primary"
+								onclick="return confirm('수주를 등록 하시겠습니까?');"><i
 								class="bi bi-plus-lg"></i>등록</a>
 						</div>
 						<div class="card-body">
@@ -96,7 +103,10 @@
 
 								<!-- 검색 버튼 -->
 								<div class="col-auto">
-									<button type="submit" class="btn btn-primary btn-sm">검색</button>
+									<button type="submit"
+										class="btn btn-secondary btn-sm text-nowrap">
+										<i class="bi bi-search"></i> 검색
+									</button>
 								</div>
 							</form>
 
@@ -105,31 +115,30 @@
 								<table class="table table-bordered align-middle ">
 									<thead class="table-light">
 										<tr>
-											<th class="text-center">#</th>
-											<th class="text-center">수주번호</th>
-											<th class="text-center">거래처명</th>
-											<th class="text-center">제품명</th>
-											<th class="text-center">요청수량</th>
-											<th class="text-center">출고수량</th>
-											<th class="text-center">총액</th>
-											<th class="text-center">납기완료일</th>
-											<th class="text-center">출고상태</th>
-											<th class="text-center">담당자</th>
-											<th class="text-center">수정</th>
+											<th style="width: 7%;" class="text-center">번호</th>
+											<th style="width: 10%;" class="text-center">거래처명</th>
+											<th style="width: 22%;" class="text-center">제목</th>
+											<th style="width: 8%;" class="text-center">요청수량</th>
+											<th style="width: 8%;" class="text-center">출고수량</th>
+											<th style="width: 7%;" class="text-center">총액</th>
+											<th style="width: 10%;" class="text-center">납기완료일</th>
+											<th style="width: 8%;" class="text-center">출고상태</th>
+											<th style="width: 8%;" class="text-center">담당자</th>
+											<th style="width: 10%;" class="text-center">등록일</th>
+											<th style="width: 8%;" class="text-center">수정</th>
 										</tr>
 									</thead>
 									<tbody>
 										<c:forEach var="order" items="${listSales}" varStatus="st">
 											<tr style="cursor: pointer;"
 												onclick="location.href='<c:url value='/sales/detail?sales_No=${order.sales_No}'/>'">
-												<!-- 순번 -->
-												<td class="text-center">${st.index + 1}</td>
+												
 
 												<!-- 수주번호 (detail 링크) -->
 												<td class="text-center">${order.sales_No}</td>
 
 												<!-- client → clientName -->
-												<td>${order.clientDto.client_Name}</td>
+												<td class="text-center">${order.clientDto.client_Name}</td>
 
 
 												<%-- 		<!-- salesItems 컬렉션 출력 -->
@@ -149,10 +158,15 @@
 															value="${fn:length(order.sales_Item) - 1}" />
 
 														<!-- 제품명 -->
-														<td><c:out value="${first.productDto.product_name}" />
+														<%-- 		<td><c:out value="${first.productDto.product_name}" />
 															<c:if test="${othersCount > 0}">
 													 &nbsp;외 ${othersCount}종
-													</c:if></td>
+													</c:if></td> --%>
+
+														<td class="name text-truncate"
+															title="<c:out value='${order.sales_Title != null ? order.sales_Title : "-"}'/>"><c:out
+																value="${order.sales_Title != null ? order.sales_Title : '-'}" />
+														</td>
 
 														<!-- 요청수량 (총합) -->
 														<td class="text-center"><c:out
@@ -175,7 +189,7 @@
 												</td>
 
 												<!-- 납기 완료일 -->
-												<td>${order.sales_Date}</td>
+												<td class="text-center">${order.sales_Date}</td>
 
 												<!-- 출고 상태 -->
 												<td class="text-center"><span class="status-text"
@@ -191,15 +205,18 @@
 												<!-- client → clientMan -->
 												<td class="text-center">${order.empDTO.empName}</td>
 
+												<td class="text-center">${fn:substring(order.in_Date, 0, 10)}</td>
 
-												<!-- 수정/삭제 버튼 -->
+
+												<!-- 수정 버튼 -->
 												<c:choose>
 													<c:when
 														test="${order.out_Status == 0 or order.out_Status == 1}">
-														<td class="text-center">
-															<!-- 수정 버튼 --> <a
-															href="/sales/modifyStart?sales_No=${order.sales_No}"
-															class="btn btn-sm btn-outline-success"> <i
+														<td class="text-center" onclick="event.stopPropagation()">
+															<a
+															href="<c:url value='/sales/modifyStart?sales_No=${order.sales_No}'/>"
+															class="btn btn-sm btn-outline-success"
+															onclick="return confirm('수주를 수정 하시겠습니까?');"> <i
 																class="bi bi-pencil-square"></i> 수정
 														</a>
 														</td>
@@ -208,11 +225,13 @@
 												<c:choose>
 													<c:when
 														test="${order.out_Status == 2 or order.out_Status == 3}">
-														<td class="text-center"><a href="#"
+														<td class="text-center" onclick="event.stopPropagation()">
+															<a href="#"
 															class="btn btn-sm btn-outline-success disabled keep-look"
 															role="button" aria-disabled="true" tabindex="-1"> <i
 																class="bi bi-pencil-square"></i> 수정
-														</a></td>
+														</a>
+														</td>
 													</c:when>
 												</c:choose>
 											</tr>
@@ -221,7 +240,7 @@
 										<!-- 조회 결과 없을 때 -->
 										<c:if test="${empty listSales}">
 											<tr>
-												<td colspan="10" class="text-center">조회된 데이터가 없습니다.</td>
+												<td colspan="11" class="text-center">조회된 데이터가 없습니다.</td>
 											</tr>
 										</c:if>
 									</tbody>

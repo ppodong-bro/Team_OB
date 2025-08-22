@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository;
 
 import com.WiseForce.AssemERP.dto.dg.InventoryInfoDTO;
 import com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO;
+import com.WiseForce.AssemERP.dto.km.Sales_ItemDto;
+import com.WiseForce.AssemERP.dto.sh.PartsDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -73,12 +75,52 @@ public class InventoryDaoImpl implements InventoryDao {
 		
 		return target_InventoryInfoDTO;
 	}
+	// 가용 재고 상세 정보 조회
+	@Override
+	public InventoryInfoDTO getAbleInventoryInfoById(InventoryInfoDTO inventoryInfoDTO) {
+		InventoryInfoDTO target_InventoryInfoDTO = session.selectOne("com.WiseForce.AssemERP.dg.InventoryMapper.getAbleInventoryInfoById", inventoryInfoDTO);
+		
+		return target_InventoryInfoDTO;
+	}
 
 	// 재고현황 조회
 	@Override
 	public List<Map<String, Object>> getInventoryCurrent() {
-		List<Map<String, Object>> list = session.selectList("com.WiseForce.AssemERP.dg.InventoryMapper.getInventoryCurrent");
+		// 제품,부품,여유
+//		List<Map<String, Object>> list = session.selectList("com.WiseForce.AssemERP.dg.InventoryMapper.getInventoryCurrent");
+
+		// 부품,여유
+		List<Map<String, Object>> list = session.selectList("com.WiseForce.AssemERP.dg.InventoryMapper.getInventoryCurrentParts");
+		
+		System.out.println(list);
 		
 		return list;
+	}
+
+	// 제품 하나에 필요한 부품 조회
+	@Override
+	public Map<Integer, Integer> getRequirementsForProduct(Sales_ItemDto sales_ItemDto) {
+		Map<Integer, Integer> returnMap = new HashMap<>();
+		
+		// Map형태로 리턴받을 경우 가장 안전한 타입
+		List<Map<String, Object>> resultMaps = session.selectList("com.WiseForce.AssemERP.dg.InventoryMapper.getRequirementsForProduct", sales_ItemDto);
+
+		for (Map<String, Object> row : resultMaps) {
+//			System.out.println(row);
+			
+			// 리턴 받은 칼럼은 모두 대문자로 인식된다.
+			// 리턴 받은 숫자값은 Number로 먼저 형변환 하는것이 안전하다.(NULL도 체크하면 굿)
+			Number numberParts_no = (Number) row.get("parts_no".toUpperCase());
+			// DTO로 만들 int로 형변환
+			Integer intParts_no = numberParts_no.intValue();
+
+			Number numberCnt = (Number) row.get("cnt".toUpperCase());
+			Integer integerCnt = numberCnt.intValue();
+			
+			// id로만 DTO구성(추후 필요시 id로 전체 DTO 구성)
+			returnMap.put(intParts_no, integerCnt);
+		}
+
+		return returnMap;
 	}
 }

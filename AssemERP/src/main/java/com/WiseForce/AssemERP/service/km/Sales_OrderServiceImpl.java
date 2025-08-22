@@ -137,7 +137,7 @@ public class Sales_OrderServiceImpl implements Sales_OrderService {
 	}
 
 	@Override
-	public void createSales(Sales_OrderDto sales_OrderDto) {
+	public int createSales(Sales_OrderDto sales_OrderDto) {
 		LocalDate localDate = LocalDate.now();
 
 		if (sales_OrderDto.getSales_Date() == null) {
@@ -147,12 +147,14 @@ public class Sales_OrderServiceImpl implements Sales_OrderService {
 		if (localDate.isAfter(sales_OrderDto.getSales_Date())) {
 			throw new IllegalArgumentException("납기일은 금일보다 이전으로 설정할 수 없습니다.");
 		} else {
-			sales_OrderDao.createSales(sales_OrderDto);
+			int result = sales_OrderDao.createSales(sales_OrderDto);
+			
+			return result;
 		}
 	}
 
 	@Override
-	public void modifySales(Sales_OrderDto sales_OrderDto, List<Sales_ItemDto> salesItemList) {
+	public String modifySales(Sales_OrderDto sales_OrderDto, List<Sales_ItemDto> salesItemList) {
 		int status = sales_OrderDto.getOut_Status();
 		LocalDate localDate = LocalDate.now();
 
@@ -165,15 +167,35 @@ public class Sales_OrderServiceImpl implements Sales_OrderService {
 		}
 
 		if (status == 0 || status == 1) {
-			sales_OrderDao.modifySales(sales_OrderDto, salesItemList);
+			int result = sales_OrderDao.modifySales(sales_OrderDto, salesItemList);
+			
+			if(result == 1) {
+				String success = "수주 수정 성공";
+				return success;
+			} else if (result == 0) {
+				String fail = "수주 수정 실패";
+				return fail;
+			} else {
+				throw new IllegalArgumentException("잘못된 요청");
+			}
 		} else {
 			throw new IllegalArgumentException("이미 출고 처리된 수주는 수정이 불가합니다.");
 		}
 	}
 
 	@Override
-	public void deleteSales(Sales_OrderDto sales_OrderDto) {
-		sales_OrderDao.deleteSales(sales_OrderDto);
+	public String deleteSales(Sales_OrderDto sales_OrderDto) {
+		int result = sales_OrderDao.deleteSales(sales_OrderDto);
+		if(result == 1) {
+			String success = "수주 삭제 성공";
+			return success;
+		} else if (result == 0) {
+			String fail = "수주 삭제 실패";
+			return fail;
+		} else {
+			throw new IllegalArgumentException("잘못된 요청");
+		}
+		
 	}
 
 	@Override
@@ -183,7 +205,7 @@ public class Sales_OrderServiceImpl implements Sales_OrderService {
 	}
 
 	@Override
-	public void modifyStatus(int sales_No, List<Sales_ItemDto> salesItemList) {
+	public String modifyStatus(int sales_No, List<Sales_ItemDto> salesItemList) {
 		int status = sales_OrderDao.selectOutStatus(sales_No);
 		Long totCost = 0L;
 
@@ -197,34 +219,57 @@ public class Sales_OrderServiceImpl implements Sales_OrderService {
 
 		if (status == 1) {
 			
-			sales_OrderDao.modifyStatus(sales_No, status);
+			int result = sales_OrderDao.modifyStatus(sales_No, status);
 			
-		} else if (status == 2) {
-			
-			sales_OrderDao.completeStatus(sales_No, status, salesItemList);
-			
-			List<Sales_ItemDto> items = sales_OrderDao.salesItemList(sales_No);
-			
-			for (Sales_ItemDto sales_ItemDto : items) {
-
-				long cost = (long) sales_ItemDto.getSales_Item_Cost();
-				int	 outCnt  = sales_ItemDto.getSales_Item_OutCnt();
-				
-				totCost += cost*outCnt;
-				
+			if(result == 1) {
+				String success = "수주 승인 성공";
+				return success;
+			} else if(result == 0) {
+				String fail = "수주 승인 실패";
+				return fail;
+			} else {
+				throw new IllegalArgumentException("잘못된 요청입니다");
 			}
-			System.out.println("totCost??????????????????????????->"+totCost);
-			Sales_OrderDto sales_OrderDto = sales_OrderDao.getCompleteDateAndClientNo(sales_No);
-			System.out.println("sales_OrderDto----------------------------------------->" + sales_OrderDto);
-			Client_PerformDto client_PerformDto = Client_PerformDto.builder()
-																   .dYearMonth(sales_OrderDto.getComplete_Date())
-																   .total_Amt(totCost)
-																   .client_No(sales_OrderDto.getClientDto().getClient_No())
-																   .build();
-
-			System.out.println("client_PerformDto ->" + client_PerformDto);
-
-			clinetDao.perform(client_PerformDto);
+			
+			} else if (status == 2) {
+			
+			int result = sales_OrderDao.completeStatus(sales_No, status, salesItemList);
+			
+//			
+//			List<Sales_ItemDto> items = sales_OrderDao.salesItemList(sales_No);
+//			
+//			for (Sales_ItemDto sales_ItemDto : items) {
+//
+//				long cost = (long) sales_ItemDto.getSales_Item_Cost();
+//				int	 outCnt  = sales_ItemDto.getSales_Item_OutCnt();
+//				
+//				totCost += cost*outCnt;
+//				
+//			}
+//			System.out.println("totCost??????????????????????????->"+totCost);
+//			Sales_OrderDto sales_OrderDto = sales_OrderDao.getCompleteDateAndClientNo(sales_No);
+//			System.out.println("sales_OrderDto----------------------------------------->" + sales_OrderDto);
+//			Client_PerformDto client_PerformDto = Client_PerformDto.builder()
+//																   .dYearMonth(sales_OrderDto.getComplete_Date())
+//																   .total_Amt(totCost)
+//																   .client_No(sales_OrderDto.getClientDto().getClient_No())
+//																   .build();
+//
+//			System.out.println("client_PerformDto ->" + client_PerformDto);
+//
+//			int result = clinetDao.perform(client_PerformDto);
+			
+			if(result == 1) {
+				String success = "수주 완료 성공";
+				return success;
+			} else if(result == 0) {
+				String fail = "수주 완료 실패";
+				return fail;
+			} else {
+				throw new IllegalArgumentException("잘못된 요청입니다");
+			}
+			
+			
 		} else {
 			throw new IllegalArgumentException("잘못된 요청입니다");
 		}
@@ -260,7 +305,7 @@ public class Sales_OrderServiceImpl implements Sales_OrderService {
 	}
 
 	@Override
-	public int returnStatus(int sales_No) {
+	public String returnStatus(int sales_No) {
 		int out_Status = sales_OrderDao.selectOutStatus(sales_No);
 		
 		if(out_Status == 1 || out_Status == 2 ) {
@@ -277,34 +322,53 @@ public class Sales_OrderServiceImpl implements Sales_OrderService {
 			}
 				
 		if(out_Status == 1) {
-			Sales_OrderDto sales_OrderDto = sales_OrderDao.getCompleteDateAndClientNo(sales_No);
+//			Sales_OrderDto sales_OrderDto = sales_OrderDao.getCompleteDateAndClientNo(sales_No);
 			List<Sales_ItemDto> listSalesItem = sales_OrderDao.salesItemList(sales_No);
-			Long totCost = 0L;
+//			Long totCost = 0L;
 			
-			System.out.println("Sales_OrderDto sales_OrderDto"+sales_OrderDto);
-			
-			for(Sales_ItemDto sales_ItemDto : listSalesItem) {
-				Long cost = sales_ItemDto.getSales_Item_Cost();
-				int	 outCnt = sales_ItemDto.getSales_Item_OutCnt();
-				
-				totCost += cost*outCnt;
-			}
-			Client_PerformDto client_PerformDto = Client_PerformDto.builder()
-																   .client_No(sales_OrderDto.getClientDto().getClient_No())
-																   .dYearMonth(sales_OrderDto.getComplete_Date())
-																   .total_Amt(totCost)
-																   .build()
-																   ;
-			clinetDao.returnPerform(client_PerformDto);
+//			System.out.println("Sales_OrderDto sales_OrderDto"+sales_OrderDto);
+//			
+//			for(Sales_ItemDto sales_ItemDto : listSalesItem) {
+//				Long cost = sales_ItemDto.getSales_Item_Cost();
+//				int	 outCnt = sales_ItemDto.getSales_Item_OutCnt();
+//				
+//				totCost += cost*outCnt;
+//			}
+//			Client_PerformDto client_PerformDto = Client_PerformDto.builder()
+//																   .client_No(sales_OrderDto.getClientDto().getClient_No())
+//																   .dYearMonth(sales_OrderDto.getComplete_Date())
+//																   .total_Amt(totCost)
+//																   .build()
+//																   ;
+//			clinetDao.returnPerform(client_PerformDto);
 			
 			int result = sales_OrderDao.returnComplete(out_Status, sales_No, listSalesItem);
-			System.out.println("result!!!!"+result);
 			
-			return result;
+			if (result == 1) {
+				String success = "수주 완료 취소 성공";
+				return success;
+			} else if (result == 0) {
+				String fail = "수주 완료 취소 실패";
+				return fail;
+			} else {
+				throw new IllegalArgumentException("잘못된 요청");
+			}
+			
+			
 		} else if( out_Status == 0){
 			
 			int result = sales_OrderDao.modifyStatus(sales_No, out_Status);
-			return result;
+			
+			if(result == 1) {
+				String success = "수주 승인 취소 성공";
+				return success;
+			} else if(result == 0) {
+				String fail = "수주 승인 취소 실패";
+				return fail;
+			} else {
+				throw new IllegalArgumentException("잘못된 요청");
+			}
+			
 		
 		} else {
 			throw new IllegalArgumentException("잘못된 출고 상태 ");

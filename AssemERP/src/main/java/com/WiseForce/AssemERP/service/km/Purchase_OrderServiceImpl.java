@@ -111,9 +111,20 @@ public class Purchase_OrderServiceImpl implements Purchase_OrderService {
 	}
 
 	@Override
-	public void createPurchase(Purchase_OrderDto purchase_OrderDto) {
+	public String createPurchase(Purchase_OrderDto purchase_OrderDto) {
 		
-		purchase_OrderDao.createPurchase(purchase_OrderDto);
+		int result = purchase_OrderDao.createPurchase(purchase_OrderDto);
+		
+		if(result == 1) {
+			String success = "발주 등록 성공";
+			return success;
+		} else if(result == 0) {
+			String fail = "발주 등록 실패";
+			return fail;
+		} else {
+			throw new IllegalArgumentException("잘못된 요청");
+		}
+		
 		/*
 		 * List<Purchase_ItemDto> purchase_ItemDto =
 		 * purchase_OrderDto.getPurchase_Item();
@@ -132,12 +143,26 @@ public class Purchase_OrderServiceImpl implements Purchase_OrderService {
 	}
 
 	@Override
-	public void modifyPurchase(Purchase_OrderDto purchase_OrderDto) {
-		purchase_OrderDao.modifyPurchase(purchase_OrderDto);
+	public String modifyPurchase(Purchase_OrderDto purchase_OrderDto) {
+		int purchase_No = purchase_OrderDto.getPurchase_No();
+		List<Purchase_ItemDto> purchaseItem = purchase_OrderDao.getPurchaseItem(purchase_No);
+		purchase_OrderDao.deletePurchaseItem(purchaseItem);
+		
+		int result = purchase_OrderDao.modifyPurchase(purchase_OrderDto);
+		
+		if(result == 1) {
+			String success = "발주 수정 성공";
+			return success;
+		} else if (result == 0) {
+			String fail = "발주 수정 실패";
+			return fail;
+		} else {
+			throw new IllegalArgumentException("잘못된 요청");
+		}
 	}
 
 	@Override
-	public void modifyStatus(int purchase_No) {
+	public String modifyStatus(int purchase_No) {
 		int in_Status = purchase_OrderDao.getInStatus(purchase_No);
 		List<Integer> parts_no = purchase_OrderDao.getPartsNo(purchase_No);
 		System.out.println("in_Status"+in_Status);
@@ -150,15 +175,39 @@ public class Purchase_OrderServiceImpl implements Purchase_OrderService {
 		}
 		System.out.println("in_Status1"+in_Status);
 		if (in_Status == 1) {
-			purchase_OrderDao.modifyStatus(purchase_No, in_Status);
+			int result = purchase_OrderDao.modifyStatus(purchase_No, in_Status);
+			
+			if(result == 1) {
+				String success = "발주 승인 성공";
+				return success;
+			} else if(result == 0) {
+				String fail = "발주 승인 실패";
+				return fail;
+			} else {
+				throw new IllegalArgumentException("잘못된 요청");
+			}
+			
+			
 		} else if(in_Status == 2) {
-			purchase_OrderDao.modifyComplete(purchase_No, in_Status, parts_no);
+			int result = purchase_OrderDao.modifyComplete(purchase_No, in_Status, parts_no);
+			
+			if(result == 1) {
+				String success = "발주 완료 성공";
+				return success;
+			} else if(result == 0) {
+				String fail = "발주 완료 실패";
+				return fail;
+			} else {
+				throw new IllegalArgumentException("잘못된 요청");
+			}
+		} else {
+			throw new IllegalArgumentException("잘못된 요청");
 		}
 		
 	}
 
 	@Override
-	public int returnInStatus(int purchase_No) {
+	public String returnInStatus(int purchase_No) {
 		Integer in_Status = purchase_OrderDao.getInStatus(purchase_No);
 		
 		if(in_Status != null) {
@@ -182,17 +231,36 @@ public class Purchase_OrderServiceImpl implements Purchase_OrderService {
 			int result = purchase_OrderDao.returnInStatus(purchase_No, in_Status);
 			int itemReusult = purchase_OrderDao.returnPurchaseItem(purchase_No, listPurchaseItem);
 			
-			return result;
+			if(result == 1) {
+				String success = "발주 완료 취소 성공";
+				return success;
+			} else if(result == 0) {
+				String fail = "발주 완료 취소 실패";
+				return fail;
+			} else {
+				throw new IllegalArgumentException("잘못된 요청");
+			}
+			
 		} else if(in_Status ==0) {
 			int result = purchase_OrderDao.returnInStatus(purchase_No, in_Status);
-			return result;
+			
+			if(result == 1) {
+				String success = "발주 승인 취소 성공";
+				return success;
+			} else if (result == 0) {
+				String fail = "발주 승인 취소 실패";
+				return fail;
+			} else {
+				throw new IllegalArgumentException("잘못된 요청");
+			}
+			
 		} else {
 			throw new IllegalArgumentException("잘못된 입고 상태값");
 		}
 	}
 
 	@Override
-	public int deletePurchase(int purchase_No) {
+	public String deletePurchase(int purchase_No) {
 //		List<Purchase_ItemDto> purchaseItemList = purchase_OrderDao.getPurchaseItem(purchase_No);
 		Purchase_OrderDto purchase_OrderDto = purchase_OrderDao.detailPurchase(purchase_No);
 		
@@ -200,7 +268,16 @@ public class Purchase_OrderServiceImpl implements Purchase_OrderService {
 		
 		int result = purchase_OrderDao.deletePurchase(purchase_No);
 		
-		return result;
+		if(result == 1) {
+			String success = "발주 삭제 성공";
+			return success;
+		} else if(result == 0) {
+			String fail = "발주 삭제 실패";
+			return fail;
+		} else {
+			throw new IllegalArgumentException("잘못된 요청");
+		}
+		
 	}
 
 }

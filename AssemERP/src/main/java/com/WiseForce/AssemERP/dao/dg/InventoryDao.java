@@ -5,6 +5,8 @@ import java.util.Map;
 
 import com.WiseForce.AssemERP.dto.dg.InventoryInfoDTO;
 import com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO;
+import com.WiseForce.AssemERP.dto.km.Sales_ItemDto;
+import com.WiseForce.AssemERP.dto.sh.PartsDTO;
 
 public interface InventoryDao {
 	// 이번 월 기말재고의 종류 수 조회
@@ -21,10 +23,13 @@ public interface InventoryDao {
 
 	// 재고 상세 정보 조회
 	InventoryInfoDTO getInventoryInfoById(InventoryInfoDTO inventoryInfoDTO);
+	// 가용 재고 상세 정보 조회
+	InventoryInfoDTO getAbleInventoryInfoById(InventoryInfoDTO inventoryInfoDTO);
 
 	// 재고현황 조회
 	List<Map<String, Object>> getInventoryCurrent();
 
-
-
+	// 제품 하나에 필요한 부품 조회
+	Map<Integer, Integer> getRequirementsForProduct(Sales_ItemDto sales_ItemDto);
+	
 }

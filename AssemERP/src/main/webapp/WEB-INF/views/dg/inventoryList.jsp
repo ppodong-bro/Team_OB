@@ -11,7 +11,10 @@
 #btn-exceldownload:hover {
 	background: #70d967; //죽음의 인도자 형초
 }
-
+.custom_tr {
+  background-color: #FFF3CD;
+  /* background-color: #FFE8A1; */
+}
 </style>
 </head>
 <script type="text/javascript">
@@ -185,31 +188,39 @@ function excelDownload(){
 							<div class="table-responsive">
 								<table class="table table-bordered align-middle list-table">
 									<thead class="table-light">
-										<tr>
+										<tr class="${not empty realInventory ? 'table-row-highlight' : ''}">
 											<th style="width: 50px;">#</th>
 											<th style="width: 85px;">${item_type }번호</th>
 											<th style="width: 85px;">${item_type }구분</th>
 											<th style="min-width: 250px;">${item_type }명</th>
 											<th style="width: 100px;">수량</th>
-											<th style="width: 85px;">수정</th>
+											<th style="width: 85px;">조정</th>
 											<th style="display: none;">적정 수량</th>
 											<th style="display: none;">편차</th>
 										</tr>
 									</thead>
 									<tbody>
 										<c:forEach var="realInventory" items="${realInventoryList}" varStatus="index">
-											<tr>
-												<td class="text-center">${(paging.currentPage - 1) * paging.rowPage + index.index + 1}</td>
-												<td class="text-center">${realInventory.item_no}</td>
-												<td class="text-center">${realInventory.item_status}</td>
-												<td>${realInventory.item_name}</td>
-												<td class="text-center">${realInventory.cnt}</td>
-												<td class="text-center"><a
+											<!-- 재고가 부족한 경우 경고 -->
+											<c:choose>
+											    <c:when test="${realInventory.cnt <= 0}">
+													<tr class="custom_tr">
+											    </c:when>
+											    <c:otherwise>
+													<tr>
+											    </c:otherwise>
+										    </c:choose>
+												<td class="text-center" style="background: transparent;">${(paging.currentPage - 1) * paging.rowPage + index.index + 1}</td>
+												<td class="text-center" style="background: transparent;">${realInventory.item_no}</td>
+												<td class="text-center" style="background: transparent;">${realInventory.item_status}</td>
+												<td style="background: transparent;">${realInventory.item_name}</td>
+												<td class="text-center" style="background: transparent;">${realInventory.cnt}</td>
+												<td class="text-center" style="background: transparent;"><a
 													href="${pageContext.request.contextPath}/inventory/adjust?item_type=${search.item_type}&item_no=${realInventory.item_no}"
-													class="btn btn-sm btn-outline-success"> <i class="bi bi-pencil-square"></i> 수정
+													class="btn btn-sm btn-outline-success"> <i class="bi bi-pencil-square"></i> 조정
 												</a></td>
-												<td class="text-center" style="display: none;">${realInventory.proper_cnt}</td>
-												<td class="text-center" style="display: none;">${realInventory.diff_cnt}</td>
+												<td class="text-center" style="display: none; background: transparent;">${realInventory.proper_cnt}</td>
+												<td class="text-center" style="display: none; background: transparent;">${realInventory.diff_cnt}</td>
 											</tr>
 										</c:forEach>
 									</tbody>

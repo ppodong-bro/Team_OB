@@ -7,6 +7,8 @@ import com.WiseForce.AssemERP.dto.dg.InventoryDTO;
 import com.WiseForce.AssemERP.dto.dg.InventoryInfoDTO;
 import com.WiseForce.AssemERP.dto.dg.Inventory_CloseDTO;
 import com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO;
+import com.WiseForce.AssemERP.dto.km.Sales_ItemDto;
+import com.WiseForce.AssemERP.dto.sh.PartsDTO;
 
 public interface InventoryService {
 	// 현재 재고 목록 조회
@@ -15,11 +17,13 @@ public interface InventoryService {
 
 	// 재고 상세 조회
 	InventoryInfoDTO getRealInventoryById(InventoryInfoDTO inventoryInfoDTO);
+	// 가용 재고 상세 조회
+	InventoryInfoDTO getAbleInventoryById(InventoryInfoDTO inventoryInfoDTO);
 	// 재고 조정
 	boolean adjustRealInventoryById(InventoryInfoDTO inventoryInfoDTO);
 	
-	// 재고 입출고 이력 목록 조회
-	int getInventoryHistoryCnt(InventoryDTO inventoryDTO);// 재고 입출고 이력 목록 수 조회
+	// 입출고 이력 목록 조회
+	int getInventoryHistoryCnt(InventoryDTO inventoryDTO);// 입출고 이력 목록 수 조회
 	List<InventoryDTO> getInventoryHistory(InventoryDTO inventoryDTO);
 	
 	// 월마감 이력 목록 조회
@@ -31,4 +35,7 @@ public interface InventoryService {
 	
 	// 재고현황 조회
 	List<Map<String, Object>> getInventoryCurrent();
+	
+	// 판매에 필요한 재고 확인
+	Map<PartsDTO, Integer> getRequirementsForSales(List<Sales_ItemDto> sales_ItemDtos);
 }

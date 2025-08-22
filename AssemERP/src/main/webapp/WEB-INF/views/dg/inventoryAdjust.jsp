@@ -43,28 +43,29 @@ body {
 							start-50 : 50%위치에서 시작하도록
 							translate-middle-x : 객체의 x중심이 가운데에 위치하도록 -->
 							<h4 class="card-title mb-0 position-absolute start-50 translate-middle-x">
-								<i class="bi bi-pencil-square me-2"></i>재고 수정
+								<i class="bi bi-pencil-square me-2"></i>재고 조정
 							</h4>
 						</div>
 						<div class="card-body p-4">
 							<!-- 화면에서 전체적으로 사용하는 부품/제품 구분 변수 -->
 							<c:set var="item_type" value="${inventory.item_type == 0 ? '부품' : '제품'}" />
 
-							<form id="updateForm" action="${pageContext.request.contextPath}/inventory/adjust" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+							<form id="updateForm" action="${pageContext.request.contextPath}/inventory/adjust" method="post" enctype="multipart/form-data"
+								class="needs-validation" novalidate>
 								<div class="row">
 									<div class="col-md-6 mb-3">
 										<label for="item_type" class="form-label">재고 구분</label>
 										<div class="input-group">
-											<span class="input-group-text"><i class="bi bi-box"></i></span> <input type="text" class="form-control" id="item_type_ko" name="item_type_ko"
-												value="${item_type }" disabled="disabled">
-											<input type="hidden" id="item_type" name="item_type" value="${inventory.item_type }">
+											<span class="input-group-text"><i class="bi bi-box"></i></span> <input type="text" class="form-control" id="item_type_ko"
+												name="item_type_ko" value="${item_type }" disabled="disabled"> <input type="hidden" id="item_type" name="item_type"
+												value="${inventory.item_type }">
 										</div>
 									</div>
 									<div class="col-md-6 mb-3">
 										<label for="item_type" class="form-label">${item_type } 번호</label>
 										<div class="input-group">
-											<span class="input-group-text"><i class="bi bi-hash"></i></span> <input type="text" class="form-control readonly" id="item_no" name="item_no"
-												value="${inventory.item_no }" readonly="readonly">
+											<span class="input-group-text"><i class="bi bi-hash"></i></span> <input type="text" class="form-control readonly" id="item_no"
+												name="item_no" value="${inventory.item_no }" readonly="readonly">
 										</div>
 									</div>
 								</div>
@@ -93,7 +94,7 @@ body {
 										</div>
 									</div>
 									<div class="col-md-6 mb-3">
-										<label for="item_type" class="form-label">수정 수량</label>
+										<label for="item_type" class="form-label">조정 수량</label>
 										<div class="input-group">
 											<span class="input-group-text"><i class="bi bi-pencil-square"></i></span> <input type="text" class="form-control" id="item_adjustcnt"
 												name="item_adjustcnt" value="${inventory.cnt }">
@@ -102,15 +103,14 @@ body {
 								</div>
 								<div class="row">
 									<div class="col-md-12 mb-3">
-									<label for="files_no" class="form-label">첨부파일</label>
-									<input type="hidden" name="files_no" value="${inventory.files_no }">
-									<input type="file" class="form-control form-control-sm" id="files" name="files" multiple="multiple">
+										<label for="files_no" class="form-label">첨부파일</label> <input type="hidden" name="files_no" value="${inventory.files_no }"> <input
+											type="file" class="form-control form-control-sm" id="files" name="files" multiple="multiple">
 									</div>
 								</div>
 								<div class="row mt-4 g-2">
 									<div class="d-grid">
 										<button type="submit" class="btn btn-success">
-											<i class="bi bi-check-lg me-2"></i>재고 수정
+											<i class="bi bi-check-lg me-2"></i>재고 조정
 										</button>
 									</div>
 								</div>
