@@ -30,20 +30,14 @@
             					<a href="/emp/empRegisterForm" class="btn btn-primary"><i class="bi bi-plus-lg"></i>	등록</a>
 				        </div>
 				        <div class="card-body">
-				            <%-- ==================== 1. 디버깅 코드 추가 ==================== --%>
-						    <%-- <div class="alert alert-light p-2 mb-3 border">
-						        <strong>[Debug Info]</strong> searchType: <strong class="text-danger">[${searchType}]</strong>, searchKeyword: <strong class="text-danger">[${searchKeyword}]</strong>
-						    </div> --%>
-							
 							<div class="d-flex justify-content-end mb-3">
 							    <form action="/emp/empListForm" method="get" class="d-flex align-items-center">
-							        <!-- 검색 타입 셀렉트 -->
+
 							        <select name="searchType" id="searchType" class="form-select me-2" style="width: auto;">
 							            <option value="empNo" ${searchType == 'empNo' ? 'selected' : ''}>사원번호</option>
 							            <option value="empName" ${searchType == 'empName' ? 'selected' : ''}>사원명</option>
 							        </select>
 							
-							        <!-- 사원번호 입력 (숫자) -->
 							        <input 
 							            type="number" 
 							            name="searchKeyword" 
@@ -53,7 +47,6 @@
 							            value="${searchType == 'empNo' ? searchKeyword : ''}"
 							        >
 							
-							        <!-- 사원명 입력 (텍스트) -->
 							        <input 
 							            type="text" 
 							            name="searchKeyword" 
@@ -69,8 +62,7 @@
 							        </button>
 							    </form>
 							</div>
-				            <!--  <table class="table table-hover table-striped text-center align-middle">
-				                <thead class="table-dark"> -->
+				            
 				            <table class="table table-bordered align-middle text-center">
 				                <thead class="table-light">
 				                    <tr>
@@ -91,8 +83,7 @@
 				                            <td>${emp.empTel}</td>
 				                            <td align="left">${emp.email}</td>
 				                            <td>
-				                                <%-- 3. 수정 버튼 링크 경로 수정 --%>
-				                                <a href="/emp/empModifyForm?empNo=${emp.empNo}" class="btn btn-sm btn-outline-success">
+				                                <a href="/empAcc/empAccountModifyForm?empNo=${emp.empNo}" class="btn btn-sm btn-outline-success">
 				                                    <i class="bi bi-pencil-square"></i> 수정
 				                                </a>
 				                            </td>
@@ -157,8 +148,7 @@
 				
 	<!-- 부트스트랩 CDN -->
 	<jsp:include page="/common_cdn.jsp" />			
-				
-<!--  부서관리 javaScript function 구현  -->					
+							
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const sel = document.getElementById('searchType');
@@ -179,9 +169,7 @@
             }
         }
 
-        // 초기 토글
         toggleInputs();
-        // 변경 시마다 토글
         sel.addEventListener('change', toggleInputs);
     });
 </script>

@@ -2,33 +2,47 @@ package com.WiseForce.AssemERP.mapper.sm;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
+import com.WiseForce.AssemERP.dto.CommonDTO;
 import com.WiseForce.AssemERP.dto.sm.EmpDTO;
 
 @Mapper
-public interface EmpMapper 
+public interface EmpMapper  
 {
-	// 사원 총건수 조회
+
 	int 			selectTotalEmpCount(EmpDTO empDTO);
-	
-	// 사원 목록 조회
+
 	List<EmpDTO>	selectEmpList(EmpDTO empDTO);
-	
-	// 사원 상세 조회
+
 	EmpDTO			selectEmpDetail(int empNo);
-	
-	// 신규 사원 등록
+
 	void 			insertEmp(EmpDTO empDTO);
-	
-	// 사원 정보 수정
-	void 			updateEmp(EmpDTO empDTO);
-	
-	// 사원 정보 삭제
+
+	void 			insertEmpAuto(EmpDTO empDTO);
+
+	int 			updateEmp(EmpDTO empDTO);
+
 	void 			deleteEmpUpt(int empNo);
-	
-	// 타파트 조회용(사원명 조회) 추가예정
+
 	EmpDTO			searchEmpName(int empNo);
-	
-	// [Custom조회용] 사원 정보 조회를 요청
-	EmpDTO findByUsernam(String empName); 
-}
+
+	EmpDTO 			findByUsernam(String empName); 
+
+	Integer			selectSalaryPresetById(Integer presetId);
+
+	Integer 		selectDefaultPresetIdByGrade(Integer defaultGradeCode);
+
+	Long 			selecteSalaryByGradePreset(@Param("gradeCode") Integer gradeCode);
+
+	void 			insertEmpResult(EmpDTO empDTO);
+
+	Integer 		deleteEmpStatus(int empNo);
+
+	List<CommonDTO> selectRoleCodes();
+
+	Integer  		getNextInternalEmpNo();
+
+	Integer  		getNextPartnerEmpNo();
+}	
+

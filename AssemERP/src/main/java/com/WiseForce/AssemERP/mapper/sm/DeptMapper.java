@@ -1,28 +1,34 @@
 package com.WiseForce.AssemERP.mapper.sm;
 
 import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.WiseForce.AssemERP.dto.sm.DeptDTO;
+import com.WiseForce.AssemERP.dto.sm.DeptSearchDTO;
+import com.WiseForce.AssemERP.dto.sm.EmpSearchDTO;
 
 @Mapper
-public interface DeptMapper 
+public interface DeptMapper  
 {
-	// 부서 총건수 조회
-	int 			selectTotalDeptCount(DeptDTO deptDTO);
+	int 				selectTotalDeptCount(DeptDTO deptDTO);
 	
-	// 부서 목록 조회
-	List<DeptDTO>	selectDeptList(DeptDTO deptDTO);
+	List<DeptDTO>		selectDeptList(DeptDTO deptDTO);
 	
-	// 부서 상세 조회
-	DeptDTO			selectDeptDetail(int deptCode);
+	DeptDTO				selectDeptDetail(int deptCode);
 	
-	// 신규 부서 등록
-	void 			insertDept(DeptDTO deptDTO);
+	void 				insertDept(DeptDTO deptDTO);
+
+	void 				updateDept(DeptDTO deptDTO);
 	
-	// 부서 정보 수정
-	void 			updateDept(DeptDTO deptDTO);
+	void 				deleteDeptUpt(int deptCode);
 	
-	// 부서 정보 삭제
-	void 			deleteDeptUpt(int deptCode);
+	List<EmpSearchDTO> 	searchEmployeesByName(@Param("keyword") String keyword);
+	
+	DeptDTO 			selectDeptByCode(int deptCode);
+
+	List<DeptSearchDTO> searchDeptModalList(@Param("deptName") String deptName);
+
+	List<DeptDTO>       searchEmpAccByName(@Param("deptName") String deptName);
 }

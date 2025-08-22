@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.WiseForce.AssemERP.account.mapper.AccountMapper">
+
+    <resultMap id="accountResultMap" type="com.WiseForce.AssemERP.account.dto.AccountDTO">
+        <id property="userId" 				column="USER_ID"/>
+        <result property="password" 		column="PASSWORD"/>
+        <result property="rolesStatus" 		column="ROLES_STATUS"/>
+        <result property="empNo" 			column="EMP_NO"/>
+        <result property="empType" 			column="EMP_TYPE"/>
+        <result property="approvalStatus" 	column="APPROVAL_STATUS"/>
+        <result property="withdrawStatus" 	column="WITHDRAW_STATUS"/>
+        <result property="regDate" 			column="REG_DATE"/>
+
+        <result property="empName" 			column="EMP_NAME"/>
+        <result property="email" 			column="EMAIL"/>
+        <result property="empTel"       	column="EMP_TEL" />
+        <result property="authRoleName" 	column="AUTH_ROLE_NAME"/>
+
+        <result property="empFilename" 		column="EMP_FILENAME"/>
+        <result property="delStatus" 		column="DEL_STATUS"/>
+    </resultMap>
+
+    <sql id="searchCondition">
+        <if test="searchKeyword != null and searchKeyword != ''">
+            <choose>
+                <when test="searchType == 'userId'">
+                    AND A.USER_ID LIKE '%' || #{searchKeyword} || '%'
+                </when>
+                <when test="searchType == 'empName'">
+                    AND E.EMP_NAME LIKE '%' || #{searchKeyword} || '%'
+                </when>
+            </choose>
+        </if>
+    </sql>
+
+    <select id="findByUserId" parameterType="string" resultMap="accountResultMap">
+        SELECT
+            	A.USER_ID, 	A.PASSWORD, A.ROLES_STATUS, A.EMP_NO, 
+            	E.EMP_NAME, E.EMAIL, 	E.EMP_TEL, 		C.CONTEXT AS AUTH_ROLE_NAME,
+            	IMG.EMP_FILENAME,  
+            	E.DEL_STATUS, A.WITHDRAW_STATUS, A.EMP_TYPE, A.APPROVAL_STATUS
+        FROM
+            ACCOUNT A
+        JOIN
+            EMP E ON A.EMP_NO = E.EMP_NO
+        LEFT JOIN
+            COMMON C ON A.ROLES_STATUS = C.MIDDLE_STATUS AND C.BIG_STATUS = 200
+        LEFT JOIN
+            EMP_IMAGE IMG ON A.EMP_NO = IMG.EMP_NO AND IMG.ORDER_NUM = 1
+        WHERE
+            A.USER_ID = #{userId}
+    </select>
+
+    <select id="getAccountTotalCount" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM ACCOUNT A
+        JOIN EMP E ON A.EMP_NO = E.EMP_NO
+        <where>
+            <include refid="searchCondition"/>
+        </where>
+    </select>
+
+    <select id="findAllAccounts" parameterType="map" resultMap="accountResultMap">
+        SELECT *
+        FROM (
+            SELECT ROWNUM AS RNUM, T1.*
+            FROM (
+                SELECT
+                    A.USER_ID, A.ROLES_STATUS, A.EMP_NO, A.WITHDRAW_STATUS, A.REG_DATE,
+                    E.EMP_NAME, C.CONTEXT AS AUTH_ROLE_NAME
+                FROM
+                    ACCOUNT A
+                JOIN
+                    EMP E ON A.EMP_NO = E.EMP_NO
+                LEFT JOIN
+                    COMMON C ON A.ROLES_STATUS = C.MIDDLE_STATUS AND C.BIG_STATUS = 200
+                <where>
+                    <include refid="searchCondition"/>
+                </where>
+                ORDER BY A.REG_DATE DESC
+            ) T1
+        )
+        WHERE RNUM BETWEEN #{start} AND #{end}
+    </select>
+
+    <select id="findByEmpNo" parameterType="int" resultMap="accountResultMap">
+        SELECT
+            	A.USER_ID
+             ,  A.ROLES_STATUS
+             ,  A.EMP_NO
+             ,  A.EMP_TYPE
+             ,  A.APPROVAL_STATUS
+             ,  A.WITHDRAW_STATUS
+             ,  E.EMP_NAME
+             ,  E.EMAIL
+             ,  A.REG_DATE
+        FROM
+            ACCOUNT A
+        JOIN
+            EMP E ON A.EMP_NO = E.EMP_NO
+        WHERE
+            A.EMP_NO = #{empNo}
+    </select>
+
+    <insert id="insertAccount" parameterType="com.WiseForce.AssemERP.account.dto.AccountDTO">
+        INSERT INTO ACCOUNT (
+              USER_ID
+            , PASSWORD
+            , ROLES_STATUS
+            , EMP_NO
+            , EMP_TYPE
+            , APPROVAL_STATUS
+        ) VALUES (
+              #{userId, 		jdbcType=VARCHAR}
+            , #{password, 		jdbcType=VARCHAR}
+            , #{rolesStatus, 	jdbcType=NUMERIC}
+            , #{empNo, 			jdbcType=NUMERIC}
+            , #{empType, 		jdbcType=VARCHAR}
+            , #{approvalStatus, jdbcType=NUMERIC}
+        )
+    </insert>
+
+    <update id="updateAccount" parameterType="com.WiseForce.AssemERP.account.dto.AccountDTO">
+        UPDATE  ACCOUNT
+           SET  ROLES_STATUS    = #{rolesStatus}
+              , EMP_TYPE        = #{empType}
+              , APPROVAL_STATUS = #{approvalStatus}
+         WHERE  USER_ID = #{userId}
+    </update>
+
+    <update id="updatePassword" parameterType="com.WiseForce.AssemERP.account.dto.AccountDTO">
+        UPDATE ACCOUNT
+           SET PASSWORD = #{password}
+         WHERE USER_ID = #{userId}
+    </update>
+
+    <update id="updateProfile" parameterType="com.WiseForce.AssemERP.account.dto.AccountDTO">
+        UPDATE EMP
+           SET EMAIL   = #{email},
+               EMP_TEL = #{empTel}
+         WHERE EMP_NO  = #{empNo}
+    </update>
+
+    <update id="withdrawAccount" parameterType="string">
+        UPDATE ACCOUNT
+           SET WITHDRAW_STATUS = '1'
+         WHERE USER_ID = #{userId}
+    </update> 
+
+    <update id="updateEmpAccountPasswd" parameterType="com.WiseForce.AssemERP.account.dto.AccountDTO">
+        UPDATE  ACCOUNT
+           SET  ROLES_STATUS 	= #{rolesStatus}
+              , PASSWORD     	= #{password}
+              , WITHDRAW_STATUS = #{withdrawStatus} 
+              , EMP_TYPE        = #{empType}
+              , APPROVAL_STATUS = #{approvalStatus}
+         WHERE  USER_ID = #{userId}
+           AND  EMP_NO  = #{empNo}
+    </update>
+
+    <update id="updateEmpAccountStatus" parameterType="com.WiseForce.AssemERP.account.dto.AccountDTO">
+        UPDATE  ACCOUNT
+           SET  ROLES_STATUS    = #{rolesStatus}
+              , WITHDRAW_STATUS = #{withdrawStatus}
+              , EMP_TYPE        = #{empType}
+              , APPROVAL_STATUS = #{approvalStatus} 
+         WHERE  USER_ID = #{userId}
+           AND  EMP_NO  = #{empNo}
+    </update>
+
+    <update id="withdrawEmpAccount" parameterType="com.WiseForce.AssemERP.account.dto.AccountDTO">
+        UPDATE ACCOUNT
+           SET WITHDRAW_STATUS = 1
+         WHERE USER_ID = #{userId}
+           AND EMP_NO  = #{empNo}
+    </update> 
+
+    <select id="selectVerify" parameterType="com.WiseForce.AssemERP.account.dto.AccountDTO" resultType="Integer">
+        SELECT
+            	COUNT(*)
+        FROM
+            ACCOUNT A
+        JOIN
+            EMP E ON A.EMP_NO = E.EMP_NO
+        WHERE A.EMP_NO    = #{empNo}
+          AND A.USER_ID   = #{userId}
+          AND A.EMP_TYPE  = 'EXTERNAL'
+          AND A.APPROVAL_STATUS = 8
+          AND A.WITHDRAW_STATUS = 0
+    </select>
+
+    <update id="updatePartnerAccount" parameterType="com.WiseForce.AssemERP.account.dto.AccountDTO">
+         UPDATE ACCOUNT
+           SET  APPROVAL_STATUS = 2,
+                PASSWORD  = #{password}
+         WHERE  USER_ID   = #{userId}
+           AND  EMP_NO    = #{empNo}
+           AND  EMP_TYPE  = 'EXTERNAL'
+           AND  APPROVAL_STATUS = 8
+           AND  WITHDRAW_STATUS = 0
+    </update>
+
+</mapper>
+

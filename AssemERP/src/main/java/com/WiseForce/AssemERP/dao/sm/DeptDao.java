@@ -24,4 +24,7 @@ public interface DeptDao
     // 부서 정보 삭제
     void 			deleteDept(int deptCode);
 
+    //List<DeptDTO> findAllDepts();
+    //DeptDTO findByDeptCode(int deptCode);
+    
 }

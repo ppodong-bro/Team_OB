@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.WiseForce.AssemERP.mapper.sm.EmpMapper">
+
+	<resultMap id="empResultMap" type="com.WiseForce.AssemERP.dto.sm.EmpDTO">
+	    <id     property="empNo"        column="EMP_NO" />
+	    <result property="empName"      column="EMP_NAME" />
+	    <result property="empTel"       column="EMP_TEL" />
+	    <result property="email"        column="EMAIL" />
+	    <result property="sal"          column="SAL" />
+	    <result property="deptCode"     column="DEPT_CODE" />
+	    <result property="deptName"     column="DEPT_NAME" />
+	    <result property="delStatus"    column="DEL_STATUS" />
+	    <result property="registrar"    column="REGISTRAR" />
+	    <result property="inDate"       column="IN_DATE" />
+	    <result property="hireDate"     column="HIRE_DATE" />
+		<result property="gradeCode"	column="GRADE_CODE" />
+	</resultMap> 
+
+	<sql id="searchCondition">
+    <if test="searchKeyword != null and searchKeyword != ''">
+        <choose>
+            <when test="searchType == 'empNo'">
+                AND EMP_NO = #{searchKeyword}
+            </when>
+            <when test="searchType == 'empName'">
+                AND EMP_NAME LIKE #{searchKeyword} || '%'
+            </when>
+        </choose>
+    </if>
+    </sql>
+
+	<select id="selectTotalEmpCount" parameterType="EmpDTO"  resultType="int">
+		SELECT Count(*) 
+		  FROM emp
+		 WHERE DEL_STATUS = 0     
+		<include refid="searchCondition" />
+	</select>
+
+	<select id="selectEmpList" parameterType="EmpDTO" resultMap="empResultMap">
+		SELECT *
+        FROM (
+            SELECT ROWNUM rn, a.*
+            FROM (
+                SELECT 
+		                  EMP_NO
+						, EMP_NAME
+						, EMP_TEL
+						, EMAIL
+						, SAL
+						, HIRE_DATE
+						, GRADE_CODE
+						, DEPT_CODE
+						, DEL_STATUS
+						, REGISTRAR
+						, IN_DATE     
+                FROM EMP
+                WHERE DEL_STATUS = 0
+                <include refid="searchCondition" />
+                ORDER BY EMP_NO ASC
+            ) a
+        )
+        WHERE rn BETWEEN #{start} AND #{end}
+	</select>
+
+	<select id="selectEmpDetail" parameterType="int"  resultMap="empResultMap">
+			SELECT
+			        e1.EMP_NO,
+			        e1.EMP_NAME,
+			        e1.EMP_TEL,
+			        e1.EMAIL,
+			        e1.SAL,
+			        e1.HIRE_DATE,
+			        e1.GRADE_CODE,
+			        e1.DEPT_CODE,
+			        e1.DEL_STATUS, 
+			        e1.REGISTRAR,
+			        e1.IN_DATE,
+			        e2.EMP_NAME AS REGISTRAR_NAME,
+			        d1.DEPT_NAME
+		    FROM
+		        EMP e1
+		    LEFT JOIN
+		        EMP e2 ON e1.REGISTRAR  = e2.EMP_NO
+		    LEFT JOIN 
+		        DEPT d1 ON e1.DEPT_CODE = d1.DEPT_CODE
+		    WHERE
+		        e1.EMP_NO = #{empNo}
+	</select>
+
+     <insert id="insertEmp" parameterType="EmpDTO">
+        INSERT INTO EMP (
+            	  EMP_NO
+            	, EMP_NAME
+            	, EMP_TEL
+            	, EMAIL
+            	, SAL
+            	, HIRE_DATE
+				, GRADE_CODE
+            	, DEPT_CODE
+            	, DEL_STATUS
+            	, REGISTRAR
+            	, IN_DATE
+        ) VALUES (
+            	  EMP_NO_SEQ.NEXTVAL 
+            	, #{empName}
+            	, #{empTel, 	jdbcType=VARCHAR}
+            	, #{email, 		jdbcType=VARCHAR}
+            	, #{sal, 		jdbcType=NUMERIC}
+            	, #{hireDate, 	jdbcType=NUMERIC}
+            	, #{gradeCode, 	jdbcType=NUMERIC}
+            	, #{deptCode, 	jdbcType=NUMERIC}
+            	, #{delStatus,	jdbcType=NUMERIC}  
+            	, #{registrar,	jdbcType=NUMERIC}  
+            	, SYSDATE
+        )
+    </insert>
+
+    <insert id="insertEmpAuto" parameterType="EmpDTO">
+        INSERT INTO EMP (
+            	  EMP_NO
+            	, EMP_NAME
+            	, EMP_TEL
+            	, EMAIL
+            	, SAL
+            	, HIRE_DATE
+				, GRADE_CODE
+            	, DEPT_CODE
+            	, DEL_STATUS
+            	, REGISTRAR
+            	, IN_DATE
+        ) VALUES (
+            	  #{empNo}  
+            	, #{empName}
+            	, #{empTel, 	jdbcType=VARCHAR}
+            	, #{email, 		jdbcType=VARCHAR}
+            	, #{sal, 		jdbcType=NUMERIC}
+            	, #{hireDate, 	jdbcType=NUMERIC}
+            	, #{gradeCode, 	jdbcType=NUMERIC}
+            	, #{deptCode, 	jdbcType=NUMERIC}
+            	, #{delStatus,	jdbcType=NUMERIC}  
+            	, #{registrar,	jdbcType=NUMERIC}  
+            	, SYSDATE
+        )
+    </insert>
+
+    <update id="updateEmp" parameterType="EmpDTO">
+    	UPDATE    EMP
+		   SET    EMP_NAME 			= #{empName}
+		   		, EMP_TEL           = #{empTel}
+				, EMAIL				= #{email}
+				, SAL				= #{sal}
+				, HIRE_DATE			= #{hireDate}
+				, GRADE_CODE		= #{gradeCode}
+				, DEPT_CODE			= #{deptCode}
+				, DEL_STATUS        = #{delStatus}
+		 WHERE    EMP_NO  			= #{empNo}
+	</update>
+
+    <update id="deleteEmpUpt" parameterType="int">
+    	UPDATE EMP
+		   SET DEL_STATUS = 1
+		 WHERE EMP_NO     = #{empNo}
+	</update>
+
+    <select id="searchEmpName" parameterType="EmpDTO" resultMap="empResultMap">
+		SELECT
+		        e.EMP_NO,
+		        e.EMP_NAME
+		  FROM
+		        EMP e
+		 WHERE e.EMP_NO     = #{empNo}
+		   AND e.DEL_STATUS = 0
+	</select>
+
+    <select id="findByUsername" parameterType="string"  resultMap="empResultMap">
+        SELECT
+            e.EMP_NO,
+            e.EMP_NAME,
+            e.EMP_TEL,
+            e.EMAIL,
+            e.HIRE_DATE,
+            e.GRADE_CODE,
+            e.DEPT_CODE,
+            e.DEL_STATUS,
+            img.EMP_FILENAME
+        FROM
+            EMP e
+        LEFT JOIN
+            EMP_IMAGE img ON e.EMP_NO = img.EMP_NO 
+            AND img.ORDER_NUM = 1
+        WHERE
+            e.USERNAME = #{username} 
+            AND e.DEL_STATUS = 0
+        ORDER BY 1
+    </select>
+
+  	<select id="selectSalaryPresetById" parameterType="Integer" resultType="Integer">
+	     SELECT 
+	     		-- c.MIDDLE_STATUS, 
+	     		TO_NUMBER(REGEXP_SUBSTR(c.CONTEXT, '[^|]+', 1, 2)) AS SAL
+		   FROM COMMON c
+		  WHERE c.BIG_STATUS = 220
+		    AND c.MIDDLE_STATUS = #{presetId}
+	</select>
+
+  	<select id="selectDefaultPresetIdByGrade" parameterType="Integer" resultType="Integer">
+	      SELECT 
+			     c.MIDDLE_STATUS as defaultPresetId 
+			FROM COMMON c
+		   WHERE c.BIG_STATUS = 210
+			 AND c.MIDDLE_STATUS = #{defaultGradeCode}
+	</select>
+
+    <select id="selecteSalaryByGradePreset" parameterType="Integer"  resultType="long">
+        SELECT TO_NUMBER(REGEXP_SUBSTR(s.CONTEXT, '[^|]+', 1, 2)) AS SALARY_AMT
+		  FROM COMMON g
+		  JOIN COMMON s
+		    ON s.MIDDLE_STATUS = g.MIDDLE_STATUS
+		   AND s.BIG_STATUS = 220
+		 WHERE g.BIG_STATUS = 210
+		   AND g.MIDDLE_STATUS = #{gradeCode}   
+		   AND s.MIDDLE_STATUS = #{gradeCode}
+    </select>
+
+    <insert id="insertEmpResult" parameterType="EmpDTO">
+    	<selectKey keyProperty="empNo" resultType="int" order="BEFORE">
+	        SELECT EMP_NO_SEQ.NEXTVAL FROM DUAL
+	    </selectKey>
+        INSERT INTO EMP (
+            	  EMP_NO
+            	, EMP_NAME
+            	, EMP_TEL
+            	, EMAIL
+            	, SAL
+            	, HIRE_DATE
+				, GRADE_CODE
+            	, DEPT_CODE
+            	, DEL_STATUS
+            	, REGISTRAR
+            	, IN_DATE
+        ) VALUES (
+            	  #{empNo}
+            	, #{empName}
+            	, #{empTel, 	jdbcType=VARCHAR}
+            	, #{email, 		jdbcType=VARCHAR}
+            	, #{sal, 		jdbcType=NUMERIC}
+            	, #{hireDate, 	jdbcType=NUMERIC}
+            	, #{gradeCode, 	jdbcType=NUMERIC}
+            	, #{deptCode, 	jdbcType=NUMERIC}
+            	, #{delStatus,	jdbcType=NUMERIC}  
+            	, #{registrar,	jdbcType=NUMERIC}  
+            	, SYSDATE
+        )
+    </insert>
+
+    <update id="deleteEmpStatus" parameterType="int">
+    	UPDATE EMP
+		   SET DEL_STATUS = 1
+		 WHERE EMP_NO     = #{empNo}
+	</update>
+
+    <select id="selectRoleCodes" resultType="com.WiseForce.AssemERP.dto.CommonDTO">
+	    SELECT
+		      MIDDLE_STATUS  AS MIDDLE_STATUS,
+		      CONTEXT  		 AS CONTEXT
+	    FROM  COMMON
+	    WHERE BIG_STATUS = 200
+	      AND MIDDLE_STATUS not in (999)
+	    ORDER BY MIDDLE_STATUS
+    </select>
+
+	<select id="getNextInternalEmpNo" resultType="java.lang.Integer">
+	    SELECT EMP_NO_SEQ.NEXTVAL FROM DUAL
+	</select>
+
+	<select id="getNextPartnerEmpNo" resultType="java.lang.Integer">
+	    SELECT EMP_NO_PARTNER_SEQ.NEXTVAL FROM DUAL
+	</select>
+
+</mapper>
