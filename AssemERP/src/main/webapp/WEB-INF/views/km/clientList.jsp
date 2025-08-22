@@ -97,9 +97,9 @@
 									<thead class="table-light text-center">
 										<tr>
 											<th style="width: 8%;">거래처번호</th>
-											<th style="width: 17%;">거래처명</th>
-											<th style="width: 5%;">유형</th>
-											<th style="width: 27%;">주소</th>
+											<th style="width: 15%;">거래처명</th>
+											<th style="width: 8%;">거래처 유형</th>
+											<th style="width: 26%;">주소</th>
 											<th style="width: 15%;">이메일</th>
 											<th style="width: 10%;">거래처 담당자</th>
 											<th style="width: 10%;">등록일</th>
