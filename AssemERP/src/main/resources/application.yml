@@ -65,6 +65,10 @@ mybatis:
 
 #upload Folder
 com.WiseForce.AssemERP.upload.path: upload
+
+#emp/account upload Folder
+file:
+  upload-dir: C:/GitHub/Team_OB/AssemERP/upload/account/profile-images
   
   
   

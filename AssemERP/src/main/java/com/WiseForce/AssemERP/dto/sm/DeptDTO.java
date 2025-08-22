@@ -24,6 +24,8 @@ public class DeptDTO
     
     // Emp Ref.
     private String  registrarName;
+    private String 	deptCaptainName; 
+    private String 	parentDeptName; 
     
     // 검색 조건
     private String searchType;

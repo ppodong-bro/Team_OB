@@ -2,6 +2,7 @@ package com.WiseForce.AssemERP.controller.sm;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,9 +12,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.WiseForce.AssemERP.dto.sm.DeptDTO;
+import com.WiseForce.AssemERP.dto.sm.EmpDTO;
 import com.WiseForce.AssemERP.service.sm.DeptService;
-import com.WiseForce.AssemERP.service.sm.Paging;
+import com.WiseForce.AssemERP.service.sm.EmpService;
+import com.WiseForce.AssemERP.util.Paging;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -21,18 +25,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class DeptController 
 {
-	private final DeptService deptService; 
+	private final DeptService 	deptService; 
 
-    // 부서 등록 페이지를 보여주는 메서드
     @GetMapping("/deptRegisterForm")
     public String deptRegisterForm() 
     {
     	System.out.println("DeptController deptRegisterForm start");
-    	
-        return "sm/deptRegisterForm"; 	// deptRegisterForm.jsp 뷰를 반환
+        return "sm/deptRegisterForm"; 	
     }
     
-    // 부서 정보를 등록하는 메서드
     @PostMapping("/deptSavePro")
     public String deptSavePro(
     							  @ModelAttribute DeptDTO deptDTO
@@ -45,16 +46,14 @@ public class DeptController
     	
     	int totalCount = deptService.getTotalCount(deptDTO);
     	
-    	// Paging 객체를 이용해 마지막 페이지 번호 계산
 		int pageSize   = 10;
 		int totalPage = (int) Math.ceil((double) totalCount / pageSize);
 		
 		System.out.println("DeptController deptSavePro saveDept - OK");
     	
-        return "redirect:/dept/deptListForm?currentPage="+totalPage; 		// deptListForm.jsp 뷰를 반환
+        return "redirect:/dept/deptListForm?currentPage="+totalPage; 		
 	}
     
-    // 부서 수정 페이지를 보여주는 메서드
     @GetMapping("/deptModifyForm")
     public String deptModifyForm(
     								  @RequestParam("deptCode") int deptCode
@@ -66,15 +65,21 @@ public class DeptController
     	System.out.println("DeptController deptModifyForm deptCode->"+deptCode);
     	
     	DeptDTO deptDTO = deptService.getDeptDetail(deptCode);
-    
+        
+        if (deptDTO == null) {
+            throw new IllegalArgumentException("부서를 찾을 수 없습니다. deptCode=" + deptCode);
+        }
+
+        if (deptDTO.getDeptCaptainName() == null) deptDTO.setDeptCaptainName("");
+        if (deptDTO.getParentDeptName() == null)   deptDTO.setParentDeptName("");
+    	
     	model.addAttribute("dept", deptDTO);
     	
     	System.out.println("DeptController deptModifyForm ok");
     	
-        return "sm/deptModifyForm"; 	// deptModifyForm.jsp 뷰를 반환
+        return "sm/deptModifyForm"; 	
     }
     
-    // 부서 정보를 수정하는 메서드
     @PostMapping("/deptModifyPro")
     public String deptModifyPro(
     								@ModelAttribute DeptDTO deptDTO,
@@ -83,12 +88,15 @@ public class DeptController
     {
     	System.out.println("DeptController deptModifyPro Start");
     	
+    	System.out.println("DeptController deptModifyPro deptCode=" + deptDTO.getDeptCode()
+														        	+ ", deptCaptain=" + deptDTO.getDeptCaptain()
+														        	+ ", parentDeptCode=" + deptDTO.getParentDeptCode());
+    	
     	deptService.updateDept(deptDTO);
     	
-    	return "redirect:/dept/deptListForm"; 		// deptListForm.jsp 뷰를 반환
+    	return "redirect:/dept/deptListForm"; 		
 	}
     
-    // 부서 정보를 삭제하는 메서드
     @PostMapping("/deptDeletePro")
     public String deptDeletePro(
     								  @RequestParam("deptCode") int deptCode
@@ -101,10 +109,9 @@ public class DeptController
     	
     	System.out.println("DeptController deptDeletePro deleteDept ok");
     	
-    	return "redirect:/dept/deptListForm"; 		// deptListForm.jsp 뷰를 반환
+    	return "redirect:/dept/deptListForm"; 		
 	}
     
-    // 부서 목록 조회 페이지를 보여주는 메서드
     @GetMapping("/deptListForm")
     public String deptListForm(
     							  DeptDTO deptDTO
@@ -118,7 +125,7 @@ public class DeptController
     	
     	System.out.println("DeptController deptListForm totalCnt->"+ totalCnt);
     	
-    	Paging paging = new Paging(totalCnt, Integer.parseInt(currentPage));
+    	Paging paging = new Paging(totalCnt, currentPage);
     	deptDTO.setStart(paging.getStart());
     	deptDTO.setEnd(paging.getEnd());
     	
@@ -134,7 +141,7 @@ public class DeptController
     	model.addAttribute("searchType",	deptDTO.getSearchType());
     	model.addAttribute("searchKeyword",	deptDTO.getSearchKeyword());
     	
-        return "sm/deptListForm"; 		// deptListForm.jsp 뷰를 반환
+        return "sm/deptListForm"; 		
     }
     
 }
