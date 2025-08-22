@@ -8,9 +8,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.WiseForce.AssemERP.account.service.CustomUser;
 import com.WiseForce.AssemERP.dao.sm.EmpDao;
+import com.WiseForce.AssemERP.dto.CommonDTO;
 import com.WiseForce.AssemERP.dto.sm.EmpDTO;
-import com.WiseForce.AssemERP.security.CustomUser;
 
 import lombok.RequiredArgsConstructor;
 
@@ -51,26 +52,23 @@ public class EmpServiceImpl implements EmpService
 	{
 		System.out.println("EmpServiceImpl saveEmp Start");
 		
-		// 1. Spring Security의 컨텍스트에서 현재 사용자 인증 정보를 가져옵니다.
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder
+        							   .getContext()
+        							   .getAuthentication();
 
-        // 2. 인증된 사용자인지 확인하고 등록자(REGISTRAR)를 설정합니다.
-        // principal이 CustomUser의 인스턴스인지 확인하여 로그인한 사용자인지 판별
-        if (authentication != null && authentication.getPrincipal() instanceof CustomUser) {
+        if (authentication != null && authentication.getPrincipal() instanceof CustomUser) 
+        {
             CustomUser customUser = (CustomUser) authentication.getPrincipal();
-            // 로그인한 사용자의 사원번호를 등록자로 설정
-            empDTO.setRegistrar(customUser.getEmp().getEmpNo());
+            int empNo = customUser.getAccountDTO().getEmpNo();
+            empDTO.setRegistrar(empNo);
             
-            System.out.println("DeptServiceImpl saveEmp 1 empDTO.setRegistrar->"+customUser.getEmp().getEmpNo());
+            System.out.println("EmpServiceImpl saveEmp 1 Registrar->"+empNo);
         } else {
-            // 로그인하지 않은 경우 (시스템 초기 데이터 등) '시스템 관리자'의 번호를 등록자로 설정
-        	empDTO.setRegistrar(100); 
-        	System.out.println("DeptServiceImpl saveEmp 2 empDTO.setRegistrar->"+empDTO.getRegistrar());
+        	empDTO.setRegistrar(1005); 
+        	System.out.println("EmpServiceImpl saveEmp 2 Registrar->"+empDTO.getRegistrar());
         }
         
-        // 3. 등록자 정보가 포함된 DTO를 DAO로 전달하여 저장합니다.
         empDao.insertEmp(empDTO);
-		
 	}
 	
 	@Override
@@ -103,10 +101,41 @@ public class EmpServiceImpl implements EmpService
 	public void registerEmployee(EmpDTO emp) 
 	{
 		System.out.println("EmpServiceImpl registerEmployee start");
+	}
+
+	@Override
+	public Integer getSalaryByPresetId(Integer presetId) 
+	{
+		System.out.println("EmpServiceImpl getSalaryByPresetId start");
 		
-        String rawPassword = emp.getPassword();
-        String encodedPassword = passwordEncoder.encode(rawPassword);
-        emp.setPassword(encodedPassword);
-        //empDao.save(emp);
+		return empDao.selectSalaryPresetById(presetId);
+	}
+
+	@Override
+	public Integer getDefaultPresetIdByGrade(Integer defaultGradeCode) 
+	{
+		System.out.println("EmpServiceImpl getDefaultPresetIdByGrade start");
+		
+		return empDao.selecteDefaultPresetIdByGrade(defaultGradeCode);	
+	}
+
+	@Override
+	public Long getSalaryByGradePreset(Integer gradeCode) 
+	{
+		System.out.println("EmpServiceImpl getSalaryByGradePreset start");
+		
+        if (gradeCode == null ) return 0L;
+        if (gradeCode < 10 || gradeCode > 100 || gradeCode % 10 != 0) return 0L;
+        if (gradeCode == 888) return 0L; 
+        
+        Long sal = empDao.selecteSalaryByGradePreset(gradeCode);
+		return sal != null ? sal : 0L;
+	}
+
+	@Override
+	public List<CommonDTO> selectRoleCodes() 
+	{
+		System.out.println("EmpServiceImpl selectRoleCodes start");
+		return empDao.selectRoleCodes();
 	}
 }

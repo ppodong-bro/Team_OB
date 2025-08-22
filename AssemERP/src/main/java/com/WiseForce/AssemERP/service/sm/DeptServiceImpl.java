@@ -2,14 +2,18 @@ package com.WiseForce.AssemERP.service.sm;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.WiseForce.AssemERP.account.service.CustomUser;
 import com.WiseForce.AssemERP.dao.sm.DeptDao;
 import com.WiseForce.AssemERP.dto.sm.DeptDTO;
-import com.WiseForce.AssemERP.security.CustomUser;
+import com.WiseForce.AssemERP.dto.sm.DeptSearchDTO;
+import com.WiseForce.AssemERP.dto.sm.EmpSearchDTO;
+import com.WiseForce.AssemERP.mapper.sm.DeptMapper;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,6 +23,9 @@ import lombok.RequiredArgsConstructor;
 public class DeptServiceImpl implements DeptService 
 {
 	private final DeptDao deptDao;
+	
+	@Autowired
+	private DeptMapper deptMapper;
 	
 	@Override
 	public int getTotalCount(DeptDTO deptDTO) 
@@ -51,24 +58,24 @@ public class DeptServiceImpl implements DeptService
 	{
 		System.out.println("DeptServiceImpl saveDept Start");
 		
-		// 1. Spring Security의 컨텍스트에서 현재 사용자 인증 정보를 가져옵니다.
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder
+        							   .getContext()
+        							   .getAuthentication();
 
-        // 2. 인증된 사용자인지 확인하고 등록자(REGISTRAR)를 설정합니다.
-        // principal이 CustomUser의 인스턴스인지 확인하여 로그인한 사용자인지 판별
-        if (authentication != null && authentication.getPrincipal() instanceof CustomUser) {
+        if (authentication != null && authentication.getPrincipal() instanceof CustomUser) 
+        {
             CustomUser customUser = (CustomUser) authentication.getPrincipal();
-            // 로그인한 사용자의 사원번호를 등록자로 설정
-            deptDTO.setRegistrar(customUser.getEmp().getEmpNo());
             
-            System.out.println("DeptServiceImpl saveDept 1 deptDTO.setRegistrar->"+customUser.getEmp().getEmpNo());
+            int empNo = customUser.getAccountDTO().getEmpNo();
+            
+            deptDTO.setRegistrar(empNo);
+            
+            System.out.println("DeptServiceImpl saveDept 1 Registrar->"+empNo);
         } else {
-            // 로그인하지 않은 경우 (시스템 초기 데이터 등) '시스템 관리자'의 번호를 등록자로 설정
-        	deptDTO.setRegistrar(100); 
-        	System.out.println("DeptServiceImpl saveDept 2 deptDTO.setRegistrar->"+deptDTO.getRegistrar());
+        	deptDTO.setRegistrar(1005); 
+        	System.out.println("DeptServiceImpl saveDept 2 Registrar->"+deptDTO.getRegistrar());
         }
         
-        // 3. 등록자 정보가 포함된 DTO를 DAO로 전달하여 저장합니다.
 		deptDao.insertDept(deptDTO);
 		
 		System.out.println("DeptServiceImpl saveDept insertDept OK");
@@ -88,6 +95,32 @@ public class DeptServiceImpl implements DeptService
 		System.out.println("DeptServiceImpl deleteDept Start");
 		
 		deptDao.deleteDept(deptCode);
+	}
+
+	@Override
+	public List<EmpSearchDTO> searchEmployeesByName(String keyword) 
+	{
+		System.out.println("DeptServiceImpl searchEmployeesByName Start");
+		
+		return deptMapper.searchEmployeesByName(keyword);
+	}
+
+	@Override
+	public List<DeptSearchDTO> findDepts(String deptName) 
+	{
+		System.out.println("DeptServiceImpl findDepts Start");
+		
+		return deptMapper.searchDeptModalList(deptName);
+	}
+
+	@Override
+	public List<DeptDTO> searchEmpAccByName(String deptName) 
+	{
+		System.out.println("DeptServiceImpl searchEmpAccByName Start");
+		List<DeptDTO> rtnDeptList = deptMapper.searchEmpAccByName(deptName);
+		System.out.println("DeptServiceImpl searchEmpAccByName rtnDeptList->"+rtnDeptList);
+		
+		return rtnDeptList;
 	}
 
 }
