@@ -352,7 +352,7 @@
                       </div>
 
                       <div class="col-12 col-md-3 d-grid">
-                        <a href="${pageContext.request.contextPath}/purchase/modifyStart?purchase_No=${Purchase_OrderDto.purchase_No}"
+                        <a href="${pageContext.request.contextPath}/purchase/detailPageModifyStart?purchase_No=${Purchase_OrderDto.purchase_No}"
                            class="btn btn-outline-primary btn-sm px-4 w-100"
                            onclick="return confirm('발주를 수정 하시겠습니까?');">
                           <i class="bi bi-pencil-square me-1"></i>수정
