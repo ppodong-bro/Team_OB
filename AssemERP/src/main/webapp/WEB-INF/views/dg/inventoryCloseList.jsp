@@ -385,7 +385,7 @@ $(document).ready(function() {
 									<div class="col-auto">
 										<div class="input-group input-group-sm">
 											<span class="input-group-text">마감 상태</span> <select id="close_status" name="close_status" class="form-select form-select-sm">
-												<option value="999">전체</optioㅋn>
+												<option value="999">전체</option>
 											</select>
 										</div>
 									</div>

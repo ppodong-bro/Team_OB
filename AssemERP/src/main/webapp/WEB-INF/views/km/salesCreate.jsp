@@ -55,6 +55,10 @@
       letter-spacing: .2px;
       text-shadow: 0.7px 0.7px 0 rgba(0,0,0,.22), -0.5px -0.5px 0 rgba(255,255,255,.35);
     }
+    
+    input[type=number]::-webkit-outer-spin-button,
+	input[type=number]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+	input[type=number]{ -moz-appearance:textfield; appearance:textfield; }
   </style>
 
   <!-- 오늘 날짜 문자열 (납기 min 값에서 사용) -->
@@ -177,9 +181,28 @@
       if (sumReqEl)  sumReqEl.innerText  = sumReq.toLocaleString();
       if (sumCostEl) sumCostEl.innerText = sumCost.toLocaleString();
     }
-    document.addEventListener('input', function(e){
-      if (e.target.classList.contains('qty-input') || e.target.classList.contains('cost-input')) recalcTotal();
+ // 합계 갱신 + 커스텀 유효성 즉시 해제/설정
+    document.addEventListener('input', function (e) {
+      const t = e.target;
+
+      if (t.classList.contains('qty-input')) {
+        const v = Number(t.value);
+        // 메시지는 세팅만, 보고 싶을 때(제출 등) 브라우저가 표시
+        t.setCustomValidity(Number.isFinite(v) && v >= 1 ? '' : '요청 수량을 1 이상 입력하세요.');
+        if (v >= 1) t.classList.remove('is-invalid'); // 이전 showError 흔적 제거
+      }
+
+      if (t.classList.contains('cost-input')) {
+        const v = Number(t.value);
+        t.setCustomValidity(Number.isFinite(v) && v >= 0 ? '' : '단가는 0 이상이어야 합니다.');
+        if (v >= 0) t.classList.remove('is-invalid');
+      }
+
+      if (t.classList.contains('qty-input') || t.classList.contains('cost-input')) {
+        recalcTotal();
+      }
     });
+
 
     /* ====================== 행 인덱스 재정렬 (빈 인덱스 포함) ====================== */
     function reindexRows() {
@@ -267,13 +290,13 @@
             '<div class="invalid-feedback">제품(버전) 선택이 필요합니다.</div>' + // ★ 추가
           '</td>' +
           '<td class="numeric">' +
-            '<input type="number" min="0" name="sales_Item['+idx+'].sales_Item_Cnt" class="form-control form-control-sm qty-input" required />' +
+            '<input type="number" min="0" name="sales_Item['+idx+'].sales_Item_Cnt" class="form-control form-control-sm qty-input text-end" required />' +
           '</td>' +
           '<td class="numeric">' +
-            '<input type="number" step="0.01" min="0" name="sales_Item['+idx+'].sales_Item_Cost" class="form-control form-control-sm cost-input" required />' +
+            '<input type="number" min="0" name="sales_Item['+idx+'].sales_Item_Cost" class="form-control form-control-sm cost-input text-end" required />' +
           '</td>' +
           '<td class="numeric">' +
-            '<input type="text" class="form-control form-control-plaintext form-control-sm tot-cost" readonly />' +
+            '<input type="text" class="form-control form-control-plaintext form-control-sm tot-cost text-end" readonly />' +
           '</td>' +
           '<td class="text-center">' +
             '<button type="button" class="btn btn-sm btn-outline-danger remove-item-btn"><i class="bi bi-trash"></i> 삭제</button>' +
@@ -405,6 +428,34 @@
       // 초기 합계
       recalcTotal();
     });
+    
+ // ↑/↓ 키로 100단위 증감 (min/max 존중, 빈 값이면 0에서 시작)
+    document.addEventListener('keydown', function (e) {
+      const t = e.target;
+      if (!t.classList.contains('cost-input')) return;
+
+      if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+        e.preventDefault();
+
+        const step = 100; // 바꾸고 싶으면 여기만 수정
+        const delta = (e.key === 'ArrowUp') ? step : -step;
+
+        const minAttr = t.getAttribute('min');
+        const maxAttr = t.getAttribute('max');
+        const min = Number.isFinite(parseFloat(minAttr)) ? parseFloat(minAttr) : -Infinity;
+        const max = Number.isFinite(parseFloat(maxAttr)) ? parseFloat(maxAttr) :  Infinity;
+
+        let v = parseFloat(t.value);
+        if (!Number.isFinite(v)) v = 0;
+
+        v = Math.min(max, Math.max(min, v + delta));
+        t.value = (t.classList.contains('cost-input')) ? v : Math.round(v);
+
+        // 합계 갱신 및 커스텀 유효성 로직 재사용
+        t.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    });
+ 
   </script>
 </head>
 <body>
@@ -523,13 +574,13 @@
                               <div class="invalid-feedback">제품(버전) 선택이 필요합니다.</div>
                             </td>
                             <td class="numeric">
-                              <input type="number" min="0" name="sales_Item[0].sales_Item_Cnt" class="form-control form-control-sm qty-input" required />
+                              <input type="number" min="0" name="sales_Item[0].sales_Item_Cnt" class="form-control form-control-sm qty-input text-end" required />
                             </td>
                             <td class="numeric">
-                              <input type="number" step="0.01" min="0" name="sales_Item[0].sales_Item_Cost" class="form-control form-control-sm cost-input" required />
+                              <input type="number" min="0" name="sales_Item[0].sales_Item_Cost" class="form-control form-control-sm cost-input text-end" required />
                             </td>
                             <td class="numeric">
-                              <input type="text" class="form-control form-control-plaintext form-control-sm tot-cost" readonly />
+                              <input type="text" class="form-control form-control-plaintext form-control-sm tot-cost text-end" readonly />
                             </td>
                             <td class="text-center">
                               <button type="button" class="btn btn-sm btn-outline-danger remove-item-btn"><i class="bi bi-trash"></i> 삭제</button>

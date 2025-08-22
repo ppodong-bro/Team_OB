@@ -48,7 +48,7 @@ body {
 							<%------------------------------------------------------------------------------
                 						1-1. 목록 버튼 스타일
                  					------------------------------------------------------------------------------%>
-							<a href="/parts/partsList" class="btn btn-outline-light btn-sm">
+							<a href="${pageContext.request.contextPath}/parts/partsList" class="btn btn-outline-light btn-sm">
 								<i class="bi bi-list-ul me-1"></i> 목록
 							</a>
 							<%------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ body {
 						</div>
 						<div class="card-body p-4">
 							<!-- 제품박스 -->
-							<form action="/product/productCreate" method="post"
+							<form action="${pageContext.request.contextPath}/product/productCreate" method="post"
 								class="needs-validation" enctype="multipart/form-data"
 								novalidate>
 								<input type="hidden" name="${_csrf.parameterName}"
@@ -222,6 +222,9 @@ document.getElementById("addRowBtn").addEventListener("click", function () {
     const tableBody = document.getElementById("bomTableBody");
     const newRow = document.createElement("tr");
 	
+ 	// JSP 변수를 JavaScript 변수로 저장
+	const contextPath = "${pageContext.request.contextPath}";
+    
     // 부품구분
     const typeCell = document.createElement("td");
     const typeSelect = document.createElement("select");
@@ -231,7 +234,7 @@ document.getElementById("addRowBtn").addEventListener("click", function () {
     typeCell.appendChild(typeSelect);
 
     // MainController API로 분류값 받아오기
-    fetch("/common/900")
+    fetch(contextPath+"/common/900")
         .then(res => res.json())
         .then(types => {
             types.forEach(type => {
@@ -255,7 +258,7 @@ document.getElementById("addRowBtn").addEventListener("click", function () {
         partSelect.innerHTML = "";
         partSelect.appendChild(new Option("선택", ""));
         if (selectedValue && !isNaN(parseInt(selectedValue, 10))) {
-            fetch("/product/getPartsByStatus/" + selectedValue)
+            fetch(contextPath+"/product/getPartsByStatus/" + selectedValue)
                 .then(res => res.json())
                 .then(parts => {
                     parts.forEach(part => {

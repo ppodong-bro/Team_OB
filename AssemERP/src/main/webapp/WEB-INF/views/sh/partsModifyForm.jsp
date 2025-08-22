@@ -9,7 +9,7 @@
 <script>
     function deleteFile(partsNo) {
         if(confirm('파일을 삭제하시겠습니까?')) {
-            fetch('${pageContext.request.contextPath}/parts/deleteFile/' + partsNo, {
+            fetch(${pageContext.request.contextPath}+'/parts/deleteFile/' + partsNo, {
                 method: 'DELETE'
             }).then(response => {
                 if(response.ok) {
@@ -79,7 +79,7 @@ body {
 							<%------------------------------------------------------------------------------
                 						1-1. 목록 버튼 스타일
                  					------------------------------------------------------------------------------%>
-							<a href="/parts/partsList" class="btn btn-outline-light btn-sm">
+							<a href="${pageContext.request.contextPath}/parts/partsList" class="btn btn-outline-light btn-sm">
 								<i class="bi bi-list-ul me-1"></i> 목록
 							</a>
 							<%------------------------------------------------------------------------------
@@ -120,7 +120,7 @@ body {
 											
 											    // 이미지 로딩 실패 시 기본 이미지로
 											    img.onerror = function() {
-											        this.src = "${pageContext.request.contextPath}/upload/default.jpg";
+											        this.src = ${pageContext.request.contextPath}+"/upload/default.jpg";
 											    };
 											
 											    // 파일 크기 체크 (이미지가 있더라도 0이면 기본 이미지)
@@ -128,11 +128,11 @@ body {
 											        .then(response => {
 											            const size = response.headers.get('Content-Length');
 											            if (!size || parseInt(size) === 0) {
-											                img.src = "${pageContext.request.contextPath}/upload/default.jpg";
+											                img.src = ${pageContext.request.contextPath}+"/upload/default.jpg";
 											            }
 											        })
 											        .catch(() => {
-											            img.src = "${pageContext.request.contextPath}/upload/default.jpg";
+											            img.src = ${pageContext.request.contextPath}+"/upload/default.jpg";
 											        });
 											</script>
 												<!-- X 삭제 버튼 -->
@@ -162,7 +162,7 @@ body {
 													style="width: 100px; display: flex; justify-content: center;">부품번호</span>
 												<input type="text" class="form-control form-control-sm"
 													id="partsName" name="parts_name"
-													value="${partsDTO.parts_name}" required>
+													value="${partsDTO.parts_name}" readonly="readonly" required>
 											</div>
 
 											<!-- 부품구분 -->
@@ -266,7 +266,7 @@ body {
 							<%------------------------------------------------------------------------------
 				                   		5. 삭제 처리를 위한 별도 form
 				                  	------------------------------------------------------------------------------%>
-							<form id="deleteForm" action="/parts/partsDeletePro"
+							<form id="deleteForm" action="${pageContext.request.contextPath}/parts/partsDeletePro"
 								method="post" class="d-none">
 								<input type="hidden" name="${_csrf.parameterName}"
 									value="${_csrf.token}" /> <input type="hidden" name="parts_no"

@@ -22,9 +22,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.WiseForce.AssemERP.dto.CommonDTO;
+import com.WiseForce.AssemERP.dto.sm.DeptDTO;
+import com.WiseForce.AssemERP.dto.sm.EmpDTO;
 import com.WiseForce.AssemERP.service.dg.CommonService;
 import com.WiseForce.AssemERP.service.dg.FilesService;
 import com.WiseForce.AssemERP.service.dg.InventoryService;
+import com.WiseForce.AssemERP.service.sm.DeptService;
+import com.WiseForce.AssemERP.service.sm.EmpService;
 import com.WiseForce.AssemERP.util.CustomFileUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -36,6 +40,9 @@ public class RestAPIController {
 	
 	private final CommonService commonService;
 	private final FilesService filesService;
+	
+	private final EmpService empService;
+	private final DeptService deptService;
 
 	@ResponseBody
 	@GetMapping("/common/{big_status}")
@@ -81,6 +88,23 @@ public class RestAPIController {
 		System.out.println(fileList);
 		
 	    return fileList;
+	}
+
+	@ResponseBody
+	@GetMapping("/dept/{dept_no}")
+	public DeptDTO getDeptById(@PathVariable("dept_no") int dept_no) {
+		// emp 정보 가져오기
+		DeptDTO deptDTO = deptService.getDeptDetail(dept_no);
+    
+	    return deptDTO;
+	}
+	@ResponseBody
+	@GetMapping("/emp/{emp_no}")
+	public EmpDTO getEmpById(@PathVariable("emp_no") int emp_no) {
+		// emp 정보 가져오기
+    	EmpDTO empDTO = empService.getEmpDetail(emp_no);
+    
+	    return empDTO;
 	}
 }
 
