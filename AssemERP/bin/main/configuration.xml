@@ -9,5 +9,6 @@
         <package name="com.WiseForce.AssemERP.dto.km"/>
         <package name="com.WiseForce.AssemERP.dto.sh"/>
         <package name="com.WiseForce.AssemERP.dto.sm"/>
+        <package name="com.WiseForce.AssemERP.account.dto"/>
     </typeAliases>
 </configuration>
