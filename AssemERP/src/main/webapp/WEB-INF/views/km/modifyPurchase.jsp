@@ -16,9 +16,7 @@
     body { background-color:#f8f9fa; }
     .card-header { background-color:#198754; color:white; } /* Green theme for editing */
     .required-field::after { content:" *"; color:red; }
-
     .parent-container { display:flex; flex-direction:column; gap:30px; }
-
     .numeric{ text-align:right; }
 
     /* 가로 스크롤(부트스트랩 역할 유지) */
@@ -45,16 +43,14 @@
     /* 전역 height:100%류 무력화 (#items-scroll 제외) */
     #items-scroll .table, #items-scroll thead, #items-scroll tbody, #items-scroll tfoot { height:auto !important; }
 
-    /* ✅ 전역 스크롤바 테마가 thumb 길이를 고정해둔 경우 해제 */
+    /* 스크롤바 테마 */
     #items-scroll::-webkit-scrollbar{ width:10px; height:auto !important; }
-    #items-scroll::-webkit-scrollbar-thumb{ min-height:0 !important; height:auto !important; }
-    #items-scroll{ scrollbar-width:auto; } /* Firefox */
+    #items-scroll::-webkit-scrollbar-thumb{ min-height:0 !important; height:auto !important; background:rgba(0,0,0,.35) !important; border-radius:6px; }
+    #items-scroll{ scrollbar-width:auto; }
     #items-scroll::-webkit-scrollbar-track{ background:rgba(0,0,0,.06) !important; }
-    #items-scroll::-webkit-scrollbar-thumb{ background:rgba(0,0,0,.35) !important; border-radius:6px; }
 
-    /* 1) sticky 헤더 위쪽 보더 강제 */
+    /* 스크롤 컨테이너 최상단 라인 보정 + sticky 헤더 위쪽 보더 */
     #items-scroll.table-scroll thead th{ border-top:1px solid var(--bs-table-border-color,#dee2e6) !important; }
-    /* 2) 스크롤 컨테이너 최상단 라인 보정 */
     #items-scroll.table-scroll::before{
       content:""; position:sticky; top:0; display:block; height:1px;
       background:var(--bs-table-border-color,#dee2e6); z-index:3; pointer-events:none;
@@ -62,51 +58,36 @@
 
     .table-warning{ animation:blink 1s ease-in-out 1; }
     @keyframes blink { 0%{background:#fff3cd;} 100%{background:transparent;} }
+
+    /* ====================== 합계행(총계) & 헤더/바닥선 보정 ====================== */
+    .product-table thead > tr > * { border-bottom-width: 2px; }
+    .product-table tfoot .total-row > * { border-top: 2px solid var(--bs-table-border-color, #dee2e6) !important; }
+    .product-table tbody tr:last-child > * { border-bottom: 0 !important; }
+
+    #items-scroll.table-scroll tfoot .total-row > * {
+      position: sticky;
+      bottom: 0;
+      z-index: 3; /* thead(2)보다 위 */
+      background: var(--bs-body-bg, #fff);
+      box-shadow:
+        0 -1px 0 var(--bs-table-border-color, #dee2e6),
+        0 -6px 12px rgba(0,0,0,.04);
+    }
+
+    .product-table tfoot .total-row > * {
+      font-weight: 600;
+      text-shadow: 0.5px 0.5px 0 rgba(0,0,0,.18);
+    }
+    .product-table tfoot .total-row td:first-child {
+      letter-spacing: .2px;
+      text-shadow:
+        0.7px 0.7px 0 rgba(0,0,0,.22),
+       -0.5px -0.5px 0 rgba(255,255,255,.35);
+    }
     
-	/* ====================== 합계행(총계) & 헤더/바닥선 보정 ====================== */
-	
-	/* 헤더 하단 보더 두께를 2px로: 기준선 통일 */
-	.product-table thead > tr > * {
-	  border-bottom-width: 2px;
-	}
-	
-	/* 합계 행 위쪽 보더를 헤더와 동일하게(2px) */
-	.product-table tfoot .total-row > * {
-	  border-top: 2px solid var(--bs-table-border-color, #dee2e6) !important;
-	}
-	
-	/* 마지막 데이터 행 하단 보더 제거: 합계 위 보더와 이중선 방지 */
-	.product-table tbody tr:last-child > * {
-	  border-bottom: 0 !important;
-	}
-	
-	/* 스크롤러 기준 sticky: 합계를 하단에 고정 + 얇은 상단 경계/그림자 */
-	#items-scroll.table-scroll tfoot .total-row > * {
-	  position: sticky;
-	  bottom: 0;
-	  z-index: 3; /* thead(2)보다 위 */
-	  background: var(--bs-body-bg, #fff); /* sticky 겹침시 배경 비침 방지 */
-	  box-shadow:
-	    0 -1px 0 var(--bs-table-border-color, #dee2e6),   /* 위쪽 얇은 라인 */
-	    0 -6px 12px rgba(0,0,0,.04);                      /* 은은한 음영 */
-	}
-	
-	/* ====================== "텍스트만" 은은하게 강조(음영) ====================== */
-	
-	/* 합계 행 전체 텍스트에 미세 음영 + 약한 굵기 */
-	.product-table tfoot .total-row > * {
-	  font-weight: 600;
-	  text-shadow: 0.5px 0.5px 0 rgba(0,0,0,.18); /* blur 0: 번짐 없이 또렷 */
-	}
-	
-	/* 첫 칸 "합계" 라벨만 살짝 더 입체감(하이라이트+그림자) */
-	.product-table tfoot .total-row td:first-child {
-	  letter-spacing: .2px;
-	  text-shadow:
-	    0.7px 0.7px 0 rgba(0,0,0,.22),        /* 아래/오른쪽 얇은 그림자 */
-	   -0.5px -0.5px 0 rgba(255,255,255,.35); /* 위/왼쪽 얇은 하이라이트 */
-	}
-	    
+    input[type=number]::-webkit-outer-spin-button,
+	input[type=number]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+	input[type=number]{ -moz-appearance:textfield; appearance:textfield; }
   </style>
 
   <!-- 오늘 날짜 문자열 (납기 min 값에서 사용) -->
@@ -114,6 +95,23 @@
   <fmt:formatDate value="${now}" pattern="yyyy-MM-dd" var="todayStr" timeZone="Asia/Seoul" />
 
   <script>
+    /* ====================== 에러 헬퍼(일관 표시) ====================== */
+    function showError(el, msg){
+      if(!el) return;
+      el.setCustomValidity(msg);
+      el.classList.add('is-invalid');
+      const fb = el.closest('.input-group, td, .col-md-4, .col-12')?.querySelector('.invalid-feedback');
+      if (fb){ fb.textContent = msg; fb.classList.add('d-block'); }
+      el.reportValidity?.();
+    }
+    function clearError(el){
+      if(!el) return;
+      el.setCustomValidity('');
+      el.classList.remove('is-invalid');
+      const fb = el.closest('.input-group, td, .col-md-4, .col-12')?.querySelector('.invalid-feedback');
+      if (fb){ fb.textContent = ''; fb.classList.remove('d-block'); }
+    }
+
     /* ====================== 거래처 팝업 연동 ====================== */
     function openClientPopup() {
       window.open(
@@ -131,6 +129,7 @@
       document.getElementById('clientManInput').value     = client_Man || '';
       if (empNo)   document.getElementById('empNoInput').value   = empNo;
       if (empName) document.getElementById('empNameInput').value = empName;
+      clearError(document.getElementById('clientNameInput'));
       window.close();
     }
 
@@ -171,9 +170,12 @@
 
       if (prevNo) selectedParts.delete(prevNo);
 
-      if (targetPartsInput)     targetPartsInput.value     = pno;
-      if (targetPartsNameInput) targetPartsNameInput.value = parts_name || '';
-      if (currentRow)           currentRow.dataset.partsNo = pno;
+      if (targetPartsInput) targetPartsInput.value = pno;
+      if (targetPartsNameInput) {
+        targetPartsNameInput.value = parts_name || '';
+        clearError(targetPartsNameInput);
+      }
+      if (currentRow) currentRow.dataset.partsNo = pno;
 
       if (pno) selectedParts.add(pno);
 
@@ -191,7 +193,7 @@
         const tot  = qty * cost;
 
         const totCell = row.querySelector('.tot-cost');
-        if (totCell) totCell.value = tot ? tot.toLocaleString() : '';
+        if (totCell) totCell.value = (tot || tot === 0) ? tot.toLocaleString() : '';
 
         sumReq  += qty;
         sumCost += tot;
@@ -202,8 +204,25 @@
       if (sumReqEl)  sumReqEl.innerText  = sumReq.toLocaleString();
       if (sumCostEl) sumCostEl.innerText = sumCost.toLocaleString();
     }
-    document.addEventListener('input', function(e) {
-      if (e.target.classList.contains('qty-input') || e.target.classList.contains('cost-input')) recalcTotal();
+
+    // 입력 시 즉시 유효성/표시 갱신
+    document.addEventListener('input', function (e) {
+      const t = e.target;
+
+      if (t.classList.contains('qty-input')) {
+        const v = Number(t.value);
+        t.setCustomValidity(Number.isFinite(v) && v >= 1 ? '' : '요청 수량을 1 이상 입력하세요.');
+        if (t.checkValidity()) t.classList.remove('is-invalid');
+      }
+
+      if (t.classList.contains('cost-input')) {
+        const raw = t.value.trim();
+        const v = raw === '' ? NaN : Number(raw);
+        t.setCustomValidity(Number.isFinite(v) && v >= 0 ? '' : '단가는 0 이상이어야 합니다.');
+        if (t.checkValidity()) t.classList.remove('is-invalid');
+      }
+
+      if (t.classList.contains('qty-input') || t.classList.contains('cost-input')) recalcTotal();
     });
 
     /* ====================== 인덱스 재정렬(빈 인덱스 방지) ====================== */
@@ -212,8 +231,8 @@
       rows.forEach((tr, i) => {
         tr.querySelectorAll('input[name^="purchase_Item["],select[name^="purchase_Item["],textarea[name^="purchase_Item["]')
           .forEach(inp => {
-            // \d* 로 "[]"와 숫자 모두 교체
-            inp.name = inp.name.replace(/purchase_Item\[\d*\]\./, 'purchase_Item['+i+'].');
+            // ^ 앵커로 안전하게 치환
+            inp.name = inp.name.replace(/^purchase_Item\[\d*\]\./, 'purchase_Item['+i+'].');
           });
       });
     }
@@ -242,20 +261,21 @@
         const tr  = document.createElement('tr');
         tr.innerHTML =
           '<td>' +
-            '<div class="input-group input-group-sm">' +
+            '<div class="input-group input-group-sm has-validation">' +
               '<input type="hidden" class="partsNoInput" name="purchase_Item['+idx+'].partsDTO.parts_no" required />' +
               '<input type="text" class="form-control form-control-sm partsNameInput" readonly tabindex="-1" style="background:#f6f6f6;" />' +
               '<button type="button" class="btn btn-outline-secondary" onclick="openPartsPopup(this)">조회</button>' +
+              '<div class="invalid-feedback">부품 선택이 필요합니다.</div>' +
             '</div>' +
           '</td>' +
           '<td class="numeric">' +
-            '<input type="number" min="0" name="purchase_Item['+idx+'].purchase_Item_Cnt" class="form-control form-control-sm qty-input" required />' +
+            '<input type="number" min="1" step="1" name="purchase_Item['+idx+'].purchase_Item_Cnt" class="form-control form-control-sm qty-input text-end" required />' +
           '</td>' +
           '<td class="numeric">' +
-            '<input type="number" step="0.01" min="0" name="purchase_Item['+idx+'].purchase_Item_Cost" class="form-control form-control-sm cost-input" required />' +
+            '<input type="number" min="0" name="purchase_Item['+idx+'].purchase_Item_Cost" class="form-control form-control-sm cost-input text-end" required />' +
           '</td>' +
           '<td class="numeric">' +
-            '<input type="text" class="form-control form-control-plaintext form-control-sm tot-cost" readonly />' +
+            '<input type="text" class="form-control form-control-plaintext form-control-sm tot-cost text-end" readonly />' +
           '</td>' +
           '<td class="text-center">' +
             '<button type="button" class="btn btn-sm btn-outline-danger remove-item-btn"><i class="bi bi-trash"></i> 삭제</button>' +
@@ -283,28 +303,28 @@
         const clientNoEl   = document.getElementById('clientNoInput');
         const clientNameEl = document.getElementById('clientNameInput');
         if (!clientNoEl.value.trim()) {
-          clientNameEl.setCustomValidity('거래처를 선택하세요.');
-          clientNameEl.reportValidity();
+          showError(clientNameEl, '거래처를 선택하세요.');
           e.preventDefault(); return;
-        } else clientNameEl.setCustomValidity('');
+        } else {
+          clearError(clientNameEl);
+        }
 
         // 납기일 유효성
         const dateEl = document.getElementById('purchaseDate');
         const dateError = document.getElementById('dateError');
         if (!dateEl.value) {
-          dateEl.setCustomValidity('납기 완료일을 선택하세요.');
-          dateEl.reportValidity();
+          showError(dateEl, '납기 완료일을 선택하세요.');
+          if (dateError) dateError.textContent = '납기 완료일을 선택하세요.';
           e.preventDefault(); return;
         } else {
           const picked = new Date(dateEl.value);
           const today  = new Date('${todayStr}');
           if (picked < today) {
-            dateEl.setCustomValidity('납기 완료일은 오늘 이후만 가능합니다.');
-            dateEl.reportValidity();
+            showError(dateEl, '납기 완료일은 오늘 이후만 가능합니다.');
             if (dateError) dateError.textContent = '오늘 이후 날짜로 선택해주세요.';
             e.preventDefault(); return;
           } else {
-            dateEl.setCustomValidity('');
+            clearError(dateEl);
             if (dateError) dateError.textContent = '';
           }
         }
@@ -334,19 +354,30 @@
           const costEl = row.querySelector('.cost-input');
 
           if (!noEl?.value) {
-            if (nameEl) { nameEl.setCustomValidity('부품 선택이 필요합니다.'); nameEl.reportValidity(); }
+            showError(nameEl, '부품 선택이 필요합니다.');
+            nameEl.scrollIntoView({ behavior:'smooth', block:'center' });
+            nameEl.focus();
             e.preventDefault(); return;
-          } else if (nameEl) nameEl.setCustomValidity('');
+          } else {
+            clearError(nameEl);
+          }
 
           const qty  = Number(qtyEl?.value);
           const cost = Number(costEl?.value);
-          if (!qty || qty <= 0) { qtyEl.setCustomValidity('요청 수량을 1 이상 입력하세요.'); qtyEl.reportValidity(); e.preventDefault(); return; }
-          else qtyEl.setCustomValidity('');
-          if (cost < 0) { costEl.setCustomValidity('단가는 0 이상이어야 합니다.'); costEl.reportValidity(); e.preventDefault(); return; }
-          else costEl.setCustomValidity('');
+
+          if (!Number.isFinite(qty) || qty < 1) {
+            showError(qtyEl, '요청 수량을 1 이상 입력하세요.');
+            e.preventDefault(); return;
+          } else clearError(qtyEl);
+
+          if (!Number.isFinite(cost) || cost < 0) {
+            showError(costEl, '단가는 0 이상이어야 합니다.');
+            e.preventDefault(); return;
+          } else clearError(costEl);
         }
       });
 
+      // 초기 합계
       recalcTotal();
     });
 
@@ -397,6 +428,34 @@
       updateScroll();
       window.addEventListener('load', updateScroll);
     });
+    
+    // ↑/↓ 키로 100단위 증감 (min/max 존중, 빈 값이면 0에서 시작)
+    document.addEventListener('keydown', function (e) {
+      const t = e.target;
+      if (!t.classList.contains('cost-input')) return;
+
+      if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+        e.preventDefault();
+
+        const step = 100; // 바꾸고 싶으면 여기만 수정
+        const delta = (e.key === 'ArrowUp') ? step : -step;
+
+        const minAttr = t.getAttribute('min');
+        const maxAttr = t.getAttribute('max');
+        const min = Number.isFinite(parseFloat(minAttr)) ? parseFloat(minAttr) : -Infinity;
+        const max = Number.isFinite(parseFloat(maxAttr)) ? parseFloat(maxAttr) :  Infinity;
+
+        let v = parseFloat(t.value);
+        if (!Number.isFinite(v)) v = 0;
+
+        v = Math.min(max, Math.max(min, v + delta));
+        t.value = (t.classList.contains('cost-input')) ? v : Math.round(v);
+
+        // 합계 갱신 및 커스텀 유효성 로직 재사용
+        t.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    });
+    
   </script>
 </head>
 <body>
@@ -442,12 +501,13 @@
                     <!-- 거래처 이름 (팝업 조회) -->
                     <div class="col-md-4">
                       <label class="form-label">거래처 이름 <span class="text-danger">*</span></label>
-                      <div class="input-group input-group-sm">
+                      <div class="input-group input-group-sm has-validation">
                         <input type="hidden" id="clientNoInput"  name="clientDto.client_No"  value="${purchase_OrderDto.clientDto.client_No}" />
                         <input type="text"   id="clientNameInput" name="clientDto.client_Name"
                                class="form-control form-control-sm"
                                value="${purchase_OrderDto.clientDto.client_Name}" readonly required placeholder="조회 버튼으로 선택" />
                         <button type="button" class="btn btn-outline-secondary" onclick="openClientPopup()">조회</button>
+                        <div class="invalid-feedback">거래처를 선택하세요.</div>
                       </div>
                     </div>
 
@@ -515,11 +575,11 @@
                         <caption class="visually-hidden">수정할 부품 목록</caption>
                         <thead class="table-light">
                           <tr>
-                            <th style ="width: 45%;" class="text-center" scope="col">부품명</th>
-                            <th style ="width: 15%;" scope="col" class="numeric text-center">요청 수량</th>
-                            <th style ="width: 15%;" scope="col" class="numeric text-center">부품 단가</th>
-                            <th style ="width: 15%;" scope="col" class="numeric text-center">요청 총액</th>
-                            <th style ="width: 10%;" class="text-center" style="width:7%;" scope="col">삭제</th>
+                            <th style="width: 45%;" class="text-center" scope="col">부품명</th>
+                            <th style="width: 15%;" scope="col" class="numeric text-center">요청 수량</th>
+                            <th style="width: 15%;" scope="col" class="numeric text-center">부품 단가</th>
+                            <th style="width: 15%;" scope="col" class="numeric text-center">요청 총액</th>
+                            <th style="width: 10%;" class="text-center" scope="col">삭제</th>
                           </tr>
                         </thead>
                         <tbody id="items-tbody">
@@ -528,7 +588,7 @@
                               <c:forEach var="item" items="${purchase_OrderDto.purchase_Item}" varStatus="st">
                                 <tr data-parts-no="${item.parts_no}">
                                   <td>
-                                    <div class="input-group input-group-sm">
+                                    <div class="input-group input-group-sm has-validation">
                                       <input type="hidden" class="partsNoInput"
                                              name="purchase_Item[${st.index}].partsDTO.parts_no"
                                              value="${item.parts_no}" />
@@ -536,20 +596,23 @@
                                              value="${item.partsDTO != null ? item.partsDTO.parts_name : ''}"
                                              readonly tabindex="-1" style="background:#f6f6f6;" />
                                       <button type="button" class="btn btn-outline-secondary" onclick="openPartsPopup(this)">조회</button>
+                                      <div class="invalid-feedback">부품 선택이 필요합니다.</div>
                                     </div>
                                   </td>
                                   <td class="numeric">
-                                    <input type="number" min="0" name="purchase_Item[${st.index}].purchase_Item_Cnt"
-                                           class="form-control form-control-sm qty-input"
+                                    <input type="number" min="1" step="1"
+                                           name="purchase_Item[${st.index}].purchase_Item_Cnt"
+                                           class="form-control form-control-sm qty-input text-end"
                                            value="${item.purchase_Item_Cnt}" required />
                                   </td>
                                   <td class="numeric">
-                                    <input type="number" step="0.01" min="0" name="purchase_Item[${st.index}].purchase_Item_Cost"
-                                           class="form-control form-control-sm cost-input"
+                                    <input type="number" min="0"
+                                           name="purchase_Item[${st.index}].purchase_Item_Cost"
+                                           class="form-control form-control-sm cost-input text-end"
                                            value="${item.purchase_Item_Cost}" required />
                                   </td>
                                   <td class="numeric">
-                                    <input type="text" class="form-control form-control-plaintext form-control-sm tot-cost"
+                                    <input type="text" class="form-control form-control-plaintext form-control-sm tot-cost text-end"
                                            value="<fmt:formatNumber value='${item.purchase_Item_TotCost}' type='number' groupingUsed='true'/>" readonly />
                                   </td>
                                   <td class="text-center">
@@ -564,22 +627,23 @@
                               <!-- 기존 품목이 없으면 1행 생성 -->
                               <tr>
                                 <td>
-                                  <div class="input-group input-group-sm">
+                                  <div class="input-group input-group-sm has-validation">
                                     <input type="hidden" class="partsNoInput" name="purchase_Item[0].partsDTO.parts_no" required />
                                     <input type="text" class="form-control form-control-sm partsNameInput" readonly tabindex="-1" style="background:#f6f6f6;" />
                                     <button type="button" class="btn btn-outline-secondary" onclick="openPartsPopup(this)">조회</button>
+                                    <div class="invalid-feedback">부품 선택이 필요합니다.</div>
                                   </div>
                                 </td>
                                 <td class="numeric">
-                                  <input type="number" min="0" name="purchase_Item[0].purchase_Item_Cnt"
-                                         class="form-control form-control-sm qty-input" required />
+                                  <input type="number" min="1" step="1" name="purchase_Item[0].purchase_Item_Cnt"
+                                         class="form-control form-control-sm qty-input text-end" required />
                                 </td>
                                 <td class="numeric">
-                                  <input type="number" step="0.01" min="0" name="purchase_Item[0].purchase_Item_Cost"
-                                         class="form-control form-control-sm cost-input" required />
+                                  <input type="number" min="0" name="purchase_Item[0].purchase_Item_Cost"
+                                         class="form-control form-control-sm cost-input text-end" required />
                                 </td>
                                 <td class="numeric">
-                                  <input type="text" class="form-control form-control-plaintext form-control-sm tot-cost" readonly />
+                                  <input type="text" class="form-control form-control-plaintext form-control-sm tot-cost text-end" readonly />
                                 </td>
                                 <td class="text-center">
                                   <button type="button" class="btn btn-sm btn-outline-danger remove-item-btn">
@@ -636,3 +700,5 @@
   </div>
 </body>
 </html>
+
+
