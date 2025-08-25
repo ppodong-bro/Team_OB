@@ -3,7 +3,7 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <%
-    String logoPath = "C:/GitHub/Team_OB/AssemERP/upload/account/profile-images/Login.png";
+    String logoPath = "${pageContext.request.contextPath}/profile-images/Login.png"; 
 
     String avatarSrc = null;
     try {
