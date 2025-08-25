@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
+<!-- 계정(ACCOUNT) 테이블에 대한 CRUD 쿼리를 관리하는 MyBatis 매퍼 파일입니다. -->
 <mapper namespace="com.WiseForce.AssemERP.account.mapper.AccountMapper">
 
     <resultMap id="accountResultMap" type="com.WiseForce.AssemERP.account.dto.AccountDTO">
@@ -12,12 +13,12 @@
         <result property="approvalStatus" 	column="APPROVAL_STATUS"/>
         <result property="withdrawStatus" 	column="WITHDRAW_STATUS"/>
         <result property="regDate" 			column="REG_DATE"/>
-
+        <!-- JOIN을 통해 가져올 추가 정보들 -->
         <result property="empName" 			column="EMP_NAME"/>
         <result property="email" 			column="EMAIL"/>
         <result property="empTel"       	column="EMP_TEL" />
         <result property="authRoleName" 	column="AUTH_ROLE_NAME"/>
-
+        <!-- [추가] 프로필 사진 파일명을 위한 매핑 -->
         <result property="empFilename" 		column="EMP_FILENAME"/>
         <result property="delStatus" 		column="DEL_STATUS"/>
     </resultMap>
@@ -39,7 +40,7 @@
         SELECT
             	A.USER_ID, 	A.PASSWORD, A.ROLES_STATUS, A.EMP_NO, 
             	E.EMP_NAME, E.EMAIL, 	E.EMP_TEL, 		C.CONTEXT AS AUTH_ROLE_NAME,
-            	IMG.EMP_FILENAME,  
+            	IMG.EMP_FILENAME,  -- 프로필 사진 파일명 추가
             	E.DEL_STATUS, A.WITHDRAW_STATUS, A.EMP_TYPE, A.APPROVAL_STATUS
         FROM
             ACCOUNT A
@@ -47,6 +48,7 @@
             EMP E ON A.EMP_NO = E.EMP_NO
         LEFT JOIN
             COMMON C ON A.ROLES_STATUS = C.MIDDLE_STATUS AND C.BIG_STATUS = 200
+        -- [수정] EMP_IMAGE 테이블을 LEFT JOIN하여 사진 정보를 가져옵니다.
         LEFT JOIN
             EMP_IMAGE IMG ON A.EMP_NO = IMG.EMP_NO AND IMG.ORDER_NUM = 1
         WHERE
@@ -148,7 +150,7 @@
            SET WITHDRAW_STATUS = '1'
          WHERE USER_ID = #{userId}
     </update> 
-
+    
     <update id="updateEmpAccountPasswd" parameterType="com.WiseForce.AssemERP.account.dto.AccountDTO">
         UPDATE  ACCOUNT
            SET  ROLES_STATUS 	= #{rolesStatus}
@@ -159,7 +161,7 @@
          WHERE  USER_ID = #{userId}
            AND  EMP_NO  = #{empNo}
     </update>
-
+    
     <update id="updateEmpAccountStatus" parameterType="com.WiseForce.AssemERP.account.dto.AccountDTO">
         UPDATE  ACCOUNT
            SET  ROLES_STATUS    = #{rolesStatus}
@@ -169,17 +171,17 @@
          WHERE  USER_ID = #{userId}
            AND  EMP_NO  = #{empNo}
     </update>
-
+    
     <update id="withdrawEmpAccount" parameterType="com.WiseForce.AssemERP.account.dto.AccountDTO">
         UPDATE ACCOUNT
            SET WITHDRAW_STATUS = 1
          WHERE USER_ID = #{userId}
            AND EMP_NO  = #{empNo}
     </update> 
-
-    <select id="selectVerify" parameterType="com.WiseForce.AssemERP.account.dto.AccountDTO" resultType="Integer">
+    
+    <select id="selectVerify" parameterType="com.WiseForce.AssemERP.account.dto.AccountDTO" resultType="String">
         SELECT
-            	COUNT(*)
+            	A.USER_ID
         FROM
             ACCOUNT A
         JOIN
@@ -190,10 +192,10 @@
           AND A.APPROVAL_STATUS = 8
           AND A.WITHDRAW_STATUS = 0
     </select>
-
+    
     <update id="updatePartnerAccount" parameterType="com.WiseForce.AssemERP.account.dto.AccountDTO">
          UPDATE ACCOUNT
-           SET  APPROVAL_STATUS = 2,
+           SET  APPROVAL_STATUS = 1,
                 PASSWORD  = #{password}
          WHERE  USER_ID   = #{userId}
            AND  EMP_NO    = #{empNo}
@@ -201,6 +203,5 @@
            AND  APPROVAL_STATUS = 8
            AND  WITHDRAW_STATUS = 0
     </update>
-
+    
 </mapper>
-

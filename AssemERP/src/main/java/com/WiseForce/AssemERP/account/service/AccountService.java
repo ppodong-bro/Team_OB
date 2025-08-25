@@ -27,7 +27,7 @@ public interface AccountService {
 
 	void 				saveAccount(AccountDTO accountDTO);
 
-	Integer 			selectVerify(AccountDTO accountDTO);
+	String 				selectVerify(AccountDTO accountDTO);
 
 	int 				updatePartnerAccount(AccountDTO accountDTO);
 

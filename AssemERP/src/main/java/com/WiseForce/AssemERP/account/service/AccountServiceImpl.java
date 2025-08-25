@@ -151,7 +151,7 @@ public class AccountServiceImpl implements AccountService  //, UserDetailsServic
 	}
 
 	@Override
-	public Integer selectVerify(AccountDTO accountDTO) 
+	public String selectVerify(AccountDTO accountDTO) 
 	{
 		System.out.println("AccountServiceImpl selectVerify Start");
 		
