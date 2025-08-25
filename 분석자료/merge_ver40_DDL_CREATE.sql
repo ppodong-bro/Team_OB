@@ -1,14 +1,14 @@
 /************************************************** 
  *  DROP TABLE
  **************************************************/
-DROP TABLE BOARD CASCADE CONSTRAINTS;
 DROP TABLE COMMON CASCADE CONSTRAINTS;
 DROP TABLE CLIENT CASCADE CONSTRAINTS;
 DROP TABLE CLIENT_HIS CASCADE CONSTRAINTS;
-DROP TABLE CLIENT_PERFORM CASCADE CONSTRAINTS;
-DROP TABLE DEPT CASCADE CONSTRAINTS;
-DROP TABLE EMP CASCADE CONSTRAINTS;
+DROP TABLE BOARD CASCADE CONSTRAINTS;
 DROP TABLE EMP_IMAGE CASCADE CONSTRAINTS;
+DROP TABLE ACCOUNT CASCADE CONSTRAINTS;
+DROP TABLE EMP CASCADE CONSTRAINTS;
+DROP TABLE DEPT CASCADE CONSTRAINTS;
 DROP TABLE ERROR_LOG CASCADE CONSTRAINTS;
 DROP TABLE FILES CASCADE CONSTRAINTS;
 DROP TABLE INVENTORY CASCADE CONSTRAINTS;
@@ -31,28 +31,36 @@ DROP TABLE SALES_PERFORM CASCADE CONSTRAINTS;
 /************************************************** 
  *  SEQUENCE : 시퀀스
  **************************************************/
--- 사원(EMP) 시퀀스
-DROP SEQUENCE EMP_NO_SEQ;
-CREATE SEQUENCE EMP_NO_SEQ
-START WITH 1001 -- 시작 숫자
-INCREMENT BY 1   -- 증가 값
-NOCACHE         -- 캐시 사용 안 함
-NOCYCLE; -- 마지막 값 이후 다시 1로 돌아가지 않음
-
 -- 부서(DEPT) 시퀀스
 DROP SEQUENCE DEPT_CODE_SEQ;
 CREATE SEQUENCE DEPT_CODE_SEQ
-START WITH 1001 -- 시작 숫자
+START WITH 1020  -- 시작 숫자
 INCREMENT BY 1   -- 증가 값
-NOCACHE         -- 캐시 사용 안 함
+NOCACHE          -- 캐시 사용 안 함
+NOCYCLE; -- 마지막 값 이후 다시 1로 돌아가지 않음
+
+-- 사원(EMP) 시퀀스(내부)
+DROP SEQUENCE EMP_NO_SEQ;
+CREATE SEQUENCE EMP_NO_SEQ
+START WITH 1022  -- 시작 숫자
+INCREMENT BY 1   -- 증가 값
+NOCACHE          -- 캐시 사용 안 함
+NOCYCLE; -- 마지막 값 이후 다시 1로 돌아가지 않음
+
+-- 사원(EMP) 시퀀스(파트너)
+DROP SEQUENCE EMP_NO_PARTNER_SEQ;
+CREATE SEQUENCE EMP_NO_PARTNER_SEQ
+START WITH 9004  -- 시작 숫자
+INCREMENT BY 1   -- 증가 값
+NOCACHE          -- 캐시 사용 안 함
 NOCYCLE; -- 마지막 값 이후 다시 1로 돌아가지 않음
 
 -- 게시판(BOARD) 시퀀스
 DROP SEQUENCE BOARD_NO_SEQ;
 CREATE SEQUENCE BOARD_NO_SEQ
-START WITH 1 -- 시작 숫자
+START WITH 1     -- 시작 숫자
 INCREMENT BY 1   -- 증가 값
-NOCACHE         -- 캐시 사용 안 함
+NOCACHE          -- 캐시 사용 안 함
 NOCYCLE; -- 마지막 값 이후 다시 1로 돌아가지 않음
 
 -- 에러(ERROR_LOG) 시퀀스
@@ -835,38 +843,6 @@ COMMENT ON COLUMN purchase_perform.cnt IS '수량';
 
 COMMENT ON COLUMN purchase_perform.total IS '총액';
 
-/* 거래처별 실적 **************************************************************/
-CREATE TABLE Client_perform (
-	yearmonth VARCHAR2(4) NOT NULL, /* 년월 */
-	client_no NUMBER(7) NOT NULL, /* 거래처번호 */
-	cnt NUMBER(10), /* 건수 */
-	total_amt NUMBER(19) /* 총액 */
-);
-
-CREATE UNIQUE INDEX PK_Client_perform
-	ON Client_perform (
-		yearmonth ASC,
-		client_no ASC
-	);
-
-ALTER TABLE Client_perform
-	ADD
-		CONSTRAINT PK_Client_perform
-		PRIMARY KEY (
-			yearmonth,
-			client_no
-		);
-
-COMMENT ON TABLE Client_perform IS '거래처별 실적';
-
-COMMENT ON COLUMN Client_perform.yearmonth IS '년월';
-
-COMMENT ON COLUMN Client_perform.client_no IS '거래처번호';
-
-COMMENT ON COLUMN Client_perform.cnt IS '건수';
-
-COMMENT ON COLUMN Client_perform.total_amt IS '총액';
-
 /* 수불마감 *******************************************************************/
 CREATE TABLE inventory_close (
 	yearmonth VARCHAR2(6) NOT NULL, /* 년월 */
@@ -989,10 +965,9 @@ CREATE TABLE emp (
 	emp_tel VARCHAR2(13), /* 전화번호 */
 	email VARCHAR2(50), /* e-Mail */
 	sal NUMBER(10), /* 급여 */
+    hire_date   DATE,       /* 입사일 */
+    grade_code  NUMBER(4),   /* 직급 */
 	dept_code NUMBER(4), /* 부서번호 */
-	username VARCHAR2(100), /* 사원아이디 */
-	password VARCHAR2(1000), /* 사원비밀번호 */
-	roles_status VARCHAR2(20), /* 권한구분 */
 	del_status NUMBER(1), /* 삭제구분 */
 	registrar NUMBER(7), /* 등록자 */
 	in_date DATE /* 등록일자 */
@@ -1022,13 +997,11 @@ COMMENT ON COLUMN emp.email IS 'e-Mail';
 
 COMMENT ON COLUMN emp.sal IS '급여';
 
+COMMENT ON COLUMN emp.hire_date IS '입사일';
+
+COMMENT ON COLUMN emp.grade_code IS '직급';
+
 COMMENT ON COLUMN emp.dept_code IS '부서번호';
-
-COMMENT ON COLUMN emp.username IS '사원아이디';
-
-COMMENT ON COLUMN emp.password IS '사원비밀번호';
-
-COMMENT ON COLUMN emp.roles_status IS '권한구분';
 
 COMMENT ON COLUMN emp.del_status IS '삭제구분';
 
@@ -1037,16 +1010,19 @@ COMMENT ON COLUMN emp.registrar IS '등록자';
 COMMENT ON COLUMN emp.in_date IS '등록일자';
 
 /* 게시판 *********************************************************************/
-CREATE TABLE board (
-	board_no NUMBER(7) NOT NULL, /* 게시판번호 */
-	emp_no NUMBER(7), /* 사원번호 */
-	title VARCHAR2(100), /* 게시판제목 */
-	content VARCHAR2(1000), /* 게시판내용 */
-	read_count NUMBER(7), /* 조회수 */
-	ref NUMBER(7), /* ref */
-	re_lvl NUMBER(2), /* re_lvl */
-	re_step NUMBER(7), /* re_step */
-	in_date DATE /* 등록일시 */
+CREATE TABLE BOARD (
+	BOARD_NO NUMBER(7) NOT NULL, /* 게시판번호 */
+	EMP_NO NUMBER(7), /* 사원번호 */
+	TITLE VARCHAR2(100), /* 게시판제목 */
+	BOARD_CONTENT VARCHAR2(1000), /* 게시판내용 */
+	READ_COUNT NUMBER(7), /* 조회수 */
+	GROUP_NO NUMBER(7), /* 그룹번호 */
+	RE_LVL NUMBER(2), /* 답글레벨 */
+	RE_STEP NUMBER(7), /* 답글순서 */
+    REGISTRAR NUMBER(7), /* 등록자 */
+	IN_DATE DATE, /* 등록일시 */
+    CONSTRAINT FK_ACC_BOARD FOREIGN KEY (EMP_NO)
+        REFERENCES EMP(EMP_NO)
 );
 
 CREATE UNIQUE INDEX PK_board
@@ -1069,15 +1045,17 @@ COMMENT ON COLUMN board.emp_no IS '사원번호';
 
 COMMENT ON COLUMN board.title IS '게시판제목';
 
-COMMENT ON COLUMN board.content IS '게시판내용';
+COMMENT ON COLUMN board.board_content IS '게시판내용';
 
 COMMENT ON COLUMN board.read_count IS '조회수';
 
-COMMENT ON COLUMN board.ref IS 'ref';
+COMMENT ON COLUMN board.group_no IS '그룹번호';
 
-COMMENT ON COLUMN board.re_lvl IS 're_lvl';
+COMMENT ON COLUMN board.re_lvl IS '답글레벨';
 
-COMMENT ON COLUMN board.re_step IS 're_step';
+COMMENT ON COLUMN board.re_step IS '답글순서';
+
+COMMENT ON COLUMN board.registrar IS '등록자';
 
 COMMENT ON COLUMN board.in_date IS '등록일시';
 
@@ -1089,7 +1067,7 @@ CREATE TABLE dept (
 	parent_dept_code NUMBER(4), /* 상위부서코드 */
 	dept_loc VARCHAR2(100), /* 위치 */
     loc_detail VARCHAR2(50), /* 위치상세 */
-	del_status NUMBER(1), /* 삭제구분 */
+	del_status NUMBER(1), /* 삭제구분 */         
 	registrar NUMBER(7), /* 등록자 */
 	in_date DATE /* 등록일자 */
 );
@@ -1127,33 +1105,62 @@ COMMENT ON COLUMN dept.registrar IS '등록자';
 COMMENT ON COLUMN dept.in_date IS '등록일자';
 
 /* 사원 사진 ******************************************************************/
-CREATE TABLE emp_image (
-	emp_no NUMBER(7) NOT NULL, /* 사원번호 */
-	order_num NUMBER(1) NOT NULL, /* 사진번호 */
-	emp_filename VARCHAR2(500) /* 사진 */
+CREATE TABLE EMP_IMAGE (
+	EMP_NO NUMBER(7) NOT NULL,      /* 사원번호 */
+	ORDER_NUM NUMBER(1) NOT NULL,   /* 사진번호 */
+	EMP_FILENAME VARCHAR2(500)      /* 사진파일명 */
 );
 
-CREATE UNIQUE INDEX PK_emp_image
-	ON emp_image (
-		emp_no ASC,
-		order_num ASC
+CREATE UNIQUE INDEX PK_EMP_IMAGE
+	ON  EMP_IMAGE (
+		EMP_NO ASC,
+		ORDER_NUM ASC
 	);
 
-ALTER TABLE emp_image
+ALTER TABLE EMP_IMAGE
 	ADD
-		CONSTRAINT PK_emp_image
+		CONSTRAINT PK_EMP_IMAGE
 		PRIMARY KEY (
-			emp_no,
-			order_num
+			EMP_NO,
+			ORDER_NUM
 		);
 
-COMMENT ON TABLE emp_image IS '사원 사진';
+COMMENT ON TABLE EMP_IMAGE IS '사원 사진';
 
-COMMENT ON COLUMN emp_image.emp_no IS '사원번호';
+COMMENT ON COLUMN EMP_IMAGE.EMP_NO IS '사원번호';
 
-COMMENT ON COLUMN emp_image.order_num IS '사진번호';
+COMMENT ON COLUMN EMP_IMAGE.ORDER_NUM IS '사진번호';
 
-COMMENT ON COLUMN emp_image.emp_filename IS '사진';
+COMMENT ON COLUMN EMP_IMAGE.EMP_FILENAME IS '사진파일명';
+
+/* 계정 관리 ******************************************************************/
+CREATE TABLE ACCOUNT (
+    USER_ID         		VARCHAR2(50)  PRIMARY KEY,
+    PASSWORD        		VARCHAR2(100) NOT NULL,
+    ROLES_STATUS    		NUMBER(4)     DEFAULT 2,        -- 공통(200)
+    EMP_NO          		NUMBER(7)     NOT NULL,
+    EMP_TYPE                VARCHAR2(10)  DEFAULT 'INTERNAL',
+    APPROVAL_STATUS         NUMBER(1)     NULL,
+    WITHDRAW_STATUS	 	    NUMBER(1)     DEFAULT 0,        -- 0:활성,1:탈퇴
+    REG_DATE        		DATE          DEFAULT SYSDATE,
+    CONSTRAINT FK_ACC_EMP FOREIGN KEY (EMP_NO)
+        REFERENCES EMP(EMP_NO)
+);
+
+-- 테이블 설명 & 컬럼 설명
+COMMENT ON TABLE  ACCOUNT IS '계정 관리';
+COMMENT ON COLUMN ACCOUNT.USER_ID IS '아이디'; 
+COMMENT ON COLUMN ACCOUNT.PASSWORD IS '비밀번호';
+COMMENT ON COLUMN ACCOUNT.ROLES_STATUS IS '권한구분'; 
+COMMENT ON COLUMN ACCOUNT.EMP_NO IS '사원번호';
+COMMENT ON COLUMN ACCOUNT.EMP_TYPE IS '계정유형';
+COMMENT ON COLUMN ACCOUNT.APPROVAL_STATUS IS '승인구분';
+COMMENT ON COLUMN ACCOUNT.WITHDRAW_STATUS IS '탈퇴여부';
+COMMENT ON COLUMN ACCOUNT.REG_DATE IS '가입일자';
+
+-- 인덱스
+CREATE INDEX IDX_ACCOUNT_ROLE ON ACCOUNT(ROLES_STATUS);
+
 
 /* 테이블수정 ******************************************************************/
 ALTER TABLE product
@@ -1326,15 +1333,6 @@ ALTER TABLE purchase_perform
 			parts_no
 		);        
 
-ALTER TABLE Client_perform
-	ADD
-		CONSTRAINT FK_client_TO_Client_perform
-		FOREIGN KEY (
-			client_no
-		)
-		REFERENCES client (
-			client_no
-		);
 
 ALTER TABLE client_HIS
 	ADD
