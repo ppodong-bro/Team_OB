@@ -1,19 +1,25 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
+<spring:eval expression="@environment.getProperty('file.upload-dir')" var="profileUploadDir"/>
 <%
-    String logoPath = "${pageContext.request.contextPath}/profile-images/Login.png"; 
+	String baseDir = (String) pageContext.findAttribute("profileUploadDir");
+
+	java.nio.file.Path filePath = (baseDir == null)
+		? null
+		: java.nio.file.Paths.get(baseDir, "Login.png");
 
     String avatarSrc = null;
+    
     try {
-        java.nio.file.Path p = java.nio.file.Paths.get(logoPath);
-        if (java.nio.file.Files.exists(p)) {
-            String mime = java.nio.file.Files.probeContentType(p);
+    	if (filePath != null && java.nio.file.Files.exists(filePath)) {
+            String mime = java.nio.file.Files.probeContentType(filePath);
             if (mime == null) mime = "image/png";
-            byte[] bytes = java.nio.file.Files.readAllBytes(p);
+            byte[] bytes = java.nio.file.Files.readAllBytes(filePath);
             String b64 = java.util.Base64.getEncoder().encodeToString(bytes);
-            avatarSrc = "data:" + mime + ";base64," + b64;
+            avatarSrc = "data:" + mime + ";base64," + b64; // ✅ Base64 인라인 이미지
         }
     } catch (Exception ignore) { }
 
