@@ -47,26 +47,52 @@ public class EmpServiceImpl implements EmpService
 		return empList;
 	}
 	
+//	@Override
+//	public void saveEmp(EmpDTO empDTO) 
+//	{
+//		System.out.println("EmpServiceImpl saveEmp Start");
+//		
+//        Authentication authentication = SecurityContextHolder
+//        							   .getContext()
+//        							   .getAuthentication();
+//
+//        if (authentication != null && authentication.getPrincipal() instanceof CustomUser) 
+//        {
+//            CustomUser customUser = (CustomUser) authentication.getPrincipal();
+//            int empNo = customUser.getAccountDTO().getEmpNo();
+//            empDTO.setRegistrar(empNo);
+//            
+//            System.out.println("EmpServiceImpl saveEmp 1 Registrar->"+empNo);
+//        } else {
+//        	empDTO.setRegistrar(1005); 
+//        	System.out.println("EmpServiceImpl saveEmp 2 Registrar->"+empDTO.getRegistrar());
+//        }
+//        
+//        empDao.insertEmp(empDTO);
+//	}
+	
 	@Override
 	public void saveEmp(EmpDTO empDTO) 
 	{
 		System.out.println("EmpServiceImpl saveEmp Start");
 		
-        Authentication authentication = SecurityContextHolder
-        							   .getContext()
-        							   .getAuthentication();
+//        Authentication authentication = SecurityContextHolder
+//        							   .getContext()
+//        							   .getAuthentication();
 
-        if (authentication != null && authentication.getPrincipal() instanceof CustomUser) 
-        {
-            CustomUser customUser = (CustomUser) authentication.getPrincipal();
-            int empNo = customUser.getAccountDTO().getEmpNo();
-            empDTO.setRegistrar(empNo);
-            
-            System.out.println("EmpServiceImpl saveEmp 1 Registrar->"+empNo);
-        } else {
-        	empDTO.setRegistrar(1005); 
-        	System.out.println("EmpServiceImpl saveEmp 2 Registrar->"+empDTO.getRegistrar());
-        }
+//        if (authentication != null && authentication.getPrincipal() instanceof CustomUser) 
+//        {
+//            CustomUser customUser = (CustomUser) authentication.getPrincipal();
+//            int empNo = customUser.getAccountDTO().getEmpNo();
+//            empDTO.setRegistrar(empNo);
+//            
+//            System.out.println("EmpServiceImpl saveEmp 1 Registrar->"+empNo);
+//        } else {
+//        	empDTO.setRegistrar(1005); 
+//        	System.out.println("EmpServiceImpl saveEmp 2 Registrar->"+empDTO.getRegistrar());
+//        }
+		
+		System.out.println("EmpServiceImpl saveEmp  Registrar->"+empDTO.getRegistrar());
         
         empDao.insertEmp(empDTO);
 	}

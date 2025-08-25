@@ -160,7 +160,7 @@ $(document).ready(function() {
 					data-bs-target="#board-collapse" aria-expanded="false">게시판</button>
 				<div class="collapse" id="board-collapse">
 					<ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-						<li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">공지사항</a></li>
+						<li><a href="${pageContext.request.contextPath}/board/boardListForm" class="link-body-emphasis d-inline-flex text-decoration-none rounded">공지사항</a></li>
 					</ul>
 				</div>
 			</li>
@@ -195,7 +195,7 @@ $(document).ready(function() {
 			</a></li>
 			<!-- 게시판 -->
 			<li class="border-top my-3"></li>
-			<li class="mb-1"><a href="${pageContext.request.contextPath}/inventory" class="link-body-emphasis d-flex justify-content-center align-items-center text-decoration-none rounded"
+			<li class="mb-1"><a href="${pageContext.request.contextPath}/board/boardListForm" class="link-body-emphasis d-flex justify-content-center align-items-center text-decoration-none rounded"
 				style="height: 32px"> <i class="bi bi-chat-left-text" style="font-size: 24px"></i>
 			</a></li>
 		</ul>

@@ -37,7 +37,9 @@ public class EmpAccountServiceImpl implements EmpAccountService
     @Transactional(rollbackFor = Exception.class) 
 	public void empAccountSavePro(
 									  EmpAccountDTO 	empAccountDTO
-									, MultipartFile 	profileImageFile) 
+									, MultipartFile 	profileImageFile
+									, Integer 			loginEmpNo
+			) 
 	{
 		System.out.println("EmpAccountServiceImpl empAccountSavePro Start");
 
@@ -50,8 +52,10 @@ public class EmpAccountServiceImpl implements EmpAccountService
                 
                 String generatedUserId = "user" + empNo;
                 empAccountDTO.setUserId(generatedUserId); 
-                empAccountDTO.setRegistrar(empAccountDTO.getEmpNo());	
-                System.out.println("Generated Partner UserId: " + generatedUserId);
+                empAccountDTO.setRegistrar(loginEmpNo);	
+                
+//                System.out.println("Generated Partner UserId: " + generatedUserId);
+//                System.out.println("EmpAccountServiceImpl empAccountSavePro Registrar: " + loginEmpNo);
 
             } else {
                 empNo = empDao.getNextInternalEmpNo(); 
@@ -59,8 +63,9 @@ public class EmpAccountServiceImpl implements EmpAccountService
                 
                 String generatedUserId = "user" + empNo;
                 empAccountDTO.setUserId(generatedUserId); 
-                empAccountDTO.setRegistrar(empAccountDTO.getEmpNo());	
-                System.out.println("Generated INTERNAL UserId: " + generatedUserId);
+                empAccountDTO.setRegistrar(loginEmpNo);	
+//                System.out.println("Generated INTERNAL UserId: " + generatedUserId);
+//                System.out.println("EmpAccountServiceImpl empAccountSavePro Registrar: " + loginEmpNo);
             }
 			
             empAccountDTO.setEmpNo(empNo);

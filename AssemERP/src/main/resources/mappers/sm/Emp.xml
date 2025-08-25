@@ -23,10 +23,10 @@
     <if test="searchKeyword != null and searchKeyword != ''">
         <choose>
             <when test="searchType == 'empNo'">
-                AND EMP_NO = #{searchKeyword}
+                AND EMP_NO LIKE '%' || #{searchKeyword} || '%'
             </when>
             <when test="searchType == 'empName'">
-                AND EMP_NAME LIKE #{searchKeyword} || '%'
+                AND EMP_NAME LIKE '%' || #{searchKeyword} || '%'
             </when>
         </choose>
     </if>

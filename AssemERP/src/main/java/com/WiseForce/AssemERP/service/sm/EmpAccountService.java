@@ -10,7 +10,7 @@ public interface EmpAccountService
 {
 	void 			empAccountSavePro(
 										EmpAccountDTO empAccountDTO
-									  , MultipartFile profileImageFile);
+									  , MultipartFile profileImageFile, Integer loginEmpNo);
 	
 	void 			saveEmp(EmpDTO empDTO); 
 	

@@ -2,6 +2,7 @@ package com.WiseForce.AssemERP.controller.sm;
 
 import java.util.List;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,14 +36,19 @@ public class EmpAccountController
     public String empAccountSavePro(
 							    		@ModelAttribute EmpAccountDTO empAccountDTO,
 									    @RequestParam(value = "profileImageFile", required = false) MultipartFile profileImageFile,
+									    @AuthenticationPrincipal(expression = "accountDTO.empNo") Integer  loginEmpNo,
 									    Model model
     								) 
     {
 		System.out.println("EmpAccountController empAccountSavePro Start");
 		
+		if (loginEmpNo == null) {
+            return "redirect:/sm/loginForm?error=denied";
+        }
+		
 		try {
 		
-			empAccountService.empAccountSavePro(empAccountDTO, profileImageFile); 
+			empAccountService.empAccountSavePro(empAccountDTO, profileImageFile, loginEmpNo); 
 			
 			EmpDTO searchCondition = new EmpDTO(); 
 			int totalCount = empService.getTotalCount(searchCondition);

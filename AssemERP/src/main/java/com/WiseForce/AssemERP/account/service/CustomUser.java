@@ -30,7 +30,8 @@ public class CustomUser extends User
 		this.accountDTO = accountDTO;
 	}
 
- 	public AccountDTO getAccount() { return accountDTO; }
+ 	public AccountDTO getAccountDTO() { return accountDTO; }
+// 	public AccountDTO getAccount() { return accountDTO; }
 
     private static Collection<? extends GrantedAuthority> mapRolesToAuthorities(int rolesStatus) 
     {

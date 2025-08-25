@@ -3,6 +3,7 @@ package com.WiseForce.AssemERP.controller.sm;
 import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,13 +35,40 @@ public class DeptController
         return "sm/deptRegisterForm"; 	
     }
     
+//    @PostMapping("/deptSavePro")
+//    public String deptSavePro(
+//    							  @ModelAttribute DeptDTO deptDTO
+//    							, Model model
+//    						  ) 
+//    {
+//    	System.out.println("DeptController deptSavePro Start");
+//    	
+//    	deptService.saveDept(deptDTO); 
+//    	
+//    	int totalCount = deptService.getTotalCount(deptDTO);
+//    	
+//		int pageSize   = 10;
+//		int totalPage = (int) Math.ceil((double) totalCount / pageSize);
+//		
+//		System.out.println("DeptController deptSavePro saveDept - OK");
+//    	
+//        return "redirect:/dept/deptListForm?currentPage="+totalPage; 		
+//	}
+    
     @PostMapping("/deptSavePro")
     public String deptSavePro(
     							  @ModelAttribute DeptDTO deptDTO
+    							, @AuthenticationPrincipal(expression = "accountDTO.empNo") Integer  loginEmpNo
     							, Model model
     						  ) 
     {
     	System.out.println("DeptController deptSavePro Start");
+    	
+    	if (loginEmpNo == null) {
+            return "redirect:/sm/loginForm?error=denied";
+        }
+    	
+    	deptDTO.setRegistrar(loginEmpNo);
     	
     	deptService.saveDept(deptDTO); 
     	
