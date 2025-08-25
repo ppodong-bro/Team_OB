@@ -29,10 +29,10 @@
     <if test="searchKeyword != null and searchKeyword != ''">
         <choose>
             <when test="searchType == 'deptCode'">
-                AND DEPT_CODE = #{searchKeyword}
+                AND DEPT_CODE LIKE '%' || #{searchKeyword} || '%'
             </when>
             <when test="searchType == 'deptName'">
-                AND DEPT_NAME LIKE #{searchKeyword} || '%'
+                AND DEPT_NAME LIKE '%' || #{searchKeyword} || '%'
             </when>
         </choose>
     </if>

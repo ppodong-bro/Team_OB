@@ -1,7 +1,9 @@
 package com.WiseForce.AssemERP.controller.sm;
 
 import java.util.List;
+import java.util.Objects;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.WiseForce.AssemERP.account.dto.AccountDTO;
 import com.WiseForce.AssemERP.account.service.CustomUser;
 import com.WiseForce.AssemERP.dto.sm.BoardDTO;
 import com.WiseForce.AssemERP.service.sm.BoardService;
@@ -26,18 +29,38 @@ public class BoardController
 	private final BoardService boardService;
 	
     @GetMapping("/boardRegisterForm")
-    public String boardRegisterForm(@AuthenticationPrincipal CustomUser principal, Model model) 
+    @PreAuthorize("isAuthenticated()")
+    public String boardRegisterForm(
+    									@AuthenticationPrincipal(expression = "accountDTO") AccountDTO accountDTO,
+    									Model model) 
     {
         System.out.println("BoardController boardRegisterForm Start");
+
+        if (accountDTO == null) {
+            return "redirect:/sm/loginForm?error=denied";
+        }
         
-        Integer empNo = principal.getAccountDTO().getEmpNo();
-        
-        System.out.println("BoardController boardRegisterForm empNo->"+empNo);
-        
+        Integer empNo = accountDTO.getEmpNo();
+        System.out.println("BoardController boardRegisterForm empNo -> " + empNo);
+
         model.addAttribute("loginEmpNo", empNo);
+        return "sm/boardRegisterForm";
         
-    	return "sm/boardRegisterForm"; 	
     }
+    
+//    @GetMapping("/boardRegisterForm")
+//    public String boardRegisterForm(@AuthenticationPrincipal CustomUser principal, Model model) 
+//    {
+//        System.out.println("BoardController boardRegisterForm Start");
+//        
+//        Integer empNo = principal.getAccountDTO().getEmpNo();
+//        
+//        System.out.println("BoardController boardRegisterForm empNo->"+empNo);
+//        
+//        model.addAttribute("loginEmpNo", empNo);
+//        
+//    	return "sm/boardRegisterForm"; 	
+//    }
     
     @PostMapping("/boardSavePro")
     public String boardSavePro(
@@ -56,7 +79,7 @@ public class BoardController
 		
 		System.out.println("DeptController deptSavePro saveDept - OK");
     	
-        return "redirect:/board/boardListForm?currentPage="+totalPage; 
+        return "redirect:/board/boardListForm?currentPage=1"; 
     }
     
     @GetMapping("/boardModifyForm")
@@ -84,7 +107,8 @@ public class BoardController
     	
     	boardService.updateBoard(boardDTO);
     	
-    	return "redirect:/board/boardListForm";		
+//    	return "redirect:/board/boardListForm";		
+    	return "redirect:/board/boardListForm?currentPage=1"; 
 	}
     
     @PostMapping("/boardDeletePro")
@@ -97,7 +121,8 @@ public class BoardController
     	
     	boardService.deleteBoard(boardNo);
     	
-    	return "redirect:/board/boardListForm";		
+//    	return "redirect:/board/boardListForm";		
+    	return "redirect:/board/boardListForm?currentPage=1"; 
 	}
     
     @GetMapping("/boardListForm")
@@ -125,6 +150,6 @@ public class BoardController
     	model.addAttribute("boardList", 	boardList);
     	model.addAttribute("paging", 		paging);
     	 
-        return "sm/boardListForm"; 		
+        return "sm/boardListForm"; 	
     }
 }

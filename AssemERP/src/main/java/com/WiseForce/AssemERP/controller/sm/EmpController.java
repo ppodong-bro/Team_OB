@@ -3,6 +3,7 @@ package com.WiseForce.AssemERP.controller.sm;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -80,10 +81,17 @@ public class EmpController
     @PostMapping("/empSavePro")
     public String empSavePro(
     							  @ModelAttribute EmpDTO empDTO
+    						    , @AuthenticationPrincipal(expression = "accountDTO.empNo") Integer loginEmpNo  
     							, Model model
     						) 
     {
     	System.out.println("EmpController empSavePro Start");
+    	
+    	if (loginEmpNo == null) {
+            return "redirect:/sm/loginForm?error=denied";
+        }
+    	
+    	empDTO.setRegistrar(loginEmpNo);
     	
     	empService.saveEmp(empDTO);
     	

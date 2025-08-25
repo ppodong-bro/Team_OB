@@ -76,15 +76,19 @@ public class CustomUserDetailsService implements UserDetailsService
 	        auths = AuthorityUtils.createAuthorityList("ROLE_USER");
 	    }
 	    
-	    return org.springframework.security.core.userdetails.User
-	            .withUsername(accountDTO.getUserId())
-	            .password(accountDTO.getPassword())
-	            .authorities(auths)     
-	            .accountExpired(false)
-	            .accountLocked(false)
-	            .credentialsExpired(false)
-	            .disabled(false)                       
-	            .build();
+	    boolean enabled = true; // 계정 활성화 상태 (필요에 따라 로직 추가)
+	    
+	    return new CustomUser(accountDTO, auths, enabled);
+	    
+//	    return org.springframework.security.core.userdetails.User
+//	            .withUsername(accountDTO.getUserId())
+//	            .password(accountDTO.getPassword())
+//	            .authorities(auths)     
+//	            .accountExpired(false)
+//	            .accountLocked(false)
+//	            .credentialsExpired(false)
+//	            .disabled(false)                       
+//	            .build();
 	}
 	
 	private Collection<? extends GrantedAuthority> authoritiesFromDb(AccountDTO a) {

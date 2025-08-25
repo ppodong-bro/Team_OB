@@ -162,7 +162,7 @@
                     </div>
 
                     <div class="d-flex gap-2 justify-content-end mt-4 pt-3 border-top">
-                        <a href="${pageContext.request.contextPath}/main" class="btn btn-outline-secondary btn-xl">메인으로</a>
+                        <a href="${pageContext.request.contextPath}/" class="btn btn-outline-secondary btn-xl">메인으로</a>
                         <a href="${pageContext.request.contextPath}/sm/rePasswordForm?userId=${account.userId}"
    class="btn btn-outline-success btn-xl">비밀번호 재설정</a>
                         <button type="submit" class="btn btn-primary btn-xl">프로필 수정</button>

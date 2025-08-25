@@ -182,7 +182,7 @@ public class SecurityConfig
                   .usernameParameter("userId")
                   .passwordParameter("password")
                   .failureHandler(customFailureHandler())   	
-                  .defaultSuccessUrl("/main", true)				
+                  .defaultSuccessUrl("/", true)		//main		
               )
               
               .logout(logout -> logout
