@@ -1,14 +1,14 @@
 /************************************************** 
  *   ALL TABLE DELETE 
  **************************************************/
-DELETE FROM BOARD;
 DELETE FROM CLIENT;
 DELETE FROM CLIENT_HIS;
-DELETE FROM CLIENT_PERFORM;
 DELETE FROM COMMON;
-DELETE FROM DEPT;
-DELETE FROM EMP;
+DELETE FROM BOARD;
 DELETE FROM EMP_IMAGE;
+DELETE FROM ACCOUNT;
+DELETE FROM EMP;
+DELETE FROM DEPT;
 DELETE FROM INVENTORY;
 DELETE FROM INVENTORY_ADJUST;
 DELETE FROM INVENTORY_CLOSE;
@@ -34,10 +34,51 @@ INSERT INTO common VALUES (100, 999, '삭제구분');
 INSERT INTO common VALUES (100, 0, '활성');
 INSERT INTO common VALUES (100, 1, '삭제');
 
-INSERT INTO common VALUES (200, 999, '권한');
-INSERT INTO common VALUES (200, 0, 'ROLE_ADMIN');
-INSERT INTO common VALUES (200, 1, 'ROLE_MANAGER');
-INSERT INTO common VALUES (200, 2, 'ROLE_USER');
+INSERT INTO common VALUES (200, 999, '권한구분');
+INSERT INTO common VALUES (200, 0, 'ROLE_ADMIN');             -- 최고책임자
+INSERT INTO common VALUES (200, 1, 'ROLE_HR_MANAGER');        -- 인사관리자
+INSERT INTO common VALUES (200, 2, 'ROLE_ITEM_MANAGER');      -- 품목관리자
+INSERT INTO common VALUES (200, 3, 'ROLE_ORDER_MANAGER');     -- 주문관리자
+INSERT INTO common VALUES (200, 4, 'ROLE_INVENTORY_MANAGER'); -- 물류관리자
+INSERT INTO common VALUES (200, 5, 'ROLE_HR_USER');           -- 인사담당자
+INSERT INTO common VALUES (200, 6, 'ROLE_ITEM_USER');         -- 품목담당자
+INSERT INTO common VALUES (200, 7, 'ROLE_ORDER_USER');        -- 주문담당자
+INSERT INTO common VALUES (200, 8, 'ROLE_INVENTORY_USER');    -- 물류담당자
+INSERT INTO common VALUES (200, 9, 'ROLE_USER');              -- 일반
+INSERT INTO common VALUES (200,10, 'ROLE_PARTNER');           -- PARTNER
+
+INSERT INTO common VALUES (210, 999, '직급코드');
+INSERT INTO common VALUES (210, 10, '사원');
+INSERT INTO common VALUES (210, 20, '대리');
+INSERT INTO common VALUES (210, 30, '과장');
+INSERT INTO common VALUES (210, 40, '차장');
+INSERT INTO common VALUES (210, 50, '부장');
+INSERT INTO common VALUES (210, 60, '이사');
+INSERT INTO common VALUES (210, 70, '상무');
+INSERT INTO common VALUES (210, 80, '전무');
+INSERT INTO common VALUES (210, 90, '부사장');
+INSERT INTO common VALUES (210,100, '사장');
+INSERT INTO common VALUES (210,888, '파트너');
+
+INSERT INTO common VALUES (220, 999, '급여구분');
+INSERT INTO common VALUES (220,  10, '사원-초봉|2800000');
+INSERT INTO common VALUES (220,  20, '대리-기준|3500000');
+INSERT INTO common VALUES (220,  30, '과장-기준|4500000');
+INSERT INTO common VALUES (220,  40, '차장-기준|5200000');
+INSERT INTO common VALUES (220,  50, '부장-기준|6000000');
+INSERT INTO common VALUES (220,  60, '이사-기준|6500000');
+INSERT INTO common VALUES (220,  70, '상무-기준|6700000');
+INSERT INTO common VALUES (220,  80, '전무-기준|7000000');
+INSERT INTO common VALUES (220,  90, '부사장-기준|7500000');
+INSERT INTO common VALUES (220, 100, '사장-기준|8000000');
+INSERT INTO common VALUES (220, 888, '파트너-기준|0');
+
+INSERT INTO common VALUES (230, 999, '승인구분');
+INSERT INTO common VALUES (230, 1, '대기');
+INSERT INTO common VALUES (230, 2, '승인');
+INSERT INTO common VALUES (230, 3, '반려');
+INSERT INTO common VALUES (230, 8, '선등록');
+INSERT INTO common VALUES (230, 9, '승인불필요(내부)');
 
 INSERT INTO common VALUES (300, 999, '거래처유형');
 INSERT INTO common VALUES (300, 0, '구매처');
@@ -97,146 +138,171 @@ INSERT INTO common VALUES (1100, 6, '조정');
 
 COMMIT;
 
-/************************************************** 
+/****************************************************************************** 
  *  부서 : DEPT
- **************************************************/
+ ******************************************************************************/
 
 --특수문자 & 인식 해제 후 사용(끝나면 ON)
 SET DEFINE OFF;
 
--- 최상위 부서 (본부)
-INSERT INTO dept (DEPT_CODE, DEPT_NAME, DEPT_CAPTAIN, PARENT_DEPT_CODE, DEPT_LOC, DEL_STATUS, REGISTRAR, IN_DATE)
-VALUES (1000, '경영본부', 1001, NULL, '서울 본사 10층', 0, 1001, SYSDATE);
-
-INSERT INTO dept (DEPT_CODE, DEPT_NAME, DEPT_CAPTAIN, PARENT_DEPT_CODE, DEPT_LOC, DEL_STATUS, REGISTRAR, IN_DATE)
-VALUES (2000, '기술본부', 1009, NULL, '판교 R&D 센터 5층', 0, 1001, SYSDATE);
-
-INSERT INTO dept (DEPT_CODE, DEPT_NAME, DEPT_CAPTAIN, PARENT_DEPT_CODE, DEPT_LOC, DEL_STATUS, REGISTRAR, IN_DATE)
-VALUES (3000, '사업본부', 1002, NULL, '서울 본사 11층', 0, 1001, SYSDATE);
-
--- 경영본부(1000) 산하 팀
-INSERT INTO dept (DEPT_CODE, DEPT_NAME, DEPT_CAPTAIN, PARENT_DEPT_CODE, DEPT_LOC, DEL_STATUS, REGISTRAR, IN_DATE)
-VALUES (1001, '인사팀', 1005, 1000, '서울 본사 10층', 0, 1001, SYSDATE);
-
-INSERT INTO dept (DEPT_CODE, DEPT_NAME, DEPT_CAPTAIN, PARENT_DEPT_CODE, DEPT_LOC, DEL_STATUS, REGISTRAR, IN_DATE)
-VALUES (1002, '재무팀', 1008, 1000, '서울 본사 10층', 0, 1001, SYSDATE);
-
--- 기술본부(2000) 산하 팀
-INSERT INTO dept (DEPT_CODE, DEPT_NAME, DEPT_CAPTAIN, PARENT_DEPT_CODE, DEPT_LOC, DEL_STATUS, REGISTRAR, IN_DATE)
-VALUES (2001, '플랫폼개발팀', 1009, 2000, '판교 R&D 센터 5층', 0, 1001, SYSDATE);
-
-INSERT INTO dept (DEPT_CODE, DEPT_NAME, DEPT_CAPTAIN, PARENT_DEPT_CODE, DEPT_LOC, DEL_STATUS, REGISTRAR, IN_DATE)
-VALUES (2002, '모바일개발팀', 1007, 2000, '판교 R&D 센터 6층', 0, 1001, SYSDATE);
-
--- 사업본부(3000) 산하 팀
-INSERT INTO dept (DEPT_CODE, DEPT_NAME, DEPT_CAPTAIN, PARENT_DEPT_CODE, DEPT_LOC, DEL_STATUS, REGISTRAR, IN_DATE)
-VALUES (3001, '국내영업팀', 1003, 3000, '서울 본사 11층', 0, 1001, SYSDATE);
-
-INSERT INTO dept (DEPT_CODE, DEPT_NAME, DEPT_CAPTAIN, PARENT_DEPT_CODE, DEPT_LOC, DEL_STATUS, REGISTRAR, IN_DATE)
-VALUES (3002, '해외영업팀', 1006, 3000, '서울 본사 11층', 0, 1001, SYSDATE);
-
-INSERT INTO dept (DEPT_CODE, DEPT_NAME, DEPT_CAPTAIN, PARENT_DEPT_CODE, DEPT_LOC, DEL_STATUS, REGISTRAR, IN_DATE)
-VALUES (3003, '마케팅팀', 1002, 3000, '서울 본사 12층', 0, 1001, SYSDATE);
+-- ───────────────────────────────── 상위부서(5) ─────────────────────────────────
+INSERT INTO DEPT VALUES (1000, '영업본부',       1001, NULL,  '서울 본사',     '강남 R&D타워 9F',     0, 1005, SYSDATE);
+INSERT INTO DEPT VALUES (1001, '생산본부',       1002, NULL,  '용인 제1공장', '본관 2F',            0, 1005, SYSDATE);
+INSERT INTO DEPT VALUES (1002, '물류본부',       1003, NULL,  '평택 물류센터', '입출고동 1F',        0, 1005, SYSDATE);
+INSERT INTO DEPT VALUES (1003, '재고관리본부',   1004, NULL,  '평택 물류센터', '재고동 2F',          0, 1005, SYSDATE);
+INSERT INTO DEPT VALUES (1004, '경영지원본부',   1005, NULL,  '서울 본사',     '지원동 8F',          0, 1005, SYSDATE);
+-- ───────────────────────────────── 영업본부 산하 ───────────────────────────────
+INSERT INTO DEPT VALUES (1005, '국내영업팀',     1006, 1000, '서울 본사',     '세일즈존 7F',        0, 1005, SYSDATE);
+INSERT INTO DEPT VALUES (1006, '해외영업팀',     1007, 1000, '서울 본사',     'Export존 7F',        0, 1005, SYSDATE);
+INSERT INTO DEPT VALUES (1007, '영업기획팀',     1006, 1000, '서울 본사',     '세일즈기획 7F',      0, 1005, SYSDATE);
+-- ───────────────────────────────── 생산본부 산하 ───────────────────────────────
+INSERT INTO DEPT VALUES (1008, '생산기획팀',     1008, 1001, '용인 제1공장', '기획실 2F',          0, 1005, SYSDATE);
+INSERT INTO DEPT VALUES (1009, '조립1라인',      1008, 1001, '용인 제1공장', '조립동 A라인',       0, 1005, SYSDATE);
+INSERT INTO DEPT VALUES (1010, '품질보증팀',     1009, 1001, '용인 제1공장', 'QA랩 2F',            0, 1005, SYSDATE);
+INSERT INTO DEPT VALUES (1011, '자재구매팀',     1010, 1001, '용인 제1공장', '자재동 1F',          0, 1005, SYSDATE);
+-- ───────────────────────────────── 물류본부 산하 ───────────────────────────────
+INSERT INTO DEPT VALUES (1012, '물류운영팀',     1007, 1002, '평택 물류센터', '운영실 1F',          0, 1005, SYSDATE);
+INSERT INTO DEPT VALUES (1013, '배송관리팀',     1007, 1002, '평택 물류센터', '배송통제실 1F',      0, 1005, SYSDATE);
+-- ───────────────────────────────── 재고관리본부 산하 ───────────────────────────
+INSERT INTO DEPT VALUES (1014, '재고관리팀',     1009, 1003, '평택 물류센터', '재고동 2F',          0, 1005, SYSDATE);
+INSERT INTO DEPT VALUES (1015, '재고분석팀',     1009, 1003, '평택 물류센터', '분석실 2F',          0, 1005, SYSDATE);
+-- ───────────────────────────────── 경영지원본부 산하 ───────────────────────────
+INSERT INTO DEPT VALUES (1016, '인사총무팀',     1010, 1004, '서울 본사',     'HR존 8F',            0, 1005, SYSDATE);
+INSERT INTO DEPT VALUES (1017, '재무회계팀',     1006, 1004, '서울 본사',     '회계존 8F',          0, 1005, SYSDATE);
+INSERT INTO DEPT VALUES (1018, 'IT운영팀',       1008, 1004, '서울 본사',     'Infra룸 6F',         0, 1005, SYSDATE);
+INSERT INTO DEPT VALUES (1019, '고객지원센터',   1009, 1004, '서울 본사',     'CS센터 5F',          0, 1005, SYSDATE);
 
 COMMIT;
 
+--특수문자 & 인식 해제 후 사용(끝나면 ON)
 SET DEFINE ON;
 
-/************************************************** 
+/****************************************************************************** 
  *  사원 : EMP
- **************************************************/
--- 1. 김철수 -> 플랫폼개발팀(2001)
-INSERT INTO emp (EMP_NO, EMP_NAME, EMP_TEL, EMAIL, SAL, DEPT_CODE, USERNAME, PASSWORD, ROLES_STATUS, DEL_STATUS, REGISTRAR, IN_DATE)
-VALUES (1001, '김철수', '010-1111-2222', 'cskim@company.com', 90000000, 2001, 'cskim', 'hashed_password_placeholder', 'ROLE_ADMIN', 0, 1001, SYSDATE);
+ *****************************************************************************/
 
--- 2. 이영희 -> 마케팅팀(3003)
-INSERT INTO emp (EMP_NO, EMP_NAME, EMP_TEL, EMAIL, SAL, DEPT_CODE, USERNAME, PASSWORD, ROLES_STATUS, DEL_STATUS, REGISTRAR, IN_DATE)
-VALUES (1002, '이영희', '010-2222-3333', 'yhlee@company.com', 75000000, 3003, 'yhlee', 'hashed_password_placeholder', 'ROLE_MANAGER', 0, 1001, SYSDATE);
+-- 본부/팀장(부서장 10명 내)
+INSERT INTO EMP VALUES (1001, '김민수',  '010-8100-1001', 'minsu.kim@assem.com',   6700000, TO_DATE('2015-03-01','YYYY-MM-DD'), 70, 1000, 0, 1005, SYSDATE);  -- 영업본부장(상무) - 주문
+INSERT INTO EMP VALUES (1002, '박정우',  '010-8200-1002', 'jungwoo.park@assem.com', 7000000, TO_DATE('2013-05-01','YYYY-MM-DD'), 80, 1001, 0, 1005, SYSDATE); -- 생산본부장(전무) - 품목
+INSERT INTO EMP VALUES (1003, '최승민',  '010-8300-1003', 'seungmin.choi@assem.com',6500000, TO_DATE('2017-04-01','YYYY-MM-DD'), 60, 1002, 0, 1005, SYSDATE); -- 물류본부장(이사) - 물류
+INSERT INTO EMP VALUES (1004, '이현석',  '010-8400-1004', 'hyunseok.lee@assem.com', 6000000, TO_DATE('2019-02-01','YYYY-MM-DD'), 50, 1003, 0, 1005, SYSDATE); -- 재고관리본부장(부장) - 재고
+INSERT INTO EMP VALUES (1005, '한경영',  '010-8500-1005', 'jiyoung.han@assem.com',  7000000, TO_DATE('2012-09-01','YYYY-MM-DD'), 80, 1004, 0, 1005, SYSDATE); -- 경영지원본부장(전무) - 인사
 
--- 3. 박지성 -> 국내영업팀(3001)
-INSERT INTO emp (EMP_NO, EMP_NAME, EMP_TEL, EMAIL, SAL, DEPT_CODE, USERNAME, PASSWORD, ROLES_STATUS, DEL_STATUS, REGISTRAR, IN_DATE)
-VALUES (1003, '박지성', '010-3333-4444', 'jspark@company.com', 55000000, 3001, 'jspark', 'hashed_password_placeholder', 'ROLE_USER', 0, 1001, SYSDATE);
+INSERT INTO EMP VALUES (1006, '서다은',  '010-8600-1006', 'daeun.seo@assem.com',     6000000, TO_DATE('2019-07-01','YYYY-MM-DD'), 50, 1005, 0, 1005, SYSDATE);  -- 국내영업팀장(부장)
+INSERT INTO EMP VALUES (1007, '오태양',  '010-8700-1007', 'taeyang.oh@assem.com',     6000000, TO_DATE('2019-06-01','YYYY-MM-DD'), 50, 1006, 0, 1005, SYSDATE); -- 해외영업팀장(부장)
+INSERT INTO EMP VALUES (1008, '장예린',  '010-8800-1008', 'yerin.jang@assem.com',     5200000, TO_DATE('2020-03-01','YYYY-MM-DD'), 40, 1008, 0, 1005, SYSDATE); -- 생산기획팀장/조립1라인/IT운영 겸(차장)
+INSERT INTO EMP VALUES (1009, '문호진',  '010-8900-1009', 'hojin.moon@assem.com',     5200000, TO_DATE('2020-04-01','YYYY-MM-DD'), 40, 1010, 0, 1005, SYSDATE); -- 품질보증/재고/CS 겸(차장)
+INSERT INTO EMP VALUES (1010, '백아라',  '010-8100-1010', 'ara.baek@assem.com',       6000000, TO_DATE('2019-11-01','YYYY-MM-DD'), 50, 1011, 0, 1005, SYSDATE); -- 자재구매/인사총무 겸(부장)
 
--- 4. 최민준 -> 플랫폼개발팀(2001)
-INSERT INTO emp (EMP_NO, EMP_NAME, EMP_TEL, EMAIL, SAL, DEPT_CODE, USERNAME, PASSWORD, ROLES_STATUS, DEL_STATUS, REGISTRAR, IN_DATE)
-VALUES (1004, '최민준', '010-4444-5555', 'mjchoi@company.com', 60000000, 2001, 'mjchoi', 'hashed_password_placeholder', 'ROLE_USER', 0, 1001, SYSDATE);
+-- 임원/경영 라인 (부사장, 사장)
+INSERT INTO EMP VALUES (1011, '김하나',  '010-8200-1011', 'hana.kim@assem.com',       7500000, TO_DATE('2011-04-01','YYYY-MM-DD'), 90, 1004, 0, 1005, SYSDATE); -- 부사장(경영지원본부 소속)
+INSERT INTO EMP VALUES (1012, '유종민',  '010-8300-1012', 'jongmin.yoo@assem.com',    8000000, TO_DATE('2009-03-01','YYYY-MM-DD'),100, 1004, 0, 1005, SYSDATE); -- 사장(경영지원본부 소속)
 
--- 5. 정수빈 -> 인사팀(1001)
-INSERT INTO emp (EMP_NO, EMP_NAME, EMP_TEL, EMAIL, SAL, DEPT_CODE, USERNAME, PASSWORD, ROLES_STATUS, DEL_STATUS, REGISTRAR, IN_DATE)
-VALUES (1005, '정수빈', '010-5555-6666', 'sbjeong@company.com', 48000000, 1001, 'sbjeong', 'hashed_password_placeholder', 'ROLE_USER', 0, 1001, SYSDATE);
+-- 영업본부 산하(주문)
+INSERT INTO EMP VALUES (1013, '정가영',  '010-8400-1013', 'gayoung.jung@assem.com',   3500000, TO_DATE('2023-06-01','YYYY-MM-DD'),  20, 1005, 0, 1005, SYSDATE);  -- 국내영업 대리
+INSERT INTO EMP VALUES (1014, '임도현',  '010-8500-1014', 'dohyun.lim@assem.com',      4500000, TO_DATE('2022-08-01','YYYY-MM-DD'), 30, 1006, 0, 1005, SYSDATE); -- 해외영업 과장
+INSERT INTO EMP VALUES (1015, '박세림',  '010-8600-1015', 'serim.park@assem.com',      3500000, TO_DATE('2024-01-10','YYYY-MM-DD'), 20, 1007, 0, 1005, SYSDATE); -- 영업기획 대리
 
--- 6. 강은지 -> 해외영업팀(3002)
-INSERT INTO emp (EMP_NO, EMP_NAME, EMP_TEL, EMAIL, SAL, DEPT_CODE, USERNAME, PASSWORD, ROLES_STATUS, DEL_STATUS, REGISTRAR, IN_DATE)
-VALUES (1006, '강은지', '010-6666-7777', 'ejkang@company.com', 52000000, 3002, 'ejkang', 'hashed_password_placeholder', 'ROLE_USER', 0, 1002, SYSDATE);
+-- 생산본부 산하(품목)
+INSERT INTO EMP VALUES (1016, '신우진',  '010-8700-1016', 'woojin.shin@assem.com',     4500000, TO_DATE('2021-09-01','YYYY-MM-DD'), 30, 1008, 0, 1005, SYSDATE); -- 생산기획 과장
+INSERT INTO EMP VALUES (1017, '강지후',  '010-8800-1017', 'jihuu.kang@assem.com',      2800000, TO_DATE('2024-05-20','YYYY-MM-DD'), 10, 1009, 0, 1005, SYSDATE); -- 조립1라인 사원
+INSERT INTO EMP VALUES (1018, '노예린',  '010-8900-1018', 'yerin.noh@assem.com',       4500000, TO_DATE('2021-11-01','YYYY-MM-DD'), 30, 1010, 0, 1005, SYSDATE); -- 품질보증 과장
+INSERT INTO EMP VALUES (1019, '윤다온',  '010-8100-1019', 'daon.yoon@assem.com',       3500000, TO_DATE('2023-03-15','YYYY-MM-DD'), 20, 1011, 0, 1005, SYSDATE); -- 자재구매 대리
 
--- 7. 윤현우 -> 모바일개발팀(2002)
-INSERT INTO emp (EMP_NO, EMP_NAME, EMP_TEL, EMAIL, SAL, DEPT_CODE, USERNAME, PASSWORD, ROLES_STATUS, DEL_STATUS, REGISTRAR, IN_DATE)
-VALUES (1007, '윤현우', '010-7777-8888', 'hwyun@company.com', 61000000, 2002, 'hwyun', 'hashed_password_placeholder', 'ROLE_USER', 0, 1001, SYSDATE);
+-- 물류/재고 라인
+INSERT INTO EMP VALUES (1020, '권서윤',  '010-8200-1020', 'seoyoon.kwon@assem.com',    3500000, TO_DATE('2023-07-01','YYYY-MM-DD'), 20, 1012, 0, 1005, SYSDATE); -- 물류운영 대리  
 
--- 8. 임서연 -> 재무팀(1002)
-INSERT INTO emp (EMP_NO, EMP_NAME, EMP_TEL, EMAIL, SAL, DEPT_CODE, USERNAME, PASSWORD, ROLES_STATUS, DEL_STATUS, REGISTRAR, IN_DATE)
-VALUES (1008, '임서연', '010-8888-9999', 'syim@company.com', 50000000, 1002, 'syim', 'hashed_password_placeholder', 'ROLE_USER', 0, 1002, SYSDATE);
+-- 인사총무팀
+INSERT INTO EMP VALUES (1021, '이도연',  '010-9300-1024', 'doyeon.lee@assem.com',   3500000, TO_DATE('2025-07-15','YYYY-MM-DD'), 20, 1016, 0, 1005, SYSDATE);    -- 인사총무 대리
 
--- 9. 한지훈 -> 플랫폼개발팀(2001)
-INSERT INTO emp (EMP_NO, EMP_NAME, EMP_TEL, EMAIL, SAL, DEPT_CODE, USERNAME, PASSWORD, ROLES_STATUS, DEL_STATUS, REGISTRAR, IN_DATE)
-VALUES (1009, '한지훈', '010-9999-0000', 'jhhan@company.com', 82000000, 2001, 'jhhan', 'hashed_password_placeholder', 'ROLE_MANAGER', 0, 1001, SYSDATE);
-
--- 10. 송예은 -> 인사팀(1001)
-INSERT INTO emp (EMP_NO, EMP_NAME, EMP_TEL, EMAIL, SAL, DEPT_CODE, USERNAME, PASSWORD, ROLES_STATUS, DEL_STATUS, REGISTRAR, IN_DATE)
-VALUES (1010, '송예은', '010-0000-1111', 'yesong@company.com', 47000000, 1001, 'yesong', 'hashed_password_placeholder', 'ROLE_USER', 0, 1001, SYSDATE);
-
--- 가상 관리자 사원(100:ADMIN) 초기 정보 등록
-INSERT INTO EMP (
-    EMP_NO, EMP_NAME, USERNAME, PASSWORD, ROLES_STATUS, DEL_STATUS, IN_DATE
-) VALUES (
-    100, 'ADMIN', 'ADMIN', 'not_applicable', 'ROLE_ADMIN', 0, SYSDATE
-);       
+-- 파트너
+INSERT INTO EMP VALUES (9001, '박파트너', '010-9300-1021', 'partner01@ext.com', 3500000, TO_DATE('2025-07-01','YYYY-MM-DD'), 20, 1000, 0, 1005, SYSDATE); -- 영업본부
+INSERT INTO EMP VALUES (9002, '이파트너', '010-9300-1022', 'partner02@ext.com', 3500000, TO_DATE('2025-07-05','YYYY-MM-DD'), 20, 1002, 0, 1005, SYSDATE); -- 물류본부
+INSERT INTO EMP VALUES (9003, '김파트너', '010-9300-1023', 'partner03@ext.com', 3500000, TO_DATE('2025-07-10','YYYY-MM-DD'), 20, 1004, 0, 1005, SYSDATE); -- 경영지원본부
 
 COMMIT;
 
-/************************************************** 
+/******************************************************************************* 
+ *  계정관리 : ACCOUNT  - INSERT문 우측 업무 참고하여 계정 사용하면 됩니다.
+ - 초기 비번 : erp@2025b (내부직원) / part@2025b (파트너)
+ ******************************************************************************/
+-- 임원(사장/부사장) = ADMIN
+INSERT INTO ACCOUNT VALUES ('user1012', '$2a$10$Gs2YmS8uHZkQtyuuvv.tEO2qsCSiFwfFaKhMCz8ypfTwK7n5jT79m', 0, 1012, 'INTERNAL', 9, 0, SYSDATE); -- 사장
+INSERT INTO ACCOUNT VALUES ('user1011', '$2a$10$Gs2YmS8uHZkQtyuuvv.tEO2qsCSiFwfFaKhMCz8ypfTwK7n5jT79m', 0, 1011, 'INTERNAL', 9, 0, SYSDATE); -- 부사장
+
+-- 본부장/부장/임원 라인 = MANAGER
+INSERT INTO ACCOUNT VALUES ('user1001', '$2a$10$Gs2YmS8uHZkQtyuuvv.tEO2qsCSiFwfFaKhMCz8ypfTwK7n5jT79m', 3, 1001, 'INTERNAL', 9, 0, SYSDATE); -- 영업본부장(상무)
+INSERT INTO ACCOUNT VALUES ('user1002', '$2a$10$Gs2YmS8uHZkQtyuuvv.tEO2qsCSiFwfFaKhMCz8ypfTwK7n5jT79m', 2, 1002, 'INTERNAL', 9, 0, SYSDATE); -- 생산본부장(전무)
+INSERT INTO ACCOUNT VALUES ('user1003', '$2a$10$Gs2YmS8uHZkQtyuuvv.tEO2qsCSiFwfFaKhMCz8ypfTwK7n5jT79m', 4, 1003, 'INTERNAL', 9, 0, SYSDATE); -- 물류본부장(이사)
+INSERT INTO ACCOUNT VALUES ('user1004', '$2a$10$Gs2YmS8uHZkQtyuuvv.tEO2qsCSiFwfFaKhMCz8ypfTwK7n5jT79m', 4, 1004, 'INTERNAL', 9, 0, SYSDATE); -- 재고관리본부장(부장)
+INSERT INTO ACCOUNT VALUES ('user1005', '$2a$10$Gs2YmS8uHZkQtyuuvv.tEO2qsCSiFwfFaKhMCz8ypfTwK7n5jT79m', 1, 1005, 'INTERNAL', 9, 0, SYSDATE); -- 경영지원본부장(전무)
+INSERT INTO ACCOUNT VALUES ('user1006', '$2a$10$Gs2YmS8uHZkQtyuuvv.tEO2qsCSiFwfFaKhMCz8ypfTwK7n5jT79m', 3, 1006, 'INTERNAL', 9, 0, SYSDATE); -- 국내영업팀장(부장)
+INSERT INTO ACCOUNT VALUES ('user1007', '$2a$10$Gs2YmS8uHZkQtyuuvv.tEO2qsCSiFwfFaKhMCz8ypfTwK7n5jT79m', 3, 1007, 'INTERNAL', 9, 0, SYSDATE); -- 해외영업팀장(부장)
+INSERT INTO ACCOUNT VALUES ('user1008', '$2a$10$Gs2YmS8uHZkQtyuuvv.tEO2qsCSiFwfFaKhMCz8ypfTwK7n5jT79m', 2, 1008, 'INTERNAL', 9, 0, SYSDATE); -- 생산기획팀장(차장)
+INSERT INTO ACCOUNT VALUES ('user1009', '$2a$10$Gs2YmS8uHZkQtyuuvv.tEO2qsCSiFwfFaKhMCz8ypfTwK7n5jT79m', 2, 1009, 'INTERNAL', 9, 0, SYSDATE); -- 품질/재고/CS(차장)
+INSERT INTO ACCOUNT VALUES ('user1010', '$2a$10$Gs2YmS8uHZkQtyuuvv.tEO2qsCSiFwfFaKhMCz8ypfTwK7n5jT79m', 1, 1010, 'INTERNAL', 9, 0, SYSDATE); -- 인사(부장)
+
+-- 실무 라인 = USER
+INSERT INTO ACCOUNT VALUES ('user1013', '$2a$10$Gs2YmS8uHZkQtyuuvv.tEO2qsCSiFwfFaKhMCz8ypfTwK7n5jT79m', 7, 1013, 'INTERNAL', 9, 0, SYSDATE); -- 국내영업 대리
+INSERT INTO ACCOUNT VALUES ('user1014', '$2a$10$Gs2YmS8uHZkQtyuuvv.tEO2qsCSiFwfFaKhMCz8ypfTwK7n5jT79m', 7, 1014, 'INTERNAL', 9, 0, SYSDATE); -- 해외영업 과장
+INSERT INTO ACCOUNT VALUES ('user1015', '$2a$10$Gs2YmS8uHZkQtyuuvv.tEO2qsCSiFwfFaKhMCz8ypfTwK7n5jT79m', 7, 1015, 'INTERNAL', 9, 0, SYSDATE); -- 영업기획 대리
+INSERT INTO ACCOUNT VALUES ('user1016', '$2a$10$Gs2YmS8uHZkQtyuuvv.tEO2qsCSiFwfFaKhMCz8ypfTwK7n5jT79m', 6, 1016, 'INTERNAL', 9, 0, SYSDATE); -- 생산기획 과장
+INSERT INTO ACCOUNT VALUES ('user1017', '$2a$10$Gs2YmS8uHZkQtyuuvv.tEO2qsCSiFwfFaKhMCz8ypfTwK7n5jT79m', 6, 1017, 'INTERNAL', 9, 0, SYSDATE); -- 조립1라인 사원
+INSERT INTO ACCOUNT VALUES ('user1018', '$2a$10$Gs2YmS8uHZkQtyuuvv.tEO2qsCSiFwfFaKhMCz8ypfTwK7n5jT79m', 6, 1018, 'INTERNAL', 9, 0, SYSDATE); -- 품질보증 과장
+INSERT INTO ACCOUNT VALUES ('user1019', '$2a$10$Gs2YmS8uHZkQtyuuvv.tEO2qsCSiFwfFaKhMCz8ypfTwK7n5jT79m', 8, 1019, 'INTERNAL', 9, 0, SYSDATE); -- 자재구매 대리
+INSERT INTO ACCOUNT VALUES ('user1020', '$2a$10$Gs2YmS8uHZkQtyuuvv.tEO2qsCSiFwfFaKhMCz8ypfTwK7n5jT79m', 8, 1020, 'INTERNAL', 9, 0, SYSDATE); -- 물류운영 대리
+INSERT INTO ACCOUNT VALUES ('user1021', '$2a$10$Gs2YmS8uHZkQtyuuvv.tEO2qsCSiFwfFaKhMCz8ypfTwK7n5jT79m', 5, 1021, 'INTERNAL', 9, 0, SYSDATE); -- 인사팀 대리
+
+-- 파트너 라인 = PARTNER
+INSERT INTO ACCOUNT VALUES ('user9001', '$2a$10$KqtZvqKG3Icq45KJg.WDJ.Ty.G2WPatk.GPdun7U1ZVNEAlXWh8za', 10, 9001, 'EXTERNAL', 1, 0, SYSDATE); -- 승인대기 PENDING
+INSERT INTO ACCOUNT VALUES ('user9002', '$2a$10$KqtZvqKG3Icq45KJg.WDJ.Ty.G2WPatk.GPdun7U1ZVNEAlXWh8za', 10, 9002, 'EXTERNAL', 2, 0, SYSDATE); -- 승인 APPROVED
+INSERT INTO ACCOUNT VALUES ('user9003', '$2a$10$KqtZvqKG3Icq45KJg.WDJ.Ty.G2WPatk.GPdun7U1ZVNEAlXWh8za', 10, 9003, 'EXTERNAL', 3, 0, SYSDATE); -- 반려 REJECTED
+
+COMMIT;
+
+/******************************************************************************* 
  *  게시판 : BOARD
- **************************************************/
+ ******************************************************************************/
 
 -- 1. ERP 시스템 정기 점검
-INSERT INTO BOARD (BOARD_NO, EMP_NO, TITLE, CONTENT, READ_COUNT, REF, RE_LVL, RE_STEP, IN_DATE)
-VALUES (BOARD_NO_SEQ.NEXTVAL, 100, '[시스템] ERP 서버 정기 점검 안내 (8/8 금 22:00~)', '안녕하세요. IT관리팀입니다. 8월 8일 금요일 22:00 부터 2시간 동안 시스템 안정성 확보를 위한 정기 점검이 진행됩니다. 해당 시간에는 시스템 접속이 불가하오니 업무에 참고하시기 바랍니다.', 152, BOARD_NO_SEQ.CURRVAL, 0, 0, SYSDATE);
+INSERT INTO BOARD (BOARD_NO, EMP_NO, TITLE, BOARD_CONTENT, READ_COUNT, GROUP_NO, RE_LVL, RE_STEP, REGISTRAR, IN_DATE)
+VALUES (BOARD_NO_SEQ.NEXTVAL, 1005, '[시스템] ERP 서버 정기 점검 안내 (8/8 금 22:00~)', '안녕하세요. IT관리팀입니다. 8월 8일 금요일 22:00 부터 2시간 동안 시스템 안정성 확보를 위한 정기 점검이 진행됩니다. 해당 시간에는 시스템 접속이 불가하오니 업무에 참고하시기 바랍니다.', 152, BOARD_NO_SEQ.CURRVAL, 0, 0, 1005, SYSDATE);
 
 -- 2. 신규 기능 오픈
-INSERT INTO BOARD (BOARD_NO, EMP_NO, TITLE, CONTENT, READ_COUNT, REF, RE_LVL, RE_STEP, IN_DATE)
-VALUES (BOARD_NO_SEQ.NEXTVAL, 100, '[업데이트] 신규 "실시간 재고 추적" 모듈 오픈 안내', '사용자 편의성 증대를 위해 실시간 재고 추적 모듈이 새롭게 오픈되었습니다. 이제 각 창고별 재고 현황을 실시간으로 확인할 수 있습니다. 많은 활용 바랍니다.', 210, BOARD_NO_SEQ.CURRVAL, 0, 0, SYSDATE - 1);
+INSERT INTO BOARD (BOARD_NO, EMP_NO, TITLE, BOARD_CONTENT, READ_COUNT, GROUP_NO, RE_LVL, RE_STEP, REGISTRAR, IN_DATE)
+VALUES (BOARD_NO_SEQ.NEXTVAL, 1005, '[업데이트] 신규 "실시간 재고 추적" 모듈 오픈 안내', '사용자 편의성 증대를 위해 실시간 재고 추적 모듈이 새롭게 오픈되었습니다. 이제 각 창고별 재고 현황을 실시간으로 확인할 수 있습니다. 많은 활용 바랍니다.', 210, BOARD_NO_SEQ.CURRVAL, 0, 0, 1005, SYSDATE - 1);
 
 -- 3. 데이터 입력 규칙
-INSERT INTO BOARD (BOARD_NO, EMP_NO, TITLE, CONTENT, READ_COUNT, REF, RE_LVL, RE_STEP, IN_DATE)
-VALUES (BOARD_NO_SEQ.NEXTVAL, 100, '[중요] 고객 정보 입력 시 주소 표준화 규칙 준수 요청', '데이터 정합성을 위해, 고객 정보 등록 시 반드시 새로운 주소 검색 API를 통해 표준화된 주소를 입력해주시기 바랍니다. 오류 데이터 발생 시 영업 실적 집계에서 누락될 수 있습니다.', 350, BOARD_NO_SEQ.CURRVAL, 0, 0, SYSDATE - 2);
+INSERT INTO BOARD (BOARD_NO, EMP_NO, TITLE, BOARD_CONTENT, READ_COUNT, GROUP_NO, RE_LVL, RE_STEP, REGISTRAR, IN_DATE)
+VALUES (BOARD_NO_SEQ.NEXTVAL, 1005, '[중요] 고객 정보 입력 시 주소 표준화 규칙 준수 요청', '데이터 정합성을 위해, 고객 정보 등록 시 반드시 새로운 주소 검색 API를 통해 표준화된 주소를 입력해주시기 바랍니다. 오류 데이터 발생 시 영업 실적 집계에서 누락될 수 있습니다.', 350, BOARD_NO_SEQ.CURRVAL, 0, 0, 1005, SYSDATE - 2);
 
 -- 4. 영업 목표 공지
-INSERT INTO BOARD (BOARD_NO, EMP_NO, TITLE, CONTENT, READ_COUNT, REF, RE_LVL, RE_STEP, IN_DATE)
-VALUES (BOARD_NO_SEQ.NEXTVAL, 100, '[영업] 2025년 3분기 영업 목표 및 인센티브 정책 공지', '2025년 3분기 전사 영업 목표와 이에 따른 인센티브 정책을 공지합니다. 자세한 내용은 영업관리 > 목표관리 메뉴에서 확인 가능합니다.', 180, BOARD_NO_SEQ.CURRVAL, 0, 0, SYSDATE - 3);
+INSERT INTO BOARD (BOARD_NO, EMP_NO, TITLE, BOARD_CONTENT, READ_COUNT, GROUP_NO, RE_LVL, RE_STEP, REGISTRAR, IN_DATE)
+VALUES (BOARD_NO_SEQ.NEXTVAL, 1005, '[영업] 2025년 3분기 영업 목표 및 인센티브 정책 공지', '2025년 3분기 전사 영업 목표와 이에 따른 인센티브 정책을 공지합니다. 자세한 내용은 영업관리 > 목표관리 메뉴에서 확인 가능합니다.', 180, BOARD_NO_SEQ.CURRVAL, 0, 0, 1005, SYSDATE - 3);
 
 -- 5. 생산 계획 업데이트
-INSERT INTO BOARD (BOARD_NO, EMP_NO, TITLE, CONTENT, READ_COUNT, REF, RE_LVL, RE_STEP, IN_DATE)
-VALUES (BOARD_NO_SEQ.NEXTVAL, 100, '[생산] 생산 라인 증설에 따른 ERP 생산 계획 모듈 업데이트', 'A라인 증설이 완료됨에 따라, ERP 생산 계획 모듈에 관련 로직이 업데이트되었습니다. 8월 11일부터 새로운 기준으로 생산 계획을 수립해주시기 바랍니다.', 120, BOARD_NO_SEQ.CURRVAL, 0, 0, SYSDATE - 4);
+INSERT INTO BOARD (BOARD_NO, EMP_NO, TITLE, BOARD_CONTENT, READ_COUNT, GROUP_NO, RE_LVL, RE_STEP, REGISTRAR, IN_DATE)
+VALUES (BOARD_NO_SEQ.NEXTVAL, 1005, '[생산] 생산 라인 증설에 따른 ERP 생산 계획 모듈 업데이트', 'A라인 증설이 완료됨에 따라, ERP 생산 계획 모듈에 관련 로직이 업데이트되었습니다. 8월 11일부터 새로운 기준으로 생산 계획을 수립해주시기 바랍니다.', 120, BOARD_NO_SEQ.CURRVAL, 0, 0, 1005, SYSDATE - 4);
 
 -- 6. 재고 실사 안내
-INSERT INTO BOARD (BOARD_NO, EMP_NO, TITLE, CONTENT, READ_COUNT, REF, RE_LVL, RE_STEP, IN_DATE)
-VALUES (BOARD_NO_SEQ.NEXTVAL, 100, '[물류] 하반기 정기 재고 실사 안내 (8/29~30)', '2025년 하반기 정기 재고 실사가 8월 29일, 30일 양일간 진행됩니다. 실사 기간 동안에는 재고 이동이 통제되오니, 각 팀에서는 업무 일정을 조율해주시기 바랍니다.', 255, BOARD_NO_SEQ.CURRVAL, 0, 0, SYSDATE - 5);
+INSERT INTO BOARD (BOARD_NO, EMP_NO, TITLE, BOARD_CONTENT, READ_COUNT, GROUP_NO, RE_LVL, RE_STEP, REGISTRAR, IN_DATE)
+VALUES (BOARD_NO_SEQ.NEXTVAL, 1005, '[물류] 하반기 정기 재고 실사 안내 (8/29~30)', '2025년 하반기 정기 재고 실사가 8월 29일, 30일 양일간 진행됩니다. 실사 기간 동안에는 재고 이동이 통제되오니, 각 팀에서는 업무 일정을 조율해주시기 바랍니다.', 255, BOARD_NO_SEQ.CURRVAL, 0, 0, 1005, SYSDATE - 5);
 
 -- 7. 보안 강화 안내
-INSERT INTO BOARD (BOARD_NO, EMP_NO, TITLE, CONTENT, READ_COUNT, REF, RE_LVL, RE_STEP, IN_DATE)
-VALUES (BOARD_NO_SEQ.NEXTVAL, 100, '[보안] ERP 시스템 비밀번호 정기 변경 안내', '정보보호 정책에 따라, 모든 임직원께서는 8월 말까지 ERP 시스템 접속 비밀번호를 변경해주시기 바랍니다. (영문/숫자/특수문자 포함 9자 이상)', 412, BOARD_NO_SEQ.CURRVAL, 0, 0, SYSDATE - 6);
+INSERT INTO BOARD (BOARD_NO, EMP_NO, TITLE, BOARD_CONTENT, READ_COUNT, GROUP_NO, RE_LVL, RE_STEP, REGISTRAR, IN_DATE)
+VALUES (BOARD_NO_SEQ.NEXTVAL, 1005, '[보안] ERP 시스템 비밀번호 정기 변경 안내', '정보보호 정책에 따라, 모든 임직원께서는 8월 말까지 ERP 시스템 접속 비밀번호를 변경해주시기 바랍니다. (영문/숫자/특수문자 포함 9자 이상)', 412, BOARD_NO_SEQ.CURRVAL, 0, 0, 1005, SYSDATE - 6);
 
 -- 8. 오류 수정 공지
-INSERT INTO BOARD (BOARD_NO, EMP_NO, TITLE, CONTENT, READ_COUNT, REF, RE_LVL, RE_STEP, IN_DATE)
-VALUES (BOARD_NO_SEQ.NEXTVAL, 100, '[수정] 견적서 출력 시 일부 항목 누락 오류 수정 완료', '일부 사용자에게서 발생하던 견적서 출력 오류가 수정되었습니다. 현재 정상적으로 모든 항목이 포함되어 출력됩니다. 이용에 불편을 드려 죄송합니다.', 99, BOARD_NO_SEQ.CURRVAL, 0, 0, SYSDATE - 7);
+INSERT INTO BOARD (BOARD_NO, EMP_NO, TITLE, BOARD_CONTENT, READ_COUNT, GROUP_NO, RE_LVL, RE_STEP, REGISTRAR, IN_DATE)
+VALUES (BOARD_NO_SEQ.NEXTVAL, 1005, '[수정] 견적서 출력 시 일부 항목 누락 오류 수정 완료', '일부 사용자에게서 발생하던 견적서 출력 오류가 수정되었습니다. 현재 정상적으로 모든 항목이 포함되어 출력됩니다. 이용에 불편을 드려 죄송합니다.', 99, BOARD_NO_SEQ.CURRVAL, 0, 0, 1005, SYSDATE - 7);
 
 -- 9. 사용자 교육
-INSERT INTO BOARD (BOARD_NO, EMP_NO, TITLE, CONTENT, READ_COUNT, REF, RE_LVL, RE_STEP, IN_DATE)
-VALUES (BOARD_NO_SEQ.NEXTVAL, 100, '[교육] 신입사원을 위한 ERP 시스템 사용자 교육 (8/12 화)', '8월 신규 입사자들을 대상으로 ERP 시스템 기본 사용법 교육을 실시합니다. 일시: 8월 12일(화) 14:00~16:00, 장소: 3층 교육장', 75, BOARD_NO_SEQ.CURRVAL, 0, 0, SYSDATE - 8);
+INSERT INTO BOARD (BOARD_NO, EMP_NO, TITLE, BOARD_CONTENT, READ_COUNT, GROUP_NO, RE_LVL, RE_STEP, REGISTRAR, IN_DATE)
+VALUES (BOARD_NO_SEQ.NEXTVAL, 1005, '[교육] 신입사원을 위한 ERP 시스템 사용자 교육 (8/12 화)', '8월 신규 입사자들을 대상으로 ERP 시스템 기본 사용법 교육을 실시합니다. 일시: 8월 12일(화) 14:00~16:00, 장소: 3층 교육장', 75, BOARD_NO_SEQ.CURRVAL, 0, 0, 1005, SYSDATE - 8);
 
 -- 10. 연휴 기간 운영
-INSERT INTO BOARD (BOARD_NO, EMP_NO, TITLE, CONTENT, READ_COUNT, REF, RE_LVL, RE_STEP, IN_DATE)
-VALUES (BOARD_NO_SEQ.NEXTVAL, 100, '[안내] 추석 연휴 기간 ERP 시스템 운영 및 긴급 지원 안내', '추석 연휴 기간(9/5~9/8) 동안 시스템은 정상 운영됩니다. 긴급 장애 발생 시 IT관리팀 비상 연락망으로 연락주시기 바랍니다.', 198, BOARD_NO_SEQ.CURRVAL, 0, 0, SYSDATE - 9);
+INSERT INTO BOARD (BOARD_NO, EMP_NO, TITLE, BOARD_CONTENT, READ_COUNT, GROUP_NO, RE_LVL, RE_STEP, REGISTRAR, IN_DATE)
+VALUES (BOARD_NO_SEQ.NEXTVAL, 1005, '[안내] 추석 연휴 기간 ERP 시스템 운영 및 긴급 지원 안내', '추석 연휴 기간(9/5~9/8) 동안 시스템은 정상 운영됩니다. 긴급 장애 발생 시 IT관리팀 비상 연락망으로 연락주시기 바랍니다.', 198, BOARD_NO_SEQ.CURRVAL, 0, 0, 1005, SYSDATE - 9);
 
 COMMIT;
 
@@ -689,7 +755,7 @@ INSERT INTO CLIENT (
     CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
-    901, 1003, '부품나라', 0,
+    901, 1006, '부품나라', 0,
     'purchase@bupumnara.com', '김수빈', '서울 강남구', '010-9923-1234',
      0, NULL, TO_DATE('2025-07-24', 'YYYY-MM-DD')
 );
@@ -699,7 +765,7 @@ INSERT INTO CLIENT (
     CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS ,MODIFY_DATE, IN_DATE
 ) VALUES (
-    902, 1003, '모두파츠', 0,
+    902, 1006, '모두파츠', 0,
     'purchase@moduparts.co.kr', '박수문', '서울 용산구', '010-9349-1223',
     0, NULL, TO_DATE('2025-07-24', 'YYYY-MM-DD')
 );
@@ -709,7 +775,7 @@ INSERT INTO CLIENT (
     CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
-    903, 1003, '바로파츠', 0,
+    903, 1006, '바로파츠', 0,
     'purchase@baroparts.kr', '김성주', '서울 용산구', '010-2494-9923',
     0, NULL, TO_DATE('2025-07-24', 'YYYY-MM-DD')
 );
@@ -719,7 +785,7 @@ INSERT INTO CLIENT (
     CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
-    904, 1003, '한빛부품', 0,
+    904, 1006, '한빛부품', 0,
     'purchase@hanbitparts.co.kr', '이민주', '서울 용산구', '010-3360-2323',
     0, NULL, TO_DATE('2025-07-24', 'YYYY-MM-DD')
 );
@@ -729,7 +795,7 @@ INSERT INTO CLIENT (
     CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
-    905, 1003, '티앤피', 0,
+    905, 1006, '티앤피', 0,
     'purchase@tnp.parts', '주성진', '서울 마포구', '010-3045-9239',
     0, NULL, TO_DATE('2025-07-04', 'YYYY-MM-DD')
 );
@@ -739,7 +805,7 @@ INSERT INTO CLIENT (
     CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
-    906, 1003, '파츠링크', 0,
+    906, 1006, '파츠링크', 0,
     'purchase@partslink.co.kr', '김성주', '서울 종로구', '010-1223-9323',
     0, NULL, TO_DATE('2024-07-04', 'YYYY-MM-DD')
 );
@@ -749,7 +815,7 @@ INSERT INTO CLIENT (
     CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
-    907, 1003, '모두부품', 0,
+    907, 1006, '모두부품', 0,
     'purchase@modu.kr', '민종국', '인천 계양구', '010-9283-2939',
     0, NULL, TO_DATE('2022-03-24', 'YYYY-MM-DD')
 );
@@ -759,7 +825,7 @@ INSERT INTO CLIENT (
     CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
-    908, 1003, '마스터파츠', 0,
+    908, 1006, '마스터파츠', 0,
     'purchase@masterparts.kr', '김성주', '서울 성동구', '010-4304-9313',
     0, NULL, TO_DATE('2021-05-11', 'YYYY-MM-DD')
 );
@@ -769,7 +835,7 @@ INSERT INTO CLIENT (
     CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
-    909, 1003, '파워컴포넌트', 0,
+    909, 1006, '파워컴포넌트', 0,
     'purchase@power.kr', '이주용', '수원시 장안구', '010-7583-9212',
     0, NULL, TO_DATE('2022-03-13', 'YYYY-MM-DD')
 );
@@ -779,7 +845,7 @@ INSERT INTO CLIENT (
     CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
-    910, 1003, '요기파츠', 0,
+    910, 1006, '요기파츠', 0,
     'purchase@yogiparts.kr', '박평호', '서울 용산구', '010-9232-1923',
     0, NULL, TO_DATE('2021-11-28', 'YYYY-MM-DD')
 );
@@ -789,7 +855,7 @@ INSERT INTO CLIENT (
     CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
-    951, 1003, '테크부품', 1,
+    951, 1006, '테크부품', 1,
     'sales@techparts.com', '정승우', '서울 금천구', '010-2032-1203',
     0, NULL, TO_DATE('2021-07-16', 'YYYY-MM-DD')
 );
@@ -799,7 +865,7 @@ INSERT INTO CLIENT (
     CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
-    952, 1003, '이지파츠', 1,
+    952, 1006, '이지파츠', 1,
     'sales@ezparts.kr', '하유정', '서울 구로구', '010-9596-9232',
     0, NULL, TO_DATE('2024-07-10', 'YYYY-MM-DD')
 );
@@ -809,7 +875,7 @@ INSERT INTO CLIENT (
     CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
-    953, 1003, '스마트모듈', 1,
+    953, 1006, '스마트모듈', 1,
     'sales@smartmod.co.kr', '윤정수', '서울 양천구', '010-2392-2932',
     0, NULL, TO_DATE('2024-07-14', 'YYYY-MM-DD')
 );
@@ -819,7 +885,7 @@ INSERT INTO CLIENT (
     CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
-    954, 1003, '탑커넥트', 1,
+    954, 1006, '탑커넥트', 1,
     'sales@topconnect.kr', '오지훈', '경기 고양시', '010-3423-1223',
     0, NULL, TO_DATE('2022-07-09', 'YYYY-MM-DD')
 );
@@ -829,7 +895,7 @@ INSERT INTO CLIENT (
     CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
-    955, 1003, '오토라인', 1,
+    955, 1006, '오토라인', 1,
     'sales@autoline.kr', '서지민', '인천 남동구', '010-9242-1223',
     0, NULL, TO_DATE('2024-07-24', 'YYYY-MM-DD')
 );
@@ -839,7 +905,7 @@ INSERT INTO CLIENT (
     CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
-    956, 1003, '네오파츠', 1,
+    956, 1006, '네오파츠', 1,
     'sales@neoparts.kr', '김태린', '서울 동작구', '010-3388-3234',
     0, NULL, TO_DATE('2024-03-02', 'YYYY-MM-DD')
 );
@@ -849,7 +915,7 @@ INSERT INTO CLIENT (
     CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
-    957, 1003, '탑이노텍', 1,
+    957, 1006, '탑이노텍', 1,
     'sales@topinotech.com', '윤호민', '서울 금천구', '010-9233-9232',
     0, NULL, TO_DATE('2024-02-14', 'YYYY-MM-DD')
 );
@@ -859,7 +925,7 @@ INSERT INTO CLIENT (
     CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
-    958, 1003, '지엠파츠', 1,
+    958, 1006, '지엠파츠', 1,
     'sales@gmparts.kr', '박정화', '대전 유성구', '010-9323-1223',
     0, NULL, TO_DATE('2024-01-14', 'YYYY-MM-DD')
 );
@@ -869,7 +935,7 @@ INSERT INTO CLIENT (
     CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
-    959, 1003, '다온전자', 1,
+    959, 1006, '다온전자', 1,
     'sales@daon.co.kr', '류세영', '경기 성남시', '010-5676-7666',
     0, NULL, TO_DATE('2024-07-15', 'YYYY-MM-DD')
 );
@@ -879,7 +945,7 @@ INSERT INTO CLIENT (
     CLIENT_EMAIL, CLIENT_MAN, CLIENT_ADDRESS, CLIENT_TEL,
     DEL_STATUS, MODIFY_DATE, IN_DATE
 ) VALUES (
-    960, 1003, '이노파워', 1,
+    960, 1006, '이노파워', 1,
     'sales@innopower.kr', '정하윤', '경기 안양시', '010-2293-1223',
     0, NULL, TO_DATE('2022-07-19', 'YYYY-MM-DD')
 );
@@ -895,7 +961,7 @@ COMMIT;
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
-    (952,  TO_DATE('2024/07/10', 'YYYY/MM/DD'), TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1003,
+    (952,  TO_DATE('2024/07/10', 'YYYY/MM/DD'), TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1006,
      '이지파츠',   1, '하유정', 'sales@ezparts.kr', '010-9596-9232', '서울 구로구', TO_DATE('2024/07/10','YYYY/MM/DD'))
      ;
   INSERT INTO CLIENT_HIS (
@@ -904,7 +970,7 @@ COMMIT;
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
-    (901, TO_DATE('2024/07/24','YYYY/MM/DD'), TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1003,
+    (901, TO_DATE('2024/07/24','YYYY/MM/DD'), TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1006,
      '부품나라',   0, '김수빈', 'purchase@bupumnara.com', '010-9923-1234', '서울 강남구', TO_DATE('2025/07/24','YYYY/MM/DD'))
      ;
   INSERT INTO CLIENT_HIS (
@@ -913,7 +979,7 @@ COMMIT;
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
-    (902, TO_DATE('2024/07/24','YYYY/MM/DD'),  TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1003,
+    (902, TO_DATE('2024/07/24','YYYY/MM/DD'),  TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1006,
      '모두파츠',   0, '박수문', 'purchase@moduparts.co.kr', '010-9349-1223', '서울 용산구', TO_DATE('2025/07/24','YYYY/MM/DD'))
      ;
   INSERT INTO CLIENT_HIS (
@@ -922,7 +988,7 @@ COMMIT;
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
-    (903, TO_DATE('2024/07/24','YYYY/MM/DD'),  TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1003,
+    (903, TO_DATE('2024/07/24','YYYY/MM/DD'),  TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1006,
      '바로파츠',   0, '김성주', 'purchase@baroparts.kr', '010-2494-9923', '서울 용산구', TO_DATE('2025/07/24','YYYY/MM/DD'))
      ;
   INSERT INTO CLIENT_HIS (
@@ -931,7 +997,7 @@ COMMIT;
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
-    (904,  TO_DATE('2024/07/24','YYYY/MM/DD'),  TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1003,
+    (904,  TO_DATE('2024/07/24','YYYY/MM/DD'),  TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1006,
      '한빛부품',   0, '이민주',  'purchase@hanbitparts.co.kr', '010-3360-2323','서울 용산구', TO_DATE('2025/07/24','YYYY/MM/DD'))
      ;
   INSERT INTO CLIENT_HIS (
@@ -940,7 +1006,7 @@ COMMIT;
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
-    (905,  TO_DATE('2024/07/04','YYYY/MM/DD'),  TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1003,
+    (905,  TO_DATE('2024/07/04','YYYY/MM/DD'),  TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1006,
      '티앤피', 0, '주성진', 'purchase@tnp.parts', '010-3045-9239', '서울 마포구', TO_DATE('2024/07/04','YYYY/MM/DD'))
      ;
   INSERT INTO CLIENT_HIS (
@@ -949,7 +1015,7 @@ COMMIT;
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
-    (906, TO_DATE('2024/07/04','YYYY/MM/DD'),  TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1003,
+    (906, TO_DATE('2024/07/04','YYYY/MM/DD'),  TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1006,
      '파츠링크',   0, '김성주', 'purchase@partslink.co.kr', '010-1223-9323', '서울 종로구', TO_DATE('2024/07/04','YYYY/MM/DD'))
      ;
   INSERT INTO CLIENT_HIS (
@@ -958,7 +1024,7 @@ COMMIT;
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
-    (907, TO_DATE('2022/03/24','YYYY/MM/DD'),  TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1003,
+    (907, TO_DATE('2022/03/24','YYYY/MM/DD'),  TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1006,
      '모두부품',   0, '민종국', 'purchase@modu.kr', '010-9283-2939', '인천 계양구', TO_DATE('2022/03/24','YYYY/MM/DD'))
      ;
   INSERT INTO CLIENT_HIS (
@@ -967,7 +1033,7 @@ COMMIT;
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
-    (908, TO_DATE('2021/05/11','YYYY/MM/DD'),  TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1003,
+    (908, TO_DATE('2021/05/11','YYYY/MM/DD'),  TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1006,
      '마스터파츠', 0, '김성주', 'purchase@masterparts.kr', '010-4304-9313', '서울 성동구', TO_DATE('2021/05/11','YYYY/MM/DD'))
      ;
   INSERT INTO CLIENT_HIS (
@@ -976,7 +1042,7 @@ COMMIT;
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
-    (909, TO_DATE('2022/03/13','YYYY/MM/DD'),  TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1003,
+    (909, TO_DATE('2022/03/13','YYYY/MM/DD'),  TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1006,
      '파워컴포넌트',0, '이주용', 'purchase@power.kr', '010-7583-9212', '수원시 장안구', TO_DATE('2022/03/13','YYYY/MM/DD'))
      ;
   INSERT INTO CLIENT_HIS (
@@ -985,7 +1051,7 @@ COMMIT;
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
-    (910, TO_DATE('2021/11/28','YYYY/MM/DD'), TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1003,
+    (910, TO_DATE('2021/11/28','YYYY/MM/DD'), TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1006,
      '요기파츠', 0, '박평호', 'purchase@yogiparts.kr', '010-9232-1923',  '서울 용산구', TO_DATE('2021/11/28','YYYY/MM/DD'))
      ;
   INSERT INTO CLIENT_HIS (
@@ -994,7 +1060,7 @@ COMMIT;
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
-    (951, TO_DATE('2021/07/16','YYYY/MM/DD'),  TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1003,
+    (951, TO_DATE('2021/07/16','YYYY/MM/DD'),  TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1006,
      '테크부품',   1, '정승우', 'sales@techparts.com', '010-2032-1203', '서울 금천구', TO_DATE('2021/07/16','YYYY/MM/DD'))
      ;
   INSERT INTO CLIENT_HIS (
@@ -1003,7 +1069,7 @@ COMMIT;
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
-    (953, TO_DATE('2024/07/01','YYYY/MM/DD'), TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1003,
+    (953, TO_DATE('2024/07/01','YYYY/MM/DD'), TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1006,
      '스마트모듈', 1, '윤정수', 'sales@smartmod.co.kr', '010-2392-2932','서울 양천구', TO_DATE('2024/07/14','YYYY/MM/DD'))
      ;
   INSERT INTO CLIENT_HIS (
@@ -1012,7 +1078,7 @@ COMMIT;
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
-    (954, TO_DATE('2024/07/09','YYYY/MM/DD'),  TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1003,
+    (954, TO_DATE('2024/07/09','YYYY/MM/DD'),  TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1006,
      '탑커넥트',   1, '오지훈',  'sales@topconnect.kr', '010-3423-1223','경기 고양시', TO_DATE('2024/07/09','YYYY/MM/DD'))
      ;
   INSERT INTO CLIENT_HIS (
@@ -1021,7 +1087,7 @@ COMMIT;
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
-    (955, TO_DATE('2024/07/24','YYYY/MM/DD'),  TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1003,
+    (955, TO_DATE('2024/07/24','YYYY/MM/DD'),  TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1006,
      '오토라인',   1, '서지민', 'sales@autoline.kr','010-9242-1223','인천 남동구', TO_DATE('2024/07/24','YYYY/MM/DD'))
      ;
   INSERT INTO CLIENT_HIS (
@@ -1030,7 +1096,7 @@ COMMIT;
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
-    (956, TO_DATE('2024/03/02','YYYY/MM/DD'),  TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1003,
+    (956, TO_DATE('2024/03/02','YYYY/MM/DD'),  TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1006,
      '네오파츠',   1, '김태린', 'sales@neoparts.kr','010-3388-3234', '서울 동작구', TO_DATE('2024/03/02','YYYY/MM/DD'))
      ;
   INSERT INTO CLIENT_HIS (
@@ -1039,7 +1105,7 @@ COMMIT;
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
-    (957, TO_DATE('2024/02/14','YYYY/MM/DD'),  TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1003,
+    (957, TO_DATE('2024/02/14','YYYY/MM/DD'),  TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1006,
      '탑이노텍',   1, '윤호민', 'sales@topinotech.com', '010-9233-9232', '서울 금천구', TO_DATE('2024/02/14','YYYY/MM/DD'))
      ;
   INSERT INTO CLIENT_HIS (
@@ -1048,7 +1114,7 @@ COMMIT;
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
-    (958, TO_DATE('2024/01/14','YYYY/MM/DD'),  TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1003,
+    (958, TO_DATE('2024/01/14','YYYY/MM/DD'),  TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1006,
      '지엠파츠', 1, '박정화', 'sales@gmparts.kr', '010-9323-1223','대전 유성', TO_DATE('2024/01/14','YYYY/MM/DD'))
      ;
   INSERT INTO CLIENT_HIS (
@@ -1057,7 +1123,7 @@ COMMIT;
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
-    (959, TO_DATE('2024/07/15','YYYY/MM/DD'), TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1003,
+    (959, TO_DATE('2024/07/15','YYYY/MM/DD'), TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1006,
      '다온전자', 1, '류세영', 'sales@daon.co.kr', '010-5676-7666','경기 성남시', TO_DATE('2024/07/15','YYYY/MM/DD'))
      ;
   INSERT INTO CLIENT_HIS (
@@ -1066,7 +1132,7 @@ COMMIT;
     CLIENT_ADDRESS, IN_DATE
   )
   VALUES
-    (960, TO_DATE('2022/07/19','YYYY/MM/DD'), TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1003,
+    (960, TO_DATE('2022/07/19','YYYY/MM/DD'), TO_DATE('9999/12/31', 'YYYY/MM/DD'), 1006,
      '이노파워',   1, '정하윤',  'sales@innopower.kr', '010-2293-1223','경기 안양시', TO_DATE('2022/07/19','YYYY/MM/DD'))
      ;
 
@@ -1076,124 +1142,124 @@ COMMIT;
  *  발주 : PURCHASE_ORDER
  **************************************************/
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4101, 901, 1003, TO_DATE('2025-07-20', 'YYYY-MM-DD'), 2, '부품나라 - 라이젠5-5세대 7500F / 총 500ea 에 대한 발주 요청 건', TO_DATE('2025-07-20', 'YYYY-MM-DD'), 0, TO_DATE('2025-01-01', 'YYYY-MM-DD'));
+VALUES (4101, 901, 1006, TO_DATE('2025-07-20', 'YYYY-MM-DD'), 2, '부품나라 - 라이젠5-5세대 7500F / 총 500ea 에 대한 발주 요청 건', TO_DATE('2025-07-20', 'YYYY-MM-DD'), 0, TO_DATE('2025-01-01', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4102, 902, 1003, TO_DATE('2025-07-18', 'YYYY-MM-DD'), 2, '모두파츠 - STANDARD COOLER / 총 2000ea 에 대한 발주 요청 건',  TO_DATE('2025-07-18', 'YYYY-MM-DD'), 0, TO_DATE('2025-01-04', 'YYYY-MM-DD'));
+VALUES (4102, 902, 1006, TO_DATE('2025-07-18', 'YYYY-MM-DD'), 2, '모두파츠 - STANDARD COOLER / 총 2000ea 에 대한 발주 요청 건',  TO_DATE('2025-07-18', 'YYYY-MM-DD'), 0, TO_DATE('2025-01-04', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4103, 903, 1003, TO_DATE('2025-07-17', 'YYYY-MM-DD'), 2, '바로파츠 - RIME A620M-K / 총 1500ea 에 대한 발주 요청 건', TO_DATE('2025-07-17', 'YYYY-MM-DD'), 0, TO_DATE('2025-01-01', 'YYYY-MM-DD'));
+VALUES (4103, 903, 1006, TO_DATE('2025-07-17', 'YYYY-MM-DD'), 2, '바로파츠 - RIME A620M-K / 총 1500ea 에 대한 발주 요청 건', TO_DATE('2025-07-17', 'YYYY-MM-DD'), 0, TO_DATE('2025-01-01', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4104, 904, 1003, TO_DATE('2025-07-16', 'YYYY-MM-DD'), 2, '한빛부품 - Crucial DDR5-5600 CL46 / 총 800ea 에 대한 발주 요청 건', TO_DATE('2025-07-16', 'YYYY-MM-DD'), 0, TO_DATE('2025-01-01', 'YYYY-MM-DD'));
+VALUES (4104, 904, 1006, TO_DATE('2025-07-16', 'YYYY-MM-DD'), 2, '한빛부품 - Crucial DDR5-5600 CL46 / 총 800ea 에 대한 발주 요청 건', TO_DATE('2025-07-16', 'YYYY-MM-DD'), 0, TO_DATE('2025-01-01', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4105, 905, 1003, TO_DATE('2025-07-15', 'YYYY-MM-DD'), 2, '티앤피 - RTX 5060 Ti D7 8GB TWIN X2 / 총 1200ea 에 대한 발주 요청 건', TO_DATE('2025-07-15', 'YYYY-MM-DD'), 0, TO_DATE('2025-01-02', 'YYYY-MM-DD'));
+VALUES (4105, 905, 1006, TO_DATE('2025-07-15', 'YYYY-MM-DD'), 2, '티앤피 - RTX 5060 Ti D7 8GB TWIN X2 / 총 1200ea 에 대한 발주 요청 건', TO_DATE('2025-07-15', 'YYYY-MM-DD'), 0, TO_DATE('2025-01-02', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4106, 906, 1003, TO_DATE('2025-07-13', 'YYYY-MM-DD'), 2, '파츠링크 - Crucial P3 Plus M.2 NVMe / 총 600ea 에 대한 발주 요청 건', TO_DATE('2025-07-13', 'YYYY-MM-DD'), 0, TO_DATE('2025-02-03', 'YYYY-MM-DD'));
+VALUES (4106, 906, 1006, TO_DATE('2025-07-13', 'YYYY-MM-DD'), 2, '파츠링크 - Crucial P3 Plus M.2 NVMe / 총 600ea 에 대한 발주 요청 건', TO_DATE('2025-07-13', 'YYYY-MM-DD'), 0, TO_DATE('2025-02-03', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4107, 907, 1003, TO_DATE('2025-07-12', 'YYYY-MM-DD'), 2, '모두부품 - DS500 RGB / 총 2500ea 에 대한 발주 요청 건', TO_DATE('2025-07-12', 'YYYY-MM-DD'), 0, TO_DATE('2025-02-01', 'YYYY-MM-DD'));
+VALUES (4107, 907, 1006, TO_DATE('2025-07-12', 'YYYY-MM-DD'), 2, '모두부품 - DS500 RGB / 총 2500ea 에 대한 발주 요청 건', TO_DATE('2025-07-12', 'YYYY-MM-DD'), 0, TO_DATE('2025-02-01', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4108, 908, 1003, TO_DATE('2025-07-11', 'YYYY-MM-DD'), 2, '마스터파츠 - MAXWELL PRIMO 700W 80PLUS스탠다드 플랫 / 총 1000ea 에 대한 발주 요청 건', TO_DATE('2025-07-11', 'YYYY-MM-DD'), 0, TO_DATE('2025-02-28', 'YYYY-MM-DD'));
+VALUES (4108, 908, 1006, TO_DATE('2025-07-11', 'YYYY-MM-DD'), 2, '마스터파츠 - MAXWELL PRIMO 700W 80PLUS스탠다드 플랫 / 총 1000ea 에 대한 발주 요청 건', TO_DATE('2025-07-11', 'YYYY-MM-DD'), 0, TO_DATE('2025-02-28', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4109, 909, 1003, TO_DATE('2025-07-09', 'YYYY-MM-DD'), 2, '파워컴포넌트 - 코어i7-14세대 14700F (랩터레이크 리프레시) / 총 400ea 에 대한 발주 요청 건', TO_DATE('2025-07-09', 'YYYY-MM-DD'), 0, TO_DATE('2025-02-27', 'YYYY-MM-DD'));
+VALUES (4109, 909, 1006, TO_DATE('2025-07-09', 'YYYY-MM-DD'), 2, '파워컴포넌트 - 코어i7-14세대 14700F (랩터레이크 리프레시) / 총 400ea 에 대한 발주 요청 건', TO_DATE('2025-07-09', 'YYYY-MM-DD'), 0, TO_DATE('2025-02-27', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4110, 910, 1003, TO_DATE('2025-07-08', 'YYYY-MM-DD'), 2, '요기파츠 - JIUSHARK JF100RS Crystal / 총 700ea 에 대한 발주 요청 건', TO_DATE('2025-07-08', 'YYYY-MM-DD'), 0, TO_DATE('2025-02-27', 'YYYY-MM-DD'));
+VALUES (4110, 910, 1006, TO_DATE('2025-07-08', 'YYYY-MM-DD'), 2, '요기파츠 - JIUSHARK JF100RS Crystal / 총 700ea 에 대한 발주 요청 건', TO_DATE('2025-07-08', 'YYYY-MM-DD'), 0, TO_DATE('2025-02-27', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4111, 910, 1003, TO_DATE('2025-07-20', 'YYYY-MM-DD'), 2, '요기파츠 - B760M DS3H 외 1건 / 총 1903ea 에 대한 발주 요청 건', TO_DATE('2025-07-20', 'YYYY-MM-DD'), 0, TO_DATE('2025-03-01', 'YYYY-MM-DD'));
+VALUES (4111, 910, 1006, TO_DATE('2025-07-20', 'YYYY-MM-DD'), 2, '요기파츠 - B760M DS3H 외 1건 / 총 1903ea 에 대한 발주 요청 건', TO_DATE('2025-07-20', 'YYYY-MM-DD'), 0, TO_DATE('2025-03-01', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4112, 909, 1003, TO_DATE('2025-07-18', 'YYYY-MM-DD'), 2, '파워컴포넌트 - RTX 5070 벤투스 2X OC D7 12GB / 총 2000ea 에 대한 발주 요청 건', TO_DATE('2025-07-18', 'YYYY-MM-DD'), 0, TO_DATE('2025-03-04', 'YYYY-MM-DD'));
+VALUES (4112, 909, 1006, TO_DATE('2025-07-18', 'YYYY-MM-DD'), 2, '파워컴포넌트 - RTX 5070 벤투스 2X OC D7 12GB / 총 2000ea 에 대한 발주 요청 건', TO_DATE('2025-07-18', 'YYYY-MM-DD'), 0, TO_DATE('2025-03-04', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4113, 908, 1003, TO_DATE('2025-07-17', 'YYYY-MM-DD'), 2, '마스터파츠 - Crucial P3 Plus M.2 NVMe / 총 1050ea 에 대한 발주 요청 건', TO_DATE('2025-07-17', 'YYYY-MM-DD'), 0, TO_DATE('2025-03-01', 'YYYY-MM-DD'));
+VALUES (4113, 908, 1006, TO_DATE('2025-07-17', 'YYYY-MM-DD'), 2, '마스터파츠 - Crucial P3 Plus M.2 NVMe / 총 1050ea 에 대한 발주 요청 건', TO_DATE('2025-07-17', 'YYYY-MM-DD'), 0, TO_DATE('2025-03-01', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4114, 907, 1003, TO_DATE('2025-07-16', 'YYYY-MM-DD'), 2, '모두부품 - DPX90 ARGB 강화유리 (블랙) / 총 800ea 에 대한 발주 요청 건', TO_DATE('2025-07-16', 'YYYY-MM-DD'), 0, TO_DATE('2025-03-01', 'YYYY-MM-DD'));
+VALUES (4114, 907, 1006, TO_DATE('2025-07-16', 'YYYY-MM-DD'), 2, '모두부품 - DPX90 ARGB 강화유리 (블랙) / 총 800ea 에 대한 발주 요청 건', TO_DATE('2025-07-16', 'YYYY-MM-DD'), 0, TO_DATE('2025-03-01', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4115, 906, 1003, TO_DATE('2025-07-15', 'YYYY-MM-DD'), 2, '파츠링크 - MegaMax II 800W 80PLUS브론즈 ATX3.1 / 총 1020ea 에 대한 발주 요청 건', TO_DATE('2025-07-15', 'YYYY-MM-DD'), 0, TO_DATE('2025-03-02', 'YYYY-MM-DD'));
+VALUES (4115, 906, 1006, TO_DATE('2025-07-15', 'YYYY-MM-DD'), 2, '파츠링크 - MegaMax II 800W 80PLUS브론즈 ATX3.1 / 총 1020ea 에 대한 발주 요청 건', TO_DATE('2025-07-15', 'YYYY-MM-DD'), 0, TO_DATE('2025-03-02', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4116, 905, 1003, TO_DATE('2025-07-13', 'YYYY-MM-DD'), 2, '티앤피 - 라이젠3-2세대 3200G (피카소) / 총 3000ea 에 대한 발주 요청 건', TO_DATE('2025-07-13', 'YYYY-MM-DD'), 0, TO_DATE('2025-04-03', 'YYYY-MM-DD'));
+VALUES (4116, 905, 1006, TO_DATE('2025-07-13', 'YYYY-MM-DD'), 2, '티앤피 - 라이젠3-2세대 3200G (피카소) / 총 3000ea 에 대한 발주 요청 건', TO_DATE('2025-07-13', 'YYYY-MM-DD'), 0, TO_DATE('2025-04-03', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4117, 904, 1003, TO_DATE('2025-07-12', 'YYYY-MM-DD'), 2, '한빛부품 - A520M-A PRO / 총 2050ea 에 대한 발주 요청 건', TO_DATE('2025-07-12', 'YYYY-MM-DD'), 0, TO_DATE('2025-04-01', 'YYYY-MM-DD'));
+VALUES (4117, 904, 1006, TO_DATE('2025-07-12', 'YYYY-MM-DD'), 2, '한빛부품 - A520M-A PRO / 총 2050ea 에 대한 발주 요청 건', TO_DATE('2025-07-12', 'YYYY-MM-DD'), 0, TO_DATE('2025-04-01', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4118, 903, 1003, TO_DATE('2025-07-11', 'YYYY-MM-DD'), 2, '바로파츠 - Crucial DDR4-3200 CL22 (8GB) / 총 1200ea 에 대한 발주 요청 건',TO_DATE('2025-07-11', 'YYYY-MM-DD'), 0, TO_DATE('2025-04-30', 'YYYY-MM-DD'));
+VALUES (4118, 903, 1006, TO_DATE('2025-07-11', 'YYYY-MM-DD'), 2, '바로파츠 - Crucial DDR4-3200 CL22 (8GB) / 총 1200ea 에 대한 발주 요청 건',TO_DATE('2025-07-11', 'YYYY-MM-DD'), 0, TO_DATE('2025-04-30', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4119, 902, 1003, TO_DATE('2025-07-09', 'YYYY-MM-DD'), 2, '모두파츠 - 메인보드 내장 기본 VGA 사용 / 총 4000ea 에 대한 발주 요청 건', TO_DATE('2025-07-09', 'YYYY-MM-DD'), 0, TO_DATE('2025-04-30', 'YYYY-MM-DD'));
+VALUES (4119, 902, 1006, TO_DATE('2025-07-09', 'YYYY-MM-DD'), 2, '모두파츠 - 메인보드 내장 기본 VGA 사용 / 총 4000ea 에 대한 발주 요청 건', TO_DATE('2025-07-09', 'YYYY-MM-DD'), 0, TO_DATE('2025-04-30', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4120, 901, 1003, TO_DATE('2025-07-08', 'YYYY-MM-DD'), 2, '부품나라 - Crucial P3 Plus M.2 NVMe (500GB) / 총 700ea 에 대한 발주 요청 건', TO_DATE('2025-07-08', 'YYYY-MM-DD'), 0, TO_DATE('2025-04-30', 'YYYY-MM-DD'));
+VALUES (4120, 901, 1006, TO_DATE('2025-07-08', 'YYYY-MM-DD'), 2, '부품나라 - Crucial P3 Plus M.2 NVMe (500GB) / 총 700ea 에 대한 발주 요청 건', TO_DATE('2025-07-08', 'YYYY-MM-DD'), 0, TO_DATE('2025-04-30', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4121, 901, 1003, TO_DATE('2025-07-20', 'YYYY-MM-DD'), 2, '부품나라 - LIMPID Micro-1 / 총 300ea 에 대한 발주 요청 건', TO_DATE('2025-07-20', 'YYYY-MM-DD'), 0, TO_DATE('2025-05-01', 'YYYY-MM-DD'));
+VALUES (4121, 901, 1006, TO_DATE('2025-07-20', 'YYYY-MM-DD'), 2, '부품나라 - LIMPID Micro-1 / 총 300ea 에 대한 발주 요청 건', TO_DATE('2025-07-20', 'YYYY-MM-DD'), 0, TO_DATE('2025-05-01', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4122, 902, 1003, TO_DATE('2025-07-18', 'YYYY-MM-DD'), 2, '모두파츠 - MAXWELL PRIMO 500W 80PLUS스탠다드 플랫 / 총 40ea 에 대한 발주 요청 건', TO_DATE('2025-07-18', 'YYYY-MM-DD'), 0, TO_DATE('2025-05-04', 'YYYY-MM-DD'));
+VALUES (4122, 902, 1006, TO_DATE('2025-07-18', 'YYYY-MM-DD'), 2, '모두파츠 - MAXWELL PRIMO 500W 80PLUS스탠다드 플랫 / 총 40ea 에 대한 발주 요청 건', TO_DATE('2025-07-18', 'YYYY-MM-DD'), 0, TO_DATE('2025-05-04', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4123, 903, 1003, TO_DATE('2025-07-17', 'YYYY-MM-DD'), 2, '바로파츠 - 라이젠7-4세대 5700G / 총 70ea 에 대한 발주 요청 건', TO_DATE('2025-07-17', 'YYYY-MM-DD'), 0, TO_DATE('2025-05-01', 'YYYY-MM-DD'));
+VALUES (4123, 903, 1006, TO_DATE('2025-07-17', 'YYYY-MM-DD'), 2, '바로파츠 - 라이젠7-4세대 5700G / 총 70ea 에 대한 발주 요청 건', TO_DATE('2025-07-17', 'YYYY-MM-DD'), 0, TO_DATE('2025-05-01', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4124, 904, 1003, TO_DATE('2025-07-16', 'YYYY-MM-DD'), 2, '한빛부품 - PRIME A520M-K / 총 1000ea 에 대한 발주 요청 건', TO_DATE('2025-07-16', 'YYYY-MM-DD'), 0, TO_DATE('2025-05-01', 'YYYY-MM-DD'));
+VALUES (4124, 904, 1006, TO_DATE('2025-07-16', 'YYYY-MM-DD'), 2, '한빛부품 - PRIME A520M-K / 총 1000ea 에 대한 발주 요청 건', TO_DATE('2025-07-16', 'YYYY-MM-DD'), 0, TO_DATE('2025-05-01', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4125, 905, 1003, TO_DATE('2025-07-15', 'YYYY-MM-DD'), 2, '티앤피 - Crucial DDR4-3200 CL22 (8GB) / 총 500ea 에 대한 발주 요청 건', TO_DATE('2025-07-15', 'YYYY-MM-DD'), 0, TO_DATE('2025-05-02', 'YYYY-MM-DD'));
+VALUES (4125, 905, 1006, TO_DATE('2025-07-15', 'YYYY-MM-DD'), 2, '티앤피 - Crucial DDR4-3200 CL22 (8GB) / 총 500ea 에 대한 발주 요청 건', TO_DATE('2025-07-15', 'YYYY-MM-DD'), 0, TO_DATE('2025-05-02', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4126, 906, 1003, TO_DATE('2025-07-13', 'YYYY-MM-DD'), 2, '파츠링크 - G20 에픽 강화유리 (블랙) / 총 2000ea 에 대한 발주 요청 건', TO_DATE('2025-07-13', 'YYYY-MM-DD'), 0, TO_DATE('2025-06-03', 'YYYY-MM-DD'));
+VALUES (4126, 906, 1006, TO_DATE('2025-07-13', 'YYYY-MM-DD'), 2, '파츠링크 - G20 에픽 강화유리 (블랙) / 총 2000ea 에 대한 발주 요청 건', TO_DATE('2025-07-13', 'YYYY-MM-DD'), 0, TO_DATE('2025-06-03', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4127, 907, 1003, TO_DATE('2025-07-12', 'YYYY-MM-DD'), 2, '모두부품 - SAVEMOST 500W 블랙 / 총 1050ea 에 대한 발주 요청 건', TO_DATE('2025-07-12', 'YYYY-MM-DD'), 0, TO_DATE('2025-06-01', 'YYYY-MM-DD'));
+VALUES (4127, 907, 1006, TO_DATE('2025-07-12', 'YYYY-MM-DD'), 2, '모두부품 - SAVEMOST 500W 블랙 / 총 1050ea 에 대한 발주 요청 건', TO_DATE('2025-07-12', 'YYYY-MM-DD'), 0, TO_DATE('2025-06-01', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4128, 908, 1003, TO_DATE('2025-07-11', 'YYYY-MM-DD'), 2, '마스터파츠 - 코어i9-14세대 14900K (랩터레이크 리프레시) / 총 800ea 에 대한 발주 요청 건', TO_DATE('2025-07-11', 'YYYY-MM-DD'), 0, TO_DATE('2025-06-30', 'YYYY-MM-DD'));
+VALUES (4128, 908, 1006, TO_DATE('2025-07-11', 'YYYY-MM-DD'), 2, '마스터파츠 - 코어i9-14세대 14900K (랩터레이크 리프레시) / 총 800ea 에 대한 발주 요청 건', TO_DATE('2025-07-11', 'YYYY-MM-DD'), 0, TO_DATE('2025-06-30', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4129, 909, 1003, TO_DATE('2025-07-09', 'YYYY-MM-DD'), 2, '파워컴포넌트 - A360 ARGB / 총 1020ea 에 대한 발주 요청 건', TO_DATE('2025-07-09', 'YYYY-MM-DD'), 0, TO_DATE('2025-06-30', 'YYYY-MM-DD'));
+VALUES (4129, 909, 1006, TO_DATE('2025-07-09', 'YYYY-MM-DD'), 2, '파워컴포넌트 - A360 ARGB / 총 1020ea 에 대한 발주 요청 건', TO_DATE('2025-07-09', 'YYYY-MM-DD'), 0, TO_DATE('2025-06-30', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
 VALUES (4130, 910, 1003, TO_DATE('2025-07-08', 'YYYY-MM-DD'), 2, '요기파츠 - Z790 PG Lightning D5 에즈윈 / 총 600ea 에 대한 발주 요청 건', TO_DATE('2025-07-08', 'YYYY-MM-DD'), 0, TO_DATE('2025-06-30', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4131, 901, 1003, TO_DATE('2025-07-20', 'YYYY-MM-DD'), 2, '부품나라 - RTX A6000 D6 48GB / 총 2050ea 에 대한 발주 요청 건', TO_DATE('2025-07-20', 'YYYY-MM-DD'), 0, TO_DATE('2025-06-01', 'YYYY-MM-DD'));
+VALUES (4131, 901, 1006, TO_DATE('2025-07-20', 'YYYY-MM-DD'), 2, '부품나라 - RTX A6000 D6 48GB / 총 2050ea 에 대한 발주 요청 건', TO_DATE('2025-07-20', 'YYYY-MM-DD'), 0, TO_DATE('2025-06-01', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4132, 902, 1003, TO_DATE('2025-07-18', 'YYYY-MM-DD'), 2, '모두파츠 - Platinum P41 M.2 NVMe (2TB) / 총 1000ea 에 대한 발주 요청 건', TO_DATE('2025-07-18', 'YYYY-MM-DD'), 0, TO_DATE('2025-07-04', 'YYYY-MM-DD'));
+VALUES (4132, 902, 1006, TO_DATE('2025-07-18', 'YYYY-MM-DD'), 2, '모두파츠 - Platinum P41 M.2 NVMe (2TB) / 총 1000ea 에 대한 발주 요청 건', TO_DATE('2025-07-18', 'YYYY-MM-DD'), 0, TO_DATE('2025-07-04', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4133, 903, 1003, TO_DATE('2025-07-17', 'YYYY-MM-DD'), 2, '바로파츠 - P20C ELITE 6FAN METAL MESH 강화유리 / 총 400ea 에 대한 발주 요청 건', TO_DATE('2025-07-17', 'YYYY-MM-DD'), 0, TO_DATE('2025-07-01', 'YYYY-MM-DD'));
+VALUES (4133, 903, 1006, TO_DATE('2025-07-17', 'YYYY-MM-DD'), 2, '바로파츠 - P20C ELITE 6FAN METAL MESH 강화유리 / 총 400ea 에 대한 발주 요청 건', TO_DATE('2025-07-17', 'YYYY-MM-DD'), 0, TO_DATE('2025-07-01', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4134, 904, 1003, TO_DATE('2025-07-16', 'YYYY-MM-DD'), 2, '한빛부품 - UPMOST 1050W 80PLUS골드 풀모듈러 ATX3.0 블랙 / 총 700ea 에 대한 발주 요청 건', TO_DATE('2025-07-16', 'YYYY-MM-DD'), 0, TO_DATE('2025-07-01', 'YYYY-MM-DD'));
+VALUES (4134, 904, 1006, TO_DATE('2025-07-16', 'YYYY-MM-DD'), 2, '한빛부품 - UPMOST 1050W 80PLUS골드 풀모듈러 ATX3.0 블랙 / 총 700ea 에 대한 발주 요청 건', TO_DATE('2025-07-16', 'YYYY-MM-DD'), 0, TO_DATE('2025-07-01', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4135, 905, 1003, TO_DATE('2025-07-15', 'YYYY-MM-DD'), 2, '티앤피 - TG-360 ARGB (블랙) / 총 100ea 에 대한 발주 요청 건',  TO_DATE('2025-07-15', 'YYYY-MM-DD'), 0, TO_DATE('2025-07-02', 'YYYY-MM-DD'));
+VALUES (4135, 905, 1006, TO_DATE('2025-07-15', 'YYYY-MM-DD'), 2, '티앤피 - TG-360 ARGB (블랙) / 총 100ea 에 대한 발주 요청 건',  TO_DATE('2025-07-15', 'YYYY-MM-DD'), 0, TO_DATE('2025-07-02', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4136, 906, 1003, TO_DATE('2025-07-13', 'YYYY-MM-DD'), 2, '파츠링크 - MAG B760M 박격포 II / 총 40ea 에 대한 발주 요청 건', TO_DATE('2025-07-13', 'YYYY-MM-DD'), 0, TO_DATE('2025-07-03', 'YYYY-MM-DD'));
+VALUES (4136, 906, 1006, TO_DATE('2025-07-13', 'YYYY-MM-DD'), 2, '파츠링크 - MAG B760M 박격포 II / 총 40ea 에 대한 발주 요청 건', TO_DATE('2025-07-13', 'YYYY-MM-DD'), 0, TO_DATE('2025-07-03', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4137, 907, 1003, TO_DATE('2025-07-12', 'YYYY-MM-DD'), 2, '모두부품 - RTX 5070 SOLID OC D7 12GB / 총 70ea 에 대한 발주 요청 건', TO_DATE('2025-07-12', 'YYYY-MM-DD'), 0, TO_DATE('2025-08-01', 'YYYY-MM-DD'));
+VALUES (4137, 907, 1006, TO_DATE('2025-07-12', 'YYYY-MM-DD'), 2, '모두부품 - RTX 5070 SOLID OC D7 12GB / 총 70ea 에 대한 발주 요청 건', TO_DATE('2025-07-12', 'YYYY-MM-DD'), 0, TO_DATE('2025-08-01', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4138, 908, 1003, TO_DATE('2025-07-11', 'YYYY-MM-DD'), 2, '마스터파츠 - Crucial P3 Plus M.2 NVMe (1TB) / 총 1000ea 에 대한 발주 요청 건', TO_DATE('2025-07-11', 'YYYY-MM-DD'), 0, TO_DATE('2025-08-31', 'YYYY-MM-DD'));
+VALUES (4138, 908, 1006, TO_DATE('2025-07-11', 'YYYY-MM-DD'), 2, '마스터파츠 - Crucial P3 Plus M.2 NVMe (1TB) / 총 1000ea 에 대한 발주 요청 건', TO_DATE('2025-07-11', 'YYYY-MM-DD'), 0, TO_DATE('2025-08-31', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4139, 909, 1003, TO_DATE('2025-07-09', 'YYYY-MM-DD'), 2, '파워컴포넌트 - UH40 킬러웨일 ARGB / 총 500ea 에 대한 발주 요청 건', TO_DATE('2025-07-09', 'YYYY-MM-DD'), 0, TO_DATE('2025-08-31', 'YYYY-MM-DD'));
+VALUES (4139, 909, 1006, TO_DATE('2025-07-09', 'YYYY-MM-DD'), 2, '파워컴포넌트 - UH40 킬러웨일 ARGB / 총 500ea 에 대한 발주 요청 건', TO_DATE('2025-07-09', 'YYYY-MM-DD'), 0, TO_DATE('2025-08-31', 'YYYY-MM-DD'));
 
 INSERT INTO PURCHASE_ORDER (PURCHASE_NO, CLIENT_NO, EMP_NO, PURCHASE_DATE, IN_STATUS, PURCHASE_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE)
-VALUES (4140, 910, 1003, TO_DATE('2025-07-08', 'YYYY-MM-DD'), 2, '요기파츠 - Classic II 풀체인지 800W 80PLUS브론즈 ATX3.1 / 총 2000ea 에 대한 발주 요청 건', TO_DATE('2025-07-08', 'YYYY-MM-DD'), 0, TO_DATE('2025-08-31', 'YYYY-MM-DD'));
+VALUES (4140, 910, 1006, TO_DATE('2025-07-08', 'YYYY-MM-DD'), 2, '요기파츠 - Classic II 풀체인지 800W 80PLUS브론즈 ATX3.1 / 총 2000ea 에 대한 발주 요청 건', TO_DATE('2025-07-08', 'YYYY-MM-DD'), 0, TO_DATE('2025-08-31', 'YYYY-MM-DD'));
 
 
 COMMIT;
@@ -1250,124 +1316,124 @@ COMMIT;
  *  수주 : SALES_ORDER
  **************************************************/
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, COMPLETE_DATE, DEL_STATUS, IN_DATE) VALUES
-(3001, 951, 1003, TO_DATE('2025-08-01', 'YYYY-MM-DD'), 2, '테크부품 - AMD R5-7500F / 총 10대 에 대한 수주 요청 건', TO_DATE('2025-08-01', 'YYYY-MM-DD'), 0, TO_DATE('2025-08-01', 'YYYY-MM-DD'));
+(3001, 951, 1006, TO_DATE('2025-08-01', 'YYYY-MM-DD'), 2, '테크부품 - AMD R5-7500F / 총 10대 에 대한 수주 요청 건', TO_DATE('2025-08-01', 'YYYY-MM-DD'), 0, TO_DATE('2025-08-01', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3002, 952, 1003, TO_DATE('2025-07-03', 'YYYY-MM-DD'), 1, '이지파츠 - AMD R3-3200G/내장VGA/16G / 총 10대 에 대한 수주 요청 건', 0, TO_DATE('2025-08-03', 'YYYY-MM-DD'));
+(3002, 952, 1006, TO_DATE('2025-07-03', 'YYYY-MM-DD'), 1, '이지파츠 - AMD R3-3200G/내장VGA/16G / 총 10대 에 대한 수주 요청 건', 0, TO_DATE('2025-08-03', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3003, 953, 1003, TO_DATE('2025-07-05', 'YYYY-MM-DD'), 0, '스마트모듈 - 인텔i7-14700F/RTX5070/32G / 총 15대 에 대한 수주 요청 건', 0, TO_DATE('2025-07-05', 'YYYY-MM-DD'));
+(3003, 953, 1006, TO_DATE('2025-07-05', 'YYYY-MM-DD'), 0, '스마트모듈 - 인텔i7-14700F/RTX5070/32G / 총 15대 에 대한 수주 요청 건', 0, TO_DATE('2025-07-05', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3004, 954, 1003, TO_DATE('2025-07-07', 'YYYY-MM-DD'), 0, '탑커넥트 - AMD R7-5700G/내장VGA/16G / 총 20대 에 대한 수주 요청 건', 0, TO_DATE('2025-07-07', 'YYYY-MM-DD'));
+(3004, 954, 1006, TO_DATE('2025-07-07', 'YYYY-MM-DD'), 0, '탑커넥트 - AMD R7-5700G/내장VGA/16G / 총 20대 에 대한 수주 요청 건', 0, TO_DATE('2025-07-07', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3005, 955, 1003, TO_DATE('2025-07-09', 'YYYY-MM-DD'), 0, '오토라인 - 인텔 i9-14900K/RTX A6000/64G / 총 12대 에 대한 수주 요청 건', 0, TO_DATE('2025-07-09', 'YYYY-MM-DD'));
+(3005, 955, 1006, TO_DATE('2025-07-09', 'YYYY-MM-DD'), 0, '오토라인 - 인텔 i9-14900K/RTX A6000/64G / 총 12대 에 대한 수주 요청 건', 0, TO_DATE('2025-07-09', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3006, 956, 1003, TO_DATE('2025-07-10', 'YYYY-MM-DD'), 0, '네오파츠 - 인텔 i9-14900K/RTX5070/32G / 총 30대 에 대한 수주 요청 건', 0, TO_DATE('2025-07-10', 'YYYY-MM-DD'));
+(3006, 956, 1006, TO_DATE('2025-07-10', 'YYYY-MM-DD'), 0, '네오파츠 - 인텔 i9-14900K/RTX5070/32G / 총 30대 에 대한 수주 요청 건', 0, TO_DATE('2025-07-10', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3007, 957, 1003, TO_DATE('2025-07-11', 'YYYY-MM-DD'), 0, '탑이노텍 - 아이디어패드 Slim1-15ALC R5B WIN11 16GB램 (SSD 256GB) / 총 25대 에 대한 수주 요청 건', 0, TO_DATE('2025-07-11', 'YYYY-MM-DD'));
+(3007, 957, 1006, TO_DATE('2025-07-11', 'YYYY-MM-DD'), 0, '탑이노텍 - 아이디어패드 Slim1-15ALC R5B WIN11 16GB램 (SSD 256GB) / 총 25대 에 대한 수주 요청 건', 0, TO_DATE('2025-07-11', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3008, 958, 1003, TO_DATE('2025-07-12', 'YYYY-MM-DD'), 0, '지엠파츠 - GF시리즈 Sword GF76 B13VFK (SSD 512GB) / 총 18대 에 대한 수주 요청 건', 0, TO_DATE('2025-07-12', 'YYYY-MM-DD'));
+(3008, 958, 1006, TO_DATE('2025-07-12', 'YYYY-MM-DD'), 0, '지엠파츠 - GF시리즈 Sword GF76 B13VFK (SSD 512GB) / 총 18대 에 대한 수주 요청 건', 0, TO_DATE('2025-07-12', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3009, 959, 1003, TO_DATE('2025-07-13', 'YYYY-MM-DD'), 0, '다온전자 - 5820T W-2223 RTX4070Ti Win11Pro (8GB, M.2 512GB) / 총 9대 에 대한 수주 요청 건', 0, TO_DATE('2025-07-13', 'YYYY-MM-DD'));
+(3009, 959, 1006, TO_DATE('2025-07-13', 'YYYY-MM-DD'), 0, '다온전자 - 5820T W-2223 RTX4070Ti Win11Pro (8GB, M.2 512GB) / 총 9대 에 대한 수주 요청 건', 0, TO_DATE('2025-07-13', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3010, 960, 1003, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '이노파워 - E900 G4 (베어본) / 총 14대 에 대한 수주 요청 건', 0, TO_DATE('2025-07-14', 'YYYY-MM-DD'));
+(3010, 960, 1006, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '이노파워 - E900 G4 (베어본) / 총 14대 에 대한 수주 요청 건', 0, TO_DATE('2025-07-14', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3011, 953, 1003, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '스마트모듈 - AMD R5-7500F / 총 14대 에 대한 수주 요청 건', 0, TO_DATE('2025-06-14', 'YYYY-MM-DD'));
+(3011, 953, 1006, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '스마트모듈 - AMD R5-7500F / 총 14대 에 대한 수주 요청 건', 0, TO_DATE('2025-06-14', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3012, 954, 1003, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '탑커넥트 - AMD R3-3200G/내장VGA/16G / 총 17대 에 대한 수주 요청 건', 0, TO_DATE('2025-06-14', 'YYYY-MM-DD'));
+(3012, 954, 1006, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '탑커넥트 - AMD R3-3200G/내장VGA/16G / 총 17대 에 대한 수주 요청 건', 0, TO_DATE('2025-06-14', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3013, 956, 1003, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '네오파츠 - 인텔i7-14700F/RTX5070/32G / 총 20대 에 대한 수주 요청 건', 0, TO_DATE('2025-06-14', 'YYYY-MM-DD'));
+(3013, 956, 1006, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '네오파츠 - 인텔i7-14700F/RTX5070/32G / 총 20대 에 대한 수주 요청 건', 0, TO_DATE('2025-06-14', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3014, 951, 1003, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '테크부품 - AMD R7-5700G/내장VGA/16G / 총 13대 에 대한 수주 요청 건', 0, TO_DATE('2025-06-14', 'YYYY-MM-DD'));
+(3014, 951, 1006, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '테크부품 - AMD R7-5700G/내장VGA/16G / 총 13대 에 대한 수주 요청 건', 0, TO_DATE('2025-06-14', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3015, 952, 1003, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '이지파츠 - 인텔 i9-14900K/RTX A6000/64G / 총 14대 에 대한 수주 요청 건',  0, TO_DATE('2025-06-14', 'YYYY-MM-DD'));
+(3015, 952, 1006, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '이지파츠 - 인텔 i9-14900K/RTX A6000/64G / 총 14대 에 대한 수주 요청 건',  0, TO_DATE('2025-06-14', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3016, 957, 1003, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '탑이노텍 - 인텔 i9-14900K/RTX5070/32G / 총 11대 에 대한 수주 요청 건',  0, TO_DATE('2025-05-14', 'YYYY-MM-DD'));
+(3016, 957, 1006, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '탑이노텍 - 인텔 i9-14900K/RTX5070/32G / 총 11대 에 대한 수주 요청 건',  0, TO_DATE('2025-05-14', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3017, 958, 1003, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '지엠파츠 - 아이디어패드 Slim1-15ALC R5B WIN11 16GB램 (SSD 256GB) / 총 40대 에 대한 수주 요청 건', 0, TO_DATE('2025-05-14', 'YYYY-MM-DD'));
+(3017, 958, 1006, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '지엠파츠 - 아이디어패드 Slim1-15ALC R5B WIN11 16GB램 (SSD 256GB) / 총 40대 에 대한 수주 요청 건', 0, TO_DATE('2025-05-14', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3018, 959, 1003, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '다온전자 - GF시리즈 Sword GF76 B13VFK (SSD 512GB) / 총 18대 에 대한 수주 요청 건', 0, TO_DATE('2025-05-14', 'YYYY-MM-DD'));
+(3018, 959, 1006, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '다온전자 - GF시리즈 Sword GF76 B13VFK (SSD 512GB) / 총 18대 에 대한 수주 요청 건', 0, TO_DATE('2025-05-14', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3019, 960, 1003, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '이노파워 - 5820T W-2223 RTX4070Ti Win11Pro (8GB, M.2 512GB) / 총 33대 에 대한 수주 요청 건', 0, TO_DATE('2025-04-14', 'YYYY-MM-DD'));
+(3019, 960, 1006, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '이노파워 - 5820T W-2223 RTX4070Ti Win11Pro (8GB, M.2 512GB) / 총 33대 에 대한 수주 요청 건', 0, TO_DATE('2025-04-14', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3020, 953, 1003, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '스마트모듈 - E900 G4 (베어본) / 총 63대 에 대한 수주 요청 건', 0, TO_DATE('2025-04-14', 'YYYY-MM-DD'));
+(3020, 953, 1006, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '스마트모듈 - E900 G4 (베어본) / 총 63대 에 대한 수주 요청 건', 0, TO_DATE('2025-04-14', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3021, 960, 1003, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '이노파워 - AMD R5-7500F / 총 12대 에 대한 수주 요청 건', 0, TO_DATE('2025-04-14', 'YYYY-MM-DD'));
+(3021, 960, 1006, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '이노파워 - AMD R5-7500F / 총 12대 에 대한 수주 요청 건', 0, TO_DATE('2025-04-14', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3022, 951, 1003, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '테크부품 - AMD R3-3200G/내장VGA/16G / 총 27대 에 대한 수주 요청 건', 0, TO_DATE('2025-03-14', 'YYYY-MM-DD'));
+(3022, 951, 1006, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '테크부품 - AMD R3-3200G/내장VGA/16G / 총 27대 에 대한 수주 요청 건', 0, TO_DATE('2025-03-14', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3023, 951, 1003, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '테크부품 - 인텔i7-14700F/RTX5070/32G / 총 46대 에 대한 수주 요청 건', 0, TO_DATE('2025-03-14', 'YYYY-MM-DD'));
+(3023, 951, 1006, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '테크부품 - 인텔i7-14700F/RTX5070/32G / 총 46대 에 대한 수주 요청 건', 0, TO_DATE('2025-03-14', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3024, 954, 1003, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '탑커넥트 - AMD R7-5700G/내장VGA/16G / 총 70대 에 대한 수주 요청 건', 0, TO_DATE('2025-03-14', 'YYYY-MM-DD'));
+(3024, 954, 1006, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '탑커넥트 - AMD R7-5700G/내장VGA/16G / 총 70대 에 대한 수주 요청 건', 0, TO_DATE('2025-03-14', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3025, 955, 1003, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '오토라인 - 인텔 i9-14900K/RTX A6000/64G / 총 66대 에 대한 수주 요청 건', 0, TO_DATE('2025-02-14', 'YYYY-MM-DD'));
+(3025, 955, 1006, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '오토라인 - 인텔 i9-14900K/RTX A6000/64G / 총 66대 에 대한 수주 요청 건', 0, TO_DATE('2025-02-14', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3026, 955, 1003, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0,'오토라인 - 인텔 i9-14900K/RTX5070/32G / 총 34대 에 대한 수주 요청 건', 0, TO_DATE('2025-02-14', 'YYYY-MM-DD'));
+(3026, 955, 1006, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0,'오토라인 - 인텔 i9-14900K/RTX5070/32G / 총 34대 에 대한 수주 요청 건', 0, TO_DATE('2025-02-14', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3027, 958, 1003, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0,'지엠파츠 - 아이디어패드 Slim1-15ALC R5B WIN11 16GB램 (SSD 256GB) / 총 42대 에 대한 수주 요청 건', 0, TO_DATE('2025-02-14', 'YYYY-MM-DD'));
+(3027, 958, 1006, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0,'지엠파츠 - 아이디어패드 Slim1-15ALC R5B WIN11 16GB램 (SSD 256GB) / 총 42대 에 대한 수주 요청 건', 0, TO_DATE('2025-02-14', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3028, 959, 1003, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '다온전자 - GF시리즈 Sword GF76 B13VFK (SSD 512GB) / 총 10대 에 대한 수주 요청 건', 0, TO_DATE('2025-01-14', 'YYYY-MM-DD'));
+(3028, 959, 1006, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '다온전자 - GF시리즈 Sword GF76 B13VFK (SSD 512GB) / 총 10대 에 대한 수주 요청 건', 0, TO_DATE('2025-01-14', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3029, 960, 1003, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '이노파워 - 5820T W-2223 RTX4070Ti Win11Pro (8GB, M.2 512GB) / 총 3대 에 대한 수주 요청 건', 0, TO_DATE('2025-01-14', 'YYYY-MM-DD'));
+(3029, 960, 1006, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '이노파워 - 5820T W-2223 RTX4070Ti Win11Pro (8GB, M.2 512GB) / 총 3대 에 대한 수주 요청 건', 0, TO_DATE('2025-01-14', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3030, 957, 1003, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '탑이노텍 - E900 G4 (베어본) / 총 4대 에 대한 수주 요청 건', 0, TO_DATE('2025-01-14', 'YYYY-MM-DD'));
+(3030, 957, 1006, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '탑이노텍 - E900 G4 (베어본) / 총 4대 에 대한 수주 요청 건', 0, TO_DATE('2025-01-14', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3031, 953, 1003, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '스마트모듈 - AMD R5-7500F / 총 251대 에 대한 수주 요청 건', 0, TO_DATE('2025-01-14', 'YYYY-MM-DD'));
+(3031, 953, 1006, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '스마트모듈 - AMD R5-7500F / 총 251대 에 대한 수주 요청 건', 0, TO_DATE('2025-01-14', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3032, 954, 1003, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '탑커넥트 - AMD R3-3200G/내장VGA/16G / 총 34대 에 대한 수주 요청 건', 0, TO_DATE('2025-08-14', 'YYYY-MM-DD'));
+(3032, 954, 1006, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '탑커넥트 - AMD R3-3200G/내장VGA/16G / 총 34대 에 대한 수주 요청 건', 0, TO_DATE('2025-08-14', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3033, 952, 1003, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '이지파츠 - 인텔i7-14700F/RTX5070/32G / 총 69대 에 대한 수주 요청 건', 0, TO_DATE('2025-08-14', 'YYYY-MM-DD'));
+(3033, 952, 1006, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '이지파츠 - 인텔i7-14700F/RTX5070/32G / 총 69대 에 대한 수주 요청 건', 0, TO_DATE('2025-08-14', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE,DEL_STATUS, IN_DATE) VALUES
-(3034, 952, 1003, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '이지파츠 - AMD R7-5700G/내장VGA/16G / 총 72대 에 대한 수주 요청 건', 0, TO_DATE('2025-08-14', 'YYYY-MM-DD'));
+(3034, 952, 1006, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '이지파츠 - AMD R7-5700G/내장VGA/16G / 총 72대 에 대한 수주 요청 건', 0, TO_DATE('2025-08-14', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3035, 953, 1003, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '스마트모듈 - 인텔 i9-14900K/RTX A6000/64G / 총 30대 에 대한 수주 요청 건', 0, TO_DATE('2025-04-14', 'YYYY-MM-DD'));
+(3035, 953, 1006, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '스마트모듈 - 인텔 i9-14900K/RTX A6000/64G / 총 30대 에 대한 수주 요청 건', 0, TO_DATE('2025-04-14', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3036, 959, 1003, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '다온전자 - 인텔 i9-14900K/RTX5070/32G / 총 28대 에 대한 수주 요청 건', 0, TO_DATE('2025-03-14', 'YYYY-MM-DD'));
+(3036, 959, 1006, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '다온전자 - 인텔 i9-14900K/RTX5070/32G / 총 28대 에 대한 수주 요청 건', 0, TO_DATE('2025-03-14', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3037, 951, 1003, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '테크부품 - 아이디어패드 Slim1-15ALC R5B WIN11 16GB램 (SSD 256GB) / 총 46대 에 대한 수주 요청 건', 0, TO_DATE('2025-02-14', 'YYYY-MM-DD'));
+(3037, 951, 1006, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '테크부품 - 아이디어패드 Slim1-15ALC R5B WIN11 16GB램 (SSD 256GB) / 총 46대 에 대한 수주 요청 건', 0, TO_DATE('2025-02-14', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3038, 956, 1003, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '네오파츠 - GF시리즈 Sword GF76 B13VFK (SSD 512GB) / 총 75대 에 대한 수주 요청 건', 0, TO_DATE('2025-01-14', 'YYYY-MM-DD'));
+(3038, 956, 1006, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '네오파츠 - GF시리즈 Sword GF76 B13VFK (SSD 512GB) / 총 75대 에 대한 수주 요청 건', 0, TO_DATE('2025-01-14', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3039, 958, 1003, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '지엠파츠 - 5820T W-2223 RTX4070Ti Win11Pro (8GB, M.2 512GB) / 총 3대 에 대한 수주 요청 건', 0, TO_DATE('2025-04-14', 'YYYY-MM-DD'));
+(3039, 958, 1006, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '지엠파츠 - 5820T W-2223 RTX4070Ti Win11Pro (8GB, M.2 512GB) / 총 3대 에 대한 수주 요청 건', 0, TO_DATE('2025-04-14', 'YYYY-MM-DD'));
 
 INSERT INTO SALES_ORDER (SALES_NO, CLIENT_NO, EMP_NO, SALES_DATE, OUT_STATUS, SALES_TITLE, DEL_STATUS, IN_DATE) VALUES
-(3040, 954, 1003, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '탑커넥트 - E900 G4 (베어본) / 총 1대 에 대한 수주 요청 건', 0, TO_DATE('2025-03-14', 'YYYY-MM-DD'));
+(3040, 954, 1006, TO_DATE('2025-07-14', 'YYYY-MM-DD'), 0, '탑커넥트 - E900 G4 (베어본) / 총 1대 에 대한 수주 요청 건', 0, TO_DATE('2025-03-14', 'YYYY-MM-DD'));
 
 
 COMMIT;

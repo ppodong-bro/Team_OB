@@ -20,7 +20,6 @@ import com.WiseForce.AssemERP.dao.km.ClientDao;
 import com.WiseForce.AssemERP.dao.km.Sales_OrderDao;
 import com.WiseForce.AssemERP.dto.km.ClientDto;
 import com.WiseForce.AssemERP.dto.km.Client_HisDto;
-import com.WiseForce.AssemERP.dto.km.Client_PerformDto;
 import com.WiseForce.AssemERP.dto.km.PartsShortageDto;
 import com.WiseForce.AssemERP.dto.km.Sales_ItemDto;
 import com.WiseForce.AssemERP.dto.km.Sales_OrderDto;

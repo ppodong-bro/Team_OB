@@ -188,76 +188,13 @@
 		</if>
 		</where>
 	</select>
-	<!-- 
-	<insert id="createClient_His" parameterType="ClientDto">
-		INSERT INTO CLIENT_HIS (CLIENT_NO, START_DATE, END_DATE, EMP_NO, CLIENT_NAME, CLIENT_GUBUN
-		           , CLIENT_MAN, CLIENT_EMAIL, CLIENT_TEL, CLIENT_ADDRESS, IN_DATE) 
-		      VALUES(#{client_No}, SYSDATE, '99991231', #{empDTO.empNo}, #{client_Name}, #{client_Gubun}, #{client_Man}, #{client_Email}, #{client_Tel}, #{client_Address}, SYSDATE)
-	</insert> -->
-	
-	<insert id="client_Perform" parameterType="Client_PerformDto">
-		  MERGE INTO CLIENT_PERFORM M
-		  USING (
-		    SELECT
-		      TO_CHAR(#{dYearMonth, jdbcType=TIMESTAMP}, 'YYMM') AS YEARMONTH,
-		      #{client_No}   AS CLIENT_NO,
-		      #{total_Amt}   AS AMT
-		    FROM DUAL
-		  ) SRC
-		  ON (M.YEARMONTH = SRC.YEARMONTH AND M.CLIENT_NO = SRC.CLIENT_NO)
-		  WHEN NOT MATCHED THEN
-		    INSERT (YEARMONTH, CLIENT_NO, CNT, TOTAL_AMT)
-		    VALUES (SRC.YEARMONTH, SRC.CLIENT_NO, 1, SRC.AMT)
-		  WHEN MATCHED THEN
-		    UPDATE SET M.CNT       = NVL(M.CNT,0) + 1,
-		               M.TOTAL_AMT = NVL(M.TOTAL_AMT,0) + SRC.AMT
-	</insert>
-	
-	<!-- 	<update id="client_PerformUndo" parameterType="Client_PerformDto">
-	  MERGE INTO CLIENT_PERFORM M
-	  USING (
-	    SELECT
-	      TO_CHAR(#{dYearMonth, jdbcType=TIMESTAMP}, 'YYMM') AS YEARMONTH,
-	      #{client_No} AS CLIENT_NO,
-	      #{total_Amt} AS AMT
-	    FROM DUAL
-	  ) SRC
-	  ON (M.YEARMONTH = SRC.YEARMONTH AND M.CLIENT_NO = SRC.CLIENT_NO)
-	  WHEN MATCHED THEN
-	    UPDATE SET
-	      M.CNT       = NVL(M.CNT, 0) - 1,
-	      M.TOTAL_AMT = NVL(M.TOTAL_AMT, 0) - SRC.AMT
-	    DELETE WHERE (NVL(M.CNT, 0) - 1) <= 0
-	             AND (NVL(M.TOTAL_AMT, 0) - SRC.AMT) <= 0
-	    WHEN NOT MATCHED THEN 절 없음: 존재하지 않으면 아무 것도 안 함
-	</update>
-	 -->
-	 
-		 <!-- 1) 값 차감: 존재할 때만, 음수 방지 조건을 줄 수도 있음 -->
-	<update id="returnPerform" parameterType="Client_PerformDto">
-	  UPDATE CLIENT_PERFORM
-	     SET CNT       = CNT - 1,
-	         TOTAL_AMT = TOTAL_AMT - #{total_Amt}
-	   WHERE YEARMONTH = TO_CHAR(#{dYearMonth, jdbcType=TIMESTAMP}, 'YYMM')
-	     AND CLIENT_NO = #{client_No}
-	     AND CNT > 0
-	</update>
-	
-	<!-- 2) 값이 0/음수로 떨어진 행은 정리(삭제) -->
-	<delete id="deletePerform" parameterType="Client_PerformDto">
-	  <![CDATA[DELETE FROM CLIENT_PERFORM
-	   WHERE YEARMONTH = TO_CHAR(#{dYearMonth, jdbcType=TIMESTAMP}, 'YYMM')
-	     AND CLIENT_NO = #{client_No}
-	     AND NVL(CNT,0) <= 0
-	     AND NVL(TOTAL_AMT,0) <= 0 ]]>
-	</delete>
 	
 	<select id="listEmpOfClient" parameterType="string" resultType="EmpDTO">
-	SELECT EMP_NO AS empNO, EMP_NAME AS empName, DEPT_CODE AS deptCode, ROLES_STATUS AS rolesStatus , EMAIL AS email
+	SELECT EMP_NO AS empNO, EMP_NAME AS empName, DEPT_CODE AS deptCode, EMAIL AS email
 	FROM   EMP 
 	<where>
 	DEL_STATUS = 0
-	AND    DEPT_CODE = 3001
+	AND    DEPT_CODE = 1005
 	<if test="_parameter != null and _parameter != ''">
 	AND EMP_NAME LIKE '%' || #{_parameter} || '%'
 	</if>
@@ -268,7 +205,7 @@
 	<select id="getDeptName" resultType = "String">
 		SELECT DEPT_NAME
 		FROM   DEPT
-		WHERE  DEPT_CODE = 3001
+		WHERE  DEPT_CODE = 1005
 	</select>
  
 </mapper>
