@@ -88,7 +88,7 @@ public class AccountDAO {
 		return accountMapper.withdrawEmpAccount(account);
 	}
 
-	public Integer selectVerify(AccountDTO accountDTO) 
+	public String selectVerify(AccountDTO accountDTO) 
 	{
 		System.out.println("AccountDAO selectVerify Start");
     	System.out.println("AccountDAO selectVerify empNo->"+accountDTO.getEmpNo());

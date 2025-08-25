@@ -18,13 +18,13 @@
         <result property="deptCaptainName" 	column="DEPT_CAPTAIN_NAME"/>
         <result property="parentDeptName" 	column="PARENT_DEPT_NAME"/>
     </resultMap>
-
+    
     <resultMap id="deptSearchResultMap" 	type="com.WiseForce.AssemERP.dto.sm.DeptSearchDTO">
         <id     property="deptCode"       	column="DEPT_CODE" />
         <result property="deptName"       	column="DEPT_NAME" />
         <result property="parentDeptCode" 	column="PARENT_DEPT_CODE" />
     </resultMap>
-
+    
     <sql id="searchCondition">
     <if test="searchKeyword != null and searchKeyword != ''">
         <choose>
@@ -37,14 +37,14 @@
         </choose>
     </if>
     </sql>
-
+ 
 	<select id="selectTotalDeptCount" parameterType="DeptDto" resultType="int">
 		SELECT  Count(*) 
 		  FROM  Dept
 		 WHERE  DEL_STATUS = 0     
 		<include refid="searchCondition" />
 	</select>
-
+	
 	<select id="selectDeptList" parameterType="DeptDto" resultMap="deptResultMap">
 		 SELECT *
         FROM (
@@ -68,7 +68,7 @@
         )
         WHERE rn BETWEEN #{start} AND #{end}
 	</select>
-
+	
 	<select id="selectDeptDetail" parameterType="int"  resultMap="deptResultMap">
 		SELECT 
 				  d.DEPT_CODE
@@ -91,7 +91,7 @@
 		   AND d.DEL_STATUS = 0
 		ORDER BY DEPT_CODE ASC
 	</select>
-
+	
 	<insert id="insertDept" parameterType="DeptDTO">
 		INSERT INTO Dept (
 			  DEPT_CODE
@@ -115,7 +115,7 @@
 			, SYSDATE
 		)
 	</insert>
-
+	
 	<update id="updateDept" parameterType="DeptDTO">
 		UPDATE   Dept
 		   SET   DEPT_NAME 			= #{deptName}
@@ -125,33 +125,34 @@
 				,LOC_DETAIL			= #{locDetail}
 		 WHERE   DEPT_CODE  		= #{deptCode}
 	</update>
-
+	
 	<update id="deleteDeptUpt" parameterType="int">
 		UPDATE Dept
 		   SET DEL_STATUS = 1
 		 WHERE DEPT_CODE  = #{deptCode}
 	</update>
-
+	
     <select id="searchEmployeesByName" parameterType="string" resultType="EmpSearchDTO">
-        SELECT
-		        e.EMP_NO    AS empNo,
-		        e.EMP_NAME  AS empName,
-		        d.DEPT_NAME AS deptName,
-		        e.EMAIL     AS email
-		  FROM EMP e
-	 LEFT JOIN DEPT d
+    	SELECT
+			    e.EMP_NO    AS empNo,
+			    e.EMP_NAME  AS empName,
+			    d.DEPT_NAME AS deptName,
+			    e.EMAIL     AS email
+		FROM EMP e
+		LEFT JOIN DEPT d
 		       ON d.DEPT_CODE = e.DEPT_CODE
-		 WHERE e.DEL_STATUS = 0
-		   AND NOT EXISTS (
-				            SELECT 1
-				            FROM DEPT dx
-				            WHERE dx.DEPT_CAPTAIN = e.EMP_NO
-				              AND dx.DEL_STATUS = 0
-		      				)
-		   AND UPPER(e.EMP_NAME) LIKE NVL('%' || UPPER(TRIM(#{keyword})) || '%', '%')
-	  ORDER BY e.EMP_NAME
+		WHERE e.DEL_STATUS = 0
+		  AND EXISTS (
+		        SELECT 1
+		          FROM DEPT dx
+		         WHERE dx.DEPT_CAPTAIN = e.EMP_NO
+		           AND dx.DEL_STATUS   = 0
+		           AND TO_CHAR(dx.DEPT_CAPTAIN) NOT LIKE '9%'
+		      )
+		 AND UPPER(e.EMP_NAME) LIKE NVL('%' || UPPER(TRIM(#{keyword})) || '%', '%')
+		ORDER BY e.EMP_NAME
     </select>
-
+	
 	<select id="selectDeptByCode" parameterType="int"   resultMap="deptResultMap">
 		  SELECT  d.*,
 		          e.emp_name AS deptCaptainName
@@ -159,7 +160,7 @@
 	   LEFT JOIN  EMP  e ON e.emp_no = d.dept_captain
 		   WHERE  d.dept_code = #{deptCode}
 	</select>
-
+	
 	<select id="searchDeptModalList" resultMap="deptSearchResultMap">
 	        SELECT
 		            DEPT_CODE,
@@ -170,7 +171,7 @@
 	           AND  PARENT_DEPT_CODE IS NULL  
 	           AND  DEPT_NAME LIKE '%' || #{deptName} || '%'
 	</select>
-
+	
     <select id="searchEmpAccByName" parameterType="string" resultType="DeptDTO">
         SELECT
 	            dept_code deptCode,
@@ -179,5 +180,5 @@
          WHERE  DEL_STATUS = 0
            AND  DEPT_NAME LIKE '%' || #{deptName} || '%'
     </select>
-
+	
 </mapper> 

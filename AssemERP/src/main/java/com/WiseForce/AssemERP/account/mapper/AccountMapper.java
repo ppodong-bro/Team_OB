@@ -34,7 +34,7 @@ public interface AccountMapper
 	
 	Integer 			withdrawEmpAccount(AccountDTO account);
 
-	Integer 			selectVerify(AccountDTO accountDTO);
+	String 				selectVerify(AccountDTO accountDTO);
 
 	int 				updatePartnerAccount(AccountDTO accountDTO);
 	

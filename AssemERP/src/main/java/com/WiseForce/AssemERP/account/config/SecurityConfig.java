@@ -5,13 +5,18 @@ import java.io.IOException;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AccountExpiredException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -60,26 +65,45 @@ public class SecurityConfig
                   if (ex instanceof InternalAuthenticationServiceException && ex.getCause() instanceof AuthenticationException) {
                       root = (AuthenticationException) ex.getCause();
                   }
-
-                  String code = "bad"; // 기본: 아이디/비번 오류
-                  if (root instanceof DisabledException || "STATUS_BLOCKED".equals(root.getMessage())) {
-                      code = "status"; // 제한: 퇴사/탈퇴 접근 제한 오류
-//                  } else if (ex instanceof LockedException) {
-//                      code = "locked";
-//                  } else if (ex instanceof CredentialsExpiredException) {
-//                      code = "expired";
+                  
+                  String code = "bad"; 			// 기본: 아이디/비밀번호 오류
+                  
+                  if (root instanceof DisabledException) {
+                      String msg = root.getMessage();
+                      if ("APPROVAL_PENDING".equals(msg))       code = "approval";
+                      else if ("APPROVAL_REJECTED".equals(msg)) code = "rejected";
+                      else if ("PRE_REGISTERED".equals(msg))    code = "pre";
+                      else if ("APPROVAL_REQUIRED".equals(msg)) code = "required";
+                      else if ("ACCOUNT_WITHDRAWN".equals(msg) || "STATUS_BLOCKED".equals(msg)) code = "withdrawn";
+                      else                                      code = "status";   
+                  }else if (root instanceof BadCredentialsException || root instanceof UsernameNotFoundException) {
+                      code = "bad";
                   }
-                  getRedirectStrategy().sendRedirect(request, response, "/sm/loginForm?error=" + code);
+                  else if (root instanceof AccountExpiredException) {
+                      code = "expired";
+                  }
+                  else if (root instanceof CredentialsExpiredException) {
+                      code = "pwexpired";
+                  }
+                  else if (root instanceof LockedException) {
+                      code = "locked";
+                  }
+              
+                  getRedirectStrategy().sendRedirect(
+                		  								request, response, 
+                		  								request.getContextPath() + "/sm/loginForm?error=" + code
+                		  							);
               }
           };
       }
       
       @Bean
       public AccessDeniedHandler accessDeniedHandler() {
-          return (request, response, accessDeniedException) -> {
-              response.sendRedirect("/sm/loginForm?error=denied");
+          return (request, response, ex) -> {
+              response.sendRedirect(request.getContextPath() + "/sm/loginForm?error=denied");
           };
       }
+      
       
       @Bean
       public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -148,7 +172,6 @@ public class SecurityConfig
 	                  // ---------------------------------------------------------------------------------------
 	                  // 4) 각 업무별 인증 필요 URL (INVENTORY) - ROLE_INVENTORY_MANAGER, ROLE_INVENTORY_USER
 	                  // ---------------------------------------------------------------------------------------
-	                  
 	                  
 	                  .anyRequest().authenticated()
               )

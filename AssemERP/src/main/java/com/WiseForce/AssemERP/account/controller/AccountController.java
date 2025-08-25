@@ -155,21 +155,23 @@ public class AccountController {
     	String redirectUrl = "redirect:/sm/accountRegisterForm";
     	
     	try {
-            Integer result = accountService.selectVerify(accountDTO); 
+    		
+    		accountDTO.setUserId("user"+accountDTO.getEmpNo());
+    		
+            String resultUserId = accountService.selectVerify(accountDTO); 
+            
+            System.out.println("AccountController verifyPartnerPro resultUserId->"+resultUserId);
             
             ra.addAttribute("empNo",  accountDTO.getEmpNo());
-            ra.addAttribute("userId", accountDTO.getUserId());
+            ra.addAttribute("userId", resultUserId);
             
-            if (result != null && result > 0)
-            {
-            	if (result != null && result > 0) {
-                    ra.addAttribute("verified", "true");
-                    ra.addAttribute("msg", "인증이 완료되었습니다.");
-                } else {
-                    ra.addAttribute("verified", "false");
-                    ra.addAttribute("msg", "일치하는 사원 정보가 없습니다.");
-                }
-            } 
+        	if (resultUserId != null && !resultUserId.isEmpty()) {
+                ra.addAttribute("verified", "true");
+                ra.addAttribute("msg", "인증이 완료되었습니다. 비밀번호 입력 후 가입이 가능합니다.");
+            } else {
+                ra.addAttribute("verified", "false");
+                ra.addAttribute("msg", "일치하는 파트너번호가 없습니다. 담당자에게 문의하세요.");
+            }
             
     	} catch (Exception e) {
     		
@@ -188,6 +190,11 @@ public class AccountController {
     									RedirectAttributes ra
     								) 
     {
+    	System.out.println("AccountController accountRegisterPro Start");
+    	
+    	System.out.println("AccountController accountRegisterPro EmpNo"+accountDTO.getEmpNo());
+    	System.out.println("AccountController accountRegisterPro UserId"+accountDTO.getUserId());
+    	
         if (accountDTO.getUserId() == null || accountDTO.getUserId().isBlank()) {
         	accountDTO.setUserId("user" + accountDTO.getEmpNo());
         }
@@ -199,12 +206,21 @@ public class AccountController {
 
         try {
             int affected = accountService.updatePartnerAccount(accountDTO);
+            
+            System.out.println("AccountController accountRegisterPro affected->"+affected);
+            
             if (affected > 0) 
             {
-                ra.addFlashAttribute("toastSuccess", "가입되셨습니다. 관리자가 승인이 필요합니다.");
+            	System.out.println("AccountController accountRegisterPro affected-> 성공");
+            	
+                ra.addAttribute("joined", "true");
+                ra.addAttribute("msg", "가입되셨습니다. 관리자가 승인 후 로그인이 가능합니다.");
                 return "redirect:/sm/accountRegisterForm";
             } else {
-                ra.addFlashAttribute("toastError", "처리 대상이 없습니다. 사원번호를 확인해주세요.");
+            	System.out.println("AccountController accountRegisterPro affected-> 실패");
+            	
+            	ra.addAttribute("joined", "false");
+            	ra.addAttribute("msg", "파트너 정보가 없습니다. 파트너번호를 확인해주세요.");
                 return "redirect:/sm/accountRegisterForm";
             }
         } catch (org.springframework.dao.DuplicateKeyException e) {
