@@ -11,7 +11,7 @@
   <meta charset="UTF-8" />
   <title>AssemERP - 부서 상세 / 수정</title>
 
-  <style
+  <style>
     body{background:#f6f8fb;}
     .shadow-soft{box-shadow:0 10px 30px rgba(16,24,40,.06),0 2px 6px rgba(16,24,40,.06);}
     .card{border:0;border-radius:18px;overflow:hidden;}
@@ -37,75 +37,29 @@
     .card-footer{position:sticky;bottom:0;z-index:1;background:#fff}
     .card-footer .btn{height:44px}
 
-    /* 모달 테이블 UX */
     .modal-body .table-hover tbody tr:hover{cursor:pointer;background:#f3f6ff}
-    
-    /* 관리자 스타일 버튼 공통 */
-	.btn-admin-primary {
-	  background: linear-gradient(135deg, #5D7BFF 0%, #78A6FF 100%);
-	  color: #fff;
-	  border: none;
-	  border-radius: 10px;
-	  box-shadow: 0 4px 10px rgba(93, 123, 255, 0.3);
-	  transition: all 0.2s ease-in-out;
-	}
-	.btn-admin-primary:hover {
-	  background: linear-gradient(135deg, #4a6be0 0%, #6894f0 100%);
-	  box-shadow: 0 6px 14px rgba(93, 123, 255, 0.45);
-	}
-	
-	.btn-admin-danger {
-	  background: linear-gradient(135deg, #FF5D5D 0%, #FF7B78 100%);
-	  color: #fff;
-	  border: none;
-	  border-radius: 10px;
-	  box-shadow: 0 4px 10px rgba(255, 93, 93, 0.3);
-	}
-	.btn-admin-danger:hover {
-	  background: linear-gradient(135deg, #e84b4b 0%, #f76b68 100%);
-	  box-shadow: 0 6px 14px rgba(255, 93, 93, 0.45);
-	}
-	
-	.btn-admin-outline {
-	  background: transparent;
-	  color: #5D7BFF;
-	  border: 2px solid #5D7BFF;
-	  border-radius: 10px;
-	  transition: all 0.2s ease-in-out;
-	}
-	.btn-admin-outline:hover {
-	  background: #5D7BFF;
-	  color: #fff;
-	}
-	
-        .btn-admin { height: 44px; border-radius: 10px; border: none; transition: all .2s; }
 
-        .btn-admin-primary {
-          background: linear-gradient(135deg,#5D7BFF 0%,#78A6FF 100%);
-          color:#fff; box-shadow:0 4px 10px rgba(93,123,255,.3);
-        }
-        .btn-admin-primary:hover{
-          background: linear-gradient(135deg,#4a6be0 0%,#6894f0 100%);
-          box-shadow:0 6px 14px rgba(93,123,255,.45);
-        }
-
-        .btn-admin-danger {
-          background: linear-gradient(135deg,#FF5D5D 0%,#FF7B78 100%);
-          color:#fff; box-shadow:0 4px 10px rgba(255,93,93,.3);
-        }
-        .btn-admin-danger:hover{
-          background: linear-gradient(135deg,#e84b4b 0%,#f76b68 100%);
-          box-shadow:0 6px 14px rgba(255,93,93,.45);
-        }
-
-        .btn-admin-outline {
-          background: transparent; color:#5D7BFF; border:2px solid #5D7BFF; border-radius:10px;
-        }
-        .btn-admin-outline:hover { background:#5D7BFF; color:#fff; }
-
-        .addr-row .btn { min-width:120px; }
-        .card-footer .btn { height:44px; }
-	    
+    .btn-admin { height: 44px; border-radius: 10px; border: none; transition: all .2s; }
+    .btn-admin-primary {
+      background: linear-gradient(135deg,#5D7BFF 0%,#78A6FF 100%);
+      color:#fff; box-shadow:0 4px 10px rgba(93,123,255,.3);
+    }
+    .btn-admin-primary:hover{
+      background: linear-gradient(135deg,#4a6be0 0%,#6894f0 100%);
+      box-shadow:0 6px 14px rgba(93,123,255,.45);
+    }
+    .btn-admin-danger {
+      background: linear-gradient(135deg,#FF5D5D 0%,#FF7B78 100%);
+      color:#fff; box-shadow:0 4px 10px rgba(255,93,93,.3);
+    }
+    .btn-admin-danger:hover{
+      background: linear-gradient(135deg,#e84b4b 0%,#f76b68 100%);
+      box-shadow:0 6px 14px rgba(255,93,93,.45);
+    }
+    .btn-admin-outline {
+      background: transparent; color:#5D7BFF; border:2px solid #5D7BFF; border-radius:10px;
+    }
+    .btn-admin-outline:hover { background:#5D7BFF; color:#fff; }
   </style>
 </head>
 <body>
@@ -118,10 +72,9 @@
 
     <div id="contents" class="container-fluid px-4 py-3">
       <div class="card shadow-soft">
-
         <div class="card-header py-3">
           <div class="d-flex align-items-center gap-3">
-          	<a href="/dept/deptListForm" class="btn btn-outline-light btn-sm">
+            <a href="/dept/deptListForm" class="btn btn-outline-light btn-sm">
               <i class="bi bi-list-ul me-1"></i> 목록
             </a>
             <span class="brand-chip">
@@ -141,6 +94,7 @@
             <input type="hidden" name="deptCode" value="${dept.deptCode}"/>
 
             <div class="row g-4">
+              <!-- 기본정보 -->
               <div class="col-12 col-lg-7">
                 <div class="section-title">기본 정보</div>
 
@@ -241,22 +195,22 @@
             </div>
          </form>
        </div>
-       
+
        <div class="card-footer py-3">
-		  <div class="d-flex justify-content-end gap-2">
-		    <button type="button" id="deleteBtn" class="btn btn-admin btn-admin-danger">
-		      <i class="bi bi-trash me-2"></i> 삭제
-		    </button>
-		    <button type="submit" form="updateForm" class="btn btn-admin btn-admin-primary">
-		      <i class="bi bi-check-lg me-2"></i> 정보 수정
-		    </button>
-		  </div>
-		</div>
-		
-		<form id="deleteForm" action="/dept/deptDeletePro" method="post" class="d-none">
-		  <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-		  <input type="hidden" name="deptCode" value="${dept.deptCode}"/>
-		</form>
+         <div class="d-flex justify-content-end gap-2">
+           <button type="button" id="deleteBtn" class="btn btn-admin btn-admin-danger">
+             <i class="bi bi-trash me-2"></i> 삭제
+           </button>
+           <button type="submit" form="updateForm" class="btn btn-admin btn-admin-primary">
+             <i class="bi bi-check-lg me-2"></i> 정보 수정
+           </button>
+         </div>
+       </div>
+
+       <form id="deleteForm" action="/dept/deptDeletePro" method="post" class="d-none">
+         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+         <input type="hidden" name="deptCode" value="${dept.deptCode}"/>
+       </form>
 
       </div>
     </div>
@@ -378,13 +332,13 @@ async function loadEmployees(keyword){
       return;
     }
     tbody.innerHTML = list.map(function(emp){
-    	  return '<tr data-id="' + emp.empNo + '" data-name="' + (emp.empName || '') + '">' +
-    	         '<td>' + emp.empNo + '</td>' +
-    	         '<td>' + (emp.empName || '') + '</td>' +
-    	         '<td>' + (emp.deptName || '') + '</td>' +
-    	         '<td>' + (emp.email || '') + '</td>' +
-    	         '</tr>';
-    	}).join('');
+      return '<tr data-id="' + emp.empNo + '" data-name="' + (emp.empName || '') + '">'
+           +   '<td>' + emp.empNo + '</td>'
+           +   '<td>' + (emp.empName || '') + '</td>'
+           +   '<td>' + (emp.deptName || '') + '</td>'
+           +   '<td>' + (emp.email || '') + '</td>'
+           + '</tr>';
+     }).join('');
   }catch(e){
     tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger py-4">조회 중 오류가 발생했습니다.</td></tr>';
   }
@@ -399,23 +353,23 @@ async function loadDepartments(keyword){
     const res  = await fetch('/api/search/searchParentDeptModal?deptName=' + encodeURIComponent(q),
                              { headers:{ 'Accept':'application/json' }});
     const list = await res.json();
-    
+
     if(!list || list.length===0){
       tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted py-4">검색 결과가 없습니다.</td></tr>';
       return;
     }
     tbody.innerHTML = list.map(function(dept){
-        var code   = (dept.deptCode == null ? '' : dept.deptCode);
-        var name   = (dept.deptName || '');
-        var parent = (dept.parentDeptName || ''); // 필요시 parentDeptCode 로 교체
+      var code   = (dept.deptCode == null ? '' : dept.deptCode);
+      var name   = (dept.deptName || '');
+      var parent = (dept.parentDeptName || '');
 
-        return '<tr data-code="' + code + '" data-name="' + name + '">'
-             +   '<td>' + code   + '</td>'
-             +   '<td>' + name   + '</td>'
-             +   '<td>' + parent + '</td>'
-             + '</tr>';
-      }).join('');
-    
+      return '<tr data-code="' + code + '" data-name="' + name + '">'
+           +   '<td>' + code   + '</td>'
+           +   '<td>' + name   + '</td>'
+           +   '<td>' + parent + '</td>'
+           + '</tr>';
+    }).join('');
+
   }catch(e){
     tbody.innerHTML = '<tr><td colspan="3" class="text-center text-danger py-4">조회 중 오류가 발생했습니다.</td></tr>';
   }
@@ -451,7 +405,6 @@ document.getElementById('deptSearchTbody').addEventListener('click', function(e)
   bootstrap.Modal.getInstance(document.getElementById('deptSearchModal')).hide();
 });
 </script>
-
 
 </body>
 </html>
