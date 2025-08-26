@@ -199,7 +199,9 @@ public class AccountController {
         	accountDTO.setUserId("user" + accountDTO.getEmpNo());
         }
         
+        System.out.println("accountDTO.getPassword():" + accountDTO.getPassword());
         accountDTO.setPassword(passwordEncoder.encode(accountDTO.getPassword()));
+        System.out.println("accountDTO.getPassword():" + accountDTO.getPassword());
         
         accountDTO.setApprovalStatus(2);
         accountDTO.setEmpType("EXTERNAL");

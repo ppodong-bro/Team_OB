@@ -1,7 +1,5 @@
 package com.WiseForce.AssemERP.service.dg;
 
-import java.io.Console;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -12,25 +10,23 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.WiseForce.AssemERP.account.dao.AccountDAO;
+import com.WiseForce.AssemERP.account.dto.AccountDTO;
 import com.WiseForce.AssemERP.dao.dg.InventoryDao;
-import com.WiseForce.AssemERP.domain.dg.Common;
-import com.WiseForce.AssemERP.domain.dg.Common_ID;
 import com.WiseForce.AssemERP.domain.dg.Files;
-import com.WiseForce.AssemERP.domain.dg.Inventory;
 import com.WiseForce.AssemERP.domain.dg.Inventory_Adjust;
 import com.WiseForce.AssemERP.domain.dg.Inventory_Close;
 import com.WiseForce.AssemERP.domain.sh.Parts;
 import com.WiseForce.AssemERP.dto.dg.InventoryDTO;
 import com.WiseForce.AssemERP.dto.dg.InventoryInfoDTO;
-import com.WiseForce.AssemERP.dto.dg.Inventory_AdjustDTO;
 import com.WiseForce.AssemERP.dto.dg.Inventory_CloseDTO;
 import com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO;
 import com.WiseForce.AssemERP.dto.km.Sales_ItemDto;
 import com.WiseForce.AssemERP.dto.sh.PartsDTO;
-import com.WiseForce.AssemERP.dto.sh.ProductDTO;
 import com.WiseForce.AssemERP.repository.dg.CommonRepository;
 import com.WiseForce.AssemERP.repository.dg.EmpRepository;
 import com.WiseForce.AssemERP.repository.dg.FilesRepository;
@@ -38,7 +34,6 @@ import com.WiseForce.AssemERP.repository.dg.InventoryAdjustRepository;
 import com.WiseForce.AssemERP.repository.dg.InventoryCloseRepository;
 import com.WiseForce.AssemERP.repository.dg.InventoryRepository;
 import com.WiseForce.AssemERP.repository.sh.PartsRepository;
-import com.WiseForce.AssemERP.service.sh.ProductService;
 import com.WiseForce.AssemERP.util.CustomFileUtil;
 
 import jakarta.transaction.Transactional;
@@ -53,6 +48,8 @@ public class InventoryServiceImpl implements InventoryService {
 	private final CommonRepository commonRepository;
 	private final EmpRepository empRepository;
 	private final PartsRepository partsRepository;
+	private final AccountDAO accountDAO;
+    private final PasswordEncoder passwordEncoder;
 
 	// 재고
 	private final InventoryDao inventoryDao;
@@ -207,11 +204,17 @@ public class InventoryServiceImpl implements InventoryService {
 
 	// 월마감 실행
 	@Override
-	public boolean doMonthClose(String yearMonth, String empid, int realStatus) {
-		int empno = inventoryDao.getEmpNoFromEmpId(empid);
+	public String doMonthClose(String yearMonth, Inventory_CloseDTO inventory_CloseDTO, int realStatus) {
+		// id로 정보 가져오기
+		AccountDTO accountDTO = accountDAO.findByUserId(inventory_CloseDTO.getEmp_id());
 		
-		// 월마감 패키지 실행
-		return inventoryDao.doMonthClose(yearMonth, empno, realStatus);
+		if(passwordEncoder.matches(inventory_CloseDTO.getEmp_password(), accountDTO.getPassword())) {
+			// 월마감 패키지 실행
+			return String.valueOf(inventoryDao.doMonthClose(yearMonth, accountDTO.getEmpNo(), realStatus));
+		}
+		else {
+			return "password";
+		}
 	}
 
 	// 재고현황 조회
