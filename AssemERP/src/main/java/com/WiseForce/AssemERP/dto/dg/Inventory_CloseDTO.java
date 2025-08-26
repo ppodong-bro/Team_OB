@@ -20,6 +20,7 @@ public class Inventory_CloseDTO {
 	private int emp_no;// 마감처리담당자
 	
 	// 마감용
+	private String emp_id;// 마감처리담당자 ID
 	private String emp_password;// 마감처리담당자의 비밀번호
 
 	// 출력

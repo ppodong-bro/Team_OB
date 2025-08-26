@@ -222,4 +222,8 @@
 		)
     </select>
     
+    
+    <select id="getEmpNoFromEmpId" parameterType="string" resultType="int">
+    	SELECT emp_no FROM account WHERE user_id = #{empid}
+	</select>
 </mapper>
