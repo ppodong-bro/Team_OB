@@ -16,9 +16,9 @@ $(document).ready(function() {
 	})
 	.catch(error => console.error("/emp 호출 오류:", error));
 	// 대표자(경영본부 부서장) : 1001 => admin으로 저장되어 있어서 인사팀 부서장으로 임시 변경
-	// 대표자(인사팀 부서장) : 1005
+	// 대표자(사장) : 1012
 	const ceo = document.getElementById("ceo");
-	fetch(contextPath + "/getemp/1005")
+	fetch(contextPath + "/getemp/1012")
 	.then(response => response.json())
 	.then(emp => {
 		// console.log(emp.empName);
