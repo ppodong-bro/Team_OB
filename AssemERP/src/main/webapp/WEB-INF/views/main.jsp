@@ -32,6 +32,7 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 
+<jsp:include page="/common.jsp" />
 <style>
 .dashboard {
 	display: grid;
@@ -84,7 +85,7 @@
 	/* 수직 방향 가운데 정렬 */
 	flex-direction: column;
 	align-items: center; /* 내용이 세로로 쌓이게 (선택 사항) */
-	padding: 0px;
+	padding: 10px;
 }
 
 .dashboard .item-2 {
@@ -147,6 +148,24 @@
     font-size: 24px;
 }
 
+.boardTitle {
+	height: auto;
+	padding: 10px;
+}
+
+.boardList {
+	flex-grow: 1;
+	font-size: 14px;
+}
+.boardList tr {
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* 색상 변경 시 부드러운 전환 효과 */
+}
+/* 마우스 오버 시 배경색 변경 (하이라이트 효과) */
+.boardList tr:hover {
+    background-color: #c2cbd6;
+}	
+
 </style>
 <script>
 function openyearsPerformDetail() {
@@ -178,10 +197,12 @@ function openClientPerformDetail() {
 			<div id="contents">
 				<div class="dashboard container-fluid">
 					<!-- 캘린더 -->
+					<%-- 
 					<div class="item item-1">
 						<div id="fullCalendar"></div>
 						<jsp:include page="/WEB-INF/views/sh/calender.jsp" />
-					</div>
+					</div> 
+					--%>
 					<!-- 매출매입실적 -->
 					<div class="item item-2" onclick="openyearsPerformDetail()">
 						<canvas id="yearsperformChartCanvas"></canvas>
@@ -212,6 +233,16 @@ function openClientPerformDetail() {
 							<div class="weather-details" id="weather-details"></div>
 							<jsp:include page="/WEB-INF/views/sh/weather.jsp" />
 						</div>
+					</div>
+					<div class="item item-1">
+						<h4 class="boardTitle" style="font-weight: 900;">공지사항</h4>
+						<table class="boardList list-table">
+						<c:forEach var="board" items="${boardList}" varStatus="index">
+							<tr onclick="location.href='${pageContext.request.contextPath}/board/boardModifyForm?boardNo=${board.boardNo}';">
+								<td>${board.title}</td>
+							</tr>
+						</c:forEach>
+						</table>
 					</div>
 				</div>
 			</div>
