@@ -91,16 +91,18 @@ public class RestAPIController {
 	}
 
 	@ResponseBody
-	@GetMapping("/dept/{dept_no}")
+	@GetMapping("/getdept/{dept_no}")
 	public DeptDTO getDeptById(@PathVariable("dept_no") int dept_no) {
-		// emp 정보 가져오기
+		System.out.println("dept_no" + dept_no);
+		// dept 정보 가져오기
 		DeptDTO deptDTO = deptService.getDeptDetail(dept_no);
     
 	    return deptDTO;
 	}
 	@ResponseBody
-	@GetMapping("/emp/{emp_no}")
+	@GetMapping("/getemp/{emp_no}")
 	public EmpDTO getEmpById(@PathVariable("emp_no") int emp_no) {
+		System.out.println("emp_no" + emp_no);
 		// emp 정보 가져오기
     	EmpDTO empDTO = empService.getEmpDetail(emp_no);
     
