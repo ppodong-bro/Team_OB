@@ -8,6 +8,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
 import com.WiseForce.AssemERP.dto.dg.InventoryInfoDTO;
+import com.WiseForce.AssemERP.dto.dg.Inventory_CloseDTO;
 import com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO;
 import com.WiseForce.AssemERP.dto.km.Sales_ItemDto;
 import com.WiseForce.AssemERP.dto.sh.PartsDTO;
@@ -122,5 +123,13 @@ public class InventoryDaoImpl implements InventoryDao {
 		}
 
 		return returnMap;
+	}
+
+	@Override
+	public int getEmpNoFromEmpInfo(Inventory_CloseDTO inventory_CloseDTO) {
+		System.out.println(inventory_CloseDTO);
+		Integer empno = session.selectOne("com.WiseForce.AssemERP.dg.InventoryMapper.getEmpNoFromEmpId", inventory_CloseDTO);
+		
+		return empno;
 	}
 }

@@ -31,7 +31,7 @@ public interface InventoryService {
 	List<Inventory_CloseDTO> getInventoryCloseList(Inventory_CloseDTO inventory_CloseDTO);
 	
 	// 월마감 실행
-	boolean doMonthClose(String yearMonth, int empno, int realStatus);
+	String doMonthClose(String yearMonth, Inventory_CloseDTO inventory_CloseDTO, int realStatus);
 	
 	// 재고현황 조회
 	List<Map<String, Object>> getInventoryCurrent();

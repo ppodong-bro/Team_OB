@@ -222,4 +222,10 @@
 		)
     </select>
     
+    
+    <select id="getEmpNoFromEmpId" parameterType="com.WiseForce.AssemERP.dto.dg.Inventory_CloseDTO" resultType="int">
+    	SELECT emp_no FROM account 
+    	WHERE user_id = #{emp_id}
+    	AND password = #{emp_password}
+	</select>
 </mapper>

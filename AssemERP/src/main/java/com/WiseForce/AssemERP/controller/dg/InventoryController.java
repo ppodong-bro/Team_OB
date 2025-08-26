@@ -27,6 +27,8 @@ import com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO;
 import com.WiseForce.AssemERP.service.dg.InventoryService;
 import com.WiseForce.AssemERP.util.Paging;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -152,35 +154,48 @@ public class InventoryController {
 	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_INVENTORY_MANAGER')")
 	@ResponseBody
 	public Map<String, Object> monthClose(@RequestBody Inventory_CloseDTO inventory_CloseDTO, @PathVariable("real_status") int realStatus) {
-		System.out.println(inventory_CloseDTO.getEmp_password());
-		
-		// 월마감 실행
-		boolean result = inventoryService.doMonthClose(inventory_CloseDTO.getYearmonth(), inventory_CloseDTO.getEmp_no(), realStatus);
-		
 		Map<String, Object> response = new HashMap<>();
-	    response.put("result", String.valueOf(result));
-	    
+		
+//		// 로그인한 사용자의 비밀번호를 사용하려고 했으나
+//		// 로그인, 권한 기능이 오래걸려 고정된 비밀번호 사용
+//		if(inventory_CloseDTO.getEmp_password().equals("admin")) {
+//			// 월마감 실행
+//			boolean result = inventoryService.doMonthClose(inventory_CloseDTO.getYearmonth(), inventory_CloseDTO.getEmp_id(), realStatus);
+//		    response.put("result", String.valueOf(result));
+//		}
+//		else {
+//		    response.put("result", "password");
+//		}
+		
+		System.out.println(inventory_CloseDTO);
+		String result = inventoryService.doMonthClose(inventory_CloseDTO.getYearmonth(), inventory_CloseDTO, realStatus);
+	    response.put("result", result);
+		
 	    System.out.println(response);
 		
 		return response;
 	}
 
-	@DeleteMapping("/inventory/monthClose")
-	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_INVENTORY_MANAGER')")
-	@ResponseBody
-	public Map<String, Object> monthCloseCancel(@RequestBody Inventory_CloseDTO inventory_CloseDTO) {
-		System.out.println(inventory_CloseDTO.getEmp_password());
-		
-		// 월마감 취소 진행
-//		boolean result = inventoryService.doMonthCloseCancel(inventory_CloseDTO.getYearmonth());
-		
-		Map<String, Object> response = new HashMap<>();
-	    response.put("result", String.valueOf(false));
-	    
-	    System.out.println(response);
-		
-		return response;
-	}
+//	@DeleteMapping("/inventory/monthClose")
+//	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_INVENTORY_MANAGER')")
+//	@ResponseBody
+//	public Map<String, Object> monthCloseCancel(@RequestBody Inventory_CloseDTO inventory_CloseDTO) {
+//		// 로그인한 사용자의 비밀번호를 사용하려고 했으나
+//		// 로그인, 권한 기능이 오래걸려 고정된 비밀번호 사용
+//		if(inventory_CloseDTO.getEmp_password().equals("admin")) {
+//			
+//		}
+//		
+//		// 월마감 취소 진행
+////		boolean result = inventoryService.doMonthCloseCancel(inventory_CloseDTO.getYearmonth());
+//		
+//		Map<String, Object> response = new HashMap<>();
+//	    response.put("result", String.valueOf(false));
+//	    
+//	    System.out.println(response);
+//		
+//		return response;
+//	}
 
 	@GetMapping("/inventory/excel")
 	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_HR_MANAGER', 'ROLE_ITEM_MANAGER', 'ROLE_ITEM_MANAGER', 'ROLE_INVENTORY_MANAGER', 'ROLE_INVENTORY_USER')")
