@@ -11,11 +11,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.WiseForce.AssemERP.dto.sm.BoardDTO;
 import com.WiseForce.AssemERP.service.dg.InventoryService;
 import com.WiseForce.AssemERP.service.km.ClientService;
 import com.WiseForce.AssemERP.service.sh.PartsService;
 import com.WiseForce.AssemERP.service.sh.PerformanceService;
 import com.WiseForce.AssemERP.service.sh.ProductService;
+import com.WiseForce.AssemERP.service.sm.BoardService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -27,6 +29,7 @@ public class MainController {
 	
 	private final PerformanceService performanceService;
 	private final InventoryService inventoryService;
+	private final BoardService boardService;
 	
 	@GetMapping("/")
 	public String mainPage(Model model) throws JsonProcessingException {
@@ -63,6 +66,15 @@ public class MainController {
 //		System.out.println(inventoryCurrent);
         model.addAttribute("inventoryCurrent", mapper.writeValueAsString(inventoryCurrent)); // 자바 객체를 JSON 문자열로 변환
 
+        // 공지사항
+		BoardDTO boardDTO = new BoardDTO();
+		boardDTO.setStart(1); // 가장 최신
+		boardDTO.setEnd(5); // 5개
+		// emp 정보 가져오기
+		List<BoardDTO> boardDTOs = boardService.getBoardList(boardDTO);
+
+        model.addAttribute("boardList", boardDTOs);
+        
 		return "main"; // src/main/webapp/WEB-INF/views/main.jsp
 	}
 
