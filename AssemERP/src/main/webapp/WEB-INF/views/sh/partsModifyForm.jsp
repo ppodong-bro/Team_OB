@@ -159,7 +159,7 @@ body {
 											<!-- 부품명 -->
 											<div class="input-group">
 												<span class="input-group-text autospace"
-													style="width: 100px; display: flex; justify-content: center;">부품번호</span>
+													style="width: 100px; display: flex; justify-content: center;">부품명</span>
 												<input type="text" class="form-control form-control-sm"
 													id="partsName" name="parts_name"
 													value="${partsDTO.parts_name}" readonly="readonly" required>
