@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -169,7 +170,8 @@ $(document).ready(function() {
 
     // 가마감 버튼 클릭
     $("#btnFakeMonthClose").click(function() {
-    	// 비밀번호
+    	// ID, 비밀번호
+    	const id = $("#modalMonthCloseId").val();
     	const password = $("#modalMonthClosePassword").val();
 
     	// 년월일 구하기
@@ -182,6 +184,7 @@ $(document).ready(function() {
     	// 월마감 진행중 화면으로 변경
     	$("#modalMonthCloseText").text("가마감 진행중입니다...");
     	$("#spinner").removeClass("d-none");// 스피너 보이기
+    	$("#modalMonthClosePasswordDiv").hide();// 비밀번호 입력 비활성화
     	$("#btnMonthClose").hide();// 월마감 버튼 비활성화
     	$("#btnFakeMonthClose").hide();// 가마감 버튼 비활성화
     	
@@ -193,7 +196,7 @@ $(document).ready(function() {
             contentType: "application/json", // JSON 데이터 전송시 필요
             data: JSON.stringify({
             	yearmonth: yymmdd,
-            	emp_no: 1001, //담당자
+            	emp_id: id, //담당자
             	emp_password: password//비밀번호
             }),
             success: function(response) {
@@ -218,7 +221,8 @@ $(document).ready(function() {
     });
     // 월마감 버튼 클릭
     $("#btnMonthClose").click(function() {
-    	// 비밀번호
+    	// ID, 비밀번호
+    	const id = $("#modalMonthCloseId").val();
     	const password = $("#modalMonthClosePassword").val();
     	
     	// 년월일 구하기
@@ -231,6 +235,7 @@ $(document).ready(function() {
     	// 월마감 진행중 화면으로 변경
     	$("#modalMonthCloseText").text("월마감 진행중입니다...");
     	$("#spinner").removeClass("d-none");// 스피너 보이기
+    	$("#modalMonthClosePasswordDiv").hide();// 비밀번호 입력 비활성화
     	$("#btnMonthClose").hide();// 월마감 버튼 비활성화
     	$("#btnFakeMonthClose").hide();// 가마감 버튼 비활성화
     	
@@ -242,7 +247,7 @@ $(document).ready(function() {
             contentType: "application/json", // JSON 데이터 전송시 필요
             data: JSON.stringify({
             	yearmonth: yymmdd,
-            	emp_no: 1001, //담당자
+            	emp_id: id, //1003 : 물류 본부장
             	emp_password: password//비밀번호
             }),
             success: function(response) {
@@ -267,7 +272,8 @@ $(document).ready(function() {
     });
 	// 월마감 취소 버튼 클릭
     $("#btnMonthCloseCancel").click(function() {
-    	// 비밀번호
+    	// ID, 비밀번호
+    	const id = $("#modalMonthCloseId").val();
     	const password = $("#modalMonthCloseCancelPassword").val();
     	
     	// 년월일 구하기
@@ -280,6 +286,7 @@ $(document).ready(function() {
     	// 월마감 진행중 화면으로 변경
     	$("#modalMonthCloseCancelText").text("월마감 취소중입니다...");
     	$("#spinner").removeClass("d-none");// 스피너 보이기
+    	$("#modalMonthCloseCancelPasswordDiv").hide();
     	$("#btnMonthCloseCancel").hide();// 월마감 취소 버튼 비활성화
     	
         // Ajax 요청 보내기
@@ -290,7 +297,7 @@ $(document).ready(function() {
             contentType: "application/json", // JSON 데이터 전송시 필요
             data: JSON.stringify({
             	yearmonth: yymmdd,
-            	emp_no: 1001, //담당자
+            	emp_id: id, // 사용자 ID
             	emp_password: password//비밀번호
             }),
             success: function(response) {
@@ -321,6 +328,7 @@ $(document).ready(function() {
 
         // 버튼 보이게 & 활성화
         $('#btnMonthClose').show();
+    	$("#modalMonthClosePasswordDiv").show();
     });
     $('#modalMonthCloseCancel').on('hidden.bs.modal', function () {
         // 초기 모달 텍스트 복원
@@ -328,6 +336,7 @@ $(document).ready(function() {
 
         // 버튼 보이게 & 활성화
         $('#btnMonthCloseCancel').show();
+    	$("#modalMonthCloseCancelPasswordDiv").show();
     });
 });
 
@@ -484,6 +493,10 @@ $(document).ready(function() {
 			<jsp:include page="/foot.jsp" />
 		</div>
 
+		<!-- 사용자의 ID -->
+		<sec:authentication property="name" var="loginId" />
+		<input type="hidden" id="modalMonthCloseId" value="${loginId }">
+
 		<!-- 월마감 모달창 -->
 		<!-- 
 		aria-hidden="true" : 페이지 로드시 해당 내용은 읽지 않도록 처리
@@ -499,7 +512,7 @@ $(document).ready(function() {
 						<div id="modalMonthCloseText">월마감을 진행하시겠습니까?</div>
 						<div class="currentTime"></div>
 						<p/>
-						<div>
+						<div id="modalMonthClosePasswordDiv">
 							<label for="password" class="form-label">비밀번호</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-lock"></i></span>
@@ -535,7 +548,7 @@ $(document).ready(function() {
 						</div>
 						<div class="currentTime"></div>
 						<p/>
-						<div>
+						<div id="modalMonthCloseCancelPasswordDiv">
 							<label for="password" class="form-label">비밀번호</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-lock"></i></span>
