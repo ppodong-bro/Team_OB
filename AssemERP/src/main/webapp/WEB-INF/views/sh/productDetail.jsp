@@ -74,14 +74,16 @@ body {
                 						1-2. 타이틀 중앙 정렬 스타일
                  					------------------------------------------------------------------------------%>
 							<h4 class="card-title mb-0">
-							<i class="bi bi-pencil-square me-2"></i> 제품 상세</h4>
+								<i class="bi bi-pencil-square me-2"></i> 제품 상세
+							</h4>
 							<%-- 타이틀의 정확한 중앙 정렬을 위한 빈 공간 --%>
 							<div style="width: 90px;"></div>
 						</div>
 						<div class="card-body p-4">
-							<form action="${pageContext.request.contextPath}/product/productUpdate" method="post"
-								class="needs-validation" enctype="multipart/form-data"
-								novalidate>
+							<form
+								action="${pageContext.request.contextPath}/product/productUpdate"
+								method="post" class="needs-validation"
+								enctype="multipart/form-data" novalidate>
 
 								<!-- 제품박스 -->
 								<h5 class="mb-3">기본 정보</h5>
@@ -90,16 +92,20 @@ body {
 									<div class="col-md-4 mb-12">
 										<div class="image-box">
 											<c:choose>
-											    <c:when test="${empty productDTO.filename}">
-											        <!-- 파일명이 없으면 기본 이미지 -->
-											        <img id="productImage" src="${pageContext.request.contextPath}/upload/default.jpg" alt="기본이미지">
-											    </c:when>
-											    <c:otherwise>
-											        <!-- 파일명이 있으면 먼저 부품 이미지로 시도 -->
-											        <img id="productImage" src="${pageContext.request.contextPath}/upload/s_${productDTO.filename}" alt="제품이미지">
-											    </c:otherwise>
+												<c:when test="${empty productDTO.filename}">
+													<!-- 파일명이 없으면 기본 이미지 -->
+													<img id="productImage"
+														src="${pageContext.request.contextPath}/upload/default.jpg"
+														alt="기본이미지">
+												</c:when>
+												<c:otherwise>
+													<!-- 파일명이 있으면 먼저 부품 이미지로 시도 -->
+													<img id="productImage"
+														src="${pageContext.request.contextPath}/upload/s_${productDTO.filename}"
+														alt="제품이미지">
+												</c:otherwise>
 											</c:choose>
-											
+
 											<script>
 											    const img = document.getElementById('productImage');
 											
@@ -258,7 +264,8 @@ body {
 								<%------------------------------------------------------------------------------
 				                   		5. 삭제 처리를 위한 별도 form
 				                  	------------------------------------------------------------------------------%>
-								<form id="deleteForm" action="${pageContext.request.contextPath}/product/productDeletePro"
+								<form id="deleteForm"
+									action="${pageContext.request.contextPath}/product/productDeletePro"
 									method="post" class="d-none">
 									<input type="hidden" name="${_csrf.parameterName}"
 										value="${_csrf.token}" /> <input type="hidden"
@@ -299,11 +306,12 @@ body {
 		const contextPath = "${pageContext.request.contextPath}";
 		
 		// 수정버튼 링크
-		const moditfyBtn = document.getElementById('moditfyBtn');
-		if (moditfyBtn) {
-		    moditfyBtn.addEventListener('click', function() {
-		    	document.getElementById('modifyForm').submit();
-		}
+		const modifyBtn = document.getElementById('moditfyBtn'); // or "modifyBtn" 으로 통일
+			if (modifyBtn) {
+    			modifyBtn.addEventListener('click', function() {
+     		   document.getElementById('modifyForm').submit();
+    			});
+			}
 	</script>
 </body>
 </html>

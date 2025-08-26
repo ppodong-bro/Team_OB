@@ -351,13 +351,11 @@ function handleRowDelete(button) {
     reindexBOMRows();
 }
 
-// 행 추가
+//행 추가
 document.getElementById("addRowBtn").addEventListener("click", function () {
     const tableBody = document.getElementById("bomTableBody");
     const newRow = document.createElement("tr");
-	
-    const contextPath = "${pageContext.request.contextPath}";
-    
+
     // 부품구분
     const typeCell = document.createElement("td");
     const typeSelect = document.createElement("select");
@@ -370,18 +368,18 @@ document.getElementById("addRowBtn").addEventListener("click", function () {
         .then(res => res.json())
         .then(types => {
             types.forEach(type => {
-                const option = new Option(type.context, type.middle_status);
-                typeSelect.appendChild(option);
-                
-                console.log("option :", option);
-                console.log("type.middle_status :", type.middle_status);
-                
-                
+                typeSelect.appendChild(new Option(type.context, type.middle_status));
             });
         })
         .catch(err => console.error("부품 구분 로드 실패:", err));
 
-   
+    // 부품명
+    const partCell = document.createElement("td");
+    const partSelect = document.createElement("select");
+    partSelect.className = "form-select";
+    partSelect.required = true;
+    partSelect.appendChild(new Option("선택", ""));
+    partCell.appendChild(partSelect);
 
     // 수량
     const cntCell = document.createElement("td");
@@ -396,22 +394,19 @@ document.getElementById("addRowBtn").addEventListener("click", function () {
     // 삭제 버튼
     const delCell = document.createElement("td");
     const delBtn = document.createElement("button");
-   	const icon = document.createElement("i")
-   	
-   	icon.className = "bi bi-trash"; 
-   	
     delBtn.type = "button";
     delBtn.className = "btn btn-sm btn-outline-danger remove-item-btn";
     delBtn.onclick = () => handleRowDelete(delBtn);
-    
+
+    const icon = document.createElement("i");
+    icon.className = "bi bi-trash"; 
     delBtn.appendChild(icon);
-    delBtn.append(" 삭제"); // 아이콘 뒤에 텍스트
-    
-    delCell.style.textAlign = "center"; // 셀 안에서 버튼을 중앙 정렬
+    delBtn.append(" 삭제");
+
+    delCell.style.textAlign = "center";
     delCell.appendChild(delBtn);
-    
-    
-    // 행에 각 셀 append
+
+    // 행에 추가
     newRow.appendChild(typeCell);
     newRow.appendChild(partCell);
     newRow.appendChild(cntCell);
@@ -420,6 +415,7 @@ document.getElementById("addRowBtn").addEventListener("click", function () {
     tableBody.appendChild(newRow);
     reindexBOMRows();
 });
+
 // 부품명
 const partCell = document.createElement("td");
 const partSelect = document.createElement("select");
@@ -453,7 +449,7 @@ document.getElementById("bomTableBody").addEventListener("change", function(e) {
         }
     }
 });
-`
+
 
 // name 인덱스 재정렬
 function reindexBOMRows() {
