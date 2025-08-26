@@ -5,14 +5,9 @@
 
 <spring:eval expression="@environment.getProperty('file.upload-dir')" var="profileUploadDir"/>
 <%
-	// String baseDir = (String) pageContext.findAttribute("profileUploadDir");
-	// 절대경로 -> 상대경로로 수정
-	String baseDir = request.getContextPath() + "/upload/account/profile-images";
-	// 이미지 설정
-	String defaultImageSrc = baseDir + "/Login.png";
-
-	// custom 프로필 이미지를 만드는 소스코드지만 정상작동하지 않기 때문에 예외처리
-	/* java.nio.file.Path filePath = (baseDir == null)
+	 String baseDir = (String) pageContext.findAttribute("profileUploadDir");
+	
+	java.nio.file.Path filePath = (baseDir == null)
 		? null
 		: java.nio.file.Paths.get(baseDir, "Login.png");
 
@@ -28,7 +23,6 @@
         }
     } catch (Exception ignore) { }
 
-    //??
     if (avatarSrc == null) {
         String svg = "<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'>"
                 + "<defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>"
@@ -40,7 +34,7 @@
                 + " font-family='-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif'"
                 + " font-size='30' fill='#fff' font-weight='700'>U</text></svg>";
         avatarSrc = "data:image/svg+xml;utf8," + java.net.URLEncoder.encode(svg, "UTF-8");
-    } */
+    } 
 %>
 
 <sec:authentication property="name" var="loginId" />
@@ -104,7 +98,7 @@
 		    <button class="avatar-btn" data-bs-toggle="dropdown" aria-expanded="false" aria-label="사용자 메뉴 열기">
 		      <!-- 필수! 프로필 이미지 -->
 		      <img class="hdr-avatar" alt="프로필" loading="lazy" decoding="async"
-		           src="<%= defaultImageSrc /*avatarSrc이 안먹어서 기본이미지 삽입*/ %>" />
+		           src="<%= avatarSrc %>" />
 		    </button>
       	<!-- ↓ 이 아래는 ‘프로필/로그아웃’ 메뉴 (원하시는 근사한 스타일) -->
 	  	<!-- <div class="dropdown-menu dropdown-menu-end p-0 border-0 shadow user-dd"> -->
@@ -114,7 +108,7 @@
 		  <div class="dropdown-header py-2 px-3">
 		    <div class="d-flex align-items-center gap-1">
 		      <!-- 작게 재사용: 헤더 아바타 소스(이미 Base64 세팅되어 있음) -->
-		      <img src="<%= defaultImageSrc /*avatarSrc이 안먹어서 기본이미지 삽입*/ %>" alt="" class="rounded-circle border border-white"
+		      <img src="<%= avatarSrc %>" alt="" class="rounded-circle border border-white"
 		           style="width:32px;height:32px;object-fit:cover">
 		      <div>
 		        <div class="name">${displayName}</div>
