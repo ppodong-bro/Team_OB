@@ -143,17 +143,17 @@ public class SecurityConfig
 	                  // ---------------------------------------------------------------------------------------
 	                  // 1) 각 업무별 인증 필요 URL (HR) - ROLE_HR_MANAGER, ROLE_HR_USER
 	                  // ---------------------------------------------------------------------------------------
-	                  .requestMatchers("/emp/**").hasAnyAuthority("ROLE_ADMIN",     "ROLE_HR_MANAGER")
 	                  .requestMatchers("/emp/empListForm").hasAnyAuthority("ROLE_ADMIN",     "ROLE_HR_MANAGER",
 	                  			  "ROLE_ITEM_MANAGER", "ROLE_ORDER_MANAGER", "ROLE_INVENTORY_MANAGER")
+	                  .requestMatchers("/emp/**").hasAnyAuthority("ROLE_ADMIN",     "ROLE_HR_MANAGER")
 	                  
-	                  .requestMatchers("/dept/**").hasAnyAuthority("ROLE_ADMIN",    "ROLE_HR_MANAGER")
 	                  .requestMatchers("/dept/deptListForm").hasAnyAuthority("ROLE_ADMIN",     "ROLE_HR_MANAGER",
                   			  	  "ROLE_ITEM_MANAGER", "ROLE_ORDER_MANAGER", "ROLE_INVENTORY_MANAGER")
+	                  .requestMatchers("/dept/**").hasAnyAuthority("ROLE_ADMIN",    "ROLE_HR_MANAGER")
 	                  
-	                  .requestMatchers("/board/**").hasAnyAuthority("ROLE_ADMIN",   "ROLE_HR_MANAGER")
 	                  .requestMatchers("/board/boardListForm").hasAnyAuthority("ROLE_ADMIN",     "ROLE_HR_MANAGER",
               			  	  	  "ROLE_ITEM_MANAGER", "ROLE_ORDER_MANAGER", "ROLE_INVENTORY_MANAGER")
+	                  .requestMatchers("/board/**").hasAnyAuthority("ROLE_ADMIN",   "ROLE_HR_MANAGER")
 	                  
 	                  .requestMatchers("/empAcc/**").hasAnyAuthority("ROLE_ADMIN",  "ROLE_HR_MANAGER")
 	                  .requestMatchers("/api/**").hasAnyAuthority("ROLE_ADMIN", 	"ROLE_HR_MANAGER")
@@ -164,14 +164,48 @@ public class SecurityConfig
 	                  // ---------------------------------------------------------------------------------------
 	                  // 2) 각 업무별 인증 필요 URL (ITEM) - ROLE_ITEM_MANAGER, ROLE_ITEM_USER
 	                  // ---------------------------------------------------------------------------------------
+	                  .requestMatchers("/parts/partsList").hasAnyAuthority("ROLE_ADMIN",     "ROLE_HR_MANAGER",
+                  			  "ROLE_ITEM_MANAGER", "ROLE_ORDER_MANAGER", "ROLE_INVENTORY_MANAGER", "ROLE_ITEM_USER")
+	                  .requestMatchers("/parts/partsDetail/**").hasAnyAuthority("ROLE_ADMIN",     "ROLE_HR_MANAGER",
+                  			  "ROLE_ITEM_MANAGER", "ROLE_ORDER_MANAGER", "ROLE_INVENTORY_MANAGER", "ROLE_ITEM_USER")
+	                  .requestMatchers("/parts/**").hasAnyAuthority("ROLE_ADMIN",     "ROLE_ITEM_MANAGER")
 	                  
+	                  .requestMatchers("/product/productList").hasAnyAuthority("ROLE_ADMIN",     "ROLE_HR_MANAGER",
+                  			  "ROLE_ITEM_MANAGER", "ROLE_ORDER_MANAGER", "ROLE_INVENTORY_MANAGER", "ROLE_ITEM_USER")
+	                  .requestMatchers("/product/productDetail/**").hasAnyAuthority("ROLE_ADMIN",     "ROLE_HR_MANAGER",
+                  			  "ROLE_ITEM_MANAGER", "ROLE_ORDER_MANAGER", "ROLE_INVENTORY_MANAGER", "ROLE_ITEM_USER")
+	                  .requestMatchers("/product/**").hasAnyAuthority("ROLE_ADMIN",     "ROLE_ITEM_MANAGER")
+	                 
 	                  // ---------------------------------------------------------------------------------------
 	                  // 3) 각 업무별 인증 필요 URL (ORDER) - ROLE_ORDER_MANAGER, ROLE_ORDER_USER
 	                  // ---------------------------------------------------------------------------------------
+	                  .requestMatchers("/client/list").hasAnyAuthority("ROLE_ADMIN",     "ROLE_HR_MANAGER",
+                  			  "ROLE_ITEM_MANAGER", "ROLE_ORDER_MANAGER", "ROLE_INVENTORY_MANAGER", "ROLE_ORDER_USER")
+	                  .requestMatchers("/client/**").hasAnyAuthority("ROLE_ADMIN","ROLE_ORDER_MANAGER")
 	                  
+	                  
+	                  .requestMatchers("/sales/list").hasAnyAuthority("ROLE_ADMIN",     "ROLE_HR_MANAGER",
+                  			  "ROLE_ITEM_MANAGER", "ROLE_ORDER_MANAGER", "ROLE_INVENTORY_MANAGER", "ROLE_ORDER_USER")
+	                  .requestMatchers("/sales/**").hasAnyAuthority("ROLE_ADMIN",     "ROLE_ORDER_MANAGER")
+	                  
+	                  .requestMatchers("/purchase/list").hasAnyAuthority("ROLE_ADMIN",     "ROLE_HR_MANAGER",
+                  			  "ROLE_ITEM_MANAGER", "ROLE_ORDER_MANAGER", "ROLE_INVENTORY_MANAGER", "ROLE_ORDER_USER")
+	                  .requestMatchers("/purchase/**").hasAnyAuthority("ROLE_ADMIN",     "ROLE_ORDER_MANAGER")
 	                  // ---------------------------------------------------------------------------------------
-	                  // 4) 각 업무별 인증 필요 URL (INVENTORY) - ROLE_INVENTORY_MANAGER, ROLE_INVENTORY_USER
+	                  // 4) 각 업무별 인증 필요 URL (INVENTORY) - ROLE_INVENTORY_MANAGER, ROLE_INVE`NTORY_USER
 	                  // ---------------------------------------------------------------------------------------
+	                  //재고 관리
+	                  .requestMatchers("/inventory").hasAnyAuthority("ROLE_ADMIN",     "ROLE_HR_MANAGER",
+                  			  "ROLE_ITEM_MANAGER", "ROLE_ORDER_MANAGER", "ROLE_INVENTORY_MANAGER", "ROLE_INVENTORY_USER")
+	                  //재고 관리 - 재고 조정
+	                  .requestMatchers("/inventory/adjust").hasAnyAuthority("ROLE_ADMIN",     "ROLE_INVENTORY_MANAGER")
+	                  //입출고 이력
+	                  .requestMatchers("/inventory/history").hasAnyAuthority("ROLE_ADMIN",     "ROLE_HR_MANAGER",
+                  			  "ROLE_ITEM_MANAGER", "ROLE_ORDER_MANAGER", "ROLE_INVENTORY_MANAGER", "ROLE_INVENTORY_USER")
+	                  //월마감 이력
+	                  .requestMatchers("/inventory/close").hasAnyAuthority("ROLE_ADMIN",     "ROLE_INVENTORY_MANAGER")
+	                  //나머지(없음)
+	                  .requestMatchers("/inventory/**").hasAnyAuthority("ROLE_ADMIN",     "ROLE_INVENTORY_MANAGER")
 	                  
 	                  .anyRequest().authenticated()
               )
