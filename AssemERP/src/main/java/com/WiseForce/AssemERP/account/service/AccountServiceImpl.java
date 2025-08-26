@@ -2,6 +2,9 @@ package com.WiseForce.AssemERP.account.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -15,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.WiseForce.AssemERP.account.dao.AccountDAO;
 import com.WiseForce.AssemERP.account.dto.AccountDTO;
+
+import net.coobird.thumbnailator.Thumbnails;
 
 @Service
 public class AccountServiceImpl implements AccountService  //, UserDetailsService
@@ -116,9 +121,12 @@ public class AccountServiceImpl implements AccountService  //, UserDetailsServic
                     dest.getParentFile().mkdirs();
                 }
 
-                profileImageFile.transferTo(dest);
-
+                
+                Files.copy(profileImageFile.getInputStream(), dest.toPath());
+                
+                // 이미지 저장 방식 수정
                 accountDTO.setEmpFilename(storedFilename);
+                // profileImageFile.transferTo(dest);
                 
                 accountDAO.upsertEmpImage(accountDTO);
 

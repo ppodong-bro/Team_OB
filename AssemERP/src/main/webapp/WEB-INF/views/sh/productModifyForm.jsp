@@ -113,7 +113,7 @@ body {
 											
 											    // 이미지 로딩 실패 시 기본 이미지로
 											    img.onerror = function() {
-											        this.src = ${pageContext.request.contextPath}+"/upload/default.jpg";
+											        this.src = "${pageContext.request.contextPath}/upload/default.jpg";
 											    };
 											
 											    // 파일 크기 체크 (이미지가 있더라도 0이면 기본 이미지)
@@ -121,11 +121,11 @@ body {
 											        .then(response => {
 											            const size = response.headers.get('Content-Length');
 											            if (!size || parseInt(size) === 0) {
-											                img.src = ${pageContext.request.contextPath}+"/upload/default.jpg";
+											                img.src = "${pageContext.request.contextPath}/upload/default.jpg";
 											            }
 											        })
 											        .catch(() => {
-											            img.src = ${pageContext.request.contextPath}+"/upload/default.jpg";
+											            img.src = "${pageContext.request.contextPath}/upload/default.jpg";
 											        });
 											</script>
 												<!-- X 삭제 버튼 -->

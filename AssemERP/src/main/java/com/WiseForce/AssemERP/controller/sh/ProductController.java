@@ -225,6 +225,6 @@ public class ProductController {
 		model.addAttribute("productBomDTOs", productBomDTOs);
 		
 		
-		return "sh/prodcutDetail";
+		return "sh/productDetail";
 	}
 }
