@@ -126,8 +126,9 @@ public class InventoryDaoImpl implements InventoryDao {
 	}
 
 	@Override
-	public int getEmpNoFromEmpId(String empid) {
-		Integer empno = session.selectOne("com.WiseForce.AssemERP.dg.InventoryMapper.getEmpNoFromEmpId", empid);
+	public int getEmpNoFromEmpInfo(Inventory_CloseDTO inventory_CloseDTO) {
+		System.out.println(inventory_CloseDTO);
+		Integer empno = session.selectOne("com.WiseForce.AssemERP.dg.InventoryMapper.getEmpNoFromEmpId", inventory_CloseDTO);
 		
 		return empno;
 	}

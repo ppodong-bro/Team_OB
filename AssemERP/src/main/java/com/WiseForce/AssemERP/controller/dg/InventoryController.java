@@ -156,16 +156,20 @@ public class InventoryController {
 	public Map<String, Object> monthClose(@RequestBody Inventory_CloseDTO inventory_CloseDTO, @PathVariable("real_status") int realStatus) {
 		Map<String, Object> response = new HashMap<>();
 		
-		// 로그인한 사용자의 비밀번호를 사용하려고 했으나
-		// 로그인, 권한 기능이 오래걸려 고정된 비밀번호 사용
-		if(inventory_CloseDTO.getEmp_password().equals("admin")) {
-			// 월마감 실행
-			boolean result = inventoryService.doMonthClose(inventory_CloseDTO.getYearmonth(), inventory_CloseDTO.getEmp_id(), realStatus);
-		    response.put("result", String.valueOf(result));
-		}
-		else {
-		    response.put("result", "password");
-		}
+//		// 로그인한 사용자의 비밀번호를 사용하려고 했으나
+//		// 로그인, 권한 기능이 오래걸려 고정된 비밀번호 사용
+//		if(inventory_CloseDTO.getEmp_password().equals("admin")) {
+//			// 월마감 실행
+//			boolean result = inventoryService.doMonthClose(inventory_CloseDTO.getYearmonth(), inventory_CloseDTO.getEmp_id(), realStatus);
+//		    response.put("result", String.valueOf(result));
+//		}
+//		else {
+//		    response.put("result", "password");
+//		}
+		
+		System.out.println(inventory_CloseDTO);
+		String result = inventoryService.doMonthClose(inventory_CloseDTO.getYearmonth(), inventory_CloseDTO, realStatus);
+	    response.put("result", result);
 		
 	    System.out.println(response);
 		

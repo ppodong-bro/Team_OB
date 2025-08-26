@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.WiseForce.AssemERP.dto.dg.InventoryInfoDTO;
+import com.WiseForce.AssemERP.dto.dg.Inventory_CloseDTO;
 import com.WiseForce.AssemERP.dto.dg.Real_InventoryDTO;
 import com.WiseForce.AssemERP.dto.km.Sales_ItemDto;
 import com.WiseForce.AssemERP.dto.sh.PartsDTO;
@@ -33,6 +34,6 @@ public interface InventoryDao {
 	Map<Integer, Integer> getRequirementsForProduct(Sales_ItemDto sales_ItemDto);
 
 	// EmpId로 EmpNo 가져오기
-	int getEmpNoFromEmpId(String empid);
+	int getEmpNoFromEmpInfo(Inventory_CloseDTO inventory_CloseDTO);
 	
 }
