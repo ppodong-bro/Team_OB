@@ -152,7 +152,11 @@ public class SecurityConfig
 	                  .requestMatchers("/dept/**").hasAnyAuthority("ROLE_ADMIN",    "ROLE_HR_MANAGER")
 	                  
 	                  .requestMatchers("/board/boardListForm").hasAnyAuthority("ROLE_ADMIN",     "ROLE_HR_MANAGER",
-              			  	  	  "ROLE_ITEM_MANAGER", "ROLE_ORDER_MANAGER", "ROLE_INVENTORY_MANAGER")
+              			  	  	  "ROLE_ITEM_MANAGER", "ROLE_ORDER_MANAGER", "ROLE_INVENTORY_MANAGER", "ROLE_HR_USER",
+              			  	  	  "ROLE_ITEM_USER", "ROLE_ORDER_USER", "ROLE_INVENTORY_USER", "ROLE_USER", "ROLE_PARTNER")
+	                  .requestMatchers("/board/boardDetail").hasAnyAuthority("ROLE_ADMIN",     "ROLE_HR_MANAGER",
+          			  	  	  "ROLE_ITEM_MANAGER", "ROLE_ORDER_MANAGER", "ROLE_INVENTORY_MANAGER", "ROLE_HR_USER",
+          			  	  	  "ROLE_ITEM_USER", "ROLE_ORDER_USER", "ROLE_INVENTORY_USER", "ROLE_USER", "ROLE_PARTNER")
 	                  .requestMatchers("/board/**").hasAnyAuthority("ROLE_ADMIN",   "ROLE_HR_MANAGER")
 	                  
 	                  .requestMatchers("/empAcc/**").hasAnyAuthority("ROLE_ADMIN",  "ROLE_HR_MANAGER")

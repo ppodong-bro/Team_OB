@@ -46,7 +46,7 @@
 				                        <tr>
 				                            <td>${board.boardNo}</td>
 				                            <td class="text-start">
-				                                <a href="/board/boardModifyForm?boardNo=${board.boardNo}" class="text-decoration-none text-dark">${board.title}</a>
+				                                <a href="/board/boardDetail?boardNo=${board.boardNo}" class="text-decoration-none text-dark">${board.title}</a>
 				                            </td>
 				                            <td>${board.empNo}</td>
 				                            <td>${board.empName}</td>
