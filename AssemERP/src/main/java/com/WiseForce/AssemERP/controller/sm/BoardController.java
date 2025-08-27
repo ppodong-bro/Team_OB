@@ -97,6 +97,22 @@ public class BoardController
     	return "sm/boardModifyForm";  	
     }
     
+    @GetMapping("/boardDetail")
+    public String boardDetail(
+    								  @RequestParam("boardNo") int boardNo
+    								, Model model
+    							 ) 
+    {
+    	System.out.println("BoardController boardModifyForm Start");
+    	
+    	BoardDTO boardDTO =  boardService.getBoardDetail(boardNo);
+    	
+    	model.addAttribute("board", boardDTO);
+    	 
+    	return "sm/boardDetail";  	
+    }
+    
+    
     @PostMapping("/boardModifyPro")
     public String boardModifyPro(
 								  	@ModelAttribute BoardDTO boardDTO

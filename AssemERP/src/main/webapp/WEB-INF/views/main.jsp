@@ -238,7 +238,7 @@ function openClientPerformDetail() {
 						<h4 class="boardTitle" style="font-weight: 900;">공지사항</h4>
 						<table class="boardList list-table">
 						<c:forEach var="board" items="${boardList}" varStatus="index">
-							<tr onclick="location.href='${pageContext.request.contextPath}/board/boardModifyForm?boardNo=${board.boardNo}';">
+							<tr onclick="location.href='${pageContext.request.contextPath}/board/boardDetail?boardNo=${board.boardNo}';">
 								<td>${board.title}</td>
 							</tr>
 						</c:forEach>
