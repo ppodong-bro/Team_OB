@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,14 +11,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.WiseForce.AssemERP.account.dao.AccountDAO;
 import com.WiseForce.AssemERP.account.dto.AccountDTO;
 import com.WiseForce.AssemERP.account.service.CustomUser;
 import com.WiseForce.AssemERP.dao.sm.EmpDao;
 import com.WiseForce.AssemERP.dto.sm.EmpAccountDTO;
 import com.WiseForce.AssemERP.dto.sm.EmpDTO;
-
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -39,7 +36,7 @@ public class EmpAccountServiceImpl implements EmpAccountService
 									  EmpAccountDTO 	empAccountDTO
 									, MultipartFile 	profileImageFile
 									, Integer 			loginEmpNo
-			) 
+								  ) 
 	{
 		System.out.println("EmpAccountServiceImpl empAccountSavePro Start");
 
@@ -54,9 +51,6 @@ public class EmpAccountServiceImpl implements EmpAccountService
                 empAccountDTO.setUserId(generatedUserId); 
                 empAccountDTO.setRegistrar(loginEmpNo);	
                 
-//                System.out.println("Generated Partner UserId: " + generatedUserId);
-//                System.out.println("EmpAccountServiceImpl empAccountSavePro Registrar: " + loginEmpNo);
-
             } else {
                 empNo = empDao.getNextInternalEmpNo(); 
                 System.out.println("Generated Internal EmpNo: " + empNo);
@@ -64,8 +58,6 @@ public class EmpAccountServiceImpl implements EmpAccountService
                 String generatedUserId = "user" + empNo;
                 empAccountDTO.setUserId(generatedUserId); 
                 empAccountDTO.setRegistrar(loginEmpNo);	
-//                System.out.println("Generated INTERNAL UserId: " + generatedUserId);
-//                System.out.println("EmpAccountServiceImpl empAccountSavePro Registrar: " + loginEmpNo);
             }
 			
             empAccountDTO.setEmpNo(empNo);
@@ -88,7 +80,6 @@ public class EmpAccountServiceImpl implements EmpAccountService
             throw new RuntimeException("사원 및 계정 정보 저장에 실패했습니다.", e);
 		}
 	}
-    
     
     @Override
 	public void saveEmp(EmpDTO empDTO) 
@@ -137,10 +128,21 @@ public class EmpAccountServiceImpl implements EmpAccountService
 		
         if (profileImageFile != null && !profileImageFile.isEmpty()) {
             try {
-                String originalFilename = profileImageFile.getOriginalFilename();
-                String storedFilename = UUID.randomUUID().toString() + "_" + originalFilename;
+            	
+            	File baseDir = new File(uploadDir); 
+            	if (!baseDir.isAbsolute()) {                                           
+                    baseDir = new File(System.getProperty("user.dir"), uploadDir);     
+                }                                                                       
+                if (!baseDir.exists()) { baseDir.mkdirs(); }                           
 
-                dest = new File(uploadDir + File.separator + storedFilename);
+                String originalFilename = profileImageFile.getOriginalFilename();       
+                if (originalFilename == null || originalFilename.isBlank()) {           
+                    originalFilename = "profile.jpg";                                   
+                }                                                                        
+                originalFilename = new File(originalFilename).getName();                
+                String storedFilename = UUID.randomUUID().toString() + "_" + originalFilename;
+                
+                dest = new File(baseDir, storedFilename);                               
                 
                 if (!dest.getParentFile().exists()) {
                     dest.getParentFile().mkdirs();
@@ -149,7 +151,7 @@ public class EmpAccountServiceImpl implements EmpAccountService
                 profileImageFile.transferTo(dest);
                 accountDTO.setEmpFilename(storedFilename);
                 
-                System.out.println("EmpAccountServiceImpl saveEmpImage empNo->"+accountDTO.getEmpName());
+                System.out.println("EmpAccountServiceImpl saveEmpImage empNo->" + accountDTO.getEmpNo());
                 System.out.println("EmpAccountServiceImpl saveEmpImage storedFilename->"+storedFilename);
                 
                 accountDAO.upsertEmpImage(accountDTO);
@@ -267,32 +269,48 @@ public class EmpAccountServiceImpl implements EmpAccountService
 	
 	private void handleProfileImage(int empNo, AccountDTO accountDTO, MultipartFile newImageFile, boolean removeImage) 
 	{
+		File baseDir = new File(uploadDir);
+		
+		if (!baseDir.isAbsolute()) {                                                          
+	        baseDir = new File(System.getProperty("user.dir"), uploadDir);                    
+	    }                                                                                     
+	    if (!baseDir.exists()) { baseDir.mkdirs(); }                                          
+	    System.out.println("[IMG] baseDir -> " + baseDir.getAbsolutePath());                  
+	    
      	String oldFilename = accountDAO.selectEmpImageFilename(empNo);
      	
      	if (removeImage || (newImageFile != null && !newImageFile.isEmpty())) {
      		
             Integer delResult = accountDAO.deleteEmpImageFilename(empNo);
+            
+            System.out.println("deleteEmpImageFilename result -> " + delResult);
      		
-            try {
-                File oldFile = new File(uploadDir + File.separator + oldFilename);
-                if (oldFile.exists() && oldFile.delete()) {
-                    System.out.println("기존 프로필 이미지 파일 삭제 성공: " + oldFilename);
-                }
-            } catch (Exception e) {
-                System.err.println("기존 프로필 이미지 파일 삭제 실패: " + e.getMessage());
+            if (oldFilename != null && !oldFilename.isBlank()) { 
+	            try {
+	            	File oldFile = new File(baseDir, oldFilename);                             
+	                if (oldFile.exists() && oldFile.delete()) {                                
+	                    System.out.println("기존 프로필 이미지 파일 삭제 성공: " + oldFile.getAbsolutePath());
+	                }
+	            } catch (Exception e) {
+	                System.err.println("기존 프로필 이미지 파일 삭제 실패: " + e.getMessage());
+	            }
             }
      	}
      	
      	if (!removeImage && newImageFile != null && !newImageFile.isEmpty()) {
      		
      		try {
-     			String originalFilename = newImageFile.getOriginalFilename();
-                String storedFilename = UUID.randomUUID().toString() + "_" + originalFilename;
+     			String originalFilename = newImageFile.getOriginalFilename();                  
+                if (originalFilename == null || originalFilename.isBlank()) {                  
+                    originalFilename = "profile.jpg";                                          
+                }                                                                              
+                originalFilename = new java.io.File(originalFilename).getName();               
+
+                String storedFilename = java.util.UUID.randomUUID() + "_" + originalFilename;
                 
-                File dest = new File(uploadDir + File.separator + storedFilename);
-                
-                if (!dest.getParentFile().exists()) {
-                    dest.getParentFile().mkdirs();
+                File dest = new File(baseDir, storedFilename);                                 
+                if (dest.getParentFile() != null && !dest.getParentFile().exists()) {          
+                    dest.getParentFile().mkdirs();                                             
                 }
                 
                 newImageFile.transferTo(dest);
