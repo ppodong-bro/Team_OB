@@ -235,7 +235,7 @@
 				  <div class="col-md-4">
 				    <!-- <label for="hireDate" class="form-label required-field">입사일</label> -->
 				    <!-- <label for="hireDate" class="form-label">입사일</label> -->
-				    <label for="hireDate" class="form-label" id="hireDateLabel">입사일</label>
+				    <label for="hireDate" class="form-label required-field" id="hireDateLabel">입사일</label>
 				    <div class="input-group">
 				      <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
 				      <input type="date" class="form-control" id="hireDate" name="hireDate"
