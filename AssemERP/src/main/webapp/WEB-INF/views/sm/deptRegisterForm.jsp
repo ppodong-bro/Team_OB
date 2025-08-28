@@ -85,7 +85,7 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="deptCaptainName" class="form-label">부서장</label>
+                                    <label for="deptCaptainName" class="form-label required-field">부서장</label>
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="deptCaptainName" placeholder="오른쪽 검색 버튼을 클릭하세요" readonly>
                                         <input type="hidden" id="deptCaptain" name="deptCaptain">
@@ -93,11 +93,12 @@
                                             <i class="bi bi-search"></i> 검색
                                         </button>
                                     </div>
+                                    <div class="invalid-feedback d-block" id="deptCaptainError" style="display:none;">부서장을 선택해주세요.</div>
                                     <div class="help-text mt-1">사원 검색 팝업에서 선택 시 자동으로 입력됩니다.</div>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="parentDeptName" class="form-label">상위 부서</label>
+                                    <label for="parentDeptName" class="form-label required-field">상위 부서</label>
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="parentDeptName" placeholder="오른쪽 검색 버튼을 클릭하세요" readonly>
                                         <input type="hidden" id="parentDeptCode" name="parentDeptCode">
@@ -105,10 +106,13 @@
                                             <i class="bi bi-search"></i> 검색
                                         </button>
                                     </div>
+                                    <div class="invalid-feedback d-block" id="parentDeptError" style="display:none;">상위 부서를 선택해주세요.</div>
                                 </div>
 
                                 <input type="hidden" id="delStatus" name="delStatus" value="0" />
                             </div>
+                            
+							
 
                             <div class="col-12 col-lg-5">
                                 <div class="section-title">위치 정보</div>
@@ -150,9 +154,9 @@
                         <button form="deptForm" type="reset" class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-counterclockwise me-2"></i>초기화
                         </button>
-                        <button form="deptForm" type="submit" class="btn btn-primary">
-                            <i class="bi bi-check-lg me-2"></i>부서 등록
-                        </button>
+                       <button form="deptForm" type="submit" class="btn btn-primary" id="submitBtn" disabled>
+					      <i class="bi bi-check-lg me-2"></i>부서 등록
+					   </button>
                     </div>
                 </div>
             </div>
@@ -305,20 +309,67 @@ document.getElementById('deptSearchBtn').addEventListener('click',()=>loadDepart
   if(el) el.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); el.id==='empSearchInput'?document.getElementById('empSearchBtn').click():document.getElementById('deptSearchBtn').click(); }});
 });
 
-document.getElementById('empSearchTbody').addEventListener('click',e=>{
+</script>
+
+<script>
+function isFilled(v){ return v !== null && String(v).trim().length > 0; }
+
+function updateSubmitState(){
+  const deptName       = document.getElementById('deptName').value;
+  const deptCaptainVal = document.getElementById('deptCaptain').value;
+  const parentDeptVal  = document.getElementById('parentDeptCode').value;
+
+  const deptCaptainName = document.getElementById('deptCaptainName');
+  const parentDeptName  = document.getElementById('parentDeptName');
+
+  const deptCaptainError = document.getElementById('deptCaptainError');
+  const parentDeptError  = document.getElementById('parentDeptError');
+
+  if(isFilled(deptCaptainVal)){
+    deptCaptainName.classList.remove('is-invalid');
+    deptCaptainError.style.display = 'none';
+  }else{
+    deptCaptainName.classList.add('is-invalid');
+    deptCaptainError.style.display = 'block';
+  }
+
+  if(isFilled(parentDeptVal)){
+    parentDeptName.classList.remove('is-invalid');
+    parentDeptError.style.display = 'none';
+  }else{
+    parentDeptName.classList.add('is-invalid');
+    parentDeptError.style.display = 'block';
+  }
+
+  const allOk = isFilled(deptName) && isFilled(deptCaptainVal) && isFilled(parentDeptVal);
+  document.getElementById('submitBtn').disabled = !allOk;
+}
+
+document.getElementById('deptName').addEventListener('input', updateSubmitState);
+
+document.addEventListener('DOMContentLoaded', updateSubmitState);
+
+document.querySelector('button[type="reset"]').addEventListener('click', () => {
+  setTimeout(updateSubmitState, 0); 
+});
+
+document.getElementById('empSearchTbody').addEventListener('click', e=>{
   const tr = e.target.closest('tr'); if(!tr || !tr.dataset.id) return;
   document.getElementById('deptCaptain').value = tr.dataset.id;
   document.getElementById('deptCaptainName').value = tr.dataset.name + ' ('+ tr.dataset.id +')';
   bootstrap.Modal.getInstance(document.getElementById('empSearchModal')).hide();
+  updateSubmitState();
 });
 
-document.getElementById('deptSearchTbody').addEventListener('click',e=>{
+document.getElementById('deptSearchTbody').addEventListener('click', e=>{
   const tr = e.target.closest('tr'); if(!tr || !tr.dataset.code) return;
   document.getElementById('parentDeptCode').value = tr.dataset.code;
   document.getElementById('parentDeptName').value = tr.dataset.name + ' ('+ tr.dataset.code +')';
   bootstrap.Modal.getInstance(document.getElementById('deptSearchModal')).hide();
+  updateSubmitState();
 });
 </script>
+
 
 </body>
 </html>
