@@ -15,7 +15,7 @@ spring:
    driver-class-name: oracle.jdbc.driver.OracleDriver
 #   url: jdbc:oracle:thin:@localhost:1521/xe
    url: jdbc:oracle:thin:@localhost:1521/xe
-   username: s202507b
+   username: s202507b_loc
    password: tiger
 
   servlet:
@@ -68,7 +68,7 @@ com.WiseForce.AssemERP.upload.path: upload
 
 #emp/account upload Folder
 file:
-  upload-dir: C:/GitHub/Team_OB/AssemERP/upload/account/profile-images
+  upload-dir: upload/account/profile-images
   
   
   
