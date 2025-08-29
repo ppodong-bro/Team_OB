@@ -81,8 +81,7 @@ body {
 						</div>
 						<div class="card-body p-4">
 							<form action="${pageContext.request.contextPath}/product/productUpdate" method="post"
-								class="needs-validation" enctype="multipart/form-data"
-								novalidate>
+								class="needs-validation" enctype="multipart/form-data">
 								<input type="hidden" name="product_no"
 									value="${productDTO.product_no }">
 
@@ -478,7 +477,7 @@ function reindexBOMRows() {
 }
 
 // 유효성 검사
-document.querySelector("form").addEventListener("submit", function (e) {
+document.querySelector("form.needs-validation").addEventListener("submit", function (e) {
     const rows = document.querySelectorAll("#bomTableBody tr");
     const partsNoSet = new Set();
 

@@ -1364,16 +1364,6 @@ ALTER TABLE emp
 			dept_code
 		);
 
-ALTER TABLE board
-	ADD
-		CONSTRAINT FK_emp_TO_board
-		FOREIGN KEY (
-			emp_no
-		)
-		REFERENCES emp (
-			emp_no
-		);
-
 ALTER TABLE emp_image
 	ADD
 		CONSTRAINT FK_emp_TO_emp_image
